@@ -39240,6 +39240,18 @@ mark.p21-flag{background:transparent;color:inherit;text-decoration:underline wav
   $('#meta-entries').textContent = entries.length + ' entries · ' + $$('.stage').length + ' live demos';
   try { if (window.matchMedia('(max-width: 900px)').matches) $('#toc').open = false; } catch (e) { /* ignore */ }
 
+  // Deep links: opening a URL with #section jumps to that section. Layout settles late (fonts, demos),
+  // so scroll to it again once the page has loaded, and only then start writing the hash back.
+  let deepReady = !location.hash;
+  const deepJump = () => {
+    const id = decodeURIComponent(location.hash.slice(1)); const t = id && document.getElementById(id);
+    if (t && !document.body.classList.contains('slides')) t.scrollIntoView({ behavior: 'auto', block: 'start' });
+  };
+  if (location.hash) {
+    const finish = () => { deepJump(); setTimeout(() => { deepJump(); setTimeout(() => { deepReady = true; }, 400); }, 500); };
+    if (document.readyState === 'complete') finish(); else window.addEventListener('load', finish, { once: true });
+  }
+
   if ('IntersectionObserver' in window) {
     const links = new Map($$('.rail a').map(a => [a.getAttribute('href').slice(1), a]));
     const io = new IntersectionObserver(items => {
@@ -39249,6 +39261,10 @@ mark.p21-flag{background:transparent;color:inherit;text-decoration:underline wav
         const a = links.get(it.target.id);
         if (!a) return;
         a.classList.add('current');
+        // Keep the address bar in step with the section being read, so the URL can be shared.
+        if (deepReady && !document.body.classList.contains('slides') && it.target.id && location.hash !== '#' + it.target.id) {
+          try { history.replaceState(null, '', '#' + it.target.id); } catch (e) { /* ignore */ }
+        }
         // Keep the current item in view inside the rail's own scroll area (desktop only).
         const rail = $('.rail');
         if (rail.scrollHeight > rail.clientHeight + 4) {
@@ -43085,6 +43101,7 @@ body.slides .pg-bar{display:block}
   const bar = { title: document.querySelector('[data-pg-title]'), count: document.querySelector('[data-pg-count]'), track: document.querySelector('[data-pg-track]'), prev: document.querySelector('[data-pg-prev]'), next: document.querySelector('[data-pg-next]') };
   let cur = Math.min(Math.max(0, store.get('cfg-page', 0)), pages.length - 1);
   let mode = 'slides';
+  let hashSync = false;
 
   const markRail = () => {
     document.querySelectorAll('.rail a.pg-active, .rail a.pg-parent').forEach(a => a.classList.remove('pg-active', 'pg-parent'));
@@ -43108,6 +43125,13 @@ body.slides .pg-bar{display:block}
     bar.track.style.width = ((cur + 1) / pages.length * 100) + '%';
     bar.prev.disabled = cur === 0; bar.next.disabled = cur === pages.length - 1;
     markRail();
+    if (hashSync) {
+      // Put the current page in the address bar so the URL can be shared or reopened.
+      const first = pages[cur].els[0];
+      const own = first.matches('article.entry, .part-divider') ? first : (first.closest('section.chapter, .part-divider') || first);
+      const hid = (opts.target && opts.target.id) || own.id;
+      if (hid && location.hash !== '#' + hid) { try { history.replaceState(null, '', '#' + hid); } catch (e) { /* ignore */ } }
+    }
     if (opts.target) opts.target.scrollIntoView({ block: 'start' });
     else window.scrollTo({ top: 0 });
   };
@@ -43157,5 +43181,6 @@ body.slides .pg-bar{display:block}
   fromHash();
   window.addEventListener('hashchange', () => { if (mode === 'slides') { fromHash(); go(cur); } });
   setMode(mode, true);
+  hashSync = true;
 })();
 </script>
