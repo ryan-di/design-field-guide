@@ -39236,33 +39236,41 @@ mark.p21-flag{background:transparent;color:inherit;text-decoration:underline wav
     }
     tocList.appendChild(li);
   });
-  tocList.addEventListener('click', e => {
-    const ch = e.target.closest && e.target.closest('a.ch-link');
-    if (!ch) return;
-    const li = ch.closest('li');
-    $$('#toc-list > li.open').forEach(x => { if (x !== li) x.classList.remove('open'); });
-    if (li) li.classList.add('open');
-  });
+
     const numbered = chapters.filter(c => /Chapter \d+/.test(($('.eyebrow', c) || {}).textContent || '')).length;
   $('#meta-chapters').textContent = numbered + ' chapters';
   $('#meta-entries').textContent = entries.length + ' entries · ' + $$('.stage').length + ' live demos';
   try { if (window.matchMedia('(max-width: 900px)').matches) $('#toc').open = false; } catch (e) { /* ignore */ }
 
-  const openTocFor = (idOrEl) => {
+  // Debounce chapter expand/collapse so scrolling through many sections doesn't wave the rail.
+  let tocOpenTimer = 0, tocOpenPending = '';
+  const openTocFor = (idOrEl, immediate) => {
     const id = typeof idOrEl === 'string' ? idOrEl : (idOrEl && idOrEl.id);
     if (!id) return;
-    let a = document.querySelector('#toc-list a[href="#' + id + '"]');
-    if (!a) {
-      const el = document.getElementById(id);
-      const ch = el && (el.closest('[data-chapter]') || el);
-      if (ch && ch.id) a = document.querySelector('#toc-list a.ch-link[href="#' + ch.id + '"]');
-    }
-    if (!a) return;
-    const li = a.closest('#toc-list > li');
-    $$('#toc-list > li.open').forEach(x => { if (x !== li) x.classList.remove('open'); });
-    if (li) li.classList.add('open');
+    const apply = (targetId) => {
+      let a = document.querySelector('#toc-list a[href="#' + targetId + '"]');
+      if (!a) {
+        const el = document.getElementById(targetId);
+        const ch = el && (el.closest('[data-chapter]') || el);
+        if (ch && ch.id) a = document.querySelector('#toc-list a.ch-link[href="#' + ch.id + '"]');
+      }
+      if (!a) return;
+      const li = a.closest('#toc-list > li');
+      $$('#toc-list > li.open').forEach(x => { if (x !== li) x.classList.remove('open'); });
+      if (li) li.classList.add('open');
+    };
+    if (immediate) { clearTimeout(tocOpenTimer); tocOpenPending = ''; apply(id); return; }
+    tocOpenPending = id;
+    clearTimeout(tocOpenTimer);
+    tocOpenTimer = setTimeout(() => { const t = tocOpenPending; tocOpenPending = ''; if (t) apply(t); }, 180);
   };
 
+
+  tocList.addEventListener('click', e => {
+    const a = e.target.closest && e.target.closest('a[href^="#"]');
+    if (!a || !tocList.contains(a)) return;
+    openTocFor(a.getAttribute('href').slice(1), true);
+  });
   // Deep links for the continuous book. Retry while late layout (fonts/demos) settles.
   let deepReady = !location.hash;
   try { history.scrollRestoration = 'manual'; } catch (e) {}
@@ -39274,8 +39282,8 @@ mark.p21-flag{background:transparent;color:inherit;text-decoration:underline wav
   const startPin = () => {
     deepReady = false;
     deepJump();
-    openTocFor(location.hash.slice(1));
-    [100, 300, 700, 1500, 3000, 5000].forEach(ms => setTimeout(() => { deepJump(); openTocFor(location.hash.slice(1)); }, ms));
+    openTocFor(location.hash.slice(1), true);
+    [100, 300, 700, 1500, 3000, 5000].forEach(ms => setTimeout(() => { deepJump(); openTocFor(location.hash.slice(1), true); }, ms));
     setTimeout(() => { deepReady = true; }, 5500);
   };
   if (location.hash) {
@@ -39310,7 +39318,7 @@ mark.p21-flag{background:transparent;color:inherit;text-decoration:underline wav
     entries.concat(chapters).forEach(el => io.observe(el));
   }
   // Open the chapter for the landing hash, if any.
-  if (location.hash) openTocFor(location.hash.slice(1));
+  if (location.hash) openTocFor(location.hash.slice(1), true);
 
   /* ---------- Learned progress ---------- */
   const learned = new Set(store.get(KEY, []));
