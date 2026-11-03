@@ -39240,17 +39240,26 @@ mark.p21-flag{background:transparent;color:inherit;text-decoration:underline wav
   $('#meta-entries').textContent = entries.length + ' entries · ' + $$('.stage').length + ' live demos';
   try { if (window.matchMedia('(max-width: 900px)').matches) $('#toc').open = false; } catch (e) { /* ignore */ }
 
-  // Deep links: opening a URL with #section jumps to that section. Layout settles late (fonts, demos),
-  // so scroll to it again once the page has loaded, and only then start writing the hash back.
+  // Deep links for the continuous book. Retry while late layout (fonts/demos) settles.
   let deepReady = !location.hash;
-  const deepJump = () => {
-    const id = decodeURIComponent(location.hash.slice(1)); const t = id && document.getElementById(id);
-    if (t && !document.body.classList.contains('slides')) t.scrollIntoView({ behavior: 'auto', block: 'start' });
+  try { history.scrollRestoration = 'manual'; } catch (e) {}
+  const deepTarget = () => {
+    const id = decodeURIComponent((location.hash || '').slice(1));
+    return id ? document.getElementById(id) : null;
+  };
+  const deepJump = () => { const t = deepTarget(); if (t) t.scrollIntoView({ behavior: 'auto', block: 'start' }); };
+  const startPin = () => {
+    deepReady = false;
+    deepJump();
+    [100, 300, 700, 1500, 3000, 5000].forEach(ms => setTimeout(deepJump, ms));
+    setTimeout(() => { deepReady = true; }, 5500);
   };
   if (location.hash) {
-    const finish = () => { deepJump(); setTimeout(() => { deepJump(); setTimeout(() => { deepReady = true; }, 400); }, 500); };
-    if (document.readyState === 'complete') finish(); else window.addEventListener('load', finish, { once: true });
+    if (document.readyState === 'complete') startPin();
+    else window.addEventListener('load', startPin, { once: true });
+    try { document.fonts && document.fonts.ready.then(deepJump); } catch (e) {}
   }
+  window.addEventListener('hashchange', () => { if (!document.body.classList.contains('slides')) startPin(); });
 
   if ('IntersectionObserver' in window) {
     const links = new Map($$('.rail a').map(a => [a.getAttribute('href').slice(1), a]));
@@ -42941,49 +42950,16 @@ demo('pat-customization', st => {
 </script>
 
 <style>
-/* Slide view: one topic per page, page height follows its content */
-.view-toggle{display:inline-flex;gap:2px;padding:3px;border:1px solid var(--line);border-radius:999px;background:var(--card)}
-.view-toggle button{all:unset;cursor:pointer;font:600 12px/1 var(--font-mono);letter-spacing:.06em;text-transform:uppercase;color:var(--muted);padding:7px 12px;border-radius:999px}
-.view-toggle button[aria-pressed="true"]{background:var(--ink);color:var(--paper)}
-.view-toggle button:focus-visible{outline:3px solid var(--blue);outline-offset:2px}
-body.slides .main [data-pg]:not([data-pg-on]){display:none!important}
-.page{grid-template-columns:minmax(0,1fr)!important}
-.main{margin-inline:auto;width:100%}
-.rail{display:none}
-.rail summary{display:none}
-body.toc-open .rail{display:block;position:fixed;left:16px;right:auto;top:auto;bottom:calc(70px + env(safe-area-inset-bottom,0px));z-index:60;width:min(380px,calc(100vw - 32px));height:auto;max-height:min(70vh,640px);overflow:auto;background:var(--card);border:1px solid var(--line);border-radius:14px;box-shadow:0 18px 48px rgba(0,0,0,.22);padding:0 14px 14px;animation:pg-in .14s ease-out}
-.rail a.pg-active{color:var(--accent)!important;font-weight:600;background:var(--paper-2);border-radius:6px;box-shadow:-6px 0 0 var(--paper-2),6px 0 0 var(--paper-2)}
-.rail .entries a.pg-active::before{background:var(--accent);border-color:var(--accent)}
-.rail a.pg-parent{color:var(--accent)}
-.rail a.current:not(.pg-active):not(.pg-parent){color:inherit}
-.toc-search{position:sticky;top:0;z-index:1;background:var(--card);padding:12px 0 6px;margin-bottom:4px}
-.toc-search input{width:100%;font:400 15px var(--font-body);color:var(--ink);background:var(--paper);border:1.5px solid var(--line);border-radius:9px;padding:9px 12px}
+/* Continuous book layout (slides removed). Keep searchable contents rail. */
+.toc-search{position:sticky;top:0;z-index:1;background:var(--card);padding:4px 0 10px;margin-bottom:4px}
+.toc-search input{width:100%;font:400 15px var(--font-body);color:var(--ink);background:var(--paper);border:1.5px solid var(--line);border-radius:9px;padding:9px 12px;box-sizing:border-box}
 .toc-search input:focus{outline:none;border-color:var(--blue)}
 .toc-empty{font-size:14px;color:var(--muted);padding:10px 2px 0}
 .rail .entries a[hidden]{display:none}
 .rail a:focus-visible{outline:2px solid var(--blue);outline-offset:2px;border-radius:4px}
-body.slides .chapter{padding-top:0;gap:18px}
-body.slides .entry{margin-top:0;padding-top:0;border-top:0}
-body.slides .part-divider{margin-top:0}
-body.slides .practice{margin-top:0}
-body.slides .page{padding-block:24px 140px}
-body.slides [data-pg-on]{animation:pg-in .18s ease-out}
-@keyframes pg-in{from{opacity:0;transform:translateY(6px)}}
 .pg-crumb{display:none}
-body.slides .pg-crumb{display:block;font:500 12px/1.4 var(--font-mono);letter-spacing:.06em;text-transform:uppercase;color:var(--muted);margin-bottom:14px}
-.pg-bar{position:fixed;left:0;right:0;bottom:0;z-index:50;display:none;padding:10px 16px calc(10px + env(safe-area-inset-bottom,0px));background:color-mix(in srgb,var(--paper) 92%,transparent);backdrop-filter:blur(8px);border-top:1px solid var(--line)}
-body.slides .pg-bar{display:block}
-.pg-in{max-width:1220px;margin:0 auto;display:flex;align-items:center;gap:12px}
-.pg-in .grow{flex:1;min-width:0;display:flex;flex-direction:column;gap:6px}
-.pg-title{font:600 13.5px/1.3 var(--font-body);color:var(--ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.pg-count{font:500 12px var(--font-mono);color:var(--muted);font-variant-numeric:tabular-nums;white-space:nowrap}
-.pg-track{height:3px;border-radius:2px;background:var(--paper-2);overflow:hidden}
-.pg-track span{display:block;height:100%;background:var(--accent);width:0;transition:width .2s}
-.pg-btn{all:unset;cursor:pointer;display:inline-flex;align-items:center;gap:6px;font:600 14px var(--font-body);color:var(--ink);border:1px solid var(--line);background:var(--card);border-radius:10px;padding:9px 14px}
-.pg-btn:hover{background:var(--paper-2)}
-.pg-btn[disabled]{opacity:.35;cursor:default}
-.pg-btn:focus-visible{outline:3px solid var(--blue);outline-offset:2px}
-@media (max-width:560px){.pg-btn .lbl{display:none}.pg-bar .view-toggle{display:none}}
+.pg-bar{display:none!important}
+body.slides .main [data-pg]:not([data-pg-on]){display:revert!important}
 </style>
 <div class="pg-bar" role="navigation" aria-label="Slides">
   <div class="pg-in">
@@ -43046,7 +43022,7 @@ body.slides .pg-bar{display:block}
   const tocBtn = document.querySelector('[data-toc-toggle]');
   const toc = document.getElementById('toc');
   const narrow = () => window.matchMedia('(max-width: 900px)').matches;
-  if (rail) { rail.id = 'toc-panel'; rail.setAttribute('role', 'dialog'); rail.setAttribute('aria-label', 'Contents'); }
+  if (rail) { rail.id = 'toc-panel'; /* keep nav role for continuous book */ }
   if (toc) toc.open = true;
   const sbox = document.createElement('div'); sbox.className = 'toc-search';
   sbox.innerHTML = '<input type="search" id="toc-q" placeholder="Search components, patterns…" aria-label="Search contents" autocomplete="off"><p class="toc-empty" hidden>No matches</p>';
@@ -43090,7 +43066,7 @@ body.slides .pg-bar{display:block}
       if (!narrow()) q.focus({ preventScroll: true }); else q.focus();
     }
   };
-  tocBtn.addEventListener('click', () => setToc(!document.body.classList.contains('toc-open')));
+  if (tocBtn) tocBtn.addEventListener('click', () => setToc(!document.body.classList.contains('toc-open')));
   document.addEventListener('keydown', e => {
     if (e.key === 'Escape' && document.body.classList.contains('toc-open')) { setToc(false); tocBtn.focus(); }
     else if (!e.target.closest('.stage, input, textarea, select, [contenteditable]') && ((e.key === 'k' && (e.metaKey || e.ctrlKey)) || e.key === '/')) { e.preventDefault(); setToc(true); }
@@ -43100,8 +43076,9 @@ body.slides .pg-bar{display:block}
 
   const bar = { title: document.querySelector('[data-pg-title]'), count: document.querySelector('[data-pg-count]'), track: document.querySelector('[data-pg-track]'), prev: document.querySelector('[data-pg-prev]'), next: document.querySelector('[data-pg-next]') };
   let cur = Math.min(Math.max(0, store.get('cfg-page', 0)), pages.length - 1);
-  let mode = 'slides';
+  let mode = 'scroll'; // continuous book; slides removed
   let hashSync = false;
+  try { localStorage.removeItem('cfg-view'); localStorage.removeItem('cfg-page'); } catch (e) {}
 
   const markRail = () => {
     document.querySelectorAll('.rail a.pg-active, .rail a.pg-parent').forEach(a => a.classList.remove('pg-active', 'pg-parent'));
@@ -43136,9 +43113,10 @@ body.slides .pg-bar{display:block}
     else window.scrollTo({ top: 0 });
   };
   const setMode = (m, init) => {
+    m = 'scroll'; // book only
     const anchor = init ? cur : (mode === 'scroll' ? pageInView() : cur);
-    mode = m; store.set('cfg-view', m);
-    document.body.classList.toggle('slides', m === 'slides');
+    mode = m;
+    document.body.classList.remove('slides');
     document.querySelectorAll('.view-toggle button').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.view === m)));
     if (m === 'slides') go(anchor);
     else { document.querySelectorAll('[data-pg-on]').forEach(el => el.removeAttribute('data-pg-on')); if (!init) { const el = pages[anchor].els[0]; requestAnimationFrame(() => el.scrollIntoView({ block: 'start' })); } }
