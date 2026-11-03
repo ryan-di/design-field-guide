@@ -39248,6 +39248,21 @@ mark.p21-flag{background:transparent;color:inherit;text-decoration:underline wav
   $('#meta-entries').textContent = entries.length + ' entries · ' + $$('.stage').length + ' live demos';
   try { if (window.matchMedia('(max-width: 900px)').matches) $('#toc').open = false; } catch (e) { /* ignore */ }
 
+  const openTocFor = (idOrEl) => {
+    const id = typeof idOrEl === 'string' ? idOrEl : (idOrEl && idOrEl.id);
+    if (!id) return;
+    let a = document.querySelector('#toc-list a[href="#' + id + '"]');
+    if (!a) {
+      const el = document.getElementById(id);
+      const ch = el && (el.closest('[data-chapter]') || el);
+      if (ch && ch.id) a = document.querySelector('#toc-list a.ch-link[href="#' + ch.id + '"]');
+    }
+    if (!a) return;
+    const li = a.closest('#toc-list > li');
+    $$('#toc-list > li.open').forEach(x => { if (x !== li) x.classList.remove('open'); });
+    if (li) li.classList.add('open');
+  };
+
   // Deep links for the continuous book. Retry while late layout (fonts/demos) settles.
   let deepReady = !location.hash;
   try { history.scrollRestoration = 'manual'; } catch (e) {}
@@ -39259,7 +39274,8 @@ mark.p21-flag{background:transparent;color:inherit;text-decoration:underline wav
   const startPin = () => {
     deepReady = false;
     deepJump();
-    [100, 300, 700, 1500, 3000, 5000].forEach(ms => setTimeout(deepJump, ms));
+    openTocFor(location.hash.slice(1));
+    [100, 300, 700, 1500, 3000, 5000].forEach(ms => setTimeout(() => { deepJump(); openTocFor(location.hash.slice(1)); }, ms));
     setTimeout(() => { deepReady = true; }, 5500);
   };
   if (location.hash) {
@@ -39278,10 +39294,7 @@ mark.p21-flag{background:transparent;color:inherit;text-decoration:underline wav
         const a = links.get(it.target.id);
         if (!a) return;
         a.classList.add('current');
-        // Show only the active chapter's entries in the rail.
-        const li = a.closest('#toc-list > li');
-        $$('#toc-list > li.open').forEach(x => { if (x !== li) x.classList.remove('open'); });
-        if (li) li.classList.add('open');
+        openTocFor(it.target.id);
         // Keep the address bar in step with the section being read, so the URL can be shared.
         if (deepReady && !document.body.classList.contains('slides') && it.target.id && location.hash !== '#' + it.target.id) {
           try { history.replaceState(null, '', '#' + it.target.id); } catch (e) { /* ignore */ }
@@ -39296,6 +39309,8 @@ mark.p21-flag{background:transparent;color:inherit;text-decoration:underline wav
     }, { rootMargin: '-15% 0px -75% 0px' });
     entries.concat(chapters).forEach(el => io.observe(el));
   }
+  // Open the chapter for the landing hash, if any.
+  if (location.hash) openTocFor(location.hash.slice(1));
 
   /* ---------- Learned progress ---------- */
   const learned = new Set(store.get(KEY, []));
