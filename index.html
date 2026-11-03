@@ -76,7 +76,8 @@ a{color:var(--blue)}
 .rail ol{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:2px}
 .rail .ch-link{display:flex;gap:10px;align-items:baseline;color:var(--ink);text-decoration:none;font-weight:600;padding:6px 0 2px;line-height:1.3}
 .rail .ch-link .n{font:500 11.5px var(--font-mono);color:var(--muted);width:18px;flex:none}
-.rail .entries{padding:0 0 6px 28px;display:flex;flex-direction:column;gap:0}
+.rail .entries{padding:0 0 6px 28px;display:none;flex-direction:column;gap:0}
+.rail li.open > .entries{display:flex}
 .rail .entries a{display:flex;align-items:center;gap:8px;color:var(--muted);text-decoration:none;padding:2px 0;line-height:1.35}
 .rail .entries a::before{content:"";width:7px;height:7px;border-radius:50%;border:1.5px solid var(--line);flex:none}
 .rail .entries a.done::before{background:var(--blue);border-color:var(--blue)}
@@ -39235,7 +39236,14 @@ mark.p21-flag{background:transparent;color:inherit;text-decoration:underline wav
     }
     tocList.appendChild(li);
   });
-  const numbered = chapters.filter(c => /Chapter \d+/.test(($('.eyebrow', c) || {}).textContent || '')).length;
+  tocList.addEventListener('click', e => {
+    const ch = e.target.closest && e.target.closest('a.ch-link');
+    if (!ch) return;
+    const li = ch.closest('li');
+    $$('#toc-list > li.open').forEach(x => { if (x !== li) x.classList.remove('open'); });
+    if (li) li.classList.add('open');
+  });
+    const numbered = chapters.filter(c => /Chapter \d+/.test(($('.eyebrow', c) || {}).textContent || '')).length;
   $('#meta-chapters').textContent = numbered + ' chapters';
   $('#meta-entries').textContent = entries.length + ' entries · ' + $$('.stage').length + ' live demos';
   try { if (window.matchMedia('(max-width: 900px)').matches) $('#toc').open = false; } catch (e) { /* ignore */ }
@@ -39270,6 +39278,10 @@ mark.p21-flag{background:transparent;color:inherit;text-decoration:underline wav
         const a = links.get(it.target.id);
         if (!a) return;
         a.classList.add('current');
+        // Show only the active chapter's entries in the rail.
+        const li = a.closest('#toc-list > li');
+        $$('#toc-list > li.open').forEach(x => { if (x !== li) x.classList.remove('open'); });
+        if (li) li.classList.add('open');
         // Keep the address bar in step with the section being read, so the URL can be shared.
         if (deepReady && !document.body.classList.contains('slides') && it.target.id && location.hash !== '#' + it.target.id) {
           try { history.replaceState(null, '', '#' + it.target.id); } catch (e) { /* ignore */ }
@@ -43042,6 +43054,12 @@ body.slides .main [data-pg]:not([data-pg-on]){display:revert!important}
       if (!li.hidden) any = true;
     });
     empty.hidden = any;
+    // While searching, expand chapters that still have visible rows; otherwise collapse all and let the scroll spy reopen the active one.
+    list.querySelectorAll(':scope > li').forEach(li => {
+      if (li.classList.contains('part-label')) return;
+      if (v) li.classList.toggle('open', !li.hidden);
+      else li.classList.remove('open');
+    });
   };
   q.addEventListener('input', filter);
   const visibleLinks = () => Array.from(list.querySelectorAll('a')).filter(a => a.offsetParent);
