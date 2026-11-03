@@ -56,7 +56,7 @@
 
 *,*::before,*::after{box-sizing:border-box}
 [hidden]{display:none!important}
-html{scroll-behavior:smooth}
+html{scroll-behavior:auto}
 body{margin:0;background:var(--paper);color:var(--body);font:400 17px/1.65 var(--font-body);padding-inline:16px;-webkit-font-smoothing:antialiased}
 @media (prefers-reduced-motion: reduce){html{scroll-behavior:auto}*,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}}
 a{color:var(--blue)}
@@ -39266,10 +39266,24 @@ mark.p21-flag{background:transparent;color:inherit;text-decoration:underline wav
   };
 
 
-  tocList.addEventListener('click', e => {
+  const jumpToId = (id) => {
+    const t = id && document.getElementById(id);
+    if (!t) return false;
+    openTocFor(id, true);
+    t.scrollIntoView({ behavior: 'auto', block: 'start' });
+    try { history.pushState(null, '', '#' + id); } catch (e) { location.hash = id; }
+    return true;
+  };
+  document.addEventListener('click', e => {
     const a = e.target.closest && e.target.closest('a[href^="#"]');
-    if (!a || !tocList.contains(a)) return;
-    openTocFor(a.getAttribute('href').slice(1), true);
+    if (!a || a.target === '_blank' || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
+    if (a.closest('.cs-demo, .fm-stage, .stage, .cw')) return;
+    const href = a.getAttribute('href') || '';
+    if (href.length < 2 || href === '#') return;
+    const id = decodeURIComponent(href.slice(1));
+    if (!document.getElementById(id)) return;
+    e.preventDefault();
+    jumpToId(id);
   });
   // Deep links for the continuous book. Retry while late layout (fonts/demos) settles.
   let deepReady = !location.hash;
