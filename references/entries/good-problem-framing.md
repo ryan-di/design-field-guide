@@ -13,7 +13,7 @@ When a request arrives as a solution, the frame turns it back into the problem b
 
 ## Rules
 
-Five rules keep a problem frame useful. Each comes with a demo. Switch between “Common mistake” and “Do this instead” to see the difference.
+Five rules keep a problem frame useful.
 
 ### 1. Restate the request as a problem
 

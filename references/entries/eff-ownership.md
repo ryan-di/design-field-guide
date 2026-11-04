@@ -27,7 +27,7 @@ Table: https://ryan-di.github.io/design-field-guide/#eff-ownership-split
 
 ## Rules
 
-Four rules keep the split between you and agents useful. Each comes with a demo. Switch between “Common mistake” and “Do this instead” to see the difference.
+Four rules keep the split between you and agents useful.
 
 ### 1. Ask for trade-offs, not a verdict
 

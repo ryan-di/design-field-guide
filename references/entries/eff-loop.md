@@ -27,7 +27,7 @@ Table: https://ryan-di.github.io/design-field-guide/#eff-loop-stages
 
 ## Rules
 
-Five rules keep the loop useful. Each comes with a demo. Switch between “Common mistake” and “Do this instead” to see the difference.
+Five rules keep the loop useful.
 
 ### 1. Frame the problem before you build
 

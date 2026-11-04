@@ -427,9 +427,6 @@ def build():
             part = {'id': n.get('id'), 'title': n.get('data-part'),
                     'summary': ws((n.find(lambda x: 'part-sub' in x.cls) or Node('p', {}, None)).text()), 'chapters': []}
             parts.append(part)
-            if chapters and chapters[-1]['part'] is None:
-                chapters[-1]['part'] = part['id']
-                part['chapters'].append(chapters[-1]['id'])
         elif n.tag == 'section' and n.has('data-chapter'):
             head = n.find(lambda x: 'chapter-head' in x.cls)
             eyebrow = ws(head.find(lambda x: 'eyebrow' in x.cls).text()) if head else ''
@@ -449,7 +446,7 @@ def build():
     E = {e['id'] for e in entries}
 
     def header(title, part_id, ch, anchor, extra=()):
-        where = ' · '.join(x for x in [P[part_id]['title'] if part_id else '', ch['label'] if ch else ''] if x)
+        where = ' · '.join(x for x in [P[part_id]['title'] if part_id else 'Front matter', ch['label'] if ch else ''] if x)
         return ['# ' + title, '',
                 'Design Field Guide %s (%s) · %s' % (version, date, where),
                 'Live: %s' % md.url(anchor)] + list(extra) + ['Cite as: Design Field Guide %s, #%s' % (version, anchor), '', '> ' + EVIDENCE, '']
@@ -537,6 +534,10 @@ def build():
          'Cite as “Design Field Guide %s, #<anchor>” with the link %s#<anchor>. An entry is #<id>, its rules are #<id>-rules, '
          'and rule N is #<id>-rule-N. Anchors stay valid across versions.' % (version, SITE), '',
          EVIDENCE, '']
+    front = [c for c in chapters if not c['part']]
+    if front:
+        L += ['## Front matter', ''] + ['- [%s](%sreferences/chapters/%s.md)%s' % (c['label'], SITE, c['id'], ': ' + c['summary'] if c['summary'] else '')
+                                        for c in front] + ['']
     for p in parts:
         L += ['## %s' % p['title'], '']
         if p['summary']:

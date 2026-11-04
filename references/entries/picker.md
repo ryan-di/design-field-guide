@@ -22,7 +22,7 @@ Pickers take the shape of the value they hold. A calendar picks one date, and a 
 
 ## Rules
 
-Three rules keep pickers useful. Each comes with a demo. Switch between “When it breaks” and “Do this instead” to see the difference.
+Three rules keep pickers useful.
 
 ### 1. Let people type too
 

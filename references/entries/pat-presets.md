@@ -22,7 +22,7 @@ Presets come in four common forms. They differ in how people choose one, and in 
 
 ## Rules
 
-Four rules keep presets useful. Each comes with a demo. Switch between “When it backfires” and “Do this instead” to see the difference.
+Four rules keep presets useful.
 
 ### 1. Show what each preset sets
 

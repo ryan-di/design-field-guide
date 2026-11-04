@@ -13,7 +13,7 @@ How the directions should differ, so that each one teaches you something, is the
 
 ## Rules
 
-Four rules keep exploring wide useful. Each comes with a demo. Switch between “Common mistake” and “Do this instead” to see the difference.
+Four rules keep exploring wide useful.
 
 ### 1. Ask for several at once
 

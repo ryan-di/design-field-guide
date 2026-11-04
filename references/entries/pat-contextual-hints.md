@@ -22,7 +22,7 @@ Hints range from quiet to loud. Placeholder text sits inside an empty field. A h
 
 ## Rules
 
-Four rules keep contextual hints useful. Each comes with a demo. Switch between “When it backfires” and “Do this instead” to see the difference.
+Four rules keep contextual hints useful.
 
 ### 1. Show one hint at a time
 

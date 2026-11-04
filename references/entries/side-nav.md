@@ -22,7 +22,7 @@ Side navigation comes in four common forms. A full sidebar shows an icon and a l
 
 ## Rules
 
-Four rules keep side navigation useful. Each comes with a demo. Switch between “When it breaks” and “Do this instead” to see the difference.
+Four rules keep side navigation useful.
 
 ### 1. Keep it to places
 

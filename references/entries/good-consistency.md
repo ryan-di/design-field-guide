@@ -13,7 +13,7 @@ There are two kinds. Internal consistency is about your own product: the same th
 
 ## Rules
 
-Three rules keep a product consistent. Each comes with a demo. Switch between “Common mistake” and “Do this instead” to see the difference.
+Three rules keep a product consistent.
 
 ### 1. Give one action one look
 

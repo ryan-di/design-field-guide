@@ -13,7 +13,7 @@ The agent does the looking, which is slow and easy to skip, and you keep the jud
 
 ## Rules
 
-Four rules keep design QA useful. Each comes with a demo. Switch between “Common mistake” and “Do this instead” to see the difference.
+Four rules keep design QA useful.
 
 ### 1. Check every theme and width
 

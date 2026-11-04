@@ -20,7 +20,7 @@ Progress bars come in four forms. A bar of known length fills as work gets done,
 
 ## Rules
 
-Four rules keep progress bars useful. Each comes with a demo. Switch between “When it breaks” and “Do this instead” to see the difference.
+Four rules keep progress bars useful.
 
 ### 1. Show stages when you can’t measure
 

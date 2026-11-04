@@ -22,7 +22,7 @@ There are four main ways to move with the keyboard. Most apps need Tab and arrow
 
 ## Rules
 
-Four rules keep the keyboard path usable. Each comes with a demo. Switch between “Common mistake” and “Do this instead” to see the difference.
+Four rules keep the keyboard path usable.
 
 ### 1. Keep the focus ring visible
 

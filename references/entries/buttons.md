@@ -22,7 +22,7 @@ Buttons come in three styles, set by how important the action is: primary, secon
 
 ## Rules
 
-Four rules keep buttons useful. Each comes with a demo. Switch between “When it breaks” and “Do this instead” to see the difference.
+Four rules keep buttons useful.
 
 ### 1. Keep one primary button
 

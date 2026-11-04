@@ -13,7 +13,7 @@ Where the [problem brief](https://ryan-di.github.io/design-field-guide/#eff-brie
 
 ## Rules
 
-Four rules keep a context pack useful. Each comes with a demo. Switch between “Common mistake” and “Do this instead” to see the difference.
+Four rules keep a context pack useful.
 
 ### 1. Point to the design system by path
 

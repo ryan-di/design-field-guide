@@ -21,7 +21,7 @@ Empty states come in three common kinds, set by why the screen is empty: first u
 
 ## Rules
 
-Three rules keep empty states useful. Each comes with a demo. Switch between “When it breaks” and “Do this instead” to see the difference.
+Three rules keep empty states useful.
 
 ### 1. Say what goes here
 

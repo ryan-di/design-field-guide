@@ -22,7 +22,7 @@ Feedback comes in four common strengths. The bigger or slower the action, the st
 
 ## Rules
 
-Four rules keep feedback useful. Each comes with a demo. Switch between “When it backfires” and “Do this instead” to see the difference.
+Four rules keep feedback useful.
 
 ### 1. Leave the confirmation up long enough
 

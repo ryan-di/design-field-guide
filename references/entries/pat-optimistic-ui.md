@@ -22,7 +22,7 @@ Four kinds of actions often use it, and each needs its own way to show a failure
 
 ## Rules
 
-Three rules keep optimistic UI honest. Each comes with a demo. Switch between “When it backfires” and “Do this instead” to see the difference.
+Three rules keep optimistic UI honest.
 
 ### 1. Show failures where they happened
 

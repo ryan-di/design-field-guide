@@ -22,7 +22,7 @@ There are four common ways, which differ in what people pick: an item to star, a
 
 ## Rules
 
-Four rules keep customization useful. Each comes with a demo. Switch between “When it backfires” and “Do this instead” to see the difference.
+Four rules keep customization useful.
 
 ### 1. Fix the defaults first
 

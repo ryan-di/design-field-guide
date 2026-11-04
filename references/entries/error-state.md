@@ -22,7 +22,7 @@ Error states come in four common kinds, set by what failed: content that didn’
 
 ## Rules
 
-Four rules keep error states useful. Each comes with a demo. Switch between “When it breaks” and “Do this instead” to see the difference.
+Four rules keep error states useful.
 
 ### 1. Say what failed
 

@@ -22,7 +22,7 @@ Dialogs come in four common forms, set by what they ask for: a confirmation, a c
 
 ## Rules
 
-Five rules keep dialogs useful. Each comes with a demo. Switch between “When it breaks” and “Do this instead” to see the difference.
+Five rules keep dialogs useful.
 
 ### 1. Don’t use it for news
 

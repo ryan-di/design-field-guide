@@ -13,7 +13,7 @@ This is the other half of [Internal and external consistency](https://ryan-di.gi
 
 ## Rules
 
-Three rules keep exceptions meaningful. Each comes with a demo. Switch between “Common mistake” and “Do this instead” to see the difference.
+Three rules keep exceptions meaningful.
 
 ### 1. Keep exceptions rare
 

@@ -22,7 +22,7 @@ A label can carry more or less scent, and the more alike the options are, the mo
 
 ## Rules
 
-Four rules keep labels in people’s words. Each comes with a demo. Switch between “When it backfires” and “Do this instead” to see the difference.
+Four rules keep labels in people’s words.
 
 ### 1. Use people’s words, not the team’s
 

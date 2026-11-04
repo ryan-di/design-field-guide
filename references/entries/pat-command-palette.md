@@ -22,7 +22,7 @@ Palettes differ in what they search and when they open.
 
 ## Rules
 
-Four rules keep a command palette useful. Each comes with a demo. Switch between “When it backfires” and “Do this instead” to see the difference.
+Four rules keep a command palette useful.
 
 ### 1. Give it a visible way in
 

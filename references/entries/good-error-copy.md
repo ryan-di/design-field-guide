@@ -13,7 +13,7 @@ This entry is about the words. Where the message goes, next to a field or across
 
 ## Rules
 
-Four rules keep error messages helpful. Each comes with a demo. Switch between “Common mistake” and “Do this instead” to see the difference.
+Four rules keep error messages helpful.
 
 ### 1. Describe the problem, not the person
 

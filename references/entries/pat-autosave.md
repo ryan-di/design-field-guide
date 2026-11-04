@@ -22,7 +22,7 @@ Autosave takes a few forms. A document saves as people type and shows the save s
 
 ## Rules
 
-Four rules keep autosave useful. Each comes with a demo. Switch between “When it backfires” and “Do this instead” to see the difference.
+Four rules keep autosave useful.
 
 ### 1. Show that work is saved
 

@@ -21,7 +21,7 @@ Accordions differ in how their sections open and in what a closed header shows. 
 
 ## Rules
 
-Four rules keep accordions useful. Each comes with a demo. Switch between “When it breaks” and “Do this instead” to see the difference.
+Four rules keep accordions useful.
 
 ### 1. Show what people come for
 

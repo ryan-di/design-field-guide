@@ -13,7 +13,7 @@ Agents make it cheap to get many directions, so the work that’s left is choosi
 
 ## Rules
 
-Four rules keep this choice useful. Each comes with a demo. Switch between “Common mistake” and “Do this instead” to see the difference.
+Four rules keep this choice useful.
 
 ### 1. Take directions apart
 

@@ -44,7 +44,7 @@ Table: https://ryan-di.github.io/design-field-guide/#good-heuristic-review-a11y
 
 ## Rules
 
-Four rules keep a heuristic review useful. Each comes with a demo. Switch between “Common mistake” and “Do this instead” to see the difference.
+Four rules keep a heuristic review useful.
 
 ### 1. Pair it with watching people
 

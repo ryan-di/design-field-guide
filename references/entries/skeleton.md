@@ -20,7 +20,7 @@ Skeletons take the shape of what they stand in for. The common forms are a grid 
 
 ## Rules
 
-Four rules keep skeletons useful. Each comes with a demo. Switch between “When it breaks” and “Do this instead” to see the difference.
+Four rules keep skeletons useful.
 
 ### 1. Match the real layout
 

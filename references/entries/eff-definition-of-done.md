@@ -13,7 +13,7 @@ Where [Define “good” before building](https://ryan-di.github.io/design-field
 
 ## Rules
 
-Four rules keep a definition of done useful. Each comes with a demo. Switch between “Common mistake” and “Do this instead” to see the difference.
+Four rules keep a definition of done useful.
 
 ### 1. Ask for proof, not a report
 

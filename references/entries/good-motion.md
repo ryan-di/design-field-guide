@@ -13,7 +13,7 @@ Two settings shape every animation: how long it takes, and its easing, which is 
 
 ## Rules
 
-Four rules keep motion useful. Each comes with a demo. Switch between “Common mistake” and “Do this instead” to see the difference.
+Four rules keep motion useful.
 
 ### 1. Keep it short
 

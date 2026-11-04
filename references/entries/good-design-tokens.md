@@ -21,7 +21,7 @@ Most systems have three layers of tokens: base, role and component. Each layer p
 
 ## Rules
 
-Three rules keep tokens useful. Each comes with a demo. Switch between “Common mistake” and “Do this instead” to see the difference.
+Three rules keep tokens useful.
 
 ### 1. Point components at tokens
 

@@ -13,7 +13,7 @@ A score of 4 against a 3 is a judgment, not a measurement. Write one line of why
 
 ## Rules
 
-Four rules keep a decision matrix useful. Each comes with a demo. Switch between “Common mistake” and “Do this instead” to see the difference.
+Four rules keep a decision matrix useful.
 
 ### 1. Score against the brief, not the polish
 

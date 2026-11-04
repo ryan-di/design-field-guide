@@ -22,7 +22,7 @@ A field can forgive in a few ways. It can accept several formats for the same va
 
 ## Rules
 
-Four rules keep forgiving input useful. Each comes with a demo. Switch between “When it backfires” and “Do this instead” to see the difference.
+Four rules keep forgiving input useful.
 
 ### 1. Show how you read it
 

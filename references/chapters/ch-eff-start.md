@@ -7,3 +7,7 @@ Cite as: Design Field Guide v35, #ch-eff-start
 > Evidence boundary: this is a learning guide. Its demos and product examples are illustrations written for the book, not verified product documentation, so check a product’s own docs before citing how it behaves. Tools named in it are 2026 examples, not endorsements.
 
 Most chapters use one problem in their Try-it demos: **people lose unsaved work when they close a workflow tab**. The worked example in the last chapter follows it through every stage.
+
+## How each entry reads
+
+Each entry is one step of the work. It says what the step is for, with a demo that most often uses the problem above. Then the rules: each shows a common mistake and what to do instead, with a demo you can switch between the two. Last, how real teams and products do it.

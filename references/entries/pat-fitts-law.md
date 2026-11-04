@@ -13,7 +13,7 @@ It applies to every click and tap: buttons, links, menu items, close icons. The 
 
 ## Rules
 
-Three rules put Fitts’s law to work. Each comes with a demo. Switch between “When it backfires” and “Do this instead” to see the difference.
+Three rules put Fitts’s law to work.
 
 ### 1. Make the hit area bigger than the icon
 

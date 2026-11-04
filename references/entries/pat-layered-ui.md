@@ -22,7 +22,7 @@ There are a few ways to layer. Show more and a separate page work as in [progres
 
 ## Rules
 
-Four rules keep a layered interface useful. Each comes with a demo. Switch between “When it backfires” and “Do this instead” to see the difference.
+Four rules keep a layered interface useful.
 
 ### 1. Build both layers on one set of settings
 

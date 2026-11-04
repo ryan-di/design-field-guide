@@ -13,7 +13,7 @@ It doesn’t mean a product should offer less, but that it should show the likel
 
 ## Rules
 
-Three rules put Hick’s law to work. Each comes with a demo. Switch between “When it backfires” and “Do this instead” to see the difference.
+Three rules put Hick’s law to work.
 
 ### 1. Group long lists, or let people search
 

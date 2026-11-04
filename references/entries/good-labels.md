@@ -13,7 +13,7 @@ Labels are the smallest case of [plain language](https://ryan-di.github.io/desig
 
 ## Rules
 
-Four rules keep labels clear. Each comes with a demo. Switch between “Common mistake” and “Do this instead” to see the difference.
+Four rules keep labels clear.
 
 ### 1. Name the action, not the answer
 

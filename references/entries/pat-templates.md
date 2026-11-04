@@ -22,7 +22,7 @@ There are four common ways to give people a start. They differ in where the star
 
 ## Rules
 
-Four rules keep templates useful. Each comes with a demo. Switch between “When it backfires” and “Do this instead” to see the difference.
+Four rules keep templates useful.
 
 ### 1. Offer a few different starts
 

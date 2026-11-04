@@ -22,7 +22,7 @@ Spinners come in four forms, set by how much is waiting: in a button, inline nex
 
 ## Rules
 
-Four rules keep spinners useful. Each comes with a demo. Switch between “When it breaks” and “Do this instead” to see the difference.
+Four rules keep spinners useful.
 
 ### 1. Wait before showing it
 

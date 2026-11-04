@@ -13,7 +13,7 @@ The second half of the idea is about meaning. Color can make a status quicker to
 
 ## Rules
 
-Four rules keep text readable and meaning clear. Each comes with a demo. Switch between “Common mistake” and “Do this instead” to see the difference.
+Four rules keep text readable and meaning clear.
 
 ### 1. Give text enough contrast
 

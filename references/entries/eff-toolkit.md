@@ -23,7 +23,7 @@ One long chat can do all of it, but then the decisions are buried and nobody can
 
 ## Rules
 
-Four rules keep the tools working for you. Each comes with a demo. Switch between “Common mistake” and “Do this instead” to see the difference.
+Four rules keep the tools working for you.
 
 ### 1. Split the work by job
 

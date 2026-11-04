@@ -13,7 +13,7 @@ It helps everyone, and most of all people reading in a second language, people w
 
 ## Rules
 
-Four rules keep writing plain. Each comes with a demo. Switch between “Common mistake” and “Do this instead” to see the difference.
+Four rules keep writing plain.
 
 ### 1. Use everyday words
 

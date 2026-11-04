@@ -22,7 +22,7 @@ Most tooltips name an icon button, and some also show its keyboard shortcut. Oth
 
 ## Rules
 
-Four rules keep tooltips useful. Each comes with a demo. Switch between “When it breaks” and “Do this instead” to see the difference.
+Four rules keep tooltips useful.
 
 ### 1. Don’t rely on hover
 

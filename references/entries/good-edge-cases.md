@@ -13,7 +13,7 @@ For every field, decide what happens when it is very long, missing, very large, 
 
 ## Rules
 
-Four rules keep a design working with real data. Each comes with a demo. Switch between “Common mistake” and “Do this instead” to see the difference.
+Four rules keep a design working with real data.
 
 ### 1. Test with the extremes from the start
 

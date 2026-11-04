@@ -13,7 +13,7 @@ Space only groups things for people who can see it, so give assistive tech the s
 
 ## Rules
 
-Four rules keep spacing honest. Each comes with a demo. Switch between “Common mistake” and “Do this instead” to see the difference.
+Four rules keep spacing honest.
 
 ### 1. Use more space between groups than inside them
 

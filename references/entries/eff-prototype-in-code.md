@@ -13,7 +13,7 @@ Code also lets you try the prototype with a keyboard and a screen reader, which 
 
 ## Rules
 
-Four rules keep prototypes useful. Each comes with a demo. Switch between “Common mistake” and “Do this instead” to see the difference.
+Four rules keep prototypes useful.
 
 ### 1. Make timing questions clickable
 

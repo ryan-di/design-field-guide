@@ -22,7 +22,7 @@ Sliders differ in what they let people set. A plain slider moves smoothly. Addin
 
 ## Rules
 
-Four rules keep sliders useful. Each comes with a demo. Switch between “When it breaks” and “Do this instead” to see the difference.
+Four rules keep sliders useful.
 
 ### 1. Let people type the exact value
 

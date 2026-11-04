@@ -130,7 +130,7 @@ Sample session tally · written in the ticket when it closes
 
 ## Rules
 
-Four rules keep the stages useful. Each comes with a demo. Switch between “Common mistake” and “Do this instead” to see the difference.
+Four rules keep the stages useful.
 
 ### 1. Explore directions before you build
 

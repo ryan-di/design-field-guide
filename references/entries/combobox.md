@@ -22,7 +22,7 @@ There are four common forms. A plain select opens a short list. A combobox adds 
 
 ## Rules
 
-Four rules keep selects and comboboxes useful. Each comes with a demo. Switch between “When it breaks” and “Do this instead” to see the difference.
+Four rules keep selects and comboboxes useful.
 
 ### 1. Show short lists in full
 

@@ -22,7 +22,7 @@ There are four common ways to keep the rest one step away. They differ in where 
 
 ## Rules
 
-Four rules keep progressive disclosure useful. Each comes with a demo. Switch between “When it backfires” and “Do this instead” to see the difference.
+Four rules keep progressive disclosure useful.
 
 ### 1. Say what’s hidden
 

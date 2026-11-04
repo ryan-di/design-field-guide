@@ -78,6 +78,7 @@ ch-overload
 ch-patterns-cheat
 ch-patterns-start
 ch-practice
+ch-preface
 ch-problem
 ch-progress
 ch-safety

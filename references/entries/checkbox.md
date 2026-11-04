@@ -22,7 +22,7 @@ Checkboxes come in four common forms: a single box, a group, a card and a box on
 
 ## Rules
 
-Four rules keep checkboxes useful. Each comes with a demo. Switch between “When it breaks” and “Do this instead” to see the difference.
+Four rules keep checkboxes useful.
 
 ### 1. Use radio buttons for one choice
 

@@ -13,7 +13,7 @@ In [Let agents prove their work](https://ryan-di.github.io/design-field-guide/#e
 
 ## Rules
 
-Four rules keep this check useful. Each comes with a demo. Switch between “Common mistake” and “Do this instead” to see the difference.
+Four rules keep this check useful.
 
 ### 1. Use it, don’t just look at it
 

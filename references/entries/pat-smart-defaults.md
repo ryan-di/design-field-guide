@@ -22,7 +22,7 @@ Defaults differ in where the value comes from.
 
 ## Rules
 
-Four rules keep smart defaults useful. Each comes with a demo. Switch between “When it backfires” and “Do this instead” to see the difference.
+Four rules keep smart defaults useful.
 
 ### 1. Base defaults on what people pick
 

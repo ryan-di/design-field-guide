@@ -29,7 +29,7 @@ Table: https://ryan-di.github.io/design-field-guide/#good-critique-kinds-table
 
 ## Rules
 
-Four rules keep critique useful. Each comes with a demo. Switch between “Common mistake” and “Do this instead” to see the difference.
+Four rules keep critique useful.
 
 ### 1. Tie each comment to the goal
 

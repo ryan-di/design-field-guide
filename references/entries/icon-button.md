@@ -22,7 +22,7 @@ Icon buttons come in four common forms. Plain ones sit in a toolbar and do one t
 
 ## Rules
 
-Three rules keep icon buttons useful. Each comes with a demo. Switch between “When it breaks” and “Do this instead” to see the difference.
+Three rules keep icon buttons useful.
 
 ### 1. Label icons people don’t know
 

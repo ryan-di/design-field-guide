@@ -13,7 +13,7 @@ He wrote them about physical products, and in software they work best as questio
 
 ## Rules
 
-Three rules keep the principles useful. Each comes with a demo. Switch between “Common mistake” and “Do this instead” to see the difference.
+Three rules keep the principles useful.
 
 ### 1. Ask them as questions, not rules
 

@@ -22,7 +22,7 @@ Cards come in a few forms, and the form decides what a click on the card does. A
 
 ## Rules
 
-Four rules keep cards useful. Each comes with a demo. Switch between “When it breaks” and “Do this instead” to see the difference.
+Four rules keep cards useful.
 
 ### 1. Give each card one main action
 

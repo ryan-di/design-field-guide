@@ -23,7 +23,7 @@ States fall into four kinds, by what they report. Hover and pressed follow the p
 
 ## Rules
 
-Four rules keep interaction states useful. Each comes with a demo. Switch between “When it breaks” and “Do this instead” to see the difference.
+Four rules keep interaction states useful.
 
 ### 1. Design every state, not just the default
 

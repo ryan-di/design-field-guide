@@ -22,7 +22,7 @@ Switches come in four common forms. Most sit in a settings list, one per row, an
 
 ## Rules
 
-Four rules keep switches useful. Each comes with a demo. Switch between “When it breaks” and “Do this instead” to see the difference.
+Four rules keep switches useful.
 
 ### 1. Don’t use it in a form with Save
 

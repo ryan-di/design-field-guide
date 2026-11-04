@@ -22,7 +22,7 @@ Shortcuts come in four shapes. A single key is the fastest, but it only works wh
 
 ## Rules
 
-Four rules keep shortcuts useful. Each comes with a demo. Switch between “When it backfires” and “Do this instead” to see the difference.
+Four rules keep shortcuts useful.
 
 ### 1. Show the keys where people look
 

@@ -22,7 +22,7 @@ Inline messages come in four kinds: a hint, an error, a warning and a success no
 
 ## Rules
 
-Four rules keep inline messages useful. Each comes with a demo. Switch between “When it breaks” and “Do this instead” to see the difference.
+Four rules keep inline messages useful.
 
 ### 1. Bring the problem to where people look
 

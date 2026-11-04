@@ -13,7 +13,7 @@ Good criteria describe what people do, not how the design feels. “People find 
 
 ## Rules
 
-Four rules keep success criteria useful. Each comes with a demo. Switch between “Common mistake” and “Do this instead” to see the difference.
+Four rules keep success criteria useful.
 
 ### 1. Count people who got it done
 

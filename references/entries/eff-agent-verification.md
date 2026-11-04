@@ -13,7 +13,7 @@ Proof isn’t the same as trying the change. Checks cover only what someone thou
 
 ## Rules
 
-Four rules keep this proof useful. Each comes with a demo. Switch between “Common mistake” and “Do this instead” to see the difference.
+Four rules keep this proof useful.
 
 ### 1. Ask what ran, and see the output
 

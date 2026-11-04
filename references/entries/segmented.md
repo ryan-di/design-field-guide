@@ -22,7 +22,7 @@ Most segmented controls use short text labels, and well-known views can use icon
 
 ## Rules
 
-Three rules keep segmented controls useful. Each comes with a demo. Switch between “When it breaks” and “Do this instead” to see the difference.
+Three rules keep segmented controls useful.
 
 ### 1. Keep it to a few short labels
 

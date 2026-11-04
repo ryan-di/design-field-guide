@@ -21,7 +21,7 @@ Steppers come in three common forms. A horizontal stepper names each step in a r
 
 ## Rules
 
-Four rules keep steppers useful. Each comes with a demo. Switch between “When it breaks” and “Do this instead” to see the difference.
+Four rules keep steppers useful.
 
 ### 1. Let people jump back
 

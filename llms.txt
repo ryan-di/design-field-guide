@@ -13,6 +13,10 @@ Cite as “Design Field Guide v35, #<anchor>” with the link https://ryan-di.gi
 
 Evidence boundary: this is a learning guide. Its demos and product examples are illustrations written for the book, not verified product documentation, so check a product’s own docs before citing how it behaves. Tools named in it are 2026 examples, not endorsements.
 
+## Front matter
+
+- [How to read this book](https://ryan-di.github.io/design-field-guide/references/chapters/ch-preface.md): This book is for anyone who decides how an interface should work, and most of all for design engineers, who make those calls in code.
+
 ## Start here
 
 Two short definitions before the rest of the book: what design is, and what a design engineer does.

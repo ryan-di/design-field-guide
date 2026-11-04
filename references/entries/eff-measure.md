@@ -13,7 +13,7 @@ Without this, teams count what is easy to count, and a banner can be seen a mill
 
 ## Rules
 
-Four rules keep these numbers useful. Each comes with a demo. Switch between “Common mistake” and “Do this instead” to see the difference.
+Four rules keep these numbers useful.
 
 ### 1. Count the outcome, not the activity
 

@@ -13,7 +13,7 @@ Where [Get many directions cheaply](https://ryan-di.github.io/design-field-guide
 
 ## Rules
 
-Four rules keep axes useful. Each comes with a demo. Switch between “Common mistake” and “Do this instead” to see the difference.
+Four rules keep axes useful.
 
 ### 1. Name the axis and its ends
 

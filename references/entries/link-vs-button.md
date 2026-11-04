@@ -23,7 +23,7 @@ Each comes in a few forms. A link can sit inside a sentence or stand on its own,
 
 ## Rules
 
-Three rules keep links and buttons clear. Each comes with a demo. Switch between “When it breaks” and “Do this instead” to see the difference.
+Three rules keep links and buttons clear.
 
 ### 1. Use a button when something changes
 

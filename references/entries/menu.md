@@ -22,7 +22,7 @@ Most menus open from a button: a “More” button with three dots, or a button 
 
 ## Rules
 
-Four rules keep menus useful. Each comes with a demo. Switch between “When it breaks” and “Do this instead” to see the difference.
+Four rules keep menus useful.
 
 ### 1. Keep it short
 

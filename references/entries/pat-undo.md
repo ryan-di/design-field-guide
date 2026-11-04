@@ -22,7 +22,7 @@ Undo comes in four common forms. They differ in how long the way back stays open
 
 ## Rules
 
-Four rules keep undo useful. Each comes with a demo. Switch between “When it backfires” and “Do this instead” to see the difference.
+Four rules keep undo useful.
 
 ### 1. Plan where deleted things go
 

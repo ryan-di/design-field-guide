@@ -13,7 +13,7 @@ A prototype is not the feature. It answers one question, like “Can people read
 
 ## Rules
 
-Four rules keep prototypes useful. Each comes with a demo. Switch between “Common mistake” and “Do this instead” to see the difference.
+Four rules keep prototypes useful.
 
 ### 1. Try the risky part in code early
 

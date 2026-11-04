@@ -13,7 +13,7 @@ Rationale is not a description of how the design works, which the design itself 
 
 ## Rules
 
-Four rules keep design rationale useful. Each comes with a demo. Switch between “Common mistake” and “Do this instead” to see the difference.
+Four rules keep design rationale useful.
 
 ### 1. Keep it where people will look
 

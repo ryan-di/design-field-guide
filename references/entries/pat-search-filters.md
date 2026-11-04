@@ -22,7 +22,7 @@ There are four common shapes. Chips and a panel narrow the results, a scope pick
 
 ## Rules
 
-Four rules keep search with filters useful. Each comes with a demo. Switch between “When it backfires” and “Do this instead” to see the difference.
+Four rules keep search with filters useful.
 
 ### 1. Show what the filters hide
 

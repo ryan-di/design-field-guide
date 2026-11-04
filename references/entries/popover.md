@@ -22,7 +22,7 @@ The common forms are options, a picker, a details card and a tip. Options and pi
 
 ## Rules
 
-Four rules keep popovers useful. Each comes with a demo. Switch between “When it breaks” and “Do this instead” to see the difference.
+Four rules keep popovers useful.
 
 ### 1. Keep it to a few controls
 

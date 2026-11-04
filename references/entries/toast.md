@@ -21,7 +21,7 @@ Toasts come in three common forms: a plain toast only confirms, a toast with Und
 
 ## Rules
 
-Five rules keep toasts useful. Each comes with a demo. Switch between “When it breaks” and “Do this instead” to see the difference.
+Five rules keep toasts useful.
 
 ### 1. Don’t put errors in a toast
 

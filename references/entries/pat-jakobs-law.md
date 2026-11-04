@@ -13,7 +13,7 @@ The law isn’t a ban on new ideas, but it tells you what one costs: every break
 
 ## Rules
 
-Three rules help you work with people’s habits. Each comes with a demo. Switch between “When it backfires” and “Do this instead” to see the difference.
+Three rules help you work with people’s habits.
 
 ### 1. Use the control people already know
 

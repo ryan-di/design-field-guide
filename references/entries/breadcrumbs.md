@@ -21,7 +21,7 @@ Most breadcrumbs show the full path, with a link for each level. Some add a smal
 
 ## Rules
 
-Three rules keep breadcrumbs useful. Each comes with a demo. Switch between “When it breaks” and “Do this instead” to see the difference.
+Three rules keep breadcrumbs useful.
 
 ### 1. Skip them in flat structures
 

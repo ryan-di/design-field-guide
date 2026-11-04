@@ -20,7 +20,7 @@ Banners come in three tones, set by how serious the state is: info, warning and 
 
 ## Rules
 
-Four rules keep banners useful. Each comes with a demo. Switch between “When it breaks” and “Do this instead” to see the difference.
+Four rules keep banners useful.
 
 ### 1. Use it only for what’s happening now
 

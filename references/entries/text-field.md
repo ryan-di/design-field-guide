@@ -22,7 +22,7 @@ Text fields come in four common forms, set by what people type. A single line ho
 
 ## Rules
 
-Four rules keep text fields useful. Each comes with a demo. Switch between “When it breaks” and “Do this instead” to see the difference.
+Four rules keep text fields useful.
 
 ### 1. Say back what you understood
 

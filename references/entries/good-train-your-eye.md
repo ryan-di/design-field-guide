@@ -13,7 +13,7 @@ Looking closely is not the same as collecting: a folder of screenshots trains no
 
 ## Rules
 
-Four rules make close looking pay off. Each comes with a demo. Switch between “Common mistake” and “Do this instead” to see the difference.
+Four rules make close looking pay off.
 
 ### 1. Tag what you save by problem
 

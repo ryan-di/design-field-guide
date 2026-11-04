@@ -21,7 +21,7 @@ Tabs come in three common forms, which differ in who decides what the tabs are a
 
 ## Rules
 
-Four rules keep tabs useful. Each comes with a demo. Switch between “When it breaks” and “Do this instead” to see the difference.
+Four rules keep tabs useful.
 
 ### 1. Put things to compare side by side
 

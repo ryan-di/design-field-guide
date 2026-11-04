@@ -13,7 +13,7 @@ Small steps keep mistakes cheap: when a step fails review, only that step goes b
 
 ## Rules
 
-Four rules keep small steps useful. Each comes with a demo. Switch between “Common mistake” and “Do this instead” to see the difference.
+Four rules keep small steps useful.
 
 ### 1. Plan before code
 

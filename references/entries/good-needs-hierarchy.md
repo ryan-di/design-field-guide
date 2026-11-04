@@ -13,7 +13,7 @@ Each layer rests on the ones below it, so a pleasant touch on a feature that som
 
 ## Rules
 
-Four rules keep the layers in order. Each comes with a demo. Switch between “Common mistake” and “Do this instead” to see the difference.
+Four rules keep the layers in order.
 
 ### 1. Make it work before you polish it
 

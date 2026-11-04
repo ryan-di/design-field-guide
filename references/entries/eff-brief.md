@@ -24,7 +24,7 @@ Table: https://ryan-di.github.io/design-field-guide/#eff-brief-check
 
 ## Rules
 
-Four rules keep a brief useful. Each comes with a demo. Switch between “Common mistake” and “Do this instead” to see the difference.
+Four rules keep a brief useful.
 
 ### 1. Describe the problem, not the fix
 

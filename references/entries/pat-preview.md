@@ -21,7 +21,7 @@ Previews come in three common forms, which differ in where the result shows.
 
 ## Rules
 
-Four rules keep previews useful. Each comes with a demo. Switch between “When it backfires” and “Do this instead” to see the difference.
+Four rules keep previews useful.
 
 ### 1. Make the preview match the result
 

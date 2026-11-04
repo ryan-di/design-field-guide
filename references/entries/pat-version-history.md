@@ -22,7 +22,7 @@ There are four common forms, which differ in what they cover: a whole document, 
 
 ## Rules
 
-Four rules keep version history useful. Each comes with a demo. Switch between “When it backfires” and “Do this instead” to see the difference.
+Four rules keep version history useful.
 
 ### 1. Name versions by what changed
 

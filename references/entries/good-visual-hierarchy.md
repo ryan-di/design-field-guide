@@ -13,7 +13,7 @@ When the order is clear, people find what matters in one glance and read the res
 
 ## Rules
 
-Four rules keep visual hierarchy clear. Each comes with a demo. Switch between “Common mistake” and “Do this instead” to see the difference.
+Four rules keep visual hierarchy clear.
 
 ### 1. Let one thing lead
 

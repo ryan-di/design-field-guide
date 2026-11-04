@@ -21,7 +21,7 @@ Side panels come in three forms, which differ in what happens to the page: a doc
 
 ## Rules
 
-Four rules keep side panels useful. Each comes with a demo. Switch between “When it breaks” and “Do this instead” to see the difference.
+Four rules keep side panels useful.
 
 ### 1. Give the main task the full width
 

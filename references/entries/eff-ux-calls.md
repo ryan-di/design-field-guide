@@ -13,7 +13,7 @@ This keeps the decisions with the people who own them. When the pull request des
 
 ## Rules
 
-Four rules keep these calls visible. Each comes with a demo. Switch between “Common mistake” and “Do this instead” to see the difference.
+Four rules keep these calls visible.
 
 ### 1. Decide on each visible choice
 

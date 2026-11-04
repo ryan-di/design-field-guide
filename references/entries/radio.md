@@ -22,7 +22,7 @@ Most radio groups are a stacked list. Two or three short options can sit side by
 
 ## Rules
 
-Four rules keep radio groups useful. Each comes with a demo. Switch between “When it breaks” and “Do this instead” to see the difference.
+Four rules keep radio groups useful.
 
 ### 1. Keep it to a few options
 

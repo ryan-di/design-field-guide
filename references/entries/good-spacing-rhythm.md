@@ -13,7 +13,7 @@ It works together with [Proximity](https://ryan-di.github.io/design-field-guide/
 
 ## Rules
 
-Three rules keep spacing steady. Each comes with a demo. Switch between “Common mistake” and “Do this instead” to see the difference.
+Three rules keep spacing steady.
 
 ### 1. Take every gap from one scale
 

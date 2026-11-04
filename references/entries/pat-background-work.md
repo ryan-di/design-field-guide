@@ -22,7 +22,7 @@ There are four common ways to keep background work in view. They differ in how m
 
 ## Rules
 
-Four rules keep background work useful. Each comes with a demo. Switch between “When it backfires” and “Do this instead” to see the difference.
+Four rules keep background work useful.
 
 ### 1. Keep progress on screen
 

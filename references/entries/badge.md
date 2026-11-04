@@ -22,7 +22,7 @@ Badges come in four forms, set by what people need to know. A dot says only that
 
 ## Rules
 
-Four rules keep badges useful. Each comes with a demo. Switch between “When it breaks” and “Do this instead” to see the difference.
+Four rules keep badges useful.
 
 ### 1. Clear it once people look
 

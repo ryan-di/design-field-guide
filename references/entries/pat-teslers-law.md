@@ -13,7 +13,7 @@ Usually the system should carry it, because the team solves the hard part once i
 
 ## Rules
 
-Three rules help you put complexity in the right place. Each comes with a demo. Switch between “When it backfires” and “Do this instead” to see the difference.
+Three rules help you put complexity in the right place.
 
 ### 1. Keep control within reach
 

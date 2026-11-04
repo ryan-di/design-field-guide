@@ -22,7 +22,7 @@ Constraints come in a few shapes. A list offers only the values that work. A num
 
 ## Rules
 
-Four rules keep constraints useful. Each comes with a demo. Switch between “When it backfires” and “Do this instead” to see the difference.
+Four rules keep constraints useful.
 
 ### 1. Leave a way out for odd cases
 

@@ -12,6 +12,10 @@ Every component makes a promise to the person using it, about three things.
 - **Lifetime**: How long it stays. A toast is gone in seconds. A banner stays until the state behind it changes.
 - **Control**: What people can do with it. A tooltip can only be read. A popover can hold buttons and fields.
 
+## How each entry reads
+
+Each component is a short article. It says what the component is for, with a demo. Then its forms, and the rules: each shows how the component breaks and what to do instead, with a demo you can switch between the two. Last, real products that use it.
+
 ## The interruption ladder
 
 For anything the product needs to tell people, use the lowest step that still does the job. Each step up costs more attention, so it has to be worth more. Click a step to jump to it.
