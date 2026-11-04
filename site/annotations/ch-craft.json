@@ -1,0 +1,132 @@
+{
+ "good-motion-1": {
+  "bad": [
+   {"at": "[data-move]", "title": "Each Move costs 1.2 s of sliding", "text": "600 ms up and 600 ms down, so four emails spend almost 5 s on the sheet."},
+   {"at": "[data-time]", "title": "The clock mostly counts waiting", "text": "Much of the time on it is the sheet moving, not people deciding."},
+   {"at": "[data-out].gm-busy-note", "title": "A quick second click is lost", "text": "Nothing happens, so people click again and wonder if the app froze.", "wait": "Press Move twice quickly to see this.", "reveal": [["click", "[data-move]"], ["click", "[data-move]"]]}
+  ],
+  "good": [
+   {"at": "[data-move]", "title": "Open before the pointer arrives", "text": "At 180 ms the sheet is up before people reach Archive."},
+   {"at": "[data-time]", "title": "The clock counts only people", "text": "With nothing to wait for, the time is just how fast they click."}
+  ]
+ },
+ "good-motion-2": {
+  "bad": [
+   {"at": "[data-add]", "title": "Add pulses all the time", "text": "It throbs before anyone has done anything, so its motion means nothing."},
+   {"at": "[data-title]", "title": "The title wiggles on every change", "text": "Groceries didn’t change, but it moves as if it did."},
+   {"at": "[data-rows]", "title": "All the rows jump at once", "text": "Milk lands between Eggs and Rice, and people can’t spot which row is new."}
+  ],
+  "good": [
+   {"at": "[data-add]", "title": "Add sits still", "text": "It only needs to look pressable, not to call for attention."},
+   {"at": "[data-rows]", "title": "The other rows stay put", "text": "Apples, Bread and the rest don’t move, so the eye goes to the change."},
+   {"at": "[data-rows] .gm-new", "title": "Milk slides in where it lands", "text": "A short slide and a fading highlight show where the new item went.", "wait": "Press Add to see this.", "reveal": [["click", "[data-add]"]]}
+  ]
+ },
+ "good-motion-3": {
+  "bad": [
+   {"at": ".gm-chip", "title": "The person asked for less motion", "text": "Reduce motion is on, and the app plays its biggest movement anyway."},
+   {"at": "[data-h=\"0\"]", "title": "A tap grows the card to full screen", "text": "Casa Azul scales up from its card over half a second, the kind of move that makes people dizzy."},
+   {"at": "[data-back]", "title": "Back plays the zoom in reverse", "text": "Every hotel people look at costs two big movements, one in and one out.", "wait": "Open a hotel to see this.", "reveal": [["click", "[data-h=\"0\"]"]]}
+  ],
+  "good": [
+   {"at": ".gm-chip", "title": "The setting is respected", "text": "Reduce motion is on, so the zoom goes and only a fade is left."},
+   {"at": "[data-h=\"0\"]", "title": "Same tap, same hotel page", "text": "Casa Azul still opens, so nothing is lost but the movement."},
+   {"at": "[data-back]", "title": "Back fades out in 150 ms", "text": "Going back is as calm as going in, and focus returns to the card.", "wait": "Open a hotel to see this.", "reveal": [["click", "[data-h=\"0\"]"]]}
+  ]
+ },
+ "good-motion-4": {
+  "bad": [
+   {"at": "[data-q]", "title": "Show queue seems slow to answer", "text": "Ease-in starts slow, so right after the tap it looks like nothing happened."},
+   {"at": ".gm-frame + .cs-meta", "title": "Both curves face the wrong way", "text": "Ease-out on close ends slowly, so the queue lingers after people are done with it."}
+  ],
+  "good": [
+   {"at": "[data-q]", "title": "The queue answers the tap at once", "text": "Ease-out moves fast first, then settles into place."},
+   {"at": ".gm-frame + .cs-meta", "title": "Each curve suits its direction", "text": "Ease-in on close starts gently, then gets out of the way fast."}
+  ]
+ },
+ "good-edge-cases-1": {
+  "bad": [
+   {"at": "[data-list]:has(.ec-ev:nth-child(3)) .ec-ev:first-child .ec-title", "title": "A long title runs out of the card", "text": "The planning meeting won’t fit on one line, and the design has no plan for it.", "wait": "Press Load real events to see this.", "reveal": [["click", "[data-load]"]]},
+   {"at": "[data-list]:has(.ec-ev:nth-child(3)) .ec-ev:nth-child(2) .ec-loc", "title": "“Where:” with nothing after it", "text": "The 11:45 call has no place, so the label points at empty space.", "wait": "Press Load real events to see this.", "reveal": [["click", "[data-load]"]]},
+   {"at": "[data-list]:has(.ec-ev:nth-child(3)) .ec-ev:first-child .ec-avs", "title": "24 guests, 24 dots", "text": "The guest row was drawn for two faces, so it spills past the card.", "wait": "Press Load real events to see this.", "reveal": [["click", "[data-load]"]]}
+  ],
+  "good": [
+   {"at": "[data-list]:has(.ec-ev:nth-child(3)) .ec-ev:first-child .ec-title", "title": "Long titles wrap to two lines", "text": "The card grows a little, and the meeting name stays readable.", "wait": "Press Load real events to see this.", "reveal": [["click", "[data-load]"]]},
+   {"at": "[data-list]:has(.ec-ev:nth-child(3)) .ec-ev:nth-child(2)", "title": "No place, no “Where:” line", "text": "The call simply skips the line instead of showing an empty label.", "wait": "Press Load real events to see this.", "reveal": [["click", "[data-load]"]]},
+   {"at": ".ec-avs:has(.ec-more)", "title": "Three faces and +21", "text": "Big guest lists show three avatars and a count, so the row always fits.", "wait": "Press Load real events to see this.", "reveal": [["click", "[data-load]"]]}
+  ]
+ },
+ "good-edge-cases-2": {
+  "bad": [
+   {"at": ".ec-file:nth-child(2)", "title": "Three names, one look", "text": "Every line is cut before the month, the only part that differs."},
+   {"at": "[data-miss]", "title": "A guess attaches the wrong report", "text": "People pick by position and find out only after it’s attached.", "wait": "Pick the first file to see this.", "reveal": [["click", ".ec-file"]]}
+  ],
+  "good": [
+   {"at": ".ec-file:nth-child(2) .ec-end", "title": "The month always shows", "text": "The cut moves to the middle, so April.pdf stays whole."},
+   {"at": "[data-full]:not(:empty)", "title": "The full name on hover and focus", "text": "Tabbing to a file shows it too, so the month is never a guess.", "wait": "Hover over a file to see this.", "reveal": [["hover", ".ec-file"]]}
+  ]
+ },
+ "good-edge-cases-3": {
+  "bad": [
+   {"at": "[data-book=\"Casa Azul\"]", "title": "Book jumps down a row", "text": "When the ad arrives 1 s after Reload, Hotel Mar’s Book takes this spot."},
+   {"at": ".ec-h:first-child", "title": "No space held for the ad", "text": "While loading, the list starts with Casa Azul, so everything slides when the ad lands."},
+   {"at": "[data-out]", "title": "The booking goes to the ad", "text": "A fast tap books Hotel Mar at €112, not Casa Azul at €84."}
+  ],
+  "good": [
+   {"at": "[data-book=\"Casa Azul\"]", "title": "Book stays under the pointer", "text": "Casa Azul’s button never moves, so a fast tap books the €84 room."},
+   {"at": ".ec-h:first-child", "title": "The ad’s row is held from the start", "text": "While it loads, a gray skeleton of the same height keeps its place."}
+  ]
+ },
+ "good-edge-cases-4": {
+  "bad": [
+   {"at": ".ec-fol", "title": "Seven digits with no breaks", "text": "People have to count the digits to see it’s over a million."},
+   {"at": ".cs-row:nth-child(2) .ec-val", "title": "“null” where the bio should be", "text": "An empty field reads like a crash, and people wonder what broke."},
+   {"at": ".cs-row:nth-child(4) .ec-val", "title": "A database timestamp for a join date", "text": "People only need a month and a year, not the second it happened."}
+  ],
+  "good": [
+   {"at": "[data-fol]", "title": "1.2M, exact count one press away", "text": "The short form reads at a glance, and pressing it shows 1,234,567."},
+   {"at": ".cs-row:nth-child(2) .ec-val", "title": "“No bio yet” instead of null", "text": "It tells people nothing is broken. The artist just hasn’t written one."},
+   {"at": ".cs-row:nth-child(4) .ec-val", "title": "March 2023 is enough", "text": "The month and year say how long the artist has been here."}
+  ]
+ },
+ "good-keyboard-focus-1": {
+  "bad": [
+   {"at": ".kf-tbar", "title": "Tab moves, but nothing shows it", "text": "Focus passes Forward and lands on Archive with no ring, so Enter is a guess."},
+   {"at": "[data-msg]", "title": "The message can vanish by surprise", "text": "If Enter lands on Archive or Delete, Sam’s message leaves the inbox."}
+  ],
+  "good": [
+   {"at": ".kf-tbar", "title": "Tab shows a tinted ring", "text": "A blue outline and a soft fill mark the button Enter will press."},
+   {"at": ".kf-tb:first-child", "title": "No ring after a mouse click", "text": "Clicking Reply leaves it plain, so the ring shows only for people on the keyboard."}
+  ]
+ },
+ "good-keyboard-focus-2": {
+  "bad": [
+   {"at": "[data-n=\"Name on card\"]", "title": "Name on card comes second for Tab", "text": "It sits at the bottom, so focus skips Expiry and CVC on the way down."},
+   {"at": "[data-n=\"Expiry\"]", "title": "Expiry comes last, going back up", "text": "After CVC, focus jumps up and left, against the way people read."}
+  ],
+  "good": [
+   {"at": "[data-n=\"Name on card\"]", "title": "Name on card is fourth both ways", "text": "It comes after CVC on screen and for Tab, so no field gets skipped."},
+   {"at": "[data-n=\"Expiry\"]", "title": "Expiry follows the card number", "text": "Tab goes left to right, then down, the way people read the form."}
+  ]
+ },
+ "good-keyboard-focus-3": {
+  "bad": [
+   {"at": ".kf-add", "title": "Tab goes right past it", "text": "After Quantity, focus leaves the demo, so the shirt can’t be added from the keyboard."},
+   {"at": "[data-bag]", "title": "Bag (0) for people on a keyboard", "text": "Enter does nothing here, and screen readers don’t call it a button."}
+  ],
+  "good": [
+   {"at": ".kf-add", "title": "Tab stops on Add to cart", "text": "It comes right after Quantity, and Enter or Space adds the shirt."},
+   {"at": "[data-bag]", "title": "Bag (1) from the keyboard too", "text": "The button brings focus, the keys and its role with no extra code."}
+  ]
+ },
+ "good-keyboard-focus-4": {
+  "bad": [
+   {"at": ".cs-dlg", "title": "Tab walks the page behind it", "text": "Focus goes on to Add to album and Details, buttons people can’t even see.", "wait": "Press Delete photo to see this.", "reveal": [["click", "[data-del]"]]},
+   {"at": "[data-menu]", "title": "Closing drops focus on Menu", "text": "After Cancel, people tab back down from the top to find their place."}
+  ],
+  "good": [
+   {"at": ".cs-dlg", "title": "Focus starts on Cancel", "text": "Tab moves only between Cancel and Delete while the dialog is open.", "wait": "Press Delete photo to see this.", "reveal": [["click", "[data-del]"]]},
+   {"at": "[data-del]", "title": "Focus returns to Delete photo", "text": "After Escape or Cancel, people carry on from the button they used."}
+  ]
+ }
+}

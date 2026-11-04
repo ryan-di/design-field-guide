@@ -1,0 +1,123 @@
+{
+ "good-labels-1": {
+  "bad": [
+   {"at": "[data-a=\"keep\"]", "title": "No, to what?", "text": "With the question blurred, No could mean don’t delete or don’t keep."},
+   {"at": "[data-a=\"del\"]", "title": "Yes looks like the safe next step", "text": "It’s the filled button, and it erases the email."}
+  ],
+  "good": [
+   {"at": "[data-a=\"keep\"]", "title": "Keep draft makes sense alone", "text": "People who read only the buttons still know this one saves the email."},
+   {"at": "[data-a=\"del\"]", "title": "Delete draft names the loss", "text": "A verb and an object say what goes before anyone presses it."}
+  ]
+ },
+ "good-labels-2": {
+  "bad": [
+   {"at": "[data-go]", "title": "Execute query, not search", "text": "It names what the database does. People looking for Maria have to translate it."},
+   {"at": "[data-add]", "title": "Instantiate contact means nothing to most", "text": "Some people won’t risk a button they can’t read, so they never add anyone."}
+  ],
+  "good": [
+   {"at": "[data-go]", "title": "Search, the word people think in", "text": "It matches the task, find Maria, so nobody stops to work it out."},
+   {"at": "[data-add]", "title": "Add contact says what happens", "text": "The same words people use for their own address book."}
+  ]
+ },
+ "good-labels-3": {
+  "bad": [
+   {"at": ".gl-acts .btn-primary", "title": "Add To Cart in Title Case", "text": "Right next to Save for later, it looks like it came from another app."},
+   {"at": ".gl-links", "title": "Two links, two styles", "text": "Size Guide sits beside Shipping and returns, and the mismatch shows first."},
+   {"at": ".gl-h", "title": "The heading picks a third look", "text": "Customers Also Bought adds one more capital pattern to a small screen."}
+  ],
+  "good": [
+   {"at": ".gl-acts .btn-primary", "title": "Add to cart matches its neighbor", "text": "Both buttons follow one style, so people read the words, not the capitals."},
+   {"at": ".gl-links", "title": "Both links in sentence case", "text": "Size guide and Shipping and returns read as one row."},
+   {"at": ".gl-h", "title": "The heading follows the same rule", "text": "Customers also bought matches every button and link above it."}
+  ]
+ },
+ "good-labels-4": {
+  "bad": [
+   {"at": "[data-rm]", "title": "Remove sounds mild", "text": "People expect the photo to leave the album and stay in their library.", "wait": "Open the photo’s menu to see this.", "reveal": [["click", "[data-more]"]]},
+   {"at": ".cs-dlg [data-yes]", "title": "Then the dialog says Delete", "text": "It erases from the library and every device. Is that what Remove meant?", "wait": "Press Remove in the photo’s menu to see this.", "reveal": [["click", "[data-more]"], ["click", "[data-rm]"]]}
+  ],
+  "good": [
+   {"at": "[data-rm]", "title": "Remove from album says from where", "text": "The menu item names what the photo leaves, so the library isn’t in question.", "wait": "Open the photo’s menu to see this.", "reveal": [["click", "[data-more]"]]},
+   {"at": ".cs-dlg [data-yes]", "title": "The dialog repeats Remove", "text": "Same verb as the menu, so people confirm what they meant to do.", "wait": "Press Remove from album in the photo’s menu to see this.", "reveal": [["click", "[data-more]"], ["click", "[data-rm]"]]}
+  ]
+ },
+ "good-error-copy-1": {
+  "bad": [
+   {"at": ".ge-err", "title": "Blames the person, hides the rule", "text": "Invalid how? People still have to guess that the limit is 99.", "wait": "Type 150 in Quantity and press Update to see this.", "reveal": [["fill", "[data-q]", "150"], ["click", "[data-up]"]]}
+  ],
+  "good": [
+   {"at": ".ge-err", "title": "The rule, in neutral words", "text": "From 1 to 99 tells people exactly what to type, so one try fixes it.", "wait": "Type 150 in Quantity and press Update to see this.", "reveal": [["fill", "[data-q]", "150"], ["click", "[data-up]"]]}
+  ]
+ },
+ "good-error-copy-2": {
+  "bad": [
+   {"at": ".ge-msg", "title": "Error 552 5.3.4, nothing else", "text": "Is it the file, the app or the network? A screen reader spells it out digit by digit.", "wait": "Press Send to see this.", "reveal": [["click", "[data-send]"]]},
+   {"at": ".ge-att .cs-meta", "title": "38 MB, the real cause", "text": "The size is right there, but nothing links it to the error."}
+  ],
+  "good": [
+   {"at": ".ge-msg b", "title": "Not sent, and why", "text": "38 MB against a 25 MB limit. People know to shrink the file.", "wait": "Press Send to see this.", "reveal": [["click", "[data-send]"]]},
+   {"at": ".ge-att .cs-meta", "title": "38 MB, now explained", "text": "The message names this number, so people see what to change."},
+   {"at": "[data-det]", "title": "The code waits behind Show details", "text": "Support can still ask for it, and nobody else has to read it.", "wait": "Press Send to see this.", "reveal": [["click", "[data-send]"]]}
+  ]
+ },
+ "good-error-copy-3": {
+  "bad": [
+   {"at": ".cs-dlg [data-close]", "title": "OK is the only way out", "text": "It closes the message and leaves Sam without access. The fix is somewhere else.", "wait": "Press Send to Sam to see this.", "reveal": [["click", "[data-send]"]]},
+   {"at": "[data-set]", "title": "The fix hides in Sharing settings", "text": "Give access, Back, then Send again. Six clicks in all."}
+  ],
+  "good": [
+   {"at": ".cs-dlg [data-give]", "title": "Give Sam access, right there", "text": "One press grants access and sends the link.", "wait": "Press Send to Sam to see this.", "reveal": [["click", "[data-send]"]]},
+   {"at": "[data-set]", "title": "Sharing settings isn’t needed", "text": "The message does the job, so the whole task takes two clicks."}
+  ]
+ },
+ "good-error-copy-4": {
+  "bad": [
+   {"at": ".ge-fatal", "title": "FATAL ERROR for a dropped connection", "text": "In red capitals, DATA MAY BE LOST makes people think the packing list is gone.", "wait": "Turn Wi-Fi off to see this.", "reveal": [["click", "[data-net]"]]},
+   {"at": ".ge-note", "title": "The note is still there", "text": "Nothing was lost, but the message never says so."}
+  ],
+  "good": [
+   {"at": ".ge-calm", "title": "Offline, said calmly", "text": "It says what happened and what still works: saved on this device.", "wait": "Turn Wi-Fi off to see this.", "reveal": [["click", "[data-net]"]]},
+   {"at": ".ge-note", "title": "People keep typing", "text": "The banner says the note syncs later, so there’s no reason to stop."}
+  ]
+ },
+ "good-plain-language-1": {
+  "bad": [
+   {"at": ".gp-help", "title": "Utilize, initiate, input", "text": "Three words that slow people down, then RMA and SKU with no explanation."},
+   {"at": ".gp-two .cs-f:first-child", "title": "RMA, but the email says return number", "text": "People have to guess that R-4417 belongs here."}
+  ],
+  "good": [
+   {"at": ".gp-help", "title": "Use, start, enter", "text": "Everyday verbs people read without slowing down."},
+   {"at": ".gp-two .cs-f:first-child", "title": "Return number, and where to find it", "text": "The label matches the email, and the hint points people to it."}
+  ]
+ },
+ "good-plain-language-2": {
+  "bad": [
+   {"at": ".gp-nt", "title": "The preview ends before the point", "text": "Maintenance, then ongoing work. What stops working, and when, is cut off."}
+  ],
+  "good": [
+   {"at": ".gp-nt", "title": "What and when, then why", "text": "Payments, transfers and Sunday 1 to 5 am fit in the preview. The reason comes last."}
+  ]
+ },
+ "good-plain-language-3": {
+  "bad": [
+   {"at": ".gp-text", "title": "Five ideas in one breath", "text": "The 5 days sit between the pickup code and the 3 extra days, easy to mix up."},
+   {"at": ".cs-form > .cs-meta", "title": "52 words before the first period", "text": "People reread it, and some add the extension and pick 8 days."}
+  ],
+  "good": [
+   {"at": ".gp-text", "title": "One fact per sentence", "text": "You have 5 days gets its own sentence, so people find it on the first read."},
+   {"at": ".cs-form > .cs-meta", "title": "No sentence over 10 words", "text": "Short enough to hold in mind while answering the question."}
+  ]
+ },
+ "good-plain-language-4": {
+  "bad": [
+   {"at": "[data-open]", "title": "Bag in the header", "text": "The first name people see for the place their items go."},
+   {"at": "[data-add]", "title": "Add to basket on the button", "text": "A second word. Is the basket the same as the bag?"},
+   {"at": ".toast", "title": "Then Added to cart", "text": "A third name, so people wonder where the scarf really went.", "wait": "Press Add to basket to see this.", "reveal": [["click", "[data-add]"]]}
+  ],
+  "good": [
+   {"at": "[data-open]", "title": "Cart in the header", "text": "The place gets one name, and people learn it once."},
+   {"at": "[data-add]", "title": "Add to cart, the same word", "text": "The button points at the place people can already see."},
+   {"at": ".toast", "title": "Added to cart confirms it", "text": "The message repeats the word, so the count going up in Cart makes sense.", "wait": "Press Add to cart to see this.", "reveal": [["click", "[data-add]"]]}
+  ]
+ }
+}

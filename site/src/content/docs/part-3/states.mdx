@@ -51,7 +51,7 @@ Every component spends time in states other than the default: loading, empty, er
 
 Interaction states are the different looks one control takes as people use it: hover, focus, pressed, selected, disabled, loading, and the result after. Each state tells people something they need in that moment: that the control reacts, that it heard the click, that it’s working, or that it’s done.
 
-A state lives on the control itself, so people see it exactly where they acted. A message, like a [toast](/part-3/feedback/#toast) or an [inline message](/part-3/feedback/#inline-message), is for anything that needs more words than a control can hold.
+A state lives on the control itself, so people see it exactly where they acted. A message, like a [toast](../../part-3/feedback/#toast) or an [inline message](../../part-3/feedback/#inline-message), is for anything that needs more words than a control can hold.
 
 <Raw html={F0} />
 
@@ -81,7 +81,7 @@ A button that looks the same while it sends, after it fails and when there’s n
 
 #### 2. Say why it’s off \{#interaction-states-rule-2-h\}
 
-A disabled control shows that people can’t act, but not why, so they check every field and guess. Put the reason right next to it, or keep it enabled and explain when it’s pressed, the same fix as for [a disabled button](/part-3/actions/#buttons).
+A disabled control shows that people can’t act, but not why, so they check every field and guess. Put the reason right next to it, or keep it enabled and explain when it’s pressed, the same fix as for [a disabled button](../../part-3/actions/#buttons).
 
 <Raw html={F3} />
 
@@ -91,7 +91,7 @@ A disabled control shows that people can’t act, but not why, so they check eve
 
 #### 3. Keep the focus ring \{#interaction-states-rule-3-h\}
 
-Without a focus ring, keyboard users can’t see which button they’re on, so they press Enter and hope. As in [Keyboard and focus](/part-1/craft/#good-keyboard-focus), restyle the ring to fit the design instead of removing it. `:focus-visible` shows it only when people use the keyboard, so it never shows on mouse clicks.
+Without a focus ring, keyboard users can’t see which button they’re on, so they press Enter and hope. As in [Keyboard and focus](../../part-1/craft/#good-keyboard-focus), restyle the ring to fit the design instead of removing it. `:focus-visible` shows it only when people use the keyboard, so it never shows on mouse clicks.
 
 <Raw html={F4} />
 
@@ -101,7 +101,7 @@ Without a focus ring, keyboard users can’t see which button they’re on, so t
 
 #### 4. Block the second click \{#interaction-states-rule-4-h\}
 
-If a button still works while it’s loading, a nervous double-click places two orders. Once it’s pressed, ignore repeat clicks and show that it’s working. Keep its width fixed too, because a button that grows to fit “Placing your order…” moves the buttons next to it, like [content that loads late](/part-1/craft/#good-edge-cases).
+If a button still works while it’s loading, a nervous double-click places two orders. Once it’s pressed, ignore repeat clicks and show that it’s working. Keep its width fixed too, because a button that grows to fit “Placing your order…” moves the buttons next to it, like [content that loads late](../../part-1/craft/#good-edge-cases).
 
 <Raw html={F5} />
 
@@ -159,7 +159,7 @@ Three rules keep empty states useful.
 
 #### 2. Offer one way to start \{#empty-state-rule-2-h\}
 
-Five equal buttons make a new person stop and compare them, and none of them looks like the place to start. Give one main action, and at most one quieter one beside it, such as a link to [templates](/part-2/blank/#pat-templates) for people who look for them.
+Five equal buttons make a new person stop and compare them, and none of them looks like the place to start. Give one main action, and at most one quieter one beside it, such as a link to [templates](../../part-2/blank/#pat-templates) for people who look for them.
 
 <Raw html={F11} />
 
@@ -227,7 +227,7 @@ When every problem gets the same words, people can’t tell if they made a mista
 
 #### 2. Offer the next step \{#error-state-rule-2-h\}
 
-An error with only an OK button closes and leaves the problem where it was. Put the next step on buttons in the message, such as Try again or Get help, as in [Error messages](/part-1/words/#good-error-copy). Most failures go away on a second try, and help is there when they don’t.
+An error with only an OK button closes and leaves the problem where it was. Put the next step on buttons in the message, such as Try again or Get help, as in [Error messages](../../part-1/words/#good-error-copy). Most failures go away on a second try, and help is there when they don’t.
 
 <Raw html={F18} />
 
@@ -247,7 +247,7 @@ When an upload of 40 photos fails halfway and the error clears the selection, pe
 
 #### 4. Don’t lead with the code \{#error-state-rule-4-h\}
 
-“Error 500” means nothing to most people, who can’t tell whose fault it is, or whether to retry or wait. [Lead with plain words](/part-1/words/#good-error-copy): say what didn’t load, that it isn’t their fault, and what to do. The code can stay below in small text, for when they contact support.
+“Error 500” means nothing to most people, who can’t tell whose fault it is, or whether to retry or wait. [Lead with plain words](../../part-1/words/#good-error-copy): say what didn’t load, that it isn’t their fault, and what to do. The code can stay below in small text, for when they contact support.
 
 <Raw html={F20} />
 

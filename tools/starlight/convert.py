@@ -248,7 +248,8 @@ class Book:
             page = self.page_of.get(target)
             if page is None:
                 return LIVE + h
-            return h if page == here else '/%s/%s' % (page, h)
+            # Relative, so links hold under the site's base path (/design-field-guide/ on GitHub Pages).
+            return h if page == here else '../' * (here.count('/') + 1) + '%s/%s' % (page, h)
         if h.startswith('http'):
             return h
         if h.split('/')[0] in SITE_FILES:
@@ -299,19 +300,15 @@ def annotated(book, case, notes):
         mode = s.get('data-mode')
         tone = 'bad' if mode == 'broken' else 'good'
         demo = s.find(lambda x: 'cs-demo' in x.cls)
-        cap = s.find(lambda x: x.tag == 'p' and 'fig-cap' in x.cls)
         items = []
         for k, note in enumerate(notes[tone], 1):
             wait = '<span class="ac-wait">%s</span>' % escape(note['wait']) if note.get('wait') else ''
             items.append('<li class="ac-note" data-at="%s"><span class="ac-n" aria-hidden="true">%d</span><span class="ac-t"><b>%s</b><span>%s</span>%s</span></li>'
                          % (escape(note['at']), k, escape(note['title']), escape(note['text']), wait))
-        out.append('<section class="cs-side ac-side" data-mode="%s" data-tone="%s">' % (mode, tone)
-                   + '<div class="ac-head"><span class="ac-chip"><svg class="icon" aria-hidden="true"><use href="#i-%s"/></svg>%s</span>'
-                   % ('x' if tone == 'bad' else 'check', escape(label.get(mode, '')))
-                   + '<p class="ac-cap">%s</p><button class="cs-reset" type="button">Reset</button></div>' % inner(cap)
+        out.append('<section class="cs-side ac-side" data-mode="%s" data-tone="%s" aria-label="%s">' % (mode, tone, escape(label.get(mode, '')))
                    + '<div class="ac-body"><div class="ac-stage">%s<div class="ac-layer" aria-hidden="true"></div></div>' % book.raw(demo)
-                   + '<ol class="ac-notes" aria-label="%s">%s</ol></div></section>'
-                   % ('What goes wrong' if tone == 'bad' else 'Why it works', ''.join(items)))
+                   + '<div class="ac-aside"><ol class="ac-notes" aria-label="%s">%s</ol>' % ('What goes wrong' if tone == 'bad' else 'Why it works', ''.join(items))
+                   + '<button class="cs-reset" type="button">Reset</button></div></div></section>')
     if tri:
         out.append('<p class="fig-cap ac-try">%s</p>' % inner(tri))
     return ''.join(out) + '</div>'

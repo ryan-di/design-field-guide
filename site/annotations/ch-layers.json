@@ -1,0 +1,134 @@
+{
+ "pat-layered-ui-1": {
+  "bad": [
+   {"at": "[data-m=\"a\"]", "title": "Advanced is a second form", "text": "Switching shows other fields, not the ones people just filled in."},
+   {"at": "[data-form=\"a\"] [data-k=\"from\"]", "title": "From is empty again", "text": "Lisbon and the To city are gone, so people type the trip twice.", "wait": "Switch to Advanced to see this.", "reveal": [["click", "[data-m=\"a\"]"]]},
+   {"at": "[data-go]", "title": "Search reads only one form", "text": "Results depend on which mode people last had open."}
+  ],
+  "good": [
+   {"at": "[data-m=\"a\"]", "title": "Advanced only adds fields", "text": "Switching keeps everything people already typed."},
+   {"at": "[data-k=\"from\"]", "title": "One From, one To", "text": "Both modes share these fields, so their values can’t drift apart."},
+   {"at": "[data-adv]", "title": "The extras slot in below", "text": "Return, Cabin and Direct flights only, under the same From and To.", "wait": "Switch to Advanced to see this.", "reveal": [["click", "[data-m=\"a\"]"]]}
+  ]
+ },
+ "pat-layered-ui-2": {
+  "bad": [
+   {"at": "[data-open]", "title": "An unlabeled icon in the corner", "text": "Nothing says it holds filters, so people scroll the list instead."},
+   {"at": "[data-list]", "title": "Six shirts to scan by eye", "text": "People read every size line to find the ones in M."}
+  ],
+  "good": [
+   {"at": "[data-open]", "title": "A named button, in the open", "text": "It lists size, color and price before anyone presses it."},
+   {"at": "[data-panel]", "title": "Size M in two clicks", "text": "The list drops to the 3 shirts that come in M.", "wait": "Press Filters to see this.", "reveal": [["click", "[data-open]"]]}
+  ]
+ },
+ "pat-layered-ui-3": {
+  "bad": [
+   {"at": "[data-ph]", "title": "Warmth still tints the photo", "text": "The Advanced change stays on, so the photo looks off for no clear reason."},
+   {"at": "[data-simple]", "title": "Simple shows only the looks", "text": "Original, Vivid and Mono, and no trace of Warmth to undo."}
+  ],
+  "good": [
+   {"at": "[data-nt]", "title": "Names the hidden change", "text": "“1 advanced setting changed: warmth” explains the warm tint.", "wait": "Raise Warmth in Advanced, then go back to Simple, to see this.", "reveal": [["click", "[data-m=\"a\"]"], ["fill", "[data-w]", "60"], ["click", "[data-m=\"s\"]"]]},
+   {"at": "[data-show]", "title": "Show jumps to the slider", "text": "People land on Warmth in Advanced, ready to adjust it.", "wait": "Raise Warmth in Advanced, then go back to Simple, to see this.", "reveal": [["click", "[data-m=\"a\"]"], ["fill", "[data-w]", "60"], ["click", "[data-m=\"s\"]"]]},
+   {"at": "[data-reset]", "title": "Reset without leaving Simple", "text": "One click puts Contrast and Warmth back to their defaults.", "wait": "Raise Warmth in Advanced, then go back to Simple, to see this.", "reveal": [["click", "[data-m=\"a\"]"], ["fill", "[data-w]", "60"], ["click", "[data-m=\"s\"]"]]}
+  ]
+ },
+ "pat-layered-ui-4": {
+  "bad": [
+   {"at": "[data-simple]", "title": "Simple has no Out-of-office", "text": "People look here first and find only Name, Theme and Language."},
+   {"at": "[data-adv]", "title": "Eleven settings, in no order", "text": "Expert switches and everyday ones share one unsorted list.", "wait": "Switch to Advanced to see this.", "reveal": [["click", "[data-m=\"a\"]"]]},
+   {"at": "[data-adv] .lu-set:nth-of-type(10)", "title": "Out-of-office reply, tenth down", "text": "A setting many people need, found only after a long scan.", "wait": "Switch to Advanced to see this.", "reveal": [["click", "[data-m=\"a\"]"]]}
+  ],
+  "good": [
+   {"at": "[data-simple] .lu-set:nth-of-type(3)", "title": "Out-of-office reply in Simple", "text": "It’s where people look first, one click from the top."},
+   {"at": "[data-adv]", "title": "Advanced is short and grouped", "text": "Five settings, under Sending and Your data.", "wait": "Switch to Advanced to see this.", "reveal": [["click", "[data-m=\"a\"]"]]},
+   {"at": ".lu-hint", "title": "A default replaced an option", "text": "Links are always converted, so nobody has to hunt for that switch.", "wait": "Switch to Advanced to see this.", "reveal": [["click", "[data-m=\"a\"]"]]}
+  ]
+ },
+ "pat-shortcuts-1": {
+  "bad": [
+   {"at": "[data-cmd=\"next\"]", "title": "Next, with no key shown", "text": "N skips a song, but nothing on screen says so."},
+   {"at": ".app-bar", "title": "No list of keys anywhere", "text": "There’s no Shortcuts button or “?” to look them up."},
+   {"at": "[data-count]", "title": "With keys stays at 0", "text": "People keep clicking, because they never learn the faster way."}
+  ],
+  "good": [
+   {"at": "[data-cmd=\"next\"]", "title": "N sits right on Next", "text": "People see the key every time they click, and pick it up."},
+   {"at": "[data-keys]", "title": "Shortcuts, with ? beside it", "text": "The full list is one click or one key away."},
+   {"at": "[data-pp]", "title": "Every key in one list", "text": "Next, Previous, Like, and ? for the list itself.", "wait": "Press Shortcuts to see this.", "reveal": [["click", "[data-keys]"]]}
+  ]
+ },
+ "pat-shortcuts-2": {
+  "bad": [
+   {"at": ".sc-evbar .sc-kbd", "title": "Ctrl+W already closes tabs", "text": "In a real browser, the tab closes before the app sees the key."},
+   {"at": ".sc-tabs", "title": "The whole tab is gone", "text": "Weather is showing, and the note’s last changes are lost.", "wait": "Press Ctrl + W to see this.", "reveal": [["click", "[data-press]"]]}
+  ],
+  "good": [
+   {"at": ".sc-evbar .sc-kbd", "title": "Esc, a key the browser leaves free", "text": "Close note works, and Ctrl+W still closes tabs as people expect."},
+   {"at": "[data-keys]", "title": "Every key in one place", "text": "Shortcuts lists Close note, New note and Search notes together."},
+   {"at": "[data-pick]", "title": "Each key can be changed", "text": "People can switch to Alt+Q or Ctrl+Alt+W if Esc gets in their way.", "wait": "Press Shortcuts to see this.", "reveal": [["click", "[data-keys]"]]}
+  ]
+ },
+ "pat-shortcuts-3": {
+  "bad": [
+   {"at": ".app-bar .cs-meta", "title": "A archives, wherever focus is", "text": "Nothing limits the key to the message list."},
+   {"at": "[data-reply]", "title": "The first “a” archives the chat", "text": "“Thanks” stops at “Th”, and the reply is lost with the chat."}
+  ],
+  "good": [
+   {"at": "[data-msgs]", "title": "A works in the message list", "text": "Esc leaves the reply box, and then A archives."},
+   {"at": "[data-reply]", "title": "Letters stay letters here", "text": "People can type “Thanks, see you at 6” in full."}
+  ]
+ },
+ "pat-shortcuts-4": {
+  "bad": [
+   {"at": "[data-pp]", "title": "No Duplicate in the menu", "text": "Only Edit and Delete, so people on a mouse or touch screen can’t copy Yoga.", "wait": "Pick Yoga and press ⋯ to see this.", "reveal": [["click", ".sc-ev[data-day=\"0\"]"], ["click", "[data-more]"]]},
+   {"at": ".sc-day[data-day=\"1\"]", "title": "Tuesday stays empty", "text": "Without the D key, the only way is to make the class again by hand."}
+  ],
+  "good": [
+   {"at": "[data-opt=\"dup\"]", "title": "Duplicate in the ⋯ menu", "text": "A visible path for people who never use the keyboard.", "wait": "Pick Yoga and press ⋯ to see this.", "reveal": [["click", ".sc-ev[data-day=\"0\"]"], ["click", "[data-more]"]]},
+   {"at": "[data-opt=\"dup\"] .sc-kbd", "title": "D shown beside it", "text": "The menu teaches the faster key along the way.", "wait": "Pick Yoga and press ⋯ to see this.", "reveal": [["click", ".sc-ev[data-day=\"0\"]"], ["click", "[data-more]"]]}
+  ]
+ },
+ "pat-customization-1": {
+  "bad": [
+   {"at": "[data-c=\"offer\"]", "title": "Offers lead the home screen", "text": "The first thing people see is a sales pitch, not their money."},
+   {"at": ".cu-scroll", "title": "Balance and Pay sit below the fold", "text": "People scroll past three cards for the thing they opened the app for."},
+   {"at": "[data-cust]", "title": "Customize can’t rescue it", "text": "Most people never open it, so the weak default is what they get."}
+  ],
+  "good": [
+   {"at": "[data-c=\"bal\"]", "title": "Balance and Pay at the top", "text": "€2,340.50 and Pay are the first thing people see."},
+   {"at": "[data-c=\"recent\"]", "title": "Recent payments come next", "text": "Rent and the grocer, what people check right after the balance."},
+   {"at": "[data-cust]", "title": "Customize stays for the rest", "text": "People who want offers first can still move them up."}
+  ]
+ },
+ "pat-customization-2": {
+  "bad": [
+   {"at": "[data-p=\"Mum\"]", "title": "Mum stays in the plain list", "text": "After three shares she’s still fifth of seven, and nothing offers to help."},
+   {"at": "[data-out]", "title": "Favorites hide in Settings", "text": "The only way in is Settings › Sharing, far from the share sheet.", "wait": "Share with Mum three times to see this.", "reveal": [["click", "[data-p=\"Mum\"]"], ["click", "[data-p=\"Mum\"]"], ["click", "[data-p=\"Mum\"]"]]}
+  ],
+  "good": [
+   {"at": ".cu-offer", "title": "The offer comes at the third share", "text": "“Add to favorites?” shows up right where people are sharing.", "wait": "Share with Mum three times to see this.", "reveal": [["click", "[data-p=\"Mum\"]"], ["click", "[data-p=\"Mum\"]"], ["click", "[data-p=\"Mum\"]"]]},
+   {"at": "[data-no]", "title": "Not now ends it for good", "text": "It won’t ask about Mum again, so the offer never nags.", "wait": "Share with Mum three times to see this.", "reveal": [["click", "[data-p=\"Mum\"]"], ["click", "[data-p=\"Mum\"]"], ["click", "[data-p=\"Mum\"]"]]},
+   {"at": "[data-favs]", "title": "Mum moves to the top", "text": "She sits under Favorites, one click away next time.", "wait": "Share with Mum three times and press Add to see this.", "reveal": [["click", "[data-p=\"Mum\"]"], ["click", "[data-p=\"Mum\"]"], ["click", "[data-p=\"Mum\"]"], ["click", "[data-add]"]]}
+  ]
+ },
+ "pat-customization-3": {
+  "bad": [
+   {"at": ".cu-help", "title": "The help says “the third item”", "text": "It was written for the default order, where the third item is Privacy."},
+   {"at": "[data-list]", "title": "Display jumps to the top", "text": "Privacy slides to fourth, so the help now leads to Notifications.", "wait": "Pin Display to see this.", "reveal": [["click", "[data-pin=\"Display\"]"]]}
+  ],
+  "good": [
+   {"at": ".cu-help", "title": "The help note stays true", "text": "The third item is still Privacy, whatever people pin."},
+   {"at": "[data-pins]", "title": "Pins get their own row", "text": "Display shows up top and also keeps its place in the list.", "wait": "Pin Display to see this.", "reveal": [["click", "[data-pin=\"Display\"]"]]},
+   {"at": "[data-reset]", "title": "Reset to default, in plain sight", "text": "One button clears every pin."}
+  ]
+ },
+ "pat-customization-4": {
+  "bad": [
+   {"at": "[data-n]", "title": "6 pinned, and growing", "text": "Pinned is already three times longer than Recent."},
+   {"at": "[data-chat=\"Mum\"]", "title": "No way to unpin from the row", "text": "People open the chat, then Chat info, then Unpin, for every pin."}
+  ],
+  "good": [
+   {"at": "[data-unpin=\"Mum\"]", "title": "Unpin right on the row", "text": "One click per chat, without leaving the list."},
+   {"at": "[data-empty]", "title": "An empty state that teaches", "text": "With no pins left, it says what pins are for and how they behave.", "wait": "Unpin all six chats to see this.", "reveal": [["click", "[data-unpin]"], ["click", "[data-unpin]"], ["click", "[data-unpin]"], ["click", "[data-unpin]"], ["click", "[data-unpin]"], ["click", "[data-unpin]"]]}
+  ]
+ }
+}

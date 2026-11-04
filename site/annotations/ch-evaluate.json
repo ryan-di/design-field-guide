@@ -1,0 +1,138 @@
+{
+ "eff-quick-sessions-1": {
+  "bad": [
+   {"at": ".qs-q", "title": "A question about a future habit", "text": "People guess kindly about what they’d do, which says little about what they will do."},
+   {"at": "[data-sum]:not(.bad):not(:empty)", "title": "5 of 5 said yes", "text": "Five kind answers, and no hint of where people would look for Split.", "wait": "Press Ask all five to see this.", "reveal": [["click", "[data-go]"], ["wait", 1800]]},
+   {"at": "[data-sum].bad", "title": "Few found Split after release", "text": "Most still paid the whole bill and asked for money by message.", "wait": "Press Ask all five, then See what happened after release, to see this.", "reveal": [["click", "[data-go]"], ["wait", 1800], ["click", "[data-after]"]]}
+  ],
+  "good": [
+   {"at": ".qs-q", "title": "A real task with real money", "text": "Dinner for four, paid by one person. People act it out instead of predicting."},
+   {"at": "[data-log] li:nth-child(1)", "title": "P1 looks for Request on the receipt", "text": "A place to look that no yes or no could have shown.", "wait": "Press Watch five sessions to see this.", "reveal": [["click", "[data-go]"], ["wait", 600]]},
+   {"at": "[data-sum]:not(:empty)", "title": "2 of 5 found Split", "text": "And 2 looked on the receipt, which says where Split should go.", "wait": "Press Watch five sessions to see this.", "reveal": [["click", "[data-go]"], ["wait", 2600]]}
+  ]
+ },
+ "eff-quick-sessions-2": {
+  "bad": [
+   {"at": ".qs-q", "title": "The task names the tab", "text": "“Memories” is right there in the task, so people only need to spot the word."},
+   {"at": ".qs-nav span.look", "title": "Straight to Memories in 3 seconds", "text": "Fast, and it says nothing about whether people would find it alone.", "wait": "Press Give the task to see this.", "reveal": [["click", "[data-go]"], ["wait", 400]]}
+  ],
+  "good": [
+   {"at": ".qs-q", "title": "The task names the goal", "text": "Beach photos from last summer, with no tab named."},
+   {"at": "[data-obs]:not(:empty)", "title": "Search is where they look first", "text": "“summer” brings back three summers, mixed. The named task hid this.", "wait": "Press Give the task to see this.", "reveal": [["click", "[data-go]"], ["wait", 400]]},
+   {"at": ".qs-nav [data-tab=\"mem\"].look", "title": "Memories, found after 40 seconds", "text": "After Search and Albums. Now the team knows Memories is hard to find.", "wait": "Press Give the task and wait to see this.", "reveal": [["click", "[data-go]"], ["wait", 3000]]}
+  ]
+ },
+ "eff-quick-sessions-3": {
+  "bad": [
+   {"at": "[data-log] li.you", "title": "Help comes 4 seconds into the stall", "text": "“It’s under Share.” ends it before anyone learns why it happened.", "wait": "Press Play session to see this.", "reveal": [["click", "[data-go]"], ["wait", 2900]]},
+   {"at": "[data-sum]:not(:empty)", "title": "“No problems,” say the notes", "text": "Export hiding under Share, the one real problem, never makes it in.", "wait": "Press Play session and wait to see this.", "reveal": [["click", "[data-go]"], ["wait", 3700]]}
+  ],
+  "good": [
+   {"at": "[data-log] li.you", "title": "Quiet at 0:24", "text": "The stall runs on, and they try File and Print before Share.", "wait": "Press Play session to see this.", "reveal": [["click", "[data-go]"], ["wait", 2900]]},
+   {"at": "[data-log] li:nth-child(7)", "title": "“What did you expect?” at the end", "text": "“Export next to Print.” The answer says where Export belongs.", "wait": "Press Play session and wait to see this.", "reveal": [["click", "[data-go]"], ["wait", 4800]]},
+   {"at": "[data-sum]:not(:empty)", "title": "The notes name the stall", "text": "35 seconds stuck, and where they expected Export to be.", "wait": "Press Play session and wait to see this.", "reveal": [["click", "[data-go]"], ["wait", 5000]]}
+  ]
+ },
+ "eff-quick-sessions-4": {
+  "bad": [
+   {"at": "[data-ver]", "title": "The version keeps moving", "text": "Each session changes the form, so by P5 no two people saw the same design."},
+   {"at": "[data-log] li:nth-child(4)", "title": "One change undoes another", "text": "P4 missed the new Repeat switch, so it went back to how it was.", "wait": "Press Log session four times to see this.", "reveal": [["click", "[data-go]"], ["click", "[data-go]"], ["click", "[data-go]"], ["click", "[data-go]"]]},
+   {"at": "[data-sum]:not(:empty)", "title": "Nothing seen twice on one design", "text": "P1 and P5 both missed the time zone menu, but in different places.", "wait": "Press Log session five times to see this.", "reveal": [["click", "[data-go]"], ["click", "[data-go]"], ["click", "[data-go]"], ["click", "[data-go]"], ["click", "[data-go]"]]}
+  ],
+  "good": [
+   {"at": "[data-ver]", "title": "Version 1 for all five", "text": "Every person meets the same form, so their problems can be compared."},
+   {"at": ".qs-tally", "title": "One row per problem, one column per person", "text": "Each session fills in its column, so repeats line up across the row."},
+   {"at": "[data-r=\"0\"].hot", "title": "Time zone menu: 4 of 5", "text": "Fix it and Repeat, at 2 of 5. Guests in the title was one person.", "wait": "Press Log session five times to see this.", "reveal": [["click", "[data-go]"], ["click", "[data-go]"], ["click", "[data-go]"], ["click", "[data-go]"], ["click", "[data-go]"]]}
+  ]
+ },
+ "eff-measure-1": {
+  "bad": [
+   {"at": "[data-big]", "title": "A count of clicks", "text": "2,100 presses on Reorder, and no sign of how many reorders finished."},
+   {"at": "[data-sub]:not(:empty)", "title": "Up 98% in Sale week", "text": "Visitors doubled to 70,000, and clicks doubled with them. Reordering got no easier.", "wait": "Press Sale week to see this.", "reveal": [["click", "[data-w=\"sale\"]"]]}
+  ],
+  "good": [
+   {"at": "[data-big]", "title": "A share, not a count", "text": "12% of people who opened a past order finished a reorder."},
+   {"at": "[data-sub] b", "title": "Still 12% in Sale week", "text": "1,008 of 8,400. Twice the visitors, and the number holds still.", "wait": "Press Sale week to see this.", "reveal": [["click", "[data-w=\"sale\"]"]]}
+  ]
+ },
+ "eff-measure-2": {
+  "bad": [
+   {"at": ".me-tbl th:nth-child(2)", "title": "Listening time is the only number", "text": "Nothing in the table can show what autoplay costs people."},
+   {"at": "tr[data-v=\"C\"] td.num", "title": "C leads with 52 minutes", "text": "The longest listening, and nothing here to question it."},
+   {"at": "[data-out].bad", "title": "11% turn autoplay off", "text": "A month after C ships, reviews say it plays songs people don’t want.", "wait": "Press Ship next to C to see this.", "reveal": [["click", "[data-pick=\"C\"]"]]}
+  ],
+  "good": [
+   {"at": ".me-tbl th:nth-child(3)", "title": "A guardrail with its limit", "text": "Max 5% turning autoplay off, set before anyone saw the results."},
+   {"at": "td.over", "title": "C crosses the line at 11%", "text": "Its 52 minutes stop mattering once it’s over 5%."},
+   {"at": "[data-out].good", "title": "B ships, under the limit", "text": "5 more minutes a day than A, and only 4% turn it off.", "wait": "Press Ship next to B to see this.", "reveal": [["click", "[data-pick=\"B\"]"]]}
+  ]
+ },
+ "eff-measure-3": {
+  "bad": [
+   {"at": ".me-sec:nth-child(1) > span", "title": "A goal with no number", "text": "“Fewer parcels” has no starting value to compare against later."},
+   {"at": ".me-sec:nth-child(2) ul", "title": "No event in the pull request", "text": "Nothing records when people pick a suggested address."},
+   {"at": "[data-out].bad", "title": "Only page views to look at", "text": "Two weeks on, nobody can tell whether failed deliveries went down.", "wait": "Press Two weeks later to see this.", "reveal": [["click", "[data-go]"]]}
+  ],
+  "good": [
+   {"at": ".me-sec:nth-child(1) > span", "title": "A number with today’s value", "text": "Failed deliveries per 100 orders, now 4.1, written into the brief."},
+   {"at": ".me-sec li:nth-child(3)", "title": "The event ships with the form", "text": "It records that a suggestion was picked, never the address people typed."},
+   {"at": "[data-out].good", "title": "From 4.1 to 2.6 per 100 orders", "text": "And 38% of orders used a suggestion, so the answer is there on day 14.", "wait": "Press Two weeks later to see this.", "reveal": [["click", "[data-go]"]]}
+  ]
+ },
+ "eff-measure-4": {
+  "bad": [
+   {"at": ".me-down", "title": "Down 33%, and nothing else", "text": "The number says alerts dropped, not why they did."},
+   {"at": "[data-out].bad", "title": "Remove the feature next quarter", "text": "The drop is read as people not wanting alerts anymore.", "wait": "Press Decide to see this.", "reveal": [["click", "[data-go]"]]}
+  ],
+  "good": [
+   {"at": ".me-btns", "title": "Threads and sessions beside the number", "text": "3 support threads and 5 sessions, one click from the drop."},
+   {"at": "[data-pane=\"se\"]", "title": "4 of 5 looked next to the price", "text": "The bell moved under More, and people can’t find it.", "wait": "Press Sessions (5) to see this.", "reveal": [["click", "[data-open=\"se\"]"]]},
+   {"at": "[data-out].good", "title": "Move the bell back", "text": "The same 33% drop leads to the opposite decision.", "wait": "Press Decide to see this.", "reveal": [["click", "[data-go]"]]}
+  ]
+ },
+ "eff-design-qa-1": {
+  "bad": [
+   {"at": ".qa-scr", "title": "Light, at desktop width, only", "text": "The one setup where the boarding pass was built, so it looks right.", "wait": "Press Run checks to see this.", "reveal": [["click", "[data-go]"], ["wait", 800]]},
+   {"at": ".qa-shot em", "title": "“No issues” from one screenshot", "text": "The faint gate and the cut-off button are on screens nobody checked.", "wait": "Press Run checks to see this.", "reveal": [["click", "[data-go]"], ["wait", 800]]}
+  ],
+  "good": [
+   {"at": ".qa-shot:nth-child(2)", "title": "Dark: gate and time too faint", "text": "Gate B12 and 14:05 fade on the dark card.", "wait": "Press Run checks to see this.", "reveal": [["click", "[data-go]"], ["wait", 1100]]},
+   {"at": ".qa-shot:nth-child(3)", "title": "360px: “Add to wallet” is cut off", "text": "The button people need at the gate doesn’t fit on a phone.", "wait": "Press Run checks to see this.", "reveal": [["click", "[data-go]"], ["wait", 1100]]},
+   {"at": "[data-sum].bad", "title": "4 screenshots, 2 problems", "text": "Both caught in seconds, before anyone at the gate runs into them.", "wait": "Press Run checks to see this.", "reveal": [["click", "[data-go]"], ["wait", 1100]]}
+  ]
+ },
+ "eff-design-qa-2": {
+  "bad": [
+   {"at": ".qa-st", "title": "Only Uploaded, with notes.pdf", "text": "A short sample name, in the one state that already works.", "wait": "Press Run checks to see this.", "reveal": [["click", "[data-go]"], ["wait", 800]]},
+   {"at": ".qa-st:nth-of-type(2)", "title": "A real file fails after release", "text": "Its long name pushes Retry out of view, the one button people need.", "wait": "Press Run checks, then Use a real file name, to see this.", "reveal": [["click", "[data-go]"], ["wait", 800], ["click", "[data-real]"]]}
+  ],
+  "good": [
+   {"at": ".qa-st:nth-of-type(1)", "title": "Uploading, with its progress bar", "text": "60% and a bar, a state a finished upload never shows.", "wait": "Press Run checks to see this.", "reveal": [["click", "[data-go]"], ["wait", 1100]]},
+   {"at": ".qa-st.bad", "title": "The long name hides Retry", "text": "Caught before release, in the Failed state with a real file name.", "wait": "Press Run checks to see this.", "reveal": [["click", "[data-go]"], ["wait", 1100]]},
+   {"at": ".qa-st.ok", "title": "Shortened, and Retry stays in view", "text": "The fix is checked in the same state that broke.", "wait": "Press Run checks, then Fix the long name, to see this.", "reveal": [["click", "[data-go]"], ["wait", 1100], ["click", "[data-fix]"]]}
+  ]
+ },
+ "eff-design-qa-3": {
+  "bad": [
+   {"at": ".qa-find", "title": "Three findings, none opened", "text": "Nobody checks them against the brief before changing anything."},
+   {"at": "[data-pay]:not(.qa-off)", "title": "Pay looks ready too early", "text": "The “fix” makes Pay look active, though tapping it still does nothing.", "wait": "Press Fix all to see this.", "reveal": [["click", "[data-all]"]]}
+  ],
+  "good": [
+   {"at": "[data-f=\"0\"] p", "title": "Finding 1 is dismissed", "text": "Pay stays off until the card number is filled in, so low contrast is right.", "wait": "Press Open on finding 1 to see this.", "reveal": [["click", "[data-open=\"0\"]"]]},
+   {"at": "[data-f=\"1\"] p", "title": "Finding 2 is confirmed", "text": "“Total €42.00” really ends at “Total €4” at 360px.", "wait": "Press Open on finding 2 to see this.", "reveal": [["click", "[data-open=\"1\"]"]]},
+   {"at": "[data-sum]:not(:empty)", "title": "The reason is written down", "text": "2 fixes to make, and the dismissal says why Pay looks that way.", "wait": "Open all three findings to see this.", "reveal": [["click", "[data-open=\"0\"]"], ["click", "[data-open=\"1\"]"], ["click", "[data-open=\"2\"]"]]}
+  ]
+ },
+ "eff-design-qa-4": {
+  "bad": [
+   {"at": ".qa-form button", "title": "Create account, second in the tab order", "text": "It sits at the bottom, but Tab jumps there straight from Name."},
+   {"at": "[data-log]", "title": "The focus order gives it away", "text": "From Name, Tab goes to Create account, then Password, and Email comes last."},
+   {"at": ".qa-ok", "title": "0 issues from the scan", "text": "The scan can’t see focus order, yet it’s why the form was marked accessible."}
+  ],
+  "good": [
+   {"at": ".qa-form button", "title": "Create account comes last", "text": "Name, Email, Password, then the button, the same order as on screen."},
+   {"at": "[data-log]", "title": "The focus order matches the screen", "text": "From Name, Tab goes to Email, the field right beside it."},
+   {"at": ".qa-card > p:last-child", "title": "A person checked it too", "text": "A keyboard pass and a screen reader pass sit next to the scan’s 0 issues."}
+  ]
+ }
+}

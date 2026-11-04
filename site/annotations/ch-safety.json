@@ -1,0 +1,129 @@
+{
+ "pat-undo-1": {
+  "bad": [
+   {"at": ".pu-c:first-child .icon-btn", "title": "Delete removes the contact for real", "text": "Nothing is kept, so the later Undo has nothing to bring back."},
+   {"at": ".pu-c.pu-bad", "title": "Back as a blank with a question mark", "text": "Maya Chen returns with No phone · No email, at the bottom of the list.", "wait": "Delete Maya Chen, then press Undo to see this.", "reveal": [["click", "[data-name=\"Maya Chen\"] .icon-btn"], ["click", ".toast-action"]]}
+  ],
+  "good": [
+   {"at": ".pu-c:first-child .icon-btn", "title": "Delete only marks the contact", "text": "The full record stays until the way back closes."},
+   {"at": ".pu-c.pu-back", "title": "Back in place, details intact", "text": "Maya Chen returns first in the list, with her number and email.", "wait": "Delete Maya Chen, then press Undo to see this.", "reveal": [["click", "[data-name=\"Maya Chen\"] .icon-btn"], ["click", ".toast-action"]]}
+  ]
+ },
+ "pat-undo-2": {
+  "bad": [
+   {"at": ".pu-ph:first-child", "title": "One tap deletes a photo", "text": "The whole tile is the delete button, so a stray tap is easy."},
+   {"at": ".cs-toasts .toast", "title": "Undo lasts two seconds", "text": "Barely time to read “Photo deleted” before the button goes.", "wait": "Delete a photo to see this.", "reveal": [["click", ".pu-ph"]]},
+   {"at": "[data-note]", "title": "Gone before people look back", "text": "A slip noticed a moment late can’t be fixed.", "wait": "Delete a photo and wait two seconds to see this.", "reveal": [["click", ".pu-ph"], ["wait", 2500]]}
+  ],
+  "good": [
+   {"at": ".pu-ph:first-child", "title": "Same one-tap delete", "text": "Slips still happen, so the way back has to wait for people."},
+   {"at": ".cs-toasts .toast", "title": "No timer on the toast", "text": "Undo stays while people finish reading, until they delete the next photo.", "wait": "Delete a photo to see this.", "reveal": [["click", ".pu-ph"]]}
+  ]
+ },
+ "pat-undo-3": {
+  "bad": [
+   {"at": "[data-empty]", "title": "One click, twelve files gone", "text": "No question first, so a slip deletes Tax return 2025.pdf for good."},
+   {"at": ".pu-empty", "title": "Empty, with no Undo either", "text": "The lease and the wedding photos can’t be brought back.", "wait": "Press Empty Trash to see this.", "reveal": [["click", "[data-empty]"]]}
+  ],
+  "good": [
+   {"at": "[data-empty]", "title": "Same button, one question first", "text": "The click opens a question instead of deleting."},
+   {"at": "[data-no]", "title": "Cancel has focus", "text": "A reflex press of Enter keeps the files.", "wait": "Press Empty Trash to see this.", "reveal": [["click", "[data-empty]"]]},
+   {"at": "[data-yes]", "title": "The button says Delete 12 files", "text": "People confirm the action itself, not a vague OK.", "wait": "Press Empty Trash to see this.", "reveal": [["click", "[data-empty]"]]}
+  ]
+ },
+ "pat-undo-4": {
+  "bad": [
+   {"at": ".cs-toasts .toast-action", "title": "The only Undo, for three seconds", "text": "Once the toast leaves, the archived email has no way back.", "wait": "Archive an email to see this.", "reveal": [["click", ".pu-mail button"]]},
+   {"at": ".app-bar", "title": "No Edit menu, no shortcut", "text": "Ctrl+Z only gets “Nothing happened. The email stays archived.”"}
+  ],
+  "good": [
+   {"at": ".cs-toasts .toast-action", "title": "Undo on the toast, as before", "text": "Quick right after, but no longer the only way back.", "wait": "Archive an email to see this.", "reveal": [["click", ".pu-mail button"]]},
+   {"at": "[data-edit]", "title": "An Edit menu that stays", "text": "Undo is still here, and on Ctrl+Z, after the toast leaves."},
+   {"at": "[data-undo]", "title": "Undo names what it undoes", "text": "It reads Undo archive “Lunch on Friday?”, so people know what comes back.", "wait": "Archive the first email, then open Edit to see this.", "reveal": [["click", ".pu-mail button"], ["click", "[data-edit]"]]}
+  ]
+ },
+ "pat-preview-1": {
+  "bad": [
+   {"at": "[data-prev]", "title": "The preview’s font runs small", "text": "Names that fit here can still be too long for the badge."},
+   {"at": ".pv-out .pv-badge", "title": "The printed badge cuts it off", "text": "Alexandria Montgomery fit in the preview, then printed cut off.", "wait": "Type Alexandria Montgomery and press Print to see this.", "reveal": [["fill", "[data-name]", "Alexandria Montgomery"], ["click", "[data-print]"]]}
+  ],
+  "good": [
+   {"at": "[data-prev]", "title": "Same size as the printed badge", "text": "What fits here fits on paper, and what’s cut off here is cut off there."},
+   {"at": "[data-warn]", "title": "A warning before printing", "text": "“The name won’t fit on one line” shows while people can still shorten it.", "wait": "Type Alexandria Montgomery to see this.", "reveal": [["fill", "[data-name]", "Alexandria Montgomery"]]}
+  ]
+ },
+ "pat-preview-2": {
+  "bad": [
+   {"at": "[data-page]", "title": "Every size waits its turn", "text": "Drag from 12 to 22 and the page plays back each size, seconds behind."},
+   {"at": "[data-busy]", "title": "Redrawing… on every move", "text": "People stop, wait for the page, and find they overshot.", "wait": "Move Text size to see this.", "reveal": [["fill", "[data-size]", "20"]]}
+  ],
+  "good": [
+   {"at": "[data-page]", "title": "The page keeps up with the drag", "text": "A slightly blurred version shows each size as the slider moves."},
+   {"at": "[data-size]", "title": "Let go and it sharpens", "text": "The full page replaces the rough one a moment after release."}
+  ]
+ },
+ "pat-preview-3": {
+  "bad": [
+   {"at": "[data-mock]", "title": "Looks the same as the real app", "text": "Pick Dark and nothing says it isn’t applied yet."},
+   {"at": "[data-back]", "title": "Back leaves without a word", "text": "People leave thinking they have Dark, and the app stays Light."}
+  ],
+  "good": [
+   {"at": "[data-chip]", "title": "Preview · not applied, in words", "text": "Screen readers announce it too, not only the outline.", "wait": "Pick Dark to see this.", "reveal": [["click", "[data-t=\"Dark\"]"]]},
+   {"at": ".pv-mock.on", "title": "An outline around the preview", "text": "The blue ring stays until people press Apply or Cancel.", "wait": "Pick Dark to see this.", "reveal": [["click", "[data-t=\"Dark\"]"]]},
+   {"at": ".pv-ask .cs-dlg", "title": "Back asks before leaving", "text": "“Apply the Dark theme?” lets people decide instead of losing it.", "wait": "Pick Dark, then press Back to see this.", "reveal": [["click", "[data-t=\"Dark\"]"], ["click", "[data-back]"]]}
+  ]
+ },
+ "pat-preview-4": {
+  "bad": [
+   {"at": ".pv-sw .switch:nth-child(1)", "title": "The switch doesn’t switch", "text": "Turning off Sounds opens a box, and the switch stays on."},
+   {"at": ".pv-pre", "title": "A preview for a one-line change", "text": "Cancel and Apply, for something a second tap would undo.", "wait": "Turn off Sounds to see this.", "reveal": [["click", ".pv-sw .switch"]]},
+   {"at": "[data-clicks]", "title": "Six clicks for three switches", "text": "Every setting costs two clicks, so people stop reading the previews."}
+  ],
+  "good": [
+   {"at": ".pv-sw .switch:nth-child(1)", "title": "The switch takes effect at once", "text": "Sounds turns off on the first tap."},
+   {"at": ".cs-toasts .toast", "title": "Undo covers the rare slip", "text": "“Sounds turned off” with Undo stays for five seconds.", "wait": "Turn off Sounds to see this.", "reveal": [["click", ".pv-sw .switch"]]},
+   {"at": "[data-clicks]", "title": "Three clicks for three switches", "text": "Half the clicks, with the same way back."}
+  ]
+ },
+ "pat-version-history-1": {
+  "bad": [
+   {"at": ".vh-v[data-n=\"4\"]", "title": "Oct 21, 15:10 hides the photos", "text": "Nothing on this line says it’s the version that added them."},
+   {"at": "[data-c]", "title": "Opened counts the guessing", "text": "People open one version after another to find the one before the photos."}
+  ],
+  "good": [
+   {"at": ".vh-v[data-n=\"4\"]", "title": "Added three photos marks the spot", "text": "The line below it, Added the menu, is the one people want."},
+   {"at": "[data-c]", "title": "One more open finds it", "text": "People go straight to Added the menu, so Opened stops at 2."}
+  ]
+ },
+ "pat-version-history-2": {
+  "bad": [
+   {"at": "[data-r=\"1\"]", "title": "Restore v1 throws away v2 and v3", "text": "One click on the wrong row loses the vegan option and the salt change."},
+   {"at": ".vh-row.new", "title": "Only v1 is left", "text": "Nothing newer remains to go back to, so the restore can’t be undone.", "wait": "Press Restore on v1 to see this.", "reveal": [["click", "[data-r=\"1\"]"]]}
+  ],
+  "good": [
+   {"at": "[data-r=\"1\"]", "title": "Restore adds, never removes", "text": "Every newer version stays in the list below the restored one."},
+   {"at": ".vh-row.new", "title": "v1 comes back as v4", "text": "Labeled Restored v1 (first draft), with v3 still one Restore away.", "wait": "Press Restore on v1 to see this.", "reveal": [["click", "[data-r=\"1\"]"]]}
+  ]
+ },
+ "pat-version-history-3": {
+  "bad": [
+   {"at": ".vh-old .head b", "title": "Only a day and a time", "text": "Nothing says this drops two slides and today’s title."},
+   {"at": "[data-sl]", "title": "Five slides people expect to keep", "text": "Votes and Snacks vanish on Restore, with no warning first."}
+  ],
+  "good": [
+   {"at": ".vh-sum li:first-child", "title": "The lost slides, by name", "text": "Votes and Snacks are listed, so people know what they’d lose."},
+   {"at": ".vh-sum li:last-child", "title": "Today’s version stays in the history", "text": "Restoring is safe to try, since people can go back to today."}
+  ]
+ },
+ "pat-version-history-4": {
+  "bad": [
+   {"at": ".vh-row:first-child small", "title": "Counts up toward an unseen cutoff", "text": "Deleted 12 days ago never says the trash empties at 30 days."},
+   {"at": "[data-list]", "title": "Items vanish without notice", "text": "Three weeks on, the Lisbon booking is gone with no warning."}
+  ],
+  "good": [
+   {"at": ".vh-info", "title": "The 30-day rule, at the top", "text": "People know how long they have before something is gone for good."},
+   {"at": ".vh-row:first-child .vh-left", "title": "Days left on each email", "text": "Flight booking · Lisbon shows 18 days left, so people can act in time."},
+   {"at": ".vh-left.soon", "title": "Red with a week or less left", "text": "After one week, Weekly newsletter turns red at 1 day left.", "wait": "Press Skip a week to see this.", "reveal": [["click", "[data-skip]"]]}
+  ]
+ }
+}

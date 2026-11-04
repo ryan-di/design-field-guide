@@ -1,0 +1,732 @@
+{
+ "pat-instant-feedback-1": {
+  "bad": [
+   {
+    "at": "[data-copy]",
+    "title": "Copied for a quarter second",
+    "text": "People looking back from the click see Copy link again, as if nothing happened."
+   },
+   {
+    "at": "[data-note]",
+    "title": "Pressed again, just to be sure",
+    "text": "The flash left people unsure, so the count of presses climbs.",
+    "wait": "Press Copy link twice to see this.",
+    "reveal": [
+     [
+      "click",
+      "[data-copy]"
+     ],
+     [
+      "wait",
+      400
+     ],
+     [
+      "click",
+      "[data-copy]"
+     ]
+    ]
+   }
+  ],
+  "good": [
+   {
+    "at": "[data-copy].is-success",
+    "title": "A check and Copied, on the button",
+    "text": "It stays long enough to see after people look back from the click.",
+    "wait": "Press Copy link to see this.",
+    "reveal": [
+     [
+      "click",
+      "[data-copy]"
+     ]
+    ]
+   }
+  ]
+ },
+ "pat-instant-feedback-2": {
+  "bad": [
+   {
+    "at": "[data-add]",
+    "title": "The button looks untouched",
+    "text": "Add to cart reads the same after the click, right where people are looking."
+   },
+   {
+    "at": ".if-cart",
+    "title": "The only sign is far away",
+    "text": "Cart 0 turns to 1 in the corner, which few people watch."
+   },
+   {
+    "at": "[data-note]",
+    "title": "Two headphones by accident",
+    "text": "People press again to be sure and end up with 2 in the cart.",
+    "wait": "Press Add to cart twice to see this.",
+    "reveal": [
+     [
+      "click",
+      "[data-add]"
+     ],
+     [
+      "click",
+      "[data-add]"
+     ]
+    ]
+   }
+  ],
+  "good": [
+   {
+    "at": "[data-add].is-success",
+    "title": "Added, on the button itself",
+    "text": "The answer shows where people clicked, then it reads Add another.",
+    "wait": "Press Add to cart to see this.",
+    "reveal": [
+     [
+      "click",
+      "[data-add]"
+     ]
+    ]
+   },
+   {
+    "at": ".if-cart",
+    "title": "The cart count changes too",
+    "text": "A second sign, for people who check the cart before paying."
+   }
+  ]
+ },
+ "pat-instant-feedback-3": {
+  "bad": [
+   {
+    "at": ".cs-toasts",
+    "title": "A toast for every tick",
+    "text": "Three ticks stack three identical Task updated toasts, each for six seconds.",
+    "wait": "Tick three tasks to see this.",
+    "reveal": [
+     [
+      "click",
+      ".check:nth-child(1)"
+     ],
+     [
+      "click",
+      ".check:nth-child(2)"
+     ],
+     [
+      "click",
+      ".check:nth-child(3)"
+     ]
+    ]
+   },
+   {
+    "at": ".cs-toasts .toast:last-child",
+    "title": "The share notice gets lost",
+    "text": "“Sam can edit it” lands at the bottom of the pile, easy to skip.",
+    "wait": "Tick three tasks, then press Share with Sam to see this.",
+    "reveal": [
+     [
+      "click",
+      ".check:nth-child(1)"
+     ],
+     [
+      "click",
+      ".check:nth-child(2)"
+     ],
+     [
+      "click",
+      ".check:nth-child(3)"
+     ],
+     [
+      "click",
+      "[data-share]"
+     ]
+    ]
+   }
+  ],
+  "good": [
+   {
+    "at": ".check:nth-child(1)",
+    "title": "A tick only changes the task",
+    "text": "The box fills and the line strikes through, which is answer enough."
+   },
+   {
+    "at": ".cs-toasts .toast",
+    "title": "One toast, for the share",
+    "text": "“List shared with Sam. Sam can edit it.” stands alone, so people read it.",
+    "wait": "Press Share with Sam to see this.",
+    "reveal": [
+     [
+      "click",
+      "[data-share]"
+     ]
+    ]
+   }
+  ]
+ },
+ "pat-instant-feedback-4": {
+  "bad": [
+   {
+    "at": "[data-post]",
+    "title": "Post looks idle while it works",
+    "text": "For over a second nothing changes, so people press again."
+   },
+   {
+    "at": ".if-c.dup",
+    "title": "The same comment, twice",
+    "text": "The second press posted Lovely with extra basil again, outlined in red.",
+    "wait": "Press Post twice to see this.",
+    "reveal": [
+     [
+      "click",
+      "[data-post]"
+     ],
+     [
+      "click",
+      "[data-post]"
+     ],
+     [
+      "wait",
+      1500
+     ]
+    ]
+   }
+  ],
+  "good": [
+   {
+    "at": "[data-post].busy",
+    "title": "Posting… with a spinner",
+    "text": "The button answers at once, so there’s no reason to press again.",
+    "wait": "Press Post to see this.",
+    "reveal": [
+     [
+      "click",
+      "[data-post]"
+     ]
+    ]
+   },
+   {
+    "at": "[data-note]",
+    "title": "Extra clicks do nothing",
+    "text": "Still posting. The extra click was ignored. One comment goes up.",
+    "wait": "Press Post twice to see this.",
+    "reveal": [
+     [
+      "click",
+      "[data-post]"
+     ],
+     [
+      "click",
+      "[data-post]"
+     ],
+     [
+      "wait",
+      2000
+     ]
+    ]
+   }
+  ]
+ },
+ "pat-optimistic-ui-1": {
+  "bad": [
+   {
+    "at": ".ou-heart[aria-pressed=\"true\"]",
+    "title": "The heart stays filled",
+    "text": "Nothing says the save failed, so people trust it and move on.",
+    "wait": "Tap the heart on the lamp to see this.",
+    "reveal": [
+     [
+      "click",
+      ".ou-heart"
+     ]
+    ]
+   },
+   {
+    "at": "[data-note]",
+    "title": "Missing after Reload",
+    "text": "Desk lamp was never saved. People find out when they come back for it.",
+    "wait": "Tap the heart on the lamp, then press Reload to see this.",
+    "reveal": [
+     [
+      "click",
+      ".ou-heart"
+     ],
+     [
+      "wait",
+      1000
+     ],
+     [
+      "click",
+      "[data-reload]"
+     ]
+    ]
+   }
+  ],
+  "good": [
+   {
+    "at": ".ou-item.rolled",
+    "title": "The heart empties on the lamp",
+    "text": "The rollback shows on the item people tapped, with a brief highlight.",
+    "wait": "Tap the heart on the lamp and wait a moment to see this.",
+    "reveal": [
+     [
+      "click",
+      ".ou-heart"
+     ],
+     [
+      "wait",
+      1000
+     ]
+    ]
+   },
+   {
+    "at": ".cs-toasts .toast",
+    "title": "Says what failed, offers Retry",
+    "text": "Couldn’t save Desk lamp. No connection. Screen readers announce it too.",
+    "wait": "Tap the heart on the lamp and wait a moment to see this.",
+    "reveal": [
+     [
+      "click",
+      ".ou-heart"
+     ],
+     [
+      "wait",
+      1000
+     ]
+    ]
+   }
+  ]
+ },
+ "pat-optimistic-ui-2": {
+  "bad": [
+   {
+    "at": ".ou-res.ok",
+    "title": "Paid before the bank answers",
+    "text": "“Paid. Enjoy the show” shows at once, so people may close the app.",
+    "wait": "Press Pay to see this.",
+    "reveal": [
+     [
+      "click",
+      "[data-pay]"
+     ]
+    ]
+   },
+   {
+    "at": ".ou-res.bad",
+    "title": "Then it takes it back",
+    "text": "A moment later it says declined, which people who looked away never see.",
+    "wait": "Press Pay and wait two seconds to see this.",
+    "reveal": [
+     [
+      "click",
+      "[data-pay]"
+     ],
+     [
+      "wait",
+      1700
+     ]
+    ]
+   }
+  ],
+  "good": [
+   {
+    "at": "[data-res]:has(.spinner)",
+    "title": "Paying… until the bank answers",
+    "text": "No result shows until there is one.",
+    "wait": "Press Pay to see this.",
+    "reveal": [
+     [
+      "click",
+      "[data-pay]"
+     ]
+    ]
+   },
+   {
+    "at": ".ou-res.bad",
+    "title": "One answer, and it holds",
+    "text": "Declined. You weren’t charged. The button turns into Try another card.",
+    "wait": "Press Pay and wait two seconds to see this.",
+    "reveal": [
+     [
+      "click",
+      "[data-pay]"
+     ],
+     [
+      "wait",
+      1700
+     ]
+    ]
+   }
+  ]
+ },
+ "pat-optimistic-ui-3": {
+  "bad": [
+   {
+    "at": "[data-log]",
+    "title": "Answers come back out of order",
+    "text": "Answer 2 arrives first, then the slow answer 1 flips the switch back.",
+    "wait": "Click the switch twice quickly and wait two seconds to see this.",
+    "reveal": [
+     [
+      "click",
+      ".switch"
+     ],
+     [
+      "click",
+      ".switch"
+     ],
+     [
+      "wait",
+      1800
+     ]
+    ]
+   },
+   {
+    "at": "[data-note]",
+    "title": "The switch says On, the server Off",
+    "text": "People see On after choosing Off, and can’t tell what others see.",
+    "wait": "Click the switch twice quickly and wait two seconds to see this.",
+    "reveal": [
+     [
+      "click",
+      ".switch"
+     ],
+     [
+      "click",
+      ".switch"
+     ],
+     [
+      "wait",
+      1800
+     ]
+    ]
+   }
+  ],
+  "good": [
+   {
+    "at": "[data-log]",
+    "title": "Old answers are ignored",
+    "text": "Answer 1 is old. Ignored. Only request 2 decides what’s shown.",
+    "wait": "Click the switch twice quickly and wait two seconds to see this.",
+    "reveal": [
+     [
+      "click",
+      ".switch"
+     ],
+     [
+      "click",
+      ".switch"
+     ],
+     [
+      "wait",
+      1800
+     ]
+    ]
+   },
+   {
+    "at": "[data-note]",
+    "title": "Switch and server agree",
+    "text": "Both say Off, the choice people made last.",
+    "wait": "Click the switch twice quickly and wait two seconds to see this.",
+    "reveal": [
+     [
+      "click",
+      ".switch"
+     ],
+     [
+      "click",
+      ".switch"
+     ],
+     [
+      "wait",
+      1800
+     ]
+    ]
+   }
+  ]
+ },
+ "pat-background-work-1": {
+  "bad": [
+   {
+    "at": "[data-prog]",
+    "title": "Progress lives on the Map screen",
+    "text": "The bar sits inside the screen people are about to leave.",
+    "wait": "Press Download to see this.",
+    "reveal": [
+     [
+      "click",
+      "[data-dl]"
+     ],
+     [
+      "click",
+      "[data-tab=\"0\"]"
+     ]
+    ]
+   },
+   {
+    "at": ".bw-tabs",
+    "title": "Trips and Saved show nothing",
+    "text": "Open either one and there’s no sign the 120 MB map is still coming."
+   }
+  ],
+  "good": [
+   {
+    "at": "[data-pill]",
+    "title": "Map 42% in the top bar",
+    "text": "It stays on Map, Trips and Saved, so people can check from anywhere.",
+    "wait": "Press Download to see this.",
+    "reveal": [
+     [
+      "click",
+      "[data-dl]"
+     ]
+    ]
+   },
+   {
+    "at": ".bw-pill.ok",
+    "title": "Map ready, then it clears",
+    "text": "The pill turns into a check when done and leaves after four seconds.",
+    "wait": "Press Download and wait about eight seconds to see this.",
+    "reveal": [
+     [
+      "click",
+      "[data-dl]"
+     ],
+     [
+      "wait",
+      8500
+     ]
+    ]
+   }
+  ]
+ },
+ "pat-background-work-2": {
+  "bad": [
+   {
+    "at": ".cs-toasts .toast",
+    "title": "Three seconds to press Open",
+    "text": "After that, the statement has no home anywhere in the app.",
+    "wait": "Press Export September statement to see this.",
+    "reveal": [
+     [
+      "click",
+      "[data-exp]"
+     ],
+     [
+      "wait",
+      2000
+     ]
+    ]
+   },
+   {
+    "at": ".app-bar",
+    "title": "Nowhere to find it later",
+    "text": "Nothing in the bar leads to past exports, so people export again."
+   }
+  ],
+  "good": [
+   {
+    "at": ".cs-toasts .toast",
+    "title": "The same quick toast",
+    "text": "Handy, but missing it costs nothing now.",
+    "wait": "Press Export September statement to see this.",
+    "reveal": [
+     [
+      "click",
+      "[data-exp]"
+     ],
+     [
+      "wait",
+      2000
+     ]
+    ]
+   },
+   {
+    "at": "[data-badge]",
+    "title": "A 1 on Downloads",
+    "text": "The count stays until the file is opened.",
+    "wait": "Press Export September statement to see this.",
+    "reveal": [
+     [
+      "click",
+      "[data-exp]"
+     ],
+     [
+      "wait",
+      2000
+     ]
+    ]
+   },
+   {
+    "at": "[data-file]",
+    "title": "Marked New in the list",
+    "text": "The file statement-sep-2026.pdf waits here long after the toast fades.",
+    "wait": "Export the statement, then open Downloads to see this.",
+    "reveal": [
+     [
+      "click",
+      "[data-exp]"
+     ],
+     [
+      "wait",
+      2000
+     ],
+     [
+      "click",
+      "[data-dls]"
+     ]
+    ]
+   }
+  ]
+ },
+ "pat-background-work-3": {
+  "bad": [
+   {
+    "at": ".cs-toasts",
+    "title": "Six toasts, stacked up",
+    "text": "Each says Downloaded and a song name, and each stays seven seconds.",
+    "wait": "Press Download all to see this.",
+    "reveal": [
+     [
+      "click",
+      "[data-all]"
+     ],
+     [
+      "wait",
+      2500
+     ]
+    ]
+   },
+   {
+    "at": "[data-song]:first-child [data-st]",
+    "title": "Each row already says Saved",
+    "text": "The toasts repeat what the list shows, and cover it.",
+    "wait": "Press Download all to see this.",
+    "reveal": [
+     [
+      "click",
+      "[data-all]"
+     ],
+     [
+      "wait",
+      2500
+     ]
+    ]
+   }
+  ],
+  "good": [
+   {
+    "at": ".cs-toasts",
+    "title": "One toast for the batch",
+    "text": "6 songs downloaded comes once, after the last song is saved.",
+    "wait": "Press Download all to see this.",
+    "reveal": [
+     [
+      "click",
+      "[data-all]"
+     ],
+     [
+      "wait",
+      2500
+     ]
+    ]
+   },
+   {
+    "at": ".toast-action",
+    "title": "View points at the songs",
+    "text": "It highlights all six rows in the list.",
+    "wait": "Press Download all to see this.",
+    "reveal": [
+     [
+      "click",
+      "[data-all]"
+     ],
+     [
+      "wait",
+      2500
+     ]
+    ]
+   }
+  ]
+ },
+ "pat-background-work-4": {
+  "bad": [
+   {
+    "at": "[data-file]:nth-child(4) [data-st]",
+    "title": "A quiet “skipped”",
+    "text": "The photos-2026.zip row barely differs from the three that saved.",
+    "wait": "Press Back up now and wait three seconds to see this.",
+    "reveal": [
+     [
+      "click",
+      "[data-go]"
+     ],
+     [
+      "wait",
+      3200
+     ]
+    ]
+   },
+   {
+    "at": ".cs-toasts .toast",
+    "title": "The toast says Backup finished",
+    "text": "It reads like full success, then leaves after four seconds.",
+    "wait": "Press Back up now and wait three seconds to see this.",
+    "reveal": [
+     [
+      "click",
+      "[data-go]"
+     ],
+     [
+      "wait",
+      3200
+     ]
+    ]
+   }
+  ],
+  "good": [
+   {
+    "at": "[data-file]:nth-child(4) [data-st]",
+    "title": "Failed, in red, on its row",
+    "text": "People see which file needs attention without reading every line.",
+    "wait": "Press Back up now and wait three seconds to see this.",
+    "reveal": [
+     [
+      "click",
+      "[data-go]"
+     ],
+     [
+      "wait",
+      3200
+     ]
+    ]
+   },
+   {
+    "at": ".bw-fail",
+    "title": "Says why, and what’s safe",
+    "text": "The connection dropped at 60%, the other files are safe, and Retry is right there.",
+    "wait": "Press Back up now and wait three seconds to see this.",
+    "reveal": [
+     [
+      "click",
+      "[data-go]"
+     ],
+     [
+      "wait",
+      3200
+     ]
+    ]
+   },
+   {
+    "at": ".bw-pill.bad",
+    "title": "Stays in the bar until fixed",
+    "text": "1 file didn’t back up remains after the toast has gone.",
+    "wait": "Press Back up now and wait three seconds to see this.",
+    "reveal": [
+     [
+      "click",
+      "[data-go]"
+     ],
+     [
+      "wait",
+      3200
+     ]
+    ]
+   }
+  ]
+ }
+}

@@ -1,0 +1,326 @@
+{
+ "switch-1": {
+  "bad": [
+   {"at": ".switch:first-child", "title": "Weekly summary flips to On at once", "text": "The knob moves and the label says On, so the change looks saved."},
+   {"at": "[data-save]", "title": "Save looks optional", "text": "Nothing on the switches hints that they still wait for it."},
+   {"at": ".field-msg", "title": "The change is lost on the way out", "text": "Back in the inbox, Weekly summary email is still off.", "wait": "Turn on Weekly summary, then press ← Inbox to see this.", "reveal": [["click", ".switch:first-child input"], ["click", "[data-leave]"]]}
+  ],
+  "good": [
+   {"at": ".check:first-child", "title": "A box reads as a choice to save", "text": "Checking Weekly summary feels like filling in a form, not flipping a setting."},
+   {"at": "[data-save]", "title": "Save is the obvious last step", "text": "People who check a box expect to confirm it, so they press Save before leaving."},
+   {"at": "[data-ok]", "title": "Saved, in words, before leaving", "text": "People see the change stick before they go back to the inbox.", "wait": "Check Weekly summary, then press Save to see this.", "reveal": [["click", ".check:first-child input"], ["click", "[data-save]"]]}
+  ]
+ },
+ "switch-2": {
+  "bad": [
+   {"at": ".switch:first-child", "title": "Notifications, but which kind", "text": "It’s on, yet it says nothing about email, which is what the question is about."},
+   {"at": ".switch:nth-child(2)", "title": "Turn off emails, switched off", "text": "A double negative. Off here means emails are on."},
+   {"at": "[data-ans] p", "title": "The quick guess is wrong", "text": "Most people answer No, but Sam’s comment does send an email.", "wait": "Answer Yes or No to see this.", "reveal": [["click", "[data-a=\"no\"]"]]}
+  ],
+  "good": [
+   {"at": ".switch:first-child", "title": "Push notifications says which kind", "text": "Clearly about the phone, so people can skip it for an email question."},
+   {"at": ".switch:nth-child(2)", "title": "The row asks the exact question", "text": "Email me when someone comments. The answer sits right next to it."},
+   {"at": ".switch:nth-child(2) .state", "title": "On in words, not just color", "text": "People don’t have to judge which side of the knob means on."}
+  ]
+ },
+ "switch-3": {
+  "bad": [
+   {"at": ".switch", "title": "Back up photos turns On and stays On", "text": "There’s no network, yet nothing ever says backup isn’t running."},
+   {"at": ".app-bar .cs-meta", "title": "Offline is the only clue", "text": "A small gray word in the corner, easy to miss next to a blue switch."},
+   {"at": "[data-st]", "title": "Still 0 of 248 photos", "text": "The count never moves, but people trust the switch and stop checking."}
+  ],
+  "good": [
+   {"at": ".switch", "title": "The switch waits before saying On", "text": "It shows … while it tries, then goes back to Off when backup can’t start."},
+   {"at": ".field-msg", "title": "The reason, in plain words", "text": "It names the cause, being offline, and confirms the setting is still off.", "wait": "Turn on Back up photos and wait a moment to see this.", "reveal": [["click", ".switch input"], ["wait", 1800]]},
+   {"at": "[data-st]", "title": "The count stays honest", "text": "0 of 248 photos, matching a switch that says Off."}
+  ]
+ },
+ "switch-4": {
+  "bad": [
+   {"at": ".switch", "title": "Off doesn’t say which quality", "text": "Turned off, it means Normal, and only the line below gives that away."},
+   {"at": "[data-st]", "title": "Stuck at 2 MB a minute", "text": "Off is as low as it goes, so people saving mobile data can’t get to Low."}
+  ],
+  "good": [
+   {"at": ".sw-seg", "title": "Each segment names a quality", "text": "People see Low, Normal and High before touching anything."},
+   {"at": ".sw-seg label:first-child", "title": "Low is one tap away", "text": "About 1 MB a minute, the setting people want on mobile data."},
+   {"at": "[data-st]", "title": "The line below shows the cost", "text": "Each pick updates the MB a minute, so people can compare before leaving."}
+  ]
+ },
+ "checkbox-1": {
+  "bad": [
+   {"at": "label.check:nth-of-type(2)", "title": "Checking Express keeps Standard checked", "text": "People think they switched, but now two delivery options are on."},
+   {"at": ".field-msg", "title": "The rule shows up as an error", "text": "Only after Continue do people learn they could pick just one.", "wait": "Check Express, then press Continue to see this.", "reveal": [["click", "label.check:nth-of-type(2) input"], ["click", "[data-go]"]]}
+  ],
+  "good": [
+   {"at": "label.check:nth-of-type(2)", "title": "Picking Express clears Standard", "text": "Round buttons say pick one, and the switch happens by itself."},
+   {"at": "[data-ok]", "title": "Continue goes straight through", "text": "Express, arriving tomorrow, total $49.00, with no error on the way.", "wait": "Pick Express, then press Continue to see this.", "reveal": [["click", "label.check:nth-of-type(2) input"], ["click", "[data-go]"]]}
+  ]
+ },
+ "checkbox-2": {
+  "bad": [
+   {"at": ".cb-card .check", "title": "Checked, but is it on yet", "text": "A box usually waits for Save, and there’s no Save here to press."},
+   {"at": "[data-st]", "title": "The only proof is up in the corner", "text": "The status changes to Do not disturb, far from the box people clicked."}
+  ],
+  "good": [
+   {"at": ".cb-card .switch", "title": "A switch says it acts now", "text": "People expect it to take effect, so they don’t look for Save."},
+   {"at": ".cb-card .state", "title": "On, right where people look", "text": "The confirmation sits next to the switch, not across the screen."},
+   {"at": "[data-st]", "title": "The status agrees", "text": "Available turns to Do not disturb at the same moment."}
+  ]
+ },
+ "checkbox-3": {
+  "bad": [
+   {"at": ".check", "title": "Skimmers read send me updates", "text": "People who want updates check the box and turn them off."},
+   {"at": "[data-st]", "title": "The result is the opposite", "text": "No updates at all, for people who checked the box to get them.", "wait": "Check the box, then press Create account to see this.", "reveal": [["click", "[data-cb]"], ["click", "[data-go]"]]}
+  ],
+  "good": [
+   {"at": ".check", "title": "Checked means yes", "text": "Checking it gives people exactly what the words say."},
+   {"at": "[data-st]", "title": "The result matches the click", "text": "Updates by email, for people who checked the box to get them.", "wait": "Check the box, then press Create account to see this.", "reveal": [["click", "[data-cb]"], ["click", "[data-go]"]]}
+  ]
+ },
+ "checkbox-4": {
+  "bad": [
+   {"at": "[data-list]", "title": "30 names, read one by one", "text": "The list is sorted by last name, so the four Alexes are spread from top to bottom."},
+   {"at": "[data-p=\"2\"]", "title": "Alex Chen is third, Alex Webb 28th", "text": "Finding the first one is easy. The last one is easy to miss."},
+   {"at": "[data-n]", "title": "Only a count to check against", "text": "People count to four themselves to know they got them all."}
+  ],
+  "good": [
+   {"at": "[data-q]", "title": "Search cuts 30 names to 4", "text": "Typing alex leaves only the four Alexes."},
+   {"at": ".cb-all", "title": "Select all checks what’s left", "text": "After the search it reads Select all (4), and one click gets all four."},
+   {"at": "[data-n]", "title": "The count confirms it", "text": "4 selected, matching the four names on screen."}
+  ]
+ },
+ "radio-1": {
+  "bad": [
+   {"at": ".rd-fs legend", "title": "Country opens a 55-row column", "text": "Portugal is 41st, so people read and scroll past 40 others to reach it."},
+   {"at": ".cs-form", "title": "The whole form becomes a scroll box", "text": "Continue sits below all 55 countries, out of sight until people scroll the list."}
+  ],
+  "good": [
+   {"at": "[data-q]", "title": "Three letters find Portugal", "text": "Type por, and the long list shrinks to a handful."},
+   {"at": ".rd-opts", "title": "Names that start with it come first", "text": "Portugal is on top, so one click or Enter picks it.", "wait": "Type por to see this.", "reveal": [["fill", "[data-q]", "por"]]},
+   {"at": "[data-go]", "title": "Continue stays in view", "text": "The form stays short, so the next step is right under the field."}
+  ]
+ },
+ "radio-2": {
+  "bad": [
+   {"at": ".rd-fs", "title": "Nothing picked, nothing required", "text": "People can’t tell whether they have to choose before Copy link."},
+   {"at": ".rd-res", "title": "Skipping shares it with anyone", "text": "The app picks Anyone with the link, the least safe option, without asking.", "wait": "Press Copy link to see this.", "reveal": [["click", "[data-go]"]]}
+  ],
+  "good": [
+   {"at": "label.check:nth-of-type(1)", "title": "Only me, ready from the start", "text": "People who skip the question still keep Trip budget private."},
+   {"at": ".rd-res", "title": "Skipping keeps it private", "text": "Only they can open it, until they choose to share it wider.", "wait": "Press Copy link to see this.", "reveal": [["click", "[data-go]"]]}
+  ]
+ },
+ "radio-3": {
+  "bad": [
+   {"at": ".rd-cram", "title": "Prices in three different shapes", "text": "$8 a month, $77 a year, $12 for six people. Nothing lines up to compare."},
+   {"at": "label.check:nth-of-type(2)", "title": "Yearly hides its monthly price", "text": "$6.42 a month sits mid-sentence, after $77 and before 20%."}
+  ],
+  "good": [
+   {"at": ".rd-cards", "title": "Each price in the same spot", "text": "People compare the three plans by glancing across, not by reading."},
+   {"at": ".rd-card:nth-of-type(2) .rd-card-p", "title": "Yearly shows $6.42 a month", "text": "The cheapest month is plain to see, with $77 a year on the line below."},
+   {"at": "[data-sum]", "title": "What’s charged today", "text": "Pick Yearly and it says $77 today, so the bill isn’t a surprise."}
+  ]
+ },
+ "radio-4": {
+  "bad": [
+   {"at": ".rd-fs", "title": "A form setting above the calendar", "text": "Radio buttons look like they wait for Save, but Month jumps in at once."},
+   {"at": ".rd-view", "title": "The calendar pushed down", "text": "Three stacked rows sit between November and the week."}
+  ],
+  "good": [
+   {"at": ".rd-seg", "title": "In the toolbar, where views live", "text": "Next to November, like other calendar apps, so a jump to Month is expected."},
+   {"at": ".rd-view", "title": "The calendar starts under the bar", "text": "Nothing pushes it down, so more of the week fits."}
+  ]
+ },
+ "segmented-1": {
+  "bad": [
+   {"at": ".sg-seg", "title": "No longer reads as one control", "text": "Uneven rows of segments, so people scan it like a grid."},
+   {"at": ".sg-seg label:nth-child(5)", "title": "Connected apps is hard to spot", "text": "Squeezed among long names like Privacy & security, it takes reading every segment."}
+  ],
+  "good": [
+   {"at": ".sg-tabs", "title": "Every name stays whole", "text": "Each section keeps its full name on one line, and the row scrolls for the rest."},
+   {"at": ".tab[aria-selected=\"true\"]", "title": "The open section is marked", "text": "People know where they are, even with part of the row out of view."}
+  ]
+ },
+ "segmented-2": {
+  "bad": [
+   {"at": ".sg-seg", "title": "Looks like it applies at once", "text": "Segments usually switch a view right away, so picking Only me feels done."},
+   {"at": "[data-save]", "title": "Save is easy to skip", "text": "Nothing on the control hints that it still waits for it."},
+   {"at": "[data-val]", "title": "Back shows Everyone, still", "text": "The profile stays public while people believe it’s private.", "wait": "Pick Only me, then press Back to see this.", "reveal": [["click", ".sg-seg label:nth-child(3)"], ["click", "[data-back]"]]}
+  ],
+  "good": [
+   {"at": ".sg-fs", "title": "Radio buttons read as a form", "text": "People expect to confirm them, the same as any other field."},
+   {"at": "[data-save]", "title": "Save right under the choice", "text": "It reads as the last step of this form, so people press it."},
+   {"at": "[data-val]", "title": "Back shows Only me", "text": "The saved value matches what people picked.", "wait": "Pick Only me, press Save, then Back to see this.", "reveal": [["click", ".sg-fs label:nth-of-type(3)"], ["click", "[data-save]"], ["click", "[data-back]"]]}
+  ]
+ },
+ "segmented-3": {
+  "bad": [
+   {"at": ".sg-seg label:has(input:checked)", "title": "Week is picked, but barely", "text": "The tint is so close to the others that people can’t tell which range is on."},
+   {"at": "[data-total]", "title": "$8,630 for which range", "text": "People read the total without knowing if it’s a day, a week or a month."}
+  ],
+  "good": [
+   {"at": ".sg-seg label:has(input:checked)", "title": "Solid fill and bold on Week", "text": "The picked range stands out at a glance, even on a dim screen."},
+   {"at": "[data-total]", "title": "$8,630 clearly means a week", "text": "With the range plain to see, the number means something."}
+  ]
+ },
+ "combobox-1": {
+  "bad": [
+   {"at": "[data-trig]", "title": "Normal is the only one showing", "text": "People can’t see Low, High or Urgent until they open the list."},
+   {"at": "[data-n]", "title": "Two clicks for every change", "text": "Open, then pick. Urgent and back to Normal takes four."}
+  ],
+  "good": [
+   {"at": ".cb-seg", "title": "All four priorities in view", "text": "People see where Normal sits between Low and Urgent without opening anything."},
+   {"at": "[data-n]", "title": "One click for every change", "text": "Urgent and back to Normal takes two."}
+  ]
+ },
+ "combobox-2": {
+  "bad": [
+   {"at": "[data-trig]", "title": "87 fonts behind Arial", "text": "One long list, and no way to type to get there."},
+   {"at": ".cb-pop", "title": "Roboto is 71st of 87", "text": "People scroll past Abel, Acme and dozens more to reach it.", "wait": "Open the font list to see this.", "reveal": [["click", "[data-trig]"]]}
+  ],
+  "good": [
+   {"at": "[data-q]", "title": "A few letters filter the list", "text": "Typing rob brings Roboto and its variants to the top.", "wait": "Open the font list to see this.", "reveal": [["click", "[data-trig]"]]},
+   {"at": ".cb-flist .group:first-child", "title": "Recent fonts come first", "text": "Roboto, Lora and Open Sans sit on top, since people reuse the same few.", "wait": "Open the font list to see this.", "reveal": [["click", "[data-trig]"]]}
+  ]
+ },
+ "combobox-3": {
+  "bad": [
+   {"at": "[data-trig]", "title": "Names say nothing about color", "text": "Atlas, Juno, Nova, Orbit. None of them sounds green."},
+   {"at": "[data-n]", "title": "Found by trying each one", "text": "Every guess repaints the slide, and the count climbs until green turns up."}
+  ],
+  "good": [
+   {"at": ".cb-th[data-v=\"Orbit\"]", "title": "The green theme is plain to see", "text": "Each preview shows its colors before anyone clicks."},
+   {"at": "[data-n]", "title": "Found on the first click", "text": "People go straight to the green one, so the count barely moves."}
+  ]
+ },
+ "combobox-4": {
+  "bad": [
+   {"at": "[data-trig]", "title": "Room for one name only", "text": "Picking Priya Nair replaces Sam Lee instead of adding her."},
+   {"at": "[data-goes]", "title": "Goes to shows the swap", "text": "After two picks it lists only the last one, so Sam would miss the photos."}
+  ],
+  "good": [
+   {"at": ".cb-chips", "title": "Each pick adds a person", "text": "Names stack up as chips, so Sam Lee and Priya Nair can both go."},
+   {"at": "[data-rm]", "title": "Each chip has its own ×", "text": "People drop one person without retyping the others.", "wait": "Add someone to see this.", "reveal": [["click", "[data-q]"], ["click", ".cb-pop [role=option]"]]},
+   {"at": "[data-goes]", "title": "Goes to lists everyone", "text": "People can check every name before they send."}
+  ]
+ },
+ "slider-1": {
+  "bad": [
+   {"at": "[data-r]", "title": "300 seats on a short track", "text": "A pixel can jump a seat or two, so landing on 37 takes many tries."},
+   {"at": "[data-price]", "title": "Every miss changes the bill", "text": "At $8 a seat, landing on 38 adds $8 a month."}
+  ],
+  "good": [
+   {"at": "[data-r]", "title": "Drag close, then fix it", "text": "The slider still works for a rough guess."},
+   {"at": "[data-n]", "title": "Type 37 and it’s exact", "text": "The field moves the slider too, so both agree."},
+   {"at": "[data-price]", "title": "$296 a month, as planned", "text": "Exactly 37 seats, with no rounding up or down."}
+  ]
+ },
+ "slider-2": {
+  "bad": [
+   {"at": "[data-r]", "title": "$1 to $10,000 on one straight track", "text": "$50 sits a pixel or two from the left end."},
+   {"at": "[data-px]", "title": "Each pixel jumps tens of dollars", "text": "Dragging can land near $50, but almost never on it."}
+  ],
+  "good": [
+   {"at": ".sl-ticks", "title": "Each step is ten times the last", "text": "Small amounts get as much track as large ones, so $50 has room."},
+   {"at": "[data-n]", "title": "Type 50 for the exact amount", "text": "The slider jumps to match, so both always agree."}
+  ]
+ },
+ "slider-3": {
+  "bad": [
+   {"at": "[data-thumb]", "title": "A handle smaller than a fingertip", "text": "It has to be grabbed exactly, and a near miss does nothing."},
+   {"at": "[data-t]", "title": "The track ignores clicks and keys", "text": "A click at 80% does nothing, and Tab skips it, so keyboards can’t change it."}
+  ],
+  "good": [
+   {"at": "[data-thumb]", "title": "A handle big enough to grab", "text": "People can drag it without aiming carefully."},
+   {"at": "[data-t]", "title": "Click anywhere on the track", "text": "A click near 80% jumps there. Arrow keys step by 5, Shift by 20."}
+  ]
+ },
+ "slider-4": {
+  "bad": [
+   {"at": "[data-r]", "title": "Higher could mean either way", "text": "Nothing says if 10 is strict or relaxed, so people guess."},
+   {"at": "[data-o]", "title": "Only a 6 to go by", "text": "The number changes, but nothing shows what it does to their mail."}
+  ],
+  "good": [
+   {"at": ".sl-ends", "title": "Each end names its effect", "text": "Catch more is on the right, so people know which way to drag."},
+   {"at": "[data-list]", "title": "Five emails show the result", "text": "At 6, Deals, Bank and Prize go to Spam. Drag right and Shop follows."}
+  ]
+ },
+ "text-field-1": {
+  "bad": [
+   {"at": "[data-in]", "title": "Date, and nothing more", "text": "No hint of day first or month first, so people type it their own way."},
+   {"at": "[data-out]", "title": "12/11 becomes 12 November", "text": "People meant 11 December, and search a month early without noticing.", "wait": "Type 12/11, then press Search hotels to see this.", "reveal": [["fill", "[data-in]", "12/11"], ["click", "[data-go]"]]}
+  ],
+  "good": [
+   {"at": ".tf-read", "title": "It asks which day was meant", "text": "12/11 could be two days, so people pick instead of the site guessing.", "wait": "Type 12/11 to see this.", "reveal": [["fill", "[data-in]", "12/11"]]},
+   {"at": ".tf-pick", "title": "Both readings, with weekdays", "text": "Thu 12 Nov or Fri 11 Dec, so people can check against their plans.", "wait": "Type 12/11 to see this.", "reveal": [["fill", "[data-in]", "12/11"]]},
+   {"at": "[data-out]", "title": "The search uses the right date", "text": "24 hotels from Fri, 11 Dec 2026, the date people meant.", "wait": "Pick Fri 11 Dec, then press Search hotels to see this.", "reveal": [["fill", "[data-in]", "12/11"], ["click", ".tf-pick button:nth-child(2)"], ["click", "[data-go]"]]}
+  ]
+ },
+ "text-field-2": {
+  "bad": [
+   {"at": "[data-f=\"0\"]", "title": "The label lives inside the box", "text": "Street disappears the moment anything is typed or filled in."},
+   {"at": "[data-f=\"1\"]", "title": "The postcode lands in Apt / suite", "text": "1100-148 sits here, and nothing says what this field was for.", "wait": "Press Use saved address to see this.", "reveal": [["click", "[data-fill]"]]},
+   {"at": "[data-f=\"3\"]", "title": "Postcode holds 4B", "text": "With every box full, people can’t tell which field is which.", "wait": "Press Use saved address to see this.", "reveal": [["click", "[data-fill]"]]}
+  ],
+  "good": [
+   {"at": "label.cs-f:has([data-f=\"0\"])", "title": "Street stays above the field", "text": "The label is still there after the box fills."},
+   {"at": "label.cs-f:has([data-f=\"1\"])", "title": "Apt / suite with 1100-148 looks wrong", "text": "With the label in view, the swapped value stands out at once.", "wait": "Press Use saved address to see this.", "reveal": [["click", "[data-fill]"]]},
+   {"at": "label.cs-f:has([data-f=\"3\"])", "title": "Postcode with 4B, easy to swap back", "text": "People see both mistakes and know where each value belongs.", "wait": "Press Use saved address to see this.", "reveal": [["click", "[data-fill]"]]}
+  ]
+ },
+ "text-field-3": {
+  "bad": [
+   {"at": "[data-r]", "title": "97 characters in a one-line box", "text": "Most of the review scrolls out of view, so people can’t read it back."},
+   {"at": "[data-post]", "title": "Posting what nobody could reread", "text": "People send a review they only saw a slice of, and the box stops at 160 without a word."}
+  ],
+  "good": [
+   {"at": "[data-r]", "title": "The box grows with the review", "text": "All 97 characters stay in view, so people can reread before posting."},
+   {"at": "[data-c]", "title": "97 / 160 shows the room left", "text": "The count changes color near the end, so the limit is no surprise."}
+  ]
+ },
+ "text-field-4": {
+  "bad": [
+   {"at": "[data-u]", "title": "maya.lee has nothing wrong to see", "text": "It’s taken, but the field gives no hint, so people guess at what to change."},
+   {"at": ".field-msg", "title": "Invalid, but not why", "text": "Taken, too short, or a bad character? People retype and try again.", "wait": "Press Create account to see this.", "reveal": [["click", "[data-go]"]]}
+  ],
+  "good": [
+   {"at": ".field-msg", "title": "Says it’s taken, and offers one", "text": "The cause and a free name, maya.lee2, in one line.", "wait": "Press Create account to see this.", "reveal": [["click", "[data-go]"]]},
+   {"at": "[data-use]", "title": "One click fills in maya.lee2", "text": "No retyping, and the field is ready to go.", "wait": "Press Create account to see this.", "reveal": [["click", "[data-go]"]]}
+  ]
+ },
+ "picker-1": {
+  "bad": [
+   {"at": ".pk-head", "title": "Starts in October 2026", "text": "March 1988 is 463 presses of ‹ away, one month at a time."},
+   {"at": "[data-val]", "title": "No way to type it", "text": "People know their birth date by heart, and still have to click their way to it."}
+  ],
+  "good": [
+   {"at": "[data-in]", "title": "Type it the way people say it", "text": "14 Mar 1988 or 1988-03-14 both work."},
+   {"at": ".pk-read", "title": "Read back with the weekday", "text": "Mon, 14 Mar 1988, so people can check it at a glance.", "wait": "Type 14 Mar 1988 to see this.", "reveal": [["fill", "[data-in]", "14 Mar 1988"]]},
+   {"at": ".pk-head", "title": "The calendar jumps there by itself", "text": "Type the date, and it opens on March 1988 with the 14th marked."}
+  ]
+ },
+ "picker-2": {
+  "bad": [
+   {"at": "[data-r]", "title": "Any shade can be picked", "text": "The strip blends between colors, so people choose mixes the calendar can’t keep."},
+   {"at": "[data-picked]", "title": "You picked shows a blend", "text": "At the start it sits between Blue and Rust, a shade that won’t survive Save."},
+   {"at": "[data-bar]", "title": "Save quietly swaps the color", "text": "Press Save and the bar turns plain Blue, with no reason given."}
+  ],
+  "good": [
+   {"at": ".pk-sw", "title": "Only the 8 that will save", "text": "Each swatch is a color the calendar keeps, with nothing in between."},
+   {"at": "[data-name]", "title": "The picked one has a name", "text": "Sage, so people can tell it from Green without squinting."},
+   {"at": "[data-bar]", "title": "Save keeps exactly that color", "text": "The bar matches the swatch people chose."}
+  ]
+ },
+ "picker-3": {
+  "bad": [
+   {"at": ".pk-grid", "title": "Which square is today", "text": "Nothing marks it, so people check a clock before counting seven days."},
+   {"at": ".pk-day[data-day=\"1\"]", "title": "Past days can be picked", "text": "A link that expires on 1 October is dead before it’s sent."},
+   {"at": "[data-read]", "title": "The result is just a date", "text": "No weekday and no day count, so a miscount goes unnoticed."}
+  ],
+  "good": [
+   {"at": ".pk-day.today", "title": "Today is marked", "text": "Fri 23 Oct stands out, so counting a week starts from the right square."},
+   {"at": "[data-n=\"7\"]", "title": "In 7 days, one click", "text": "The usual choice needs no counting at all."},
+   {"at": "[data-read]", "title": "The result in words", "text": "Expires Fri 30 Oct (in 7 days), easy to check before sharing."}
+  ]
+ }
+}

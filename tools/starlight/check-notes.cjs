@@ -28,7 +28,8 @@ const lint = (where, n) => {
   for (const k of ['title', 'text', 'wait']) {
     const v = n[k];
     if (typeof v !== 'string') continue;
-    if (/[—–;!]/.test(v)) bad.push(`${where}: ${k} uses a dash, semicolon or "!": ${v}`);
+    // Text quoted from the demo, inside “ ”, may keep its own "!" or ";".
+    if (/[—–]/.test(v) || /[;!]/.test(v.replace(/“[^”]*”/g, ''))) bad.push(`${where}: ${k} uses a dash, semicolon or "!": ${v}`);
     if (/['"]/.test(v)) bad.push(`${where}: ${k} uses straight quotes: ${v}`);
     if (/\s{2,}|^\s|\s$/.test(v)) bad.push(`${where}: ${k} has stray spaces`);
   }
@@ -82,7 +83,9 @@ const lint = (where, n) => {
             return {
               overflow: d.scrollWidth - d.clientWidth,
               notes: [...s.querySelectorAll('.ac-note')].map((n, k) => {
-                const pin = s.querySelectorAll('.ac-pin')[k], r = pin.getBoundingClientRect();
+                const pin = s.querySelectorAll('.ac-pin')[k];
+                if (!pin) return { wait: true, count: 0, noPin: true };
+                const r = pin.getBoundingClientRect();
                 let count = 0;
                 try { count = d.querySelectorAll(n.dataset.at).length; } catch (e) { count = -1; }
                 return { wait: n.classList.contains('is-wait'), count, pinOut: !pin.hidden && (r.left < cr.left || r.right > cr.right || r.top < cr.top - 4 || r.bottom > cr.bottom + 4) };
@@ -95,6 +98,7 @@ const lint = (where, n) => {
           if (s.overflow > 1 && c.layout !== 'stack') report(`${key} ${tone} @${w}: demo is ${s.overflow}px wider than its column; try "layout": "stack"`);
           for (const [k, n] of list.entries()) {
             const st = s.notes[k], where = `${key} ${tone} ${k + 1} @${w}`;
+            if (st.noPin) { report(`${where}: the annotation script didn't set up this side`); continue; }
             if (st.count < 0) { report(`${where}: invalid selector ${n.at}`); continue; }
             if (!n.wait && st.wait) report(`${where}: ${n.at} isn't showing at first (${st.count} matches); add "wait" and "reveal", or fix the selector`);
             if (st.pinOut) report(`${where}: the number sits outside the comparison`);

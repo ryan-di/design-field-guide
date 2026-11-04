@@ -34,52 +34,29 @@
 	right: -18px;
 	border-top: 1px dashed var(--line);
 }
-.sl-markdown-content .ac-head {
-	display: flex;
-	flex-wrap: wrap;
-	align-items: center;
-	gap: 6px 12px;
-}
-.sl-markdown-content .ac-chip {
-	display: inline-flex;
-	align-items: center;
-	gap: 6px;
-	font: 600 13.5px/1 var(--font-body);
-	padding: 7px 12px 7px 9px;
-	border-radius: 999px;
-	background: var(--tone);
-	color: var(--dfg-page);
-	white-space: nowrap;
-}
-.sl-markdown-content .ac-chip .icon {
-	width: 14px;
-	height: 14px;
-	stroke-width: 2.6;
-}
-.sl-markdown-content .ac-cap {
-	flex: 1 1 220px;
-	margin: 0;
-	font-size: 14.5px;
-	line-height: 1.45;
-	color: var(--muted);
-}
-.sl-markdown-content .ac-cap b {
-	color: var(--ink);
-	font-weight: 600;
-}
-.sl-markdown-content .ac-head .cs-reset {
-	flex: none;
-	margin-left: auto;
-}
 .sl-markdown-content .ac-body {
 	display: grid;
 	grid-template-columns: minmax(0, 1fr) minmax(200px, 34%);
 	column-gap: 28px;
-	align-items: start;
 }
+/* The notes column runs the demo's full height, so Reset sits at its bottom right. */
+.sl-markdown-content .ac-aside {
+	display: flex;
+	flex-direction: column;
+	gap: 16px;
+	min-width: 0;
+}
+.sl-markdown-content .ac-aside .cs-reset {
+	margin-top: auto;
+	align-self: flex-end;
+}
+/* The stage reaches 16px past the demo's right edge, into the gap, so a number beside an element near that edge
+   still fits on the right instead of flipping over the element's label. */
 .sl-markdown-content .ac-stage {
 	position: relative;
 	min-width: 0;
+	margin-right: -16px;
+	padding-right: 16px;
 }
 .sl-markdown-content .ac-stack .ac-body {
 	grid-template-columns: minmax(0, 1fr);
@@ -164,6 +141,8 @@
 .sl-markdown-content .ac-ring,
 .sl-markdown-content .ac-pin {
 	position: absolute;
+	/* Above the demos' own overlays and dialogs, whose z-index goes up to 9. */
+	z-index: 20;
 	pointer-events: none;
 	position-visibility: anchors-visible;
 	transition: opacity 0.15s, outline-color 0.15s;

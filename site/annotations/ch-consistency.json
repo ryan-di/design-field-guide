@@ -1,0 +1,101 @@
+{
+ "good-consistency-1": {
+  "bad": [
+   {"at": ".cn-item [data-add=\"Mug\"]", "title": "Add to cart → reads as a link", "text": "Plain text with an arrow says it opens the mug’s page. Some people expect to see it, not add it."},
+   {"at": ".cn-prod [data-add]", "title": "A filled button for the same action", "text": "Desk lamp gets a button and Mug gets a link. People wonder if they do different things."}
+  ],
+  "good": [
+   {"at": ".cn-item [data-add=\"Mug\"]", "title": "The mug gets the same button", "text": "Same fill, same label, no arrow. People know what it does before they press it."},
+   {"at": ".cn-prod [data-add]", "title": "Built once, used in both places", "text": "A change to the button reaches the product page and the wishlist together."}
+  ]
+ },
+ "good-consistency-2": {
+  "bad": [
+   {"at": "[data-book]", "title": "First it’s bookings", "text": "Add to my bookings is the first name people learn for the saved hotel."},
+   {"at": ".toast", "title": "Then it’s reservations", "text": "A second word makes people wonder if a reservation is something else.", "wait": "Press Add to my bookings to see this.", "reveal": [["click", "[data-book]"]]},
+   {"at": "[data-tab=\"Trips\"]", "title": "And it lives under Trips", "text": "There’s no Bookings tab, so people have to guess where the hotel went."}
+  ],
+  "good": [
+   {"at": "[data-book]", "title": "Add to Trips names the place", "text": "The button tells people where the hotel will go."},
+   {"at": ".toast", "title": "Added to Trips, the same word", "text": "The message confirms it in the words people just read.", "wait": "Press Add to Trips to see this.", "reveal": [["click", "[data-book]"]]},
+   {"at": "[data-tab=\"Trips\"]", "title": "The tab people look for", "text": "It matches the button word for word, and shows a 1 once the hotel is added."}
+  ]
+ },
+ "good-consistency-3": {
+  "bad": [
+   {"at": ".cs-dlg [data-yes]", "title": "Delete sits where Cancel usually is", "text": "People who press by habit erase the 3 photos they meant to keep.", "wait": "Press Delete to see this.", "reveal": [["click", "[data-del]"]]},
+   {"at": ".cs-dlg [data-no]", "title": "Cancel moved to the right end", "text": "The spot most apps use for the main action now backs out.", "wait": "Press Delete to see this.", "reveal": [["click", "[data-del]"]]}
+  ],
+  "good": [
+   {"at": ".cs-dlg [data-no]", "title": "Cancel on the left, as usual", "text": "A press by habit here keeps the photos.", "wait": "Press Delete to see this.", "reveal": [["click", "[data-del]"]]},
+   {"at": ".cs-dlg [data-yes]", "title": "Delete at the right end, in red", "text": "The main action sits where people expect it, and the red asks them to read first.", "wait": "Press Delete to see this.", "reveal": [["click", "[data-del]"]]}
+  ]
+ },
+ "good-design-tokens-1": {
+  "bad": [
+   {"at": ".tk-btn", "title": "Subscribe keeps its own 6px corner", "text": "Rounder corners and Green both pass it by, so it keeps its corner and its blue."},
+   {"at": ".tk-badge", "title": "Free holds its own blue", "text": "Switch the accent and the badge clashes with the card’s green top edge."},
+   {"at": "[data-out]:not(:empty)", "title": "Four parts didn’t follow", "text": "Only the card changed. Badge, input, button and link each need their own edit.", "wait": "Turn on Rounder corners to see this.", "reveal": [["check", "[data-sw]"]]}
+  ],
+  "good": [
+   {"at": ".tk-btn", "title": "Subscribe follows the card", "text": "Its corner and fill come from the same tokens, so it changes with them."},
+   {"at": ".tk-badge", "title": "Free turns green too", "text": "One accent change reaches the badge, the button, the link and the card’s top edge."}
+  ]
+ },
+ "good-design-tokens-2": {
+  "bad": [
+   {"at": ".tk-code", "title": "A token named after its color", "text": "The name blue-500 says what it looks like, not what it’s for."},
+   {"at": ".tk-bars", "title": "The rain turns green with the brand", "text": "Every bar used blue-500 too, so the chart no longer looks like water."},
+   {"at": ".tk-code mark", "title": "A blue token that holds green", "text": "The name now lies, and fixing the rain means editing the chart as well.", "wait": "Press Make the brand green to see this.", "reveal": [["click", "[data-go]"]]}
+  ],
+  "good": [
+   {"at": ".tk-code", "title": "Named by job: accent and rain", "text": "Both point at blue-500 today, but each can change on its own."},
+   {"at": ".tk-bars", "title": "The rain stays blue", "text": "The brand turns green, and the chart keeps the color people read as water."},
+   {"at": ".tk-code mark", "title": "One line changes", "text": "Only accent moves to green-600. Nothing else in the code is touched.", "wait": "Press Make the brand green to see this.", "reveal": [["click", "[data-go]"]]}
+  ]
+ },
+ "good-design-tokens-3": {
+  "bad": [
+   {"at": ".tk-chips", "title": "Eleven tokens, 1px apart", "text": "On a card, radius-7, radius-8 and radius-9 look alike, so people pick at random."},
+   {"at": "[data-out]:not(:empty)", "title": "Popular tokens with near twins", "text": "Next to radius-8 and its 41 uses sit look-alikes with 3 and 2. That’s drift already.", "wait": "Pick radius-8 to see this.", "reveal": [["click", "[data-name=\"radius-8\"]"]]}
+  ],
+  "good": [
+   {"at": ".tk-chips", "title": "Three steps people can tell apart", "text": "4, 8 and 16px. The difference shows at a glance."},
+   {"at": "[data-name=\"radius-medium\"]", "title": "Each one says what it’s for", "text": "Cards is written right under radius-medium, so a new card needs no guess."}
+  ]
+ },
+ "good-break-on-purpose-1": {
+  "bad": [
+   {"at": ".bp-co:not(:has([data-cover])) [data-pay]", "title": "Pay is one color among five", "text": "Orange, blue, purple, red and green. People read every label to find Pay.", "wait": "Press Start to see this.", "reveal": [["click", "[data-start]"]]},
+   {"at": ".bp-co:not(:has([data-cover])) [data-x=\"Apply coupon\"]", "title": "Apply coupon shouts in orange", "text": "It grabs the eye first, though most people have no coupon.", "wait": "Press Start to see this.", "reveal": [["click", "[data-start]"]]},
+   {"at": ".bp-co:not(:has([data-cover])) .bp-tag.hot", "title": "Popular in warning red", "text": "Red usually means a problem, so the insurance line looks like an error.", "wait": "Press Start to see this.", "reveal": [["click", "[data-start]"]]}
+  ],
+  "good": [
+   {"at": ".bp-co:not(:has([data-cover])) [data-pay]", "title": "Pay is the only filled button", "text": "Full width at the bottom, so people find it without reading the rest.", "wait": "Press Start to see this.", "reveal": [["click", "[data-start]"]]},
+   {"at": ".bp-co:not(:has([data-cover])) [data-x=\"Apply coupon\"]", "title": "Apply coupon goes quiet", "text": "Outlined like Back to cart. Still easy to find for people with a code.", "wait": "Press Start to see this.", "reveal": [["click", "[data-start]"]]},
+   {"at": ".bp-co:not(:has([data-cover])) .bp-tag.hot", "title": "Popular as a plain label", "text": "The tags stay readable but gray, so they don’t compete with Pay.", "wait": "Press Start to see this.", "reveal": [["click", "[data-start]"]]}
+  ]
+ },
+ "good-break-on-purpose-2": {
+  "bad": [
+   {"at": ".bp-guide em", "title": "Red, with no reason given", "text": "Delete account and Upgrade share nothing, so nobody can tell when red fits next."},
+   {"at": ".bp-scr .btn-danger", "title": "Save changes turns red", "text": "A teammate read red as important. Clear chat history, which deletes data, stays plain.", "wait": "Press Build the next screen to see this.", "reveal": [["click", "[data-build]"]]}
+  ],
+  "good": [
+   {"at": ".bp-guide p:last-child", "title": "A rule with a why", "text": "The reason lets the next person apply it to buttons the guide never listed."},
+   {"at": ".bp-scr .btn-danger", "title": "Red lands on Clear chat history", "text": "The one action that deletes messages. Save changes stays the normal primary.", "wait": "Press Build the next screen to see this.", "reveal": [["click", "[data-build]"]]}
+  ]
+ },
+ "good-break-on-purpose-3": {
+  "bad": [
+   {"at": ".bp-r:nth-child(2) .bp-s", "title": "Checkout’s corners came by copy", "text": "Nobody chose 4px. It came along with an old screen."},
+   {"at": ".bp-r:nth-child(5)", "title": "Settings copies a copy", "text": "It takes Profile’s off blue and trims the padding. Each release adds a variant.", "wait": "Press Next release to see this.", "reveal": [["click", "[data-next]"]]},
+   {"at": "[data-out]", "title": "The count climbs, nothing stops it", "text": "Two releases later there are 6 button styles, and still only two were chosen."}
+  ],
+  "good": [
+   {"at": "[data-audit]", "title": "An audit, part of the routine", "text": "Run audit checks every button against the standard one."},
+   {"at": ".bp-r:nth-child(2):has(small.ok)", "title": "Drift folded back", "text": "Checkout’s 4px corners go back to the standard button.", "wait": "Press Run audit to see this.", "reveal": [["click", "[data-audit]"]]},
+   {"at": ".bp-r:nth-child(4):has(small.ok)", "title": "Sign in with Apple, named", "text": "The one real variant becomes button-apple, so it stays on purpose.", "wait": "Press Run audit to see this.", "reveal": [["click", "[data-audit]"]]}
+  ]
+ }
+}

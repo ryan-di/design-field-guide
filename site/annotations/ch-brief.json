@@ -1,0 +1,596 @@
+{
+ "eff-brief-1": {
+  "bad": [
+   {
+    "at": ".bf-doc",
+    "title": "Only the answer, no problem",
+    "text": "Nothing says what people were trying to do, so no other fix can compete."
+   },
+   {
+    "at": "[data-ag]",
+    "title": "It builds the search bar and stops",
+    "text": "The fix works, but nobody checks whether something simpler would have helped more.",
+    "wait": "Press Send to agent to see this.",
+    "reveal": [
+     [
+      "click",
+      "[data-go]"
+     ],
+     [
+      "wait",
+      900
+     ]
+    ]
+   }
+  ],
+  "good": [
+   {
+    "at": ".bf-doc > span:nth-child(1)",
+    "title": "The problem, in people’s terms",
+    "text": "People can’t find how to turn off email alerts. Any fix has to solve that."
+   },
+   {
+    "at": ".bf-doc > span:nth-child(3)",
+    "title": "The search bar becomes one option",
+    "text": "It stays on the table, but it no longer limits the answer."
+   },
+   {
+    "at": "[data-ag]",
+    "title": "Three options instead of one",
+    "text": "A “Turn off these emails” link in every email wins. It’s one click from where people already are.",
+    "wait": "Press Send to agent to see this.",
+    "reveal": [
+     [
+      "click",
+      "[data-go]"
+     ],
+     [
+      "wait",
+      2000
+     ]
+    ]
+   }
+  ]
+ },
+ "eff-brief-2": {
+  "bad": [
+   {
+    "at": ".bf-doc",
+    "title": "A clear goal, but no fence",
+    "text": "Nothing tells the agent that the layout and the button wording are off limits."
+   },
+   {
+    "at": "[data-ag] .bf-li.extra",
+    "title": "Three changes nobody asked for",
+    "text": "A new layout, “Sign in” renamed to “Log in” and a “Remember me” option, each needing review.",
+    "wait": "Press Send to agent to see this.",
+    "reveal": [
+     [
+      "click",
+      "[data-go]"
+     ],
+     [
+      "wait",
+      900
+     ]
+    ]
+   }
+  ],
+  "good": [
+   {
+    "at": ".bf-doc .new",
+    "title": "Non-goals name what stays put",
+    "text": "The page layout, button wording and new options are listed, so the agent leaves them alone."
+   },
+   {
+    "at": "[data-ag] .bf-li.ok",
+    "title": "One change, the one asked for",
+    "text": "The pull request holds only the new error message, so it’s quick to review.",
+    "wait": "Press Send to agent to see this.",
+    "reveal": [
+     [
+      "click",
+      "[data-go]"
+     ],
+     [
+      "wait",
+      900
+     ]
+    ]
+   }
+  ]
+ },
+ "eff-brief-3": {
+  "bad": [
+   {
+    "at": ".bf-doc > span:nth-child(2)",
+    "title": "The goal stops at “can switch”",
+    "text": "Nothing says how fast, whether the choice lasts, or if the keyboard works."
+   },
+   {
+    "at": "[data-ag]",
+    "title": "The agent calls it done",
+    "text": "It added a language menu and checked it off. The brief gives nothing to test that against.",
+    "wait": "Press Is it done? to see this.",
+    "reveal": [
+     [
+      "click",
+      "[data-go]"
+     ],
+     [
+      "wait",
+      900
+     ]
+    ]
+   },
+   {
+    "at": "[data-res]",
+    "title": "The review turns into taste",
+    "text": "One reviewer says it looks fine, another wants it easier to find. Neither can be settled.",
+    "wait": "Press Is it done? to see this.",
+    "reveal": [
+     [
+      "click",
+      "[data-go]"
+     ],
+     [
+      "wait",
+      900
+     ]
+    ]
+   }
+  ],
+  "good": [
+   {
+    "at": ".bf-doc .new",
+    "title": "Three checks anyone can run",
+    "text": "Under a minute for a new user, kept after a restart, and works with the keyboard only."
+   },
+   {
+    "at": "[data-ag] .bf-li.no",
+    "title": "One check fails, and it’s clear which",
+    "text": "Enter doesn’t work from the keyboard, so the work goes back with a precise reason.",
+    "wait": "Press Check against the brief to see this.",
+    "reveal": [
+     [
+      "click",
+      "[data-go]"
+     ],
+     [
+      "wait",
+      900
+     ]
+    ]
+   }
+  ]
+ },
+ "eff-brief-4": {
+  "bad": [
+   {
+    "at": ".bf-doc",
+    "title": "Two words nobody can check",
+    "text": "Each reader pictures a different “cleaner”, and none of them is wrong by the brief."
+   },
+   {
+    "at": "[data-ag]",
+    "title": "Three unrelated changes come back",
+    "text": "Coupon field gone, new colors, or the total moved up. Nothing in the brief picks between them.",
+    "wait": "Press Ask 3 agents to see this.",
+    "reveal": [
+     [
+      "click",
+      "[data-go]"
+     ],
+     [
+      "wait",
+      900
+     ]
+    ]
+   }
+  ],
+  "good": [
+   {
+    "at": ".bf-doc",
+    "title": "Two facts anyone can watch for",
+    "text": "Three steps or fewer, and the total shows before card details."
+   },
+   {
+    "at": "[data-ag] .bf-li em",
+    "title": "Each result shows its step count",
+    "text": "The three designs differ, but each lands at 3 steps, so all of them pass.",
+    "wait": "Press Ask 3 agents to see this.",
+    "reveal": [
+     [
+      "click",
+      "[data-go]"
+     ],
+     [
+      "wait",
+      900
+     ]
+    ]
+   }
+  ]
+ },
+ "eff-context-pack-1": {
+  "bad": [
+   {
+    "at": ".cp-me",
+    "title": "No path to the design system",
+    "text": "The request says where the button goes, but not which tokens or component to use."
+   },
+   {
+    "at": ".cp-code",
+    "title": "Hard-coded red, 2px corners, Georgia",
+    "text": "Every value is invented, and outline:none removes the focus ring."
+   },
+   {
+    "at": ".cp-made",
+    "title": "Nothing like Sign out beside it",
+    "text": "A different red, shape and font. Press Tab and no ring shows where focus is."
+   }
+  ],
+  "good": [
+   {
+    "at": ".cp-me",
+    "title": "Token file and Button.vue, by path",
+    "text": "The danger variant is named, and new buttons are ruled out."
+   },
+   {
+    "at": ".cp-code",
+    "title": "One line that reuses the component",
+    "text": "Color, shape and focus style all come from Button.vue, not from the agent."
+   },
+   {
+    "at": ".cp-danger",
+    "title": "Same shape and ring as Sign out",
+    "text": "Press Tab from Sign out and the same focus ring lands on Delete account."
+   }
+  ]
+ },
+ "eff-context-pack-2": {
+  "bad": [
+   {
+    "at": ".cp-att",
+    "title": "4,120 files for one screen",
+    "text": "Plus all 38 Figma pages and the whole wiki. The agent has to guess what matters."
+   },
+   {
+    "at": ".cp-meter",
+    "title": "Context full, request cut off",
+    "text": "The pile used all the room, so the end of the request never reached the agent."
+   },
+   {
+    "at": "[data-ag]",
+    "title": "It copies screens replaced last year",
+    "text": "The agent picked the 2023 onboarding screens as its model, since nothing marked them as old.",
+    "wait": "Press Send to agent to see this.",
+    "reveal": [
+     [
+      "click",
+      "[data-go]"
+     ],
+     [
+      "wait",
+      900
+     ]
+    ]
+   }
+  ],
+  "good": [
+   {
+    "at": ".cp-att",
+    "title": "Three picks, each tied to the task",
+    "text": "Login.vue and Profile.vue show the current layout, so there’s nothing old to copy."
+   },
+   {
+    "at": ".cp-meter",
+    "title": "12% used, request intact",
+    "text": "Plenty of room is left, so the whole request reaches the agent."
+   },
+   {
+    "at": "[data-ag]",
+    "title": "It follows Login.vue",
+    "text": "Same layout, same field components and the frames’ wording, so it fits the screens next to it.",
+    "wait": "Press Send to agent to see this.",
+    "reveal": [
+     [
+      "click",
+      "[data-go]"
+     ],
+     [
+      "wait",
+      900
+     ]
+    ]
+   }
+  ]
+ },
+ "eff-context-pack-3": {
+  "bad": [
+   {
+    "at": ".cp-me",
+    "title": "Every word leaves room to guess",
+    "text": "“Small”, “soft” and “gray” each allow many sizes, shades and positions."
+   },
+   {
+    "at": ".cp-trip.off",
+    "title": "A card the words allow",
+    "text": "The image sits on top and the date is blue, yet nothing in the request rules that out."
+   }
+  ],
+  "good": [
+   {
+    "at": ".cp-chip",
+    "title": "One link instead of a description",
+    "text": "The agent reads sizes and colors from the Trips / Card frame, so there’s nothing to guess."
+   },
+   {
+    "at": ".cp-two > div:nth-child(2) .cp-trip",
+    "title": "A match for the design",
+    "text": "Image on the left, bold title, gray date and a soft shadow, same as the frame."
+   }
+  ]
+ },
+ "eff-context-pack-4": {
+  "bad": [
+   {
+    "at": ".cs-meta",
+    "title": "Rules pasted by hand each time",
+    "text": "Tokens, components and copy rules go into every request, and any paste can come up short."
+   },
+   {
+    "at": ".cp-task:nth-child(3) small",
+    "title": "Task 3 forgot the copy rules",
+    "text": "Nothing warned anyone. The rules were simply missing from that one paste.",
+    "wait": "Press Next task three times to see this.",
+    "reveal": [
+     [
+      "click",
+      "[data-next]"
+     ],
+     [
+      "click",
+      "[data-next]"
+     ],
+     [
+      "click",
+      "[data-next]"
+     ]
+    ]
+   },
+   {
+    "at": ".cp-task:nth-child(3) > span",
+    "title": "The dialog falls back to OK",
+    "text": "“Are you sure?” with OK doesn’t say that photos will be deleted.",
+    "wait": "Press Next task three times to see this.",
+    "reveal": [
+     [
+      "click",
+      "[data-next]"
+     ],
+     [
+      "click",
+      "[data-next]"
+     ],
+     [
+      "click",
+      "[data-next]"
+     ]
+    ]
+   }
+  ],
+  "good": [
+   {
+    "at": ".cp-chip",
+    "title": "The rules live in CLAUDE.md",
+    "text": "The agent reads tokens, components and copy rules every session, with nothing to paste."
+   },
+   {
+    "at": ".cp-task:nth-child(3) > span",
+    "title": "Task 3 says Delete 3 photos",
+    "text": "The button says what will happen, because the copy rules came along on their own.",
+    "wait": "Press Next task three times to see this.",
+    "reveal": [
+     [
+      "click",
+      "[data-next]"
+     ],
+     [
+      "click",
+      "[data-next]"
+     ],
+     [
+      "click",
+      "[data-next]"
+     ]
+    ]
+   }
+  ]
+ },
+ "eff-definition-of-done-1": {
+  "bad": [
+   {
+    "at": ".dd-b p",
+    "title": "“Everything works and is tested”",
+    "text": "A claim with no test run, no screenshot and no list of what was checked."
+   },
+   {
+    "at": "[data-out]",
+    "title": "The bug reaches people first",
+    "text": "The next day, a report says an empty name leaves a blank tab.",
+    "wait": "Press Approve to see this.",
+    "reveal": [
+     [
+      "click",
+      "[data-ok]"
+     ],
+     [
+      "wait",
+      1200
+     ]
+    ]
+   }
+  ],
+  "good": [
+   {
+    "at": ".dd-li:nth-child(3)",
+    "title": "The empty-name case has a test",
+    "text": "An empty name is refused and the old name stays, and Playwright passed it."
+   },
+   {
+    "at": ".dd-shots",
+    "title": "Three screenshots: light, dark, narrow",
+    "text": "A glance shows the tab looks right in each, without running the app."
+   },
+   {
+    "at": ".dd-li:last-child",
+    "title": "One check left to a person",
+    "text": "Whether the rename hint reads well is marked as theirs to check, not as passed."
+   }
+  ]
+ },
+ "eff-definition-of-done-2": {
+  "bad": [
+   {
+    "at": ".dd-crit:nth-child(1) > span",
+    "title": "“Feels intuitive” can’t pass or fail",
+    "text": "Nobody can say what to look for, so it gets waved through."
+   },
+   {
+    "at": "[data-r=\"0\"]",
+    "title": "Check has nothing to check",
+    "text": "No search, no result, no state to look at. It’s marked done anyway.",
+    "wait": "Press Check on the first line to see this.",
+    "reveal": [
+     [
+      "click",
+      "[data-c=\"0\"]"
+     ]
+    ]
+   },
+   {
+    "at": ".dd-crit:nth-child(3) > span",
+    "title": "“It works well” covers nothing",
+    "text": "Works how, and for which search? No result or state is named."
+   }
+  ],
+  "good": [
+   {
+    "at": ".dd-crit:nth-child(1) > span",
+    "title": "Type “dark”, see Theme first",
+    "text": "One search and one expected top result, so Playwright can test it."
+   },
+   {
+    "at": "[data-r=\"0\"]",
+    "title": "It passes with evidence",
+    "text": "Playwright found Theme first, so the line is done for a reason.",
+    "wait": "Press Check on the first line to see this.",
+    "reveal": [
+     [
+      "click",
+      "[data-c=\"0\"]"
+     ]
+    ]
+   },
+   {
+    "at": ".dd-tag",
+    "title": "The judgment call stays human",
+    "text": "A test can’t tell if the order makes sense, so a person tries a few searches."
+   }
+  ]
+ },
+ "eff-definition-of-done-3": {
+  "bad": [
+   {
+    "at": ".dd-crit",
+    "title": "Only the easy case is written",
+    "text": "Nothing covers a failed save or several tabs, which is where people lose work."
+   },
+   {
+    "at": "[data-o]",
+    "title": "A failed save closes the tab",
+    "text": "Nobody checked this state, so the changes are gone.",
+    "wait": "Pick Save fails to see this.",
+    "reveal": [
+     [
+      "click",
+      "[data-s=\"fail\"]"
+     ]
+    ]
+   }
+  ],
+  "good": [
+   {
+    "at": ".dd-crit[data-k=\"fail\"]",
+    "title": "A failed save keeps the tab",
+    "text": "The criterion says the tab stays open and explains why, so someone checks it."
+   },
+   {
+    "at": "[data-o]",
+    "title": "The tab says why it stayed",
+    "text": "“Couldn’t save. The disk is full.” The work is still there.",
+    "wait": "Pick Save fails to see this.",
+    "reveal": [
+     [
+      "click",
+      "[data-s=\"fail\"]"
+     ]
+    ]
+   },
+   {
+    "at": ".dd-crit[data-k=\"narrow\"]",
+    "title": "A width to test: 360 px",
+    "text": "The buttons stack and Cancel stays visible, so nobody is forced to save or lose work."
+   }
+  ]
+ },
+ "eff-definition-of-done-4": {
+  "bad": [
+   {
+    "at": ".dd-miss",
+    "title": "“Later” means no test at all",
+    "text": "Nothing in the pull request guards Duplicate against the next change."
+   },
+   {
+    "at": "[data-out] > span:nth-child(2)",
+    "title": "CI passes with Duplicate gone",
+    "text": "A menu clean-up drops it, and people report it three days later.",
+    "wait": "Press Ship, then Two weeks later, to see this.",
+    "reveal": [
+     [
+      "click",
+      "[data-ship]"
+     ],
+     [
+      "click",
+      "[data-later]"
+     ]
+    ]
+   }
+  ],
+  "good": [
+   {
+    "at": ".dd-b code",
+    "title": "Names the exact spec file",
+    "text": "It checks that Duplicate opens “Copy of Logo ideas” in a new tab, in this same pull request."
+   },
+   {
+    "at": "[data-out] > span:nth-child(2)",
+    "title": "CI catches the missing Duplicate",
+    "text": "The spec fails before merge, so people never see the menu without it.",
+    "wait": "Press Ship, then Two weeks later, to see this.",
+    "reveal": [
+     [
+      "click",
+      "[data-ship]"
+     ],
+     [
+      "click",
+      "[data-later]"
+     ]
+    ]
+   }
+  ]
+ }
+}

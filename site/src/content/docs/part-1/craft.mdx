@@ -36,7 +36,7 @@ import F21 from '../../../fragments/ch-craft/21.html?raw';
 
 <section class="dfg-chapter" id="ch-craft">
 
-Craft is what happens in the last 10% of a design: the timing, the messy data and the keyboard path. Mockups rarely show any of it, and people notice all of it. It lives in code, which is why it’s where a design engineer earns their keep. The entries below take those three edges one at a time. The looks a single control takes, from hover to loading, have their own entry: [Interaction states](/part-3/states/#interaction-states).
+Craft is what happens in the last 10% of a design: the timing, the messy data and the keyboard path. Mockups rarely show any of it, and people notice all of it. It lives in code, which is why it’s where a design engineer earns their keep. The entries below take those three edges one at a time. The looks a single control takes, from hover to loading, have their own entry: [Interaction states](../../part-3/states/#interaction-states).
 
 <article class="entry essay" id="good-motion" data-entry data-name="Motion">
 
@@ -122,7 +122,7 @@ Linear motion looks mechanical. Ease-in starts slow, so something that arrives w
 
 Real data is long, missing, huge and empty. Names run past the edge, images fail to load, counts reach the millions, and fields come back blank. A design made only with tidy sample data breaks on the first day of real use, and people see those cases every day after that.
 
-For every field, decide what happens when it is very long, missing, very large, empty, or squeezed into a narrow space. [Checking more than the happy path](/part-1/problem/#good-needs-hierarchy) covers slow, empty and failed loads. This entry is about the data itself.
+For every field, decide what happens when it is very long, missing, very large, empty, or squeezed into a narrow space. [Checking more than the happy path](../../part-1/problem/#good-needs-hierarchy) covers slow, empty and failed loads. This entry is about the data itself.
 
 <Raw html={F7} />
 
@@ -156,7 +156,7 @@ When long names are cut at the end, items that differ only at the end look the s
 
 #### 3. Reserve space for what loads later \{#good-edge-cases-rule-3-h\}
 
-When something loads late, it pushes everything below it down, and a click aimed at a button lands on the wrong thing. Reserve the space before the content arrives: give images a fixed aspect ratio, and make [skeletons](/part-3/progress/#skeleton) the same size as the content they stand in for.
+When something loads late, it pushes everything below it down, and a click aimed at a button lands on the wrong thing. Reserve the space before the content arrives: give images a fixed aspect ratio, and make [skeletons](../../part-3/progress/#skeleton) the same size as the content they stand in for.
 
 <Raw html={F10} />
 
@@ -234,7 +234,7 @@ People expect Tab to follow the layout: left to right, top to bottom. When CSS m
 
 #### 3. Use real buttons and links \{#good-keyboard-focus-rule-3-h\}
 
-A `div` or `span` with a click handler works with a mouse and nothing else: Tab skips it, Enter does nothing, and a screen reader doesn’t call it a button. Use a `button` for actions and a link for going somewhere, because they get focus, the keys and a role for free. See [Link vs button](/part-3/actions/#link-vs-button).
+A `div` or `span` with a click handler works with a mouse and nothing else: Tab skips it, Enter does nothing, and a screen reader doesn’t call it a button. Use a `button` for actions and a link for going somewhere, because they get focus, the keys and a role for free. See [Link vs button](../../part-3/actions/#link-vs-button).
 
 <Raw html={F18} />
 
@@ -244,7 +244,7 @@ A `div` or `span` with a click handler works with a mouse and nothing else: Tab 
 
 #### 4. Move focus with what opens and closes \{#good-keyboard-focus-rule-4-h\}
 
-When a [dialog](/part-3/dialogs/#dialog) opens and focus stays behind it, keyboard users keep tabbing through a page they can’t see. When it closes and focus goes back to the top, they have to find their place again. Move focus into the dialog when it opens, and when it closes, put focus back on the control that opened it.
+When a [dialog](../../part-3/dialogs/#dialog) opens and focus stays behind it, keyboard users keep tabbing through a page they can’t see. When it closes and focus goes back to the top, they have to find their place again. Move focus into the dialog when it opens, and when it closes, put focus back on the control that opened it.
 
 <Raw html={F19} />
 

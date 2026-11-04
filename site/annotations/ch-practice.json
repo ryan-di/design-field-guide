@@ -1,0 +1,133 @@
+{
+ "good-train-your-eye-1": {
+  "bad": [
+   {"at": ".te-file", "title": "Named for when, not for what", "text": "“Screenshot 2026-01-10” says when it was taken, nothing about the problem it shows."},
+   {"at": "[data-q]", "title": "Search has nothing to match", "text": "“empty” finds none of the 9 files, though three are empty states."}
+  ],
+  "good": [
+   {"at": ".te-tag", "title": "A tag names the problem", "text": "Tags like error and empty state are the words people search with later."},
+   {"at": "[data-q]", "title": "“empty” finds all three", "text": "Inbox, search and trips come up, so a past solution is one search away."}
+  ]
+ },
+ "good-train-your-eye-2": {
+  "bad": [
+   {"at": ".te-note", "title": "“Nice list” keeps no reason", "text": "It says the list is good, not what makes it work."},
+   {"at": ".te-acts", "title": "Dark or Gray is a guess", "text": "The price is new, and nothing in the note says how to treat it."}
+  ],
+  "good": [
+   {"at": ".te-note", "title": "One line on why it works", "text": "“Only the title is dark” still applies to a column the copy never had."},
+   {"at": ".te-acts", "title": "The reason picks the color", "text": "A gray price keeps titles the only dark text, so the answer is Gray."}
+  ]
+ },
+ "good-train-your-eye-3": {
+  "bad": [
+   {"at": "[data-k=\"Showcase\"]", "title": "Three perfect trips, the easy case", "text": "Neat photos and short dates are the part that needed the least design."},
+   {"at": ".te-none", "title": "Nothing to learn for Empty", "text": "When people have no trips yet, there’s no example of what to show them.", "wait": "Press Empty to see this.", "reveal": [["click", "[data-k=\"Empty\"]"]]},
+   {"at": "[data-out]", "title": "1 of 5 states studied", "text": "The other four are where the hard decisions live."}
+  ],
+  "good": [
+   {"at": "[data-k=\"Showcase\"]", "title": "The showcase is one of five", "text": "The same three trips, kept next to the states that took the work."},
+   {"at": "[data-st] > .btn-secondary", "title": "An error with a way out", "text": "“Your trips are safe” and Try again, worth copying and saved only because it was captured.", "wait": "Press Error to see this.", "reveal": [["click", "[data-k=\"Error\"]"]]},
+   {"at": "[data-k=\"Keyboard\"]", "title": "Even the keyboard path is saved", "text": "Tab order, the focus ring and what a screen reader says, captured in a minute."}
+  ]
+ },
+ "good-train-your-eye-4": {
+  "bad": [
+   {"at": "[data-cards]", "title": "Two cards, four hidden differences", "text": "Padding, weight, color and corners all differ, so the eye only gets a feeling."},
+   {"at": ".te-cmp", "title": "“Feels nicer” has no answer", "text": "A feeling can’t be reused. People need a property they can name."}
+  ],
+  "good": [
+   {"at": "[data-cards]", "title": "The same two cards", "text": "Only the question changed, and now the differences are easy to see."},
+   {"at": ".te-tabs", "title": "One property per button", "text": "Each press points at a single thing to compare."},
+   {"at": "[data-cmp]", "title": "A difference with numbers", "text": "Title weight 700 on the left, 500 on the right. That goes straight into a design.", "wait": "Press Weight to see this.", "reveal": [["click", "[data-p=\"wt\"]"]]}
+  ]
+ },
+ "good-real-material-1": {
+  "bad": [
+   {"at": ".rm-stamp", "title": "Approved in week 1", "text": "Sign-off came before anyone saw real names or real timing."},
+   {"at": ".rm-res", "title": "Three short names, ready at once", "text": "Desk lamp, Reading lamp, Floor lamp. The real names are a full line longer."},
+   {"at": ".rm-cut", "title": "Week 4: names cut, a blank second", "text": "Long names are cut off, and nothing shows during the 1.2 s wait.", "wait": "Open the first build and type “lamp” to see this.", "reveal": [["click", "[data-build]"], ["fill", "input", "lamp"], ["wait", 1500]]}
+  ],
+  "good": [
+   {"at": ".rm-stamp", "title": "Week 1, already in code", "text": "The risky search is built before sign-off, while the design can still change."},
+   {"at": ".rm-wait", "title": "Searching… fills the 1.2 s", "text": "The real delay showed up in week 1, so the design got a loading line.", "wait": "Type “lamp” to see this.", "reveal": [["fill", "input", "lamp"]]},
+   {"at": ".rm-wrap", "title": "Long names wrap to two lines", "text": "The prototype used the real product names, so the layout was made for them.", "wait": "Type “lamp” and wait a moment to see this.", "reveal": [["fill", "input", "lamp"], ["wait", 1500]]}
+  ]
+ },
+ "good-real-material-2": {
+  "bad": [
+   {"at": ".rm-br", "title": "A name like any other branch", "text": "Nothing in search-suggestions tells reviewers the code is throwaway."},
+   {"at": ".rm-code", "title": "A fake delay with no warning", "text": "DELAY = 1200 and a hard-coded blue look like real choices to the next reader."},
+   {"at": ".rm-later", "title": "The fake delay ships", "text": "Months later, people wait 1.2 s for every suggestion, and nobody knows why.", "wait": "Press Merge to see this.", "reveal": [["click", "[data-merge]"], ["wait", 900]]}
+  ],
+  "good": [
+   {"at": ".rm-br", "title": "The branch name starts with prototype/", "text": "Anyone scanning the branches sees what it is before opening it."},
+   {"at": ".rm-code em", "title": "A warning at the top of the file", "text": "It names what’s fake and says to rebuild before shipping."},
+   {"at": ".rm-later", "title": "Rebuilt, not merged", "text": "A task replaces the prototype with tokens and tests. The fake delay never ships.", "wait": "Press Merge to see this.", "reveal": [["click", "[data-merge]"]]}
+  ]
+ },
+ "good-real-material-3": {
+  "bad": [
+   {"at": ".rm-sl", "title": "A slider with no target", "text": "Anything from 1 to 8 s could be right, so there’s nowhere to stop."},
+   {"at": "[data-tw]", "title": "Tweaks only count up", "text": "After eight moves it still isn’t done. People stop when they’re tired."}
+  ],
+  "good": [
+   {"at": ".rm-sl", "title": "The same slider, now with an end", "text": "Move it to 4 s and the check passes. That’s where to stop."},
+   {"at": ".rm-goal", "title": "Done when, written first", "text": "A two-line caption takes about 4 s to read, so that’s the bar."},
+   {"at": "[data-chk]", "title": "Each value gets a verdict", "text": "Under 4 s fails, 4 to 6 s passes, and past 6 s people wait too long."}
+  ]
+ },
+ "good-real-material-4": {
+  "bad": [
+   {"at": ".rm-pc", "title": "Only the tidy case was tried", "text": "A short name, 24 songs, cover art and a wide screen."},
+   {"at": ".rm-pc:has(.blank)", "title": "An empty playlist is a blank card", "text": "No art and no songs, and no way to add any from here.", "wait": "Press Launch to see this.", "reveal": [["click", "[data-go]"]]},
+   {"at": ".rm-pc.narrow", "title": "Buttons cut off on a small phone", "text": "Play, Shuffle and Share don’t fit, so Share is out of reach.", "wait": "Press Launch to see this.", "reveal": [["click", "[data-go]"]]}
+  ],
+  "good": [
+   {"at": ".rm-cases", "title": "Each messy case, on purpose", "text": "Long name, Empty, Slow and Small phone, each tried before launch."},
+   {"at": ".rm-pc:has(.blank)", "title": "Empty gets an Add songs button", "text": "People get a next step instead of a hole.", "wait": "Press Empty to see this.", "reveal": [["click", "[data-k=\"empty\"]"]]},
+   {"at": ".rm-pc.narrow", "title": "Buttons wrap on a small phone", "text": "Play, Shuffle and Share drop to a second line instead of being cut.", "wait": "Press Small phone to see this.", "reveal": [["click", "[data-k=\"narrow\"]"]]}
+  ]
+ },
+ "good-design-rationale-1": {
+  "bad": [
+   {"at": ".dr-who", "title": "Mia asks a settled question", "text": "The decision was made in March, but nothing on the issue says so."},
+   {"at": ".dr-bad", "title": "214 messages, no answer", "text": "The reason was only said on a call, so Mia books a meeting to ask again.", "wait": "Press Find the reason to see this.", "reveal": [["click", "[data-find]"], ["wait", 1100]]}
+  ],
+  "good": [
+   {"at": ".dr-link", "title": "The decision, one click away", "text": "The issue links PR #377, right where Mia asks the question."},
+   {"at": ".dr-box", "title": "Why, and what was turned down", "text": "Album listeners said extra songs ruined the ending. Similar songs stay on for playlists.", "wait": "Press Find the reason to see this.", "reveal": [["click", "[data-find]"]]}
+  ]
+ },
+ "good-design-rationale-2": {
+  "bad": [
+   {"at": ".dr-doc > span:nth-of-type(2)", "title": "Only the winner and its reason", "text": "Tax included, and why. Nothing about what else was tried."},
+   {"at": ".dr-bad", "title": "The same idea, argued again", "text": "Adding tax at checkout was already tested, and nobody remembers. A 45-minute meeting follows.", "wait": "Press Ben’s proposal to see this.", "reveal": [["click", "[data-prop]"]]}
+  ],
+  "good": [
+   {"at": "[data-rej]", "title": "The rejected option, with its result", "text": "Tax at checkout lost people at the last step, so nobody needs to try it again."},
+   {"at": ".dr-good", "title": "The record answers Ben", "text": "He reads the line on checkout and drops the idea. No meeting needed.", "wait": "Press Ben’s proposal to see this.", "reveal": [["click", "[data-prop]"]]}
+  ]
+ },
+ "good-design-rationale-3": {
+  "bad": [
+   {"at": ".dr-out > .cs-meta", "title": "Merged 3 weeks ago, still unwritten", "text": "By now the trade-offs weighed in the review are mostly forgotten."},
+   {"at": ".dr-bad", "title": "“It seemed best” as the reason", "text": "“Some were discussed” and a decision. Nobody can learn from that.", "wait": "Press Write it up to see this.", "reveal": [["click", "[data-go]"]]}
+  ],
+  "good": [
+   {"at": ".dr-doc > .cs-meta", "title": "A draft, open while choosing", "text": "Each option gets its trade-off while the reasons are still fresh."},
+   {"at": ".dr-opt.new", "title": "Writing B’s trade-off finds C", "text": "Follow the system, with a switch to override it, closes the gap in B.", "wait": "Press Write the next trade-off twice to see this.", "reveal": [["click", "[data-go]"], ["click", "[data-go]"]]}
+  ]
+ },
+ "good-design-rationale-4": {
+  "bad": [
+   {"at": ".top", "title": "Opens with a refactor", "text": "SortService and an index are what reviewers read first, and they sound harmless."},
+   {"at": ".dr-rev", "title": "Approved as a refactor", "text": "The new sort order, the change people will notice, sat on the last line."}
+  ],
+  "good": [
+   {"at": ".top", "title": "Opens with what people will notice", "text": "Photos sort by the day they were taken. Reviewers know what to look at."},
+   {"at": ".muted", "title": "How it’s built comes last", "text": "The index and cache keys are still there for those who need them."},
+   {"at": ".dr-rev", "title": "The reviewer checks old scans", "text": "Knowing the change, they test the case most likely to look wrong."}
+  ]
+ }
+}

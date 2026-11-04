@@ -1,0 +1,127 @@
+{
+ "good-critique-1": {
+  "bad": [
+   {"at": ".cr-c:nth-child(2)", "title": "“I don’t like it” names nothing", "text": "Kai can’t tell if it’s the amount, the fields or the button."},
+   {"at": ".cr-c:nth-child(3)", "title": "“Cluttered” with no goal behind it", "text": "The screen has four parts. Cluttered for whom, and for what task?"},
+   {"at": ".cr-c:nth-child(4)", "title": "The designer has to ask", "text": "With nothing to act on, Kai defends the design or changes something at random."}
+  ],
+  "good": [
+   {"at": ".cr-c dl > div:nth-child(1)", "title": "Starts from the person’s goal", "text": "Fast and without mistakes, so every point after it can be judged against that."},
+   {"at": ".cr-c dl > div:nth-child(3)", "title": "The problem, with its cost", "text": "One typo sends €250 to a stranger. Kai sees why it matters."},
+   {"at": ".cr-c:last-child", "title": "One reply, one clear change", "text": "Kai knows what to fix and why: a name check before Send."}
+  ]
+ },
+ "good-critique-2": {
+  "bad": [
+   {"at": ".cr-c", "title": "A fix with no reason", "text": "Bigger for what? Kai can only do it or argue, since no problem is named."},
+   {"at": "[data-cart]", "title": "Checkout sits below six suggestions", "text": "People have to scroll the bag to find it, and a bigger button stays down there."}
+  ],
+  "good": [
+   {"at": ".cr-c", "title": "The problem and its cause", "text": "People scroll past six items and give up, so any fix can be checked against that."},
+   {"at": "[data-fix=\"move\"]", "title": "A fix the problem points to", "text": "Moving Checkout under the bag solves it, and the button doesn’t need to grow."}
+  ]
+ },
+ "good-critique-3": {
+  "bad": [
+   {"at": ".cr-app", "title": "Version 0.1, still dashed boxes", "text": "The order of the questions is still open, so the details may not survive."},
+   {"at": ".cr-c:nth-child(2)", "title": "Padding notes on a sketch", "text": "12 or 16 px won’t matter if the questions change order tomorrow."},
+   {"at": ".cr-c:nth-child(3)", "title": "Brand color before the flow works", "text": "Nobody asks yet whether dates should come before the city."}
+  ],
+  "good": [
+   {"at": ".cr-note", "title": "Kai says what feedback helps", "text": "Direction, not polish, with one concrete question to answer."},
+   {"at": ".cr-c:nth-child(3)", "title": "Ben answers the question asked", "text": "He argues from what people know first, which could change the whole sketch."},
+   {"at": ".cr-c:nth-child(4)", "title": "Lea adds an idea, not a pixel", "text": "“Anywhere” as a choice serves people who know only their dates."}
+  ]
+ },
+ "good-critique-4": {
+  "bad": [
+   {"at": ".cr-c:nth-child(2)", "title": "Ana leads with her own note", "text": "The talk is about slot size before Kai says a word."},
+   {"at": ".cr-c:nth-child(3)", "title": "Kai just agrees", "text": "His own doubt about the date never comes up."},
+   {"at": "[data-out]:not(:empty)", "title": "People still book the wrong day", "text": "The problem Kai suspected ships, because nobody asked him.", "wait": "Press Two weeks later to see this.", "reveal": [["click", "[data-go]"]]}
+  ],
+  "good": [
+   {"at": ".cr-c:nth-child(2)", "title": "Ana asks before she speaks", "text": "What works and what worries Kai, so his read comes out first."},
+   {"at": ".cr-c:nth-child(3)", "title": "Kai’s doubt comes out", "text": "The date set to Today, a problem Ana had missed."},
+   {"at": "[data-out]:not(:empty)", "title": "Two fixes, one from each", "text": "Make the date stand out and the slots bigger. Neither review alone had both.", "wait": "Press Write down the next steps to see this.", "reveal": [["click", "[data-go]"]]}
+  ]
+ },
+ "good-heuristic-review-1": {
+  "bad": [
+   {"at": ".hr-card", "title": "Three findings, all predictions", "text": "Each one is what a reviewer expected to go wrong. Nobody has tried the flow yet."},
+   {"at": "[data-out]", "title": "The real problem ships", "text": "4 in 10 people leave at Phone number, a step the review never flagged.", "wait": "Press Fix and ship to see this.", "reveal": [["click", "[data-ship]"]]}
+  ],
+  "good": [
+   {"at": ".hr-card", "title": "The same three findings", "text": "The review is still the starting point, but not the last word."},
+   {"at": "[data-obs]", "title": "Five people reorder the list", "text": "Phone number stopped 3 of 5, and nobody noticed the two Continue buttons.", "wait": "Press Watch 5 people to see this.", "reveal": [["click", "[data-watch]"]]},
+   {"at": "[data-out]", "title": "Fixes go where people struggled", "text": "The phone step and the password rules come first, and far fewer people leave.", "wait": "Press Watch 5 people, then Fix and ship, to see this.", "reveal": [["click", "[data-watch]"], ["click", "[data-ship]"]]}
+  ]
+ },
+ "good-heuristic-review-2": {
+  "bad": [
+   {"at": "[data-count]", "title": "One reviewer, 4 of 11", "text": "A single person misses most problems, and the team can’t tell which."},
+   {"at": ".hr-miss", "title": "Back empties the basket, unseen", "text": "One of seven problems nobody found. It ships as it is.", "wait": "Press Show what was missed to see this.", "reveal": [["click", "[data-miss]"]]}
+  ],
+  "good": [
+   {"at": "[data-count]", "title": "The count climbs with each reviewer", "text": "From 4 of 11 to 7, 9 and 10 as reviewers join."},
+   {"at": ".hr-new", "title": "Each reviewer finds different things", "text": "Reviewer 2 adds three problems Reviewer 1 never saw.", "wait": "Press Add a reviewer to see this.", "reveal": [["click", "[data-add]"]]},
+   {"at": "[data-out]", "title": "Past four, little is new", "text": "Reviewer 4 adds only one problem, so a fifth would add little.", "wait": "Press Add a reviewer three times to see this.", "reveal": [["click", "[data-add]"], ["click", "[data-add]"], ["click", "[data-add]"]]}
+  ]
+ },
+ "good-heuristic-review-3": {
+  "bad": [
+   {"at": "[data-list] .hr-li:first-child", "title": "The list starts with icon sizes", "text": "The order they were found in says nothing about how much they hurt."},
+   {"at": "[data-list] .hr-li:nth-child(4)", "title": "The worst problem is fourth", "text": "People can’t pay, and it looks no more urgent than a typo."},
+   {"at": "[data-out]", "title": "Three fixes, payments still broken", "text": "Icon sizes, the typo and the blurry logo are done, and people still can’t pay.", "wait": "Press Fix the first three to see this.", "reveal": [["click", "[data-fix]"]]}
+  ],
+  "good": [
+   {"at": "[data-list] .hr-li:first-child", "title": "Severity 4 at the top", "text": "Failed card payments stop people from ordering, so they come first."},
+   {"at": ".hr-li:has(.s1)", "title": "Cosmetic issues sink to 1", "text": "Icon sizes, the typo and the logo can wait without anyone losing an order."},
+   {"at": "[data-out]", "title": "The first three are the ones that hurt", "text": "Payments, the emptied basket and the hidden fee get fixed. The cosmetic ones wait.", "wait": "Press Fix the first three to see this.", "reveal": [["click", "[data-fix]"]]}
+  ]
+ },
+ "good-heuristic-review-4": {
+  "bad": [
+   {"at": ".hr-li:has(.hr-tag)", "title": "“Everything else passes” is a guess", "text": "A mock can’t show focus, timing or errors, so nobody checked them."},
+   {"at": "[data-out]", "title": "Two failures show up after release", "text": "Focus stays behind the dialog and the progress never moves. Neither was drawn.", "wait": "Press Ship it to see this.", "reveal": [["click", "[data-go]"]]}
+  ],
+  "good": [
+   {"at": ".hr-h:nth-of-type(2)", "title": "The gaps get their own heading", "text": "Next to the findings, so a clean review can’t pass for a full one."},
+   {"at": ".hr-li:has(.hr-tag)", "title": "Each gap becomes a test", "text": "Focus, timing, errors and screen readers each get checked in the running build."},
+   {"at": "[data-out]", "title": "Two of four fail, before release", "text": "Focus behind the dialog and the stuck progress get fixed while it’s still cheap.", "wait": "Press Check them in the build to see this.", "reveal": [["click", "[data-go]"]]}
+  ]
+ },
+ "good-rams-principles-1": {
+  "bad": [
+   {"at": ".rp-tools", "title": "Four tools with no names", "text": "Crop, Light, Color and Filters are bare icons, so people guess."},
+   {"at": ".rp-card", "title": "Two rules that pull apart", "text": "Hide the toolbar, label every tool. A checklist can’t say which one wins."},
+   {"at": "[data-out]", "title": "Every box ticked, still no answer", "text": "The labels exist, but on a toolbar nobody can see.", "wait": "Tick both rules to see this.", "reveal": [["check", "[data-r=\"5\"]"], ["check", "[data-r=\"4\"]"]]}
+  ],
+  "good": [
+   {"at": ".rp-tools", "title": "Labeled tools while editing", "text": "Crop, Light, Color and Filters each have a name, so nobody guesses."},
+   {"at": ".rp-card", "title": "Both principles asked about one goal", "text": "Quick edits on a phone, so the two questions point to the same design."},
+   {"at": ".rp-photo", "title": "Tap the photo to see it whole", "text": "The toolbar hides only when people want a clear look."}
+  ]
+ },
+ "good-rams-principles-2": {
+  "bad": [
+   {"at": ".rp-grid", "title": "Six pale icons, nothing else", "text": "Light gray looks calm but is hard to see, and none says what it opens."},
+   {"at": "[data-s=\"Notifications\"]", "title": "Notifications hides behind a stack icon", "text": "People try the icons one by one until they land on it."}
+  ],
+  "good": [
+   {"at": ".rp-grid", "title": "Six names in full-strength text", "text": "The grid looks almost the same, and people read their way to the setting."},
+   {"at": "[data-s=\"Notifications\"]", "title": "Notifications on the first try", "text": "The label is the essential part, so it stays."}
+  ]
+ },
+ "good-rams-principles-3": {
+  "bad": [
+   {"at": ".rp-urg", "title": "A countdown that starts over", "text": "At zero it resets to 4:59, so the urgency is made up."},
+   {"at": "label.check", "title": "Audiobooks ticked for people", "text": "+€3 a month is added unless people notice and untick it."},
+   {"at": ".rp-small", "title": "€9.99 in the smallest, palest print", "text": "The price after 3 months is the hardest thing on the screen to read."}
+  ],
+  "good": [
+   {"at": ".rp-price + span", "title": "The later price in plain text", "text": "€9.99 after 3 months sits right under the price, at full size."},
+   {"at": "label.check", "title": "Audiobooks starts unticked", "text": "It’s there for people who want it, and nobody pays for it by accident."},
+   {"at": "[data-sub]", "title": "The button says what people pay", "text": "Tick the add-on and it changes to €7.99 today, before anyone commits."}
+  ]
+ }
+}

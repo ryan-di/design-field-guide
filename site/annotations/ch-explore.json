@@ -1,0 +1,128 @@
+{
+ "eff-explore-wide-1": {
+  "bad": [
+   {"at": ".ew-card", "title": "The first idea is the only idea", "text": "The last ten workflows under File is the obvious answer, and nothing else gets tried."},
+   {"at": "[data-m]", "title": "Round 4, same recent list", "text": "Icons, dates and sorting make it neater, but no round questions the list itself.", "wait": "Press Polish three times to see this.", "reveal": [["click", "[data-p]"], ["click", "[data-p]"], ["click", "[data-p]"]]}
+  ],
+  "good": [
+   {"at": "[data-a]", "title": "One request, three subagents", "text": "They work at the same time, so three directions cost the time of one."},
+   {"at": ".ew-card:nth-child(2)", "title": "Search, a different kind of answer", "text": "Typing part of a name finds any workflow, open or closed, not just the last ten.", "wait": "Press Ask for three to see this.", "reveal": [["click", "[data-a]"], ["wait", 1300]]},
+   {"at": ".ew-card:nth-child(3)", "title": "A shortcut nobody would polish into", "text": "Ctrl+Shift+T brings back closed tabs, a path no round of polish would reach.", "wait": "Press Ask for three to see this.", "reveal": [["click", "[data-a]"], ["wait", 1300]]}
+  ]
+ },
+ "eff-explore-wide-2": {
+  "bad": [
+   {"at": ".ew-brief", "title": "The same brief, word for word", "text": "“Make failed downloads more visible” three times sends every agent down the same obvious path."},
+   {"at": "[data-g]", "title": "Three red toasts", "text": "Only the icon and the position change. It looks like three options, but it’s one idea.", "wait": "Press Run all three to see this.", "reveal": [["click", "[data-run]"], ["wait", 1000]]}
+  ],
+  "good": [
+   {"at": ".ew-brief", "title": "A different bet per subagent", "text": "Never interrupt, fix in one step, warn where people look next. Each pulls a different way."},
+   {"at": "[data-g]", "title": "A dot, a Retry, a warning", "text": "A red dot on Downloads, Retry on the failed row, or a warning in the workflow that needs the file.", "wait": "Press Run all three to see this.", "reveal": [["click", "[data-run]"], ["wait", 1000]]}
+  ]
+ },
+ "eff-explore-wide-3": {
+  "bad": [
+   {"at": ".ew-pol", "title": "Copy link looks ready to ship", "text": "A real link, a Copy button and avatars pull the eye before anyone weighs the idea."},
+   {"at": ".ew-card:nth-child(2)", "title": "Invite by email stays a sketch", "text": "Editing the same workflow together might be the better idea, but it can’t compete on looks."}
+  ],
+  "good": [
+   {"at": ".ew-card:nth-child(1)", "title": "Copy link, at sketch level too", "text": "No real link or avatars, so it wins only if the idea does."},
+   {"at": "[data-out]", "title": "The choice rests on the idea", "text": "Whichever card gets picked, the reason is what it does, not how finished it looks.", "wait": "Press Pick on any card to see this.", "reveal": [["click", "[data-pick=\"1\"]"]]}
+  ]
+ },
+ "eff-explore-wide-4": {
+  "bad": [
+   {"at": "[data-more]", "title": "One more, with no stopping point", "text": "Every press adds a card, and nothing says when there are enough."},
+   {"at": "[data-m]", "title": "7 directions, none chosen", "text": "A guided tour, a search box and an import area pile on, each adding less than the last.", "wait": "Press One more four times to see this.", "reveal": [["click", "[data-more]"], ["click", "[data-more]"], ["click", "[data-more]"], ["click", "[data-more]"]]}
+  ],
+  "good": [
+   {"at": "p.ew-meta", "title": "The plan comes before the asking", "text": "Ask for 4, keep 2. The end of exploring is set from the start."},
+   {"at": "[data-k=\"0\"]", "title": "Keep stops at two", "text": "A third Keep is refused until one is dropped, so the plan holds."},
+   {"at": "[data-out]", "title": "Two kept, the rest dim", "text": "The two picks go further, and the other two are set aside on purpose.", "wait": "Press Keep on two cards to see this.", "reveal": [["click", "[data-k=\"0\"]"], ["click", "[data-k=\"1\"]"]]}
+  ]
+ },
+ "eff-axes-1": {
+  "bad": [
+   {"at": ".ax-req", "title": "“Three versions” of what, exactly", "text": "No direction to vary along, so each agent rewrites the same toast."},
+   {"at": "[data-res]", "title": "Three toasts, same corner", "text": "“Export done!”, “Your export is ready” and “Export complete.” None is easier to notice.", "wait": "Press Send to see this.", "reveal": [["click", "[data-send]"], ["wait", 700]]}
+  ],
+  "good": [
+   {"at": ".ax-req", "title": "An axis from silent to blocking", "text": "Four named points, so each agent knows how loud its version should be."},
+   {"at": "[data-res]", "title": "A dot, a toast, a banner, a dialog", "text": "Each step is louder, so a test can find where people start to notice.", "wait": "Press Send to see this.", "reveal": [["click", "[data-send]"], ["wait", 700]]}
+  ]
+ },
+ "eff-axes-2": {
+  "bad": [
+   {"at": ".ax-cell[data-r=\"0\"][data-c=\"0\"]", "title": "Every cell says “2 files missing”", "text": "Same words, same place, same moment. Only the color and the corners change."},
+   {"at": "[data-det]", "title": "Pick two, notice nothing", "text": "Someone opening the workflow sees the same message at the same moment either way.", "wait": "Pick two cells to see this.", "reveal": [["click", ".ax-cell[data-r=\"0\"][data-c=\"0\"]"], ["click", ".ax-cell[data-r=\"1\"][data-c=\"1\"]"]]}
+  ],
+  "good": [
+   {"at": ".ax-cell[data-r=\"0\"][data-c=\"0\"]", "title": "Icon on input, as soon as it opens", "text": "A warning on each missing input, right where the file is needed."},
+   {"at": "[data-det]", "title": "Picks differ in what people see", "text": "Icon on input against Dialog changes both where and when, and people would notice.", "wait": "Pick two cells to see this.", "reveal": [["click", ".ax-cell[data-r=\"0\"][data-c=\"0\"]"], ["click", ".ax-cell[data-r=\"1\"][data-c=\"1\"]"]]}
+  ]
+ },
+ "eff-axes-3": {
+  "bad": [
+   {"at": ".ax-opt:nth-child(2)", "title": "B changes all four at once", "text": "Loud, when idle, a dialog and new words. Any of them could explain its score."},
+   {"at": "[data-out]", "title": "B wins, and nobody knows why", "text": "4.1 against 3.0 and 2.6, with no way to tell which change earned it.", "wait": "Press Show the test results to see this.", "reveal": [["click", "[data-show]"]]}
+  ],
+  "good": [
+   {"at": ".ax-fixed", "title": "Place and wording held still", "text": "Every option says “Update ready” in the top bar, so neither can explain a score."},
+   {"at": "[data-out]", "title": "Each neighbor answers one question", "text": "A against B shows waiting until idle helped. C and D show loudness hurt.", "wait": "Press Show the test results to see this.", "reveal": [["click", "[data-show]"]]}
+  ]
+ },
+ "eff-axes-4": {
+  "bad": [
+   {"at": ".ax-cell.drop", "title": "Crossed out before anyone read it", "text": "Pause midway and Dialog after look odd, so they’re dropped unopened."},
+   {"at": "[data-det]", "title": "Nothing left to learn from", "text": "Dialog after could have shown why the quiet note after works. Now nobody will know.", "wait": "Pick Dialog after to see this.", "reveal": [["click", ".ax-cell[data-r=\"1\"][data-c=\"2\"]"]]}
+  ],
+  "good": [
+   {"at": ".ax-cell[data-r=\"1\"][data-c=\"2\"]", "title": "Dialog after, still on the grid", "text": "It looks too late to help, but it gets a look before anyone drops it."},
+   {"at": "[data-det]", "title": "The odd cell explains its neighbor", "text": "People care about space after the download, which is why the quiet note after works.", "wait": "Pick Dialog after to see this.", "reveal": [["click", ".ax-cell[data-r=\"1\"][data-c=\"2\"]"]]}
+  ]
+ },
+ "eff-prototype-in-code-1": {
+  "bad": [
+   {"at": ".pc-tag", "title": "The 4 seconds live in a note", "text": "Frame 2 of 3 can show the toast, but the timing exists only as text."},
+   {"at": ".pc-toast", "title": "An Undo nobody can press", "text": "Clicking it does nothing, so nobody learns if there’s time to read and react."}
+  ],
+  "good": [
+   {"at": ".pc-tag", "title": "A real timer, not a note", "text": "The 4 seconds actually run, so the question gets answered by trying."},
+   {"at": ".pc-toast", "title": "Undo works, with a draining bar", "text": "The bar shows the time left, so people feel whether 4 seconds is enough.", "wait": "Press Remove to see this.", "reveal": [["click", "[data-rm=\"Watercolor style\"]"]]}
+  ]
+ },
+ "eff-prototype-in-code-2": {
+  "bad": [
+   {"at": "[data-dir=\"Folders\"]", "title": "Each Build costs a full day", "text": "Comparing three ideas means three branches before anyone sees one."},
+   {"at": ".pc-meter", "title": "3 days, two of them wasted", "text": "Two of the three branches get deleted once one direction is picked.", "wait": "Build all three, then pick one, to see this.", "reveal": [["click", "[data-dir=\"Folders\"]"], ["click", "[data-dir=\"Tags\"]"], ["click", "[data-dir=\"Smart search\"]"], ["click", "[data-pick=\"Tags\"]"]]}
+  ],
+  "good": [
+   {"at": "[data-dir=\"Folders\"]", "title": "Each sketch takes 10 minutes", "text": "Three directions side by side in half an hour, and cheap to throw away."},
+   {"at": "[data-build]", "title": "One branch, for the winner", "text": "It stays off until a sketch is picked, so only one day of code gets written."},
+   {"at": ".pc-meter", "title": "30 minutes, then one day", "text": "The only work thrown away is two 10-minute sketches.", "wait": "Sketch all three, pick one, then build it to see this.", "reveal": [["click", "[data-dir=\"Folders\"]"], ["click", "[data-dir=\"Tags\"]"], ["click", "[data-dir=\"Smart search\"]"], ["click", "[data-pick=\"Tags\"]"], ["click", "[data-build]"]]}
+  ]
+ },
+ "eff-prototype-in-code-3": {
+  "bad": [
+   {"at": ".pc-doc-b > span", "title": "A description, not a question", "text": "It says what the prototype is, but not what it should find out."},
+   {"at": "[data-f]", "title": "Dark mode, animations, a settings page", "text": "Three hours in, and none of it helps learn whether people find Reopen closed tab.", "wait": "Press Add something three times to see this.", "reveal": [["click", "[data-add]"], ["click", "[data-add]"], ["click", "[data-add]"]]}
+  ],
+  "good": [
+   {"at": ".pc-qh", "title": "The question comes first", "text": "Do people find Reopen closed tab without help? Anything else can wait."},
+   {"at": "[data-add]", "title": "Dark mode gets skipped", "text": "It doesn’t help answer the question, so no time goes into it."},
+   {"at": "[data-watch]", "title": "Three people end the prototype", "text": "All three find it in under ten seconds, and the work stops there."}
+  ]
+ },
+ "eff-prototype-in-code-4": {
+  "bad": [
+   {"at": ".pc-code .bad", "title": "A hack that saves every keystroke", "text": "Fine for testing an idea, not for everyone who types a draft."},
+   {"at": ".pc-code .bad:nth-of-type(3)", "title": "No tests behind it", "text": "Nothing checks that a draft survives closing the tab."},
+   {"at": "[data-out]", "title": "The shortcuts ship to everyone", "text": "Every draft now gets logged, and the next change can break saving unnoticed.", "wait": "Press Merge as it is to see this.", "reveal": [["click", "[data-m]"]]}
+  ],
+  "good": [
+   {"at": "[data-w=\"rewrite\"]", "title": "Rewrite with tests, from main", "text": "A fresh branch that saves after a pause, and the prototype branch is deleted."},
+   {"at": "[data-w=\"keep\"]", "title": "Or keep it, with a full review", "text": "The hack and the logging come out, and a reviewer approves it like any change."},
+   {"at": "[data-ck]", "title": "A test for what people liked", "text": "A Playwright spec checks that a draft survives closing the tab.", "wait": "Press Rewrite with tests to see this.", "reveal": [["click", "[data-w=\"rewrite\"]"]]}
+  ]
+ }
+}

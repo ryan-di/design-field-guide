@@ -1,0 +1,119 @@
+{
+ "interaction-states-1": {
+  "bad": [
+   {"at": "[data-send]", "title": "Send never changes its look", "text": "Sending, failed and empty all show the same ready button."},
+   {"at": "[data-msg]", "title": "Not sent, and nothing says so", "text": "With Wi‑Fi off, the text stays in the box and Send looks ready, so people press again.", "wait": "Turn Wi‑Fi off and press Send to see this.", "reveal": [["click", "[data-wifi]"], ["click", "[data-send]"], ["wait", 1600]]}
+  ],
+  "good": [
+   {"at": "[data-send]", "title": "Send shows each step", "text": "Sending… with a spinner, then Sent with a check, so people know to wait."},
+   {"at": ".is-error", "title": "Retry, in the error color", "text": "With Wi‑Fi off, Send becomes Retry, so people know the message didn’t go.", "wait": "Turn Wi‑Fi off and press Send to see this.", "reveal": [["click", "[data-wifi]"], ["click", "[data-send]"], ["wait", 1600]]},
+   {"at": "[data-send]:disabled", "title": "Off when there’s nothing to send", "text": "An empty box can’t be sent, and the button looks it.", "wait": "Empty the message box to see this.", "reveal": [["fill", "[data-msg]", ""]]}
+  ]
+ },
+ "interaction-states-2": {
+  "bad": [
+   {"at": "[data-pub]", "title": "Publish is off, and nothing says why", "text": "Title and Story are filled in, so people reread them and guess."},
+   {"at": "[data-topic]", "title": "Topic reads None", "text": "It’s the one thing missing, but it looks like a fine choice."}
+  ],
+  "good": [
+   {"at": "[data-why]", "title": "The reason sits next to the button", "text": "People go straight to Topic instead of rereading the whole post."},
+   {"at": "[data-topic]", "title": "Topic is named as the fix", "text": "Pick Travel, and Publish turns on while the hint goes away."}
+  ]
+ },
+ "interaction-states-3": {
+  "bad": [
+   {"at": ".is-rsvp", "title": "No ring on any reply", "text": "After two Tabs, Accept, Maybe and Decline look the same, so Enter is a guess."},
+   {"at": "[data-reply]", "title": "The answer shows only after Enter", "text": "People learn which reply they picked once it’s already sent."}
+  ],
+  "good": [
+   {"at": ".is-rsvp", "title": "A ring shows where Tab landed", "text": "People see which reply is focused before they press Enter."},
+   {"at": "[data-reply]", "title": "The reply matches the ring", "text": "Your reply names the button the ring was on, with no surprise."},
+   {"at": ".is-rsvp .btn:first-child", "title": "No ring on mouse clicks", "text": "Clicking Accept shows only its pressed look, so the ring never gets in the way."}
+  ]
+ },
+ "interaction-states-4": {
+  "bad": [
+   {"at": "[data-place]", "title": "Still takes clicks while it loads", "text": "A nervous double-click places two orders and charges $202."},
+   {"at": "[data-edit]", "title": "Edit cart gets pushed aside", "text": "The label grows to “Placing your order…” and shoves the button next to it."},
+   {"at": "[data-count]", "title": "Two orders from one purchase", "text": "After a double-click it reads 2, with 1 by accident."}
+  ],
+  "good": [
+   {"at": "[data-place]", "title": "Repeat clicks do nothing", "text": "Once pressed, it shows Placing… with a spinner and ignores the rest."},
+   {"at": "[data-edit]", "title": "Edit cart stays put", "text": "Place order keeps its width, so nothing beside it moves."},
+   {"at": "[data-count]", "title": "One order, however many clicks", "text": "The count stops at 1."}
+  ]
+ },
+ "empty-state-1": {
+  "bad": [
+   {"at": ".es-none", "title": "“No items” says nothing", "text": "Not that albums go here, or how to make one."},
+   {"at": ".es-plus", "title": "The only way in is a small +", "text": "It sits in the corner of the bar, with no label to find it by."}
+  ],
+  "good": [
+   {"at": ".empty p", "title": "Names what belongs here", "text": "Albums you create will show up here, so the empty screen makes sense."},
+   {"at": "[data-new]", "title": "The first album, one press away", "text": "New album sits in the middle of the empty space, where people are looking."},
+   {"at": ".es-plus", "title": "The + is still there for later", "text": "Once albums exist, it’s the way to add more."}
+  ]
+ },
+ "empty-state-2": {
+  "bad": [
+   {"at": ".es-acts", "title": "Five buttons, all the same weight", "text": "None is marked as the start, so a new person stops to compare them."},
+   {"at": "[data-a=imp]", "title": "Import leads to another task", "text": "It asks to connect Google Drive or Dropbox first, a detour for someone new."}
+  ],
+  "good": [
+   {"at": "[data-a=new]", "title": "One clear place to start", "text": "A single primary button, so a new person knows where to press."},
+   {"at": "[data-a=tpl]", "title": "Templates, quieter, below it", "text": "There for people who look for them, without competing for the first press."}
+  ]
+ },
+ "empty-state-3": {
+  "bad": [
+   {"at": "[data-sb] .es-none", "title": "Search says “No items”", "text": "Nothing points at the filter that emptied the results."},
+   {"at": "[data-chip]", "title": "Size 9 is the cause, unnamed", "text": "The filter sits right above, but the message never links the two."},
+   {"at": "[data-wb] .es-none", "title": "Wishlist says the same words", "text": "A new list and a too-narrow search look identical.", "wait": "Open Wishlist to see this.", "reveal": [["click", "[data-tab=w]"]]}
+  ],
+  "good": [
+   {"at": "[data-sb] .empty h5", "title": "Names the search and the size", "text": "People can tell the filter is the problem, not the shop."},
+   {"at": "[data-clear]", "title": "The fix is one press", "text": "Clear size filter brings back 3 sneakers."},
+   {"at": "[data-wb] .empty", "title": "Wishlist explains how to start", "text": "Press Save on anything, and Browse sneakers leads back to search.", "wait": "Open Wishlist to see this.", "reveal": [["click", "[data-tab=w]"]]}
+  ]
+ },
+ "error-state-1": {
+  "bad": [
+   {"at": "[data-end]", "title": "The real problem, unmarked", "text": "End is 9:00, before Start at 10:00, and nothing points at it."},
+   {"at": "[data-err] .cs-sum", "title": "The same words for every cause", "text": "A wrong time, no Wi‑Fi and a server problem all read the same.", "wait": "Press Save event to see this.", "reveal": [["click", "[data-save]"], ["wait", 800]]}
+  ],
+  "good": [
+   {"at": "[data-end][aria-invalid=true]", "title": "End is marked as the problem", "text": "The field people need to change is flagged where they look.", "wait": "Press Save event to see this.", "reveal": [["click", "[data-save]"], ["wait", 800]]},
+   {"at": "[data-err] .cs-sum", "title": "It names both times and the fix", "text": "It says to change one of them. No Wi‑Fi and a server problem get their own words.", "wait": "Press Save event to see this.", "reveal": [["click", "[data-save]"], ["wait", 800]]}
+  ]
+ },
+ "error-state-2": {
+  "bad": [
+   {"at": "[data-ok]", "title": "OK is the only way out", "text": "It closes the message and leaves an empty screen, with the photos still missing."}
+  ],
+  "good": [
+   {"at": "[data-retry]", "title": "Try again leads", "text": "Most dropped connections recover, and the 6 photos load on the second try."},
+   {"at": "[data-help]", "title": "Get help for when it keeps failing", "text": "It suggests checking other sites, then turning Wi‑Fi off and on."}
+  ]
+ },
+ "error-state-3": {
+  "bad": [
+   {"at": "[data-sel]", "title": "The selection is wiped", "text": "It reads No photos selected, so all 40 must be picked again.", "wait": "Press Upload 40 photos and wait for it to stop.", "reveal": [["click", "[data-go]"], ["wait", 2200]]},
+   {"at": "[data-prog]", "title": "Progress back to 0 of 40", "text": "The 18 that went through get sent a second time.", "wait": "Press Upload 40 photos and wait for it to stop.", "reveal": [["click", "[data-go]"], ["wait", 2200]]}
+  ],
+  "good": [
+   {"at": "[data-sel]", "title": "Still 40 selected, 18 uploaded", "text": "Nothing to pick again, and the count says how far it got.", "wait": "Press Upload 40 photos and wait for it to stop.", "reveal": [["click", "[data-go]"], ["wait", 2200]]},
+   {"at": "[data-go]", "title": "Resume picks up at photo 19", "text": "Only the 22 left get sent, so nothing goes up twice.", "wait": "Press Upload 40 photos and wait for it to stop.", "reveal": [["click", "[data-go]"], ["wait", 2200]]}
+  ]
+ },
+ "error-state-4": {
+  "bad": [
+   {"at": ".er-code", "title": "Error 500, and nothing else", "text": "People can’t tell if it’s their fault, or whether to wait."},
+   {"at": "[data-retry]", "title": "Try again, with no reason to", "text": "Without a word on the cause, people don’t know if retrying will help."}
+  ],
+  "good": [
+   {"at": ".empty h5", "title": "It says what didn’t load", "text": "Your playlists, named in plain words, before anything technical."},
+   {"at": ".empty p", "title": "Whose problem, and what to do", "text": "Not yours, and a minute’s wait should fix it."},
+   {"at": ".er-small", "title": "The code, small and last", "text": "Code 500 and the ref are there for support, out of the way."}
+  ]
+ }
+}

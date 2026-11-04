@@ -1,0 +1,114 @@
+{
+ "buttons-1": {
+  "bad": [
+   {"at": "[data-shop]", "title": "Continue shopping pulls as hard", "text": "The same filled blue as Check out, so it reads like the next step too."},
+   {"at": "[data-pay]", "title": "Check out only wins by reading", "text": "With two equal buttons, people read both labels before they know which one ends the order."}
+  ],
+  "good": [
+   {"at": "[data-shop]", "title": "Continue shopping steps back", "text": "Plain text, still one click away for people who want to keep browsing."},
+   {"at": "[data-pay]", "title": "Check out is the one filled button", "text": "The way to pay the €67 shows up in a glance."}
+  ]
+ },
+ "buttons-2": {
+  "bad": [
+   {"at": "[data-stop]", "title": "Cancel what, the upload or this", "text": "On its own, it could stop the photos or just close something.", "wait": "Press Upload 3 photos to see this.", "reveal": [["click", "[data-go]"]]},
+   {"at": "[data-no]", "title": "Cancel here keeps uploading", "text": "People who want to cancel the upload press Cancel, and it carries on.", "wait": "Press Upload 3 photos, then Cancel, to see this.", "reveal": [["click", "[data-go]"], ["click", "[data-stop]"]]},
+   {"at": "[data-yes]", "title": "OK is the one that stops it", "text": "Nothing on it says stop, so people reread “Cancel upload?” to be sure.", "wait": "Press Upload 3 photos, then Cancel, to see this.", "reveal": [["click", "[data-go]"], ["click", "[data-stop]"]]}
+  ],
+  "good": [
+   {"at": "[data-stop]", "title": "Stop upload names what stops", "text": "Clear on its own, even with three photos half sent.", "wait": "Press Upload 3 photos to see this.", "reveal": [["click", "[data-go]"]]},
+   {"at": "[data-no]", "title": "Keep uploading is the way back", "text": "It says what happens next, so nobody presses it to stop.", "wait": "Press Upload 3 photos, then Stop upload, to see this.", "reveal": [["click", "[data-go]"], ["click", "[data-stop]"]]},
+   {"at": "[data-yes]", "title": "Same words as the button pressed", "text": "Stop upload twice, so people know they’re confirming what they asked for.", "wait": "Press Upload 3 photos, then Stop upload, to see this.", "reveal": [["click", "[data-go]"], ["click", "[data-stop]"]]}
+  ]
+ },
+ "buttons-3": {
+  "bad": [
+   {"at": "[data-save]", "title": "Save sits one button over", "text": "A hand that reaches for the usual spot lands on Delete folder."},
+   {"at": "[data-del]", "title": "Delete folder dressed as Save", "text": "Same filled blue, same size, in the spot where Save usually goes."},
+   {"at": "[data-gone]", "title": "Gone, with no way back", "text": "One fast click removes 24 files shared with 5 people.", "wait": "Press Delete folder to see this.", "reveal": [["click", "[data-del]"]]}
+  ],
+  "good": [
+   {"at": "[data-save]", "title": "Save has the last spot alone", "text": "A habit click there only ever saves."},
+   {"at": "[data-del]", "title": "Delete folder out at the far left", "text": "A red outline and the width of the bar between it and Save."},
+   {"at": ".toast-action", "title": "Undo for six seconds", "text": "If a slip gets through, the folder and its 24 files come back in one click.", "wait": "Press Delete folder to see this.", "reveal": [["click", "[data-del]"]]}
+  ]
+ },
+ "buttons-4": {
+  "bad": [
+   {"at": "[data-ph]", "title": "Phone looks filled in", "text": "+351 912 345 67 is one digit short, and nothing points to it."},
+   {"at": "[data-book]", "title": "Pressing Book table does nothing", "text": "No message and no cursor move, so people recheck the name, the date and the time."}
+  ],
+  "good": [
+   {"at": "[data-ph][aria-invalid=\"true\"]", "title": "The cursor lands in Phone", "text": "People can type the missing digit straight away.", "wait": "Press Book table to see this.", "reveal": [["click", "[data-book]"]]},
+   {"at": "[data-book]", "title": "Book table can still be pressed", "text": "Pressing it is how people find out what’s missing."},
+   {"at": ".field-msg", "title": "The message counts the digits", "text": "It needs 9 after +351 and this one has 8, so the fix is plain.", "wait": "Press Book table to see this.", "reveal": [["click", "[data-book]"]]}
+  ]
+ },
+ "icon-button-1": {
+  "bad": [
+   {"at": "[data-t=\"2\"]", "title": "Crop hides behind a frame icon", "text": "It’s the last of three, so people try Layers and Adjust first."},
+   {"at": "[data-tries]", "title": "Every wrong guess opens a panel", "text": "Each miss shows a tool people didn’t ask for, and the count goes up.", "wait": "Pick a tool to see this.", "reveal": [["click", "[data-t=\"0\"]"]]}
+  ],
+  "good": [
+   {"at": "[data-t=\"2\"]", "title": "Crop says Crop", "text": "People go straight to it, without opening Layers or Adjust."},
+   {"at": "[data-tries]", "title": "Found on the first try", "text": "The word does the work, so there’s nothing to guess.", "wait": "Press Crop to see this.", "reveal": [["click", "[data-t=\"2\"]"]]},
+   {"at": "[data-close]", "title": "Close stays a bare ×", "text": "One of the few icons everyone reads, so it needs no word."}
+  ]
+ },
+ "icon-button-2": {
+  "bad": [
+   {"at": "[data-name=\"Save a copy\"]", "title": "Save a copy is fifth of ten", "text": "A folder icon, the same size and weight as Bookmarks and Properties."},
+   {"at": ".ib-tools", "title": "No groups, no gaps", "text": "Zoom, export and settings run together, so people scan all ten every time."},
+   {"at": "[data-seen]", "title": "Each hover is one more check", "text": "The count shows how many icons people read before finding the save."}
+  ],
+  "good": [
+   {"at": "[data-name=\"Save a copy\"]", "title": "The main action gets a word", "text": "Save a copy is the only label in the row, so the eye goes there first."},
+   {"at": ".ib-sep", "title": "A divider closes the zoom set", "text": "Zoom in, Zoom out and Fit to page read as one group people can skip."},
+   {"at": ".ib-menu", "title": "Five rare actions behind More", "text": "Each one has a word here, and none of them crowd the row.", "wait": "Press More to see this.", "reveal": [["click", "[data-more]"]]}
+  ]
+ },
+ "icon-button-3": {
+  "bad": [
+   {"at": "[data-add]", "title": "+ is smaller than a fingertip", "text": "One tap covers Play and Close too, so it’s a guess which one fires."},
+   {"at": "[data-x]", "title": "Close sits right against +", "text": "A tap a little to the right closes the player instead of adding the song."}
+  ],
+  "good": [
+   {"at": "[data-add]", "title": "+ is as wide as a fingertip", "text": "At 40 px, a tap that lands a little off still adds the song."},
+   {"at": "[data-x]", "title": "Close gets extra room", "text": "More space than between Play and +, so a slip toward it lands on nothing."}
+  ]
+ },
+ "link-vs-button-1": {
+  "bad": [
+   {"at": "[data-go=\"del:home\"]", "title": "Delete looks safe to open in a tab", "text": "People open links in a new tab just to look, and that alone deletes Home."},
+   {"at": "[data-status]", "title": "The address ends in /delete", "text": "The only warning, down in the status bar where few people look.", "wait": "Hover Delete to see this.", "reveal": [["hover", "[data-go=\"del:home\"]"]]},
+   {"at": ".lb-done", "title": "Deleted, with no Undo", "text": "Back to addresses only returns to the list, now without Home.", "wait": "Click Delete to see this.", "reveal": [["click", "[data-go=\"del:home\"]"]]}
+  ],
+  "good": [
+   {"at": "[data-del=\"home\"]", "title": "Delete has no address to open", "text": "A button can’t be opened in a tab, so people press it on purpose."},
+   {"at": "[data-go=\"edit:home\"]", "title": "Edit stays a link", "text": "Opening it in a new tab is harmless, since it only shows a form."},
+   {"at": ".toast-action", "title": "Undo right after the delete", "text": "For five seconds, a slip brings Home back in one click.", "wait": "Press Delete to see this.", "reveal": [["click", "[data-del=\"home\"]"]]}
+  ]
+ },
+ "link-vs-button-2": {
+  "bad": [
+   {"at": "[data-nav]", "title": "No new tab, no address to show", "text": "Ctrl-click just swaps this tab, and hovering shows nowhere it leads."},
+   {"at": "[data-url]", "title": "The address stays on /week", "text": "After Open agenda, there’s still nothing to bookmark or share for the agenda."},
+   {"at": "[data-back]", "title": "Back has nothing to go back to", "text": "The swap adds no history, so people can’t return to the week."}
+  ],
+  "good": [
+   {"at": "a[data-go=\"agenda\"]", "title": "Opens in a new tab like any link", "text": "Ctrl-click keeps the week in this tab and the agenda in the next."},
+   {"at": "[data-status]", "title": "Hover shows where it leads", "text": "calendar.example.com/team-sync/agenda, before anyone clicks.", "wait": "Hover Open agenda to see this.", "reveal": [["hover", "a[data-go=\"agenda\"]"]]},
+   {"at": "[data-back]", "title": "Back returns to the week", "text": "After opening the agenda, one press brings the calendar back."}
+  ]
+ },
+ "link-vs-button-3": {
+  "bad": [
+   {"at": "[data-l=\"cleanup guide\"]", "title": "Blue is the only clue", "text": "With color blindness or a dim screen, cleanup guide reads as part of the sentence."},
+   {"at": ".lb-sw", "title": "Grayscale makes both links vanish", "text": "Turn it on, and nothing marks cleanup guide or compare plans."}
+  ],
+  "good": [
+   {"at": "[data-l=\"cleanup guide\"]", "title": "An underline marks cleanup guide", "text": "It reads as a link without relying on color."},
+   {"at": ".lb-sw", "title": "Both links survive grayscale", "text": "Turn it on, and the underlines still show where to click."}
+  ]
+ }
+}

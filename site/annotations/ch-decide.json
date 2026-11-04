@@ -1,0 +1,130 @@
+{
+ "eff-decision-matrix-1": {
+  "bad": [
+   {"at": ".dm-pol", "title": "Polish on the wrong question", "text": "Downloading · 62% shows progress, not how long is left, and time left is the problem."},
+   {"at": ".dm-card[data-c=\"1\"]", "title": "Time left, hidden in a sketch", "text": "The direction that fits the brief looks unfinished, so it’s easy to pass over."}
+  ],
+  "good": [
+   {"at": ".dm-card[data-c=\"0\"] .dm-sc li:first-child", "title": "The ring scores 1 on time left", "text": "It shows progress, not time, on the criterion that counts three times.", "wait": "Press Score against the brief to see this.", "reveal": [["click", "[data-score]"]]},
+   {"at": ".dm-card[data-c=\"1\"] .dm-tot", "title": "The plain sketch totals 27", "text": "“About 4 min left” earns a 5 where it matters most. The ring totals 16.", "wait": "Press Score against the brief to see this.", "reveal": [["click", "[data-score]"]]},
+   {"at": "[data-pick=\"0\"]", "title": "Pick waits for the scores", "text": "Every Pick stays off until each direction is scored, so polish can’t decide first."}
+  ]
+ },
+ "eff-decision-matrix-2": {
+  "bad": [
+   {"at": "[data-rows]", "title": "Scores in view before any weight", "text": "Trash with restore leads with 27, and every slider move shows who it helps."},
+   {"at": ".dm-w:nth-of-type(1)", "title": "Weights with no source", "text": "Nothing ties ×3 for Prevents loss to the brief, so it can slide to suit a favorite."},
+   {"at": "[data-out]", "title": "Undo toast wins, after the fact", "text": "Drop Prevents loss to ×1, raise Low effort, and the favorite comes out on top.", "wait": "Move the weights until Undo toast wins to see this.", "reveal": [["press", "[data-w=\"loss\"]", "ArrowLeft"], ["press", "[data-w=\"loss\"]", "ArrowLeft"], ["press", "[data-w=\"eff\"]", "ArrowRight"]]}
+  ],
+  "good": [
+   {"at": ".dm-src", "title": "Each weight cites the brief", "text": "×3 for Prevents loss, because people lose files by mistake, written before any score."},
+   {"at": "[data-lock]", "title": "Lock comes before the scores", "text": "The sliders freeze, then the totals appear, so nobody can tune them to a favorite."},
+   {"at": "[data-rows]", "title": "Trash with restore wins on its own", "text": "27 against 23 and 19, with weights nobody could adjust after seeing them.", "wait": "Press Lock weights and show scores to see this.", "reveal": [["click", "[data-lock]"]]}
+  ]
+ },
+ "eff-decision-matrix-3": {
+  "bad": [
+   {"at": "[data-b]", "title": "One point is the whole lead", "text": "24 against 23, built from judgment calls, is too close to settle anything."},
+   {"at": ".dm-acts .dm-tot", "title": "“Winner” ends the discussion early", "text": "The label settles it before anyone asks whether a small change would flip it."}
+  ],
+  "good": [
+   {"at": "[data-flip]", "title": "A one-step test of the weights", "text": "Predictable order drops from ×2 to ×1 to see if the lead holds."},
+   {"at": "[data-a]", "title": "Recently used now leads, 21 to 19", "text": "The winner flipped, so the two are close and the call rests on a risk.", "wait": "Press Predictable ×1 to see this.", "reveal": [["click", "[data-flip]"]]},
+   {"at": "[data-out]", "title": "The deciding risk, named", "text": "Slow finding matters most here, so Recently used is chosen and the reason is stated.", "wait": "Press Predictable ×1 to see this.", "reveal": [["click", "[data-flip]"]]}
+  ]
+ },
+ "eff-decision-matrix-4": {
+  "bad": [
+   {"at": "tr.prob", "title": "The problem row counts ×1", "text": "Showing which workflow is running weighs exactly as much as Has animation."},
+   {"at": "tr.tot", "title": "Side issues add up to a win", "text": "One-point leads on Looks modern, brand colors and mobile outweigh 5 against 2 on the problem."}
+  ],
+  "good": [
+   {"at": "tr.prob", "title": "The problem row counts ×3", "text": "A 5 against 2 on the problem itself now outweighs everything else."},
+   {"at": "tr.tot", "title": "Badge on tab wins by 8", "text": "The lead comes from the criterion the problem is about, with only four rows to weigh."}
+  ]
+ },
+ "eff-spot-plausible-1": {
+  "bad": [
+   {"at": ".sp-shot", "title": "A picture of a dialog", "text": "Nothing in it can be clicked or tabbed, so the keyboard path goes unseen."},
+   {"at": "[data-out]", "title": "Two bugs reach people", "text": "Tab never reaches Save, and an empty name gets saved.", "wait": "Press Approve to see this.", "reveal": [["click", "[data-approve]"]]}
+  ],
+  "good": [
+   {"at": ".sp-dlg", "title": "The real dialog, live", "text": "Tab from Cancel leaves the dialog, so the skipped Save shows up at once."},
+   {"at": "[data-found]", "title": "An empty name, caught early", "text": "Clearing Product shots and pressing Save stores a blank name, with no error.", "wait": "Clear the name and press Save to see this.", "reveal": [["fill", "[data-name]", ""], ["click", "[data-save]"]]}
+  ]
+ },
+ "eff-spot-plausible-2": {
+  "bad": [
+   {"at": ".sp-col > p.cs-meta", "title": "One state out of four", "text": "Only With data was shown. Empty, loading and error never came up."},
+   {"at": "[data-out]", "title": "Blank on a first visit", "text": "And when the network fails, the panel spins forever with no way out.", "wait": "Press Approve to see this.", "reveal": [["click", "[data-approve]"]]}
+  ],
+  "good": [
+   {"at": ".sp-states", "title": "Four states, one click each", "text": "With data, Empty, Loading and Error can each be opened before approving."},
+   {"at": "[data-verdict]", "title": "Empty shows a blank panel", "text": "Found before release, so people never see a screen that looks broken.", "wait": "Pick Empty to see this.", "reveal": [["click", "[data-st=\"empty\"]"]]},
+   {"at": "[data-count]", "title": "All four seen, two problems found", "text": "The blank panel and the endless spinner get fixed before anyone hits them.", "wait": "Open every state to see this.", "reveal": [["click", "[data-st=\"empty\"]"], ["click", "[data-st=\"loading\"]"], ["click", "[data-st=\"error\"]"]]}
+  ]
+ },
+ "eff-spot-plausible-3": {
+  "bad": [
+   {"at": "[data-agent]", "title": "15px padding, 7px corners", "text": "Each is one off from the tokens, with a custom fill. By eye it’s the same Save."},
+   {"at": "[data-out]", "title": "Copied into Export and Share", "text": "A month later, two near-matching button styles exist and nobody knows which is right.", "wait": "Press Approve to see this.", "reveal": [["click", "[data-approve]"]]}
+  ],
+  "good": [
+   {"at": "[data-tbl]", "title": "3 near misses, found", "text": "Padding 15px against 16px, corners 7px against 8px, and a fill that isn’t color-primary.", "wait": "Press Check against tokens to see this.", "reveal": [["click", "[data-check]"]]},
+   {"at": "[data-agent]", "title": "Rebuilt from the tokens", "text": "It now uses space-4, radius-md and color-primary, like the existing Save.", "wait": "Press Check against tokens, then Use the tokens to see this.", "reveal": [["click", "[data-check]"], ["click", "[data-use]"]]}
+  ]
+ },
+ "eff-spot-plausible-4": {
+  "bad": [
+   {"at": "[data-send]", "title": "One problem per round", "text": "Four problems mean four rounds, each one waiting on the agent."},
+   {"at": "[data-probs] li:first-child", "title": "Escape breaks again in round 3", "text": "Fixing the faint text rewrote the key handling, so an earlier fix came undone.", "wait": "Press Send next problem until none are left to see this.", "reveal": [["click", "[data-send]"], ["wait", 700], ["click", "[data-send]"], ["wait", 700], ["click", "[data-send]"], ["wait", 700], ["click", "[data-send]"], ["wait", 700]]}
+  ],
+  "good": [
+   {"at": "[data-probs]", "title": "All four in one message", "text": "The agent sees every problem at once, so one fix can’t quietly undo another."},
+   {"at": ".sp-box:nth-of-type(2)", "title": "Checks that guard the fixes", "text": "If a later change breaks Escape again, the Playwright test fails before anyone notices."},
+   {"at": "[data-out]", "title": "One round, done", "text": "All four fixed, the keyboard test passes and both screenshots come back.", "wait": "Press Send the list to see this.", "reveal": [["click", "[data-send]"], ["wait", 700]]}
+  ]
+ },
+ "eff-cut-combine-1": {
+  "bad": [
+   {"at": "[data-dir=\"A\"]", "title": "Directions come as whole packages", "text": "Picking A brings its one long list and name-only choosing along too."},
+   {"at": ".cc-sum", "title": "1 of 3 strong, whichever is picked", "text": "A, B and C each have one strong part, so any whole pick keeps two weak ones."}
+  ],
+  "good": [
+   {"at": ".cc-part[data-row=\"1\"]", "title": "Each part picked on its own", "text": "Browsing can come from B’s grid while starting stays with A’s button."},
+   {"at": "[data-sum]", "title": "3 of 3 strong", "text": "Start from A, browse from B, choose from C. No weak part survives.", "wait": "Pick the strongest option in each row to see this.", "reveal": [["click", ".cc-part[data-row=\"1\"] [data-k=\"B\"]"], ["click", ".cc-part[data-row=\"2\"] [data-k=\"C\"]"]]}
+  ]
+ },
+ "eff-cut-combine-2": {
+  "bad": [
+   {"at": ".cc-list li:nth-child(4)", "title": "A sound for every comment", "text": "It plays for all comments, not just mentions, so it adds noise instead of signal."},
+   {"at": ".cc-cost", "title": "Six parts, two that help", "text": "Only the bell count and the highlight help people notice a mention."},
+   {"at": ".cc-panel", "title": "Six things to learn in one panel", "text": "Two switches, a tab and reactions crowd the two rows that matter."}
+  ],
+  "good": [
+   {"at": ".cc-prob", "title": "The problem decides what stays", "text": "Each idea gets one test: does it help people notice a mention?"},
+   {"at": "[data-cost]", "title": "2 parts to build", "text": "Down from 6, and both parts left solve the problem.", "wait": "Untick the four parts that don’t help with mentions to see this.", "reveal": [["click", "input[value=\"digest\"]"], ["click", "input[value=\"sound\"]"], ["click", "input[value=\"feed\"]"], ["click", "input[value=\"react\"]"]]},
+   {"at": ".cc-panel", "title": "Bell count and highlight only", "text": "People see who mentioned them and where, with nothing else to learn.", "wait": "Untick the four parts that don’t help with mentions to see this.", "reveal": [["click", "input[value=\"digest\"]"], ["click", "input[value=\"sound\"]"], ["click", "input[value=\"feed\"]"], ["click", "input[value=\"react\"]"]]}
+  ]
+ },
+ "eff-cut-combine-3": {
+  "bad": [
+   {"at": ".cc-story mark", "title": "One “or” gives it away", "text": "The story needs two ways back, a sign the parts came from different directions."},
+   {"at": ".cs-modal .cs-dlg", "title": "“You can’t get it back”", "text": "The dialog says the delete is final, yet a toast offers Undo right after.", "wait": "Press the trash icon on a photo to see this.", "reveal": [["click", "[data-del=\"Beach.jpg\"]"]]}
+  ],
+  "good": [
+   {"at": ".cc-story", "title": "One sentence, no “or”", "text": "The whole flow reads as one path, from delete to Undo."},
+   {"at": ".toast", "title": "Gone at once, Undo on the toast", "text": "One step to delete, and the way back is there if it was a mistake.", "wait": "Press the trash icon on a photo to see this.", "reveal": [["click", "[data-del=\"Beach.jpg\"]"]]}
+  ]
+ },
+ "eff-cut-combine-4": {
+  "bad": [
+   {"at": ".cc-pr", "title": "Says what shipped, not what didn’t", "text": "Regex patterns were cut, but the pull request never mentions them."},
+   {"at": "[data-thread]", "title": "The same debate starts over", "text": "Nobody remembers why regex was dropped, so it goes back in with no new evidence.", "wait": "Press Two weeks later to see this.", "reveal": [["click", "[data-later]"], ["wait", 1300]]}
+  ],
+  "good": [
+   {"at": ".cc-pr .cc-list li:first-child", "title": "Regex cut, with the evidence", "text": "None of 40 support requests asked for it, and it’s hard to explain."},
+   {"at": "[data-thread]", "title": "Settled in three messages", "text": "The reason is on record, so regex waits until new requests show up.", "wait": "Press Two weeks later to see this.", "reveal": [["click", "[data-later]"], ["wait", 1300]]}
+  ]
+ }
+}

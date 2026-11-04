@@ -1,0 +1,129 @@
+{
+ "pat-constraints-1": {
+  "bad": [
+   {"at": "[data-w]", "title": "Four set widths, nothing else", "text": "60, 90, 120 or 180 cm. None is 105 cm."},
+   {"at": "[data-add]", "title": "The only way on is a wrong size", "text": "People give up, or buy a blind that doesn’t fit."}
+  ],
+  "good": [
+   {"at": "[data-w]", "title": "Custom… at the end of the list", "text": "The common widths stay one click away, and odd sizes still have a way in."},
+   {"at": "[data-c]", "title": "Type the width you measured", "text": "No need to round it to a size on the list.", "wait": "Pick Custom… to see this.", "reveal": [["select", "[data-w]", "custom"]]},
+   {"at": "[data-help]", "title": "The limits and the rounding, up front", "text": "Type 104.6 or 400, and it says what it changed.", "wait": "Pick Custom… to see this.", "reveal": [["select", "[data-w]", "custom"]]}
+  ]
+ },
+ "pat-constraints-2": {
+  "bad": [
+   {"at": ".pc-opt[data-v=\"lossless\"]", "title": "Lossless is gray, with no reason", "text": "Clicking it does nothing, so people can’t tell if it’s broken or locked."},
+   {"at": ".pc-opt[data-v=\"atmos\"]", "title": "An option that can never apply", "text": "Dolby Atmos adds a second dead end that no plan will ever open."}
+  ],
+  "good": [
+   {"at": ".pc-opt[data-v=\"lossless\"] small", "title": "The reason sits under Lossless", "text": "“Needs the Premium plan” tells people what it takes, in plain words."},
+   {"at": "[data-plans]", "title": "See plans is the next step", "text": "People who want Lossless can go straight to the upgrade."},
+   {"at": ".pc-opt[data-v=\"normal\"] small", "title": "Each choice says what it costs", "text": "About 3 or 7 MB per song makes the trade-off concrete."}
+  ]
+ },
+ "pat-constraints-3": {
+  "bad": [
+   {"at": "[data-u]", "title": "No hint under Username", "text": "Nothing says a space won’t work, so people type their full name."},
+   {"at": "[data-msg]", "title": "The rule arrives as a rejection", "text": "People learn it only after a wasted try, then have to guess again.", "wait": "Type Ana Silva and press Save to see this.", "reveal": [["fill", "[data-u]", "Ana Silva"], ["click", "[data-save]"]]}
+  ],
+  "good": [
+   {"at": ".field-help", "title": "The rule, before the first try", "text": "Lowercase letters, numbers and dots, 3 to 20 characters. People shape the name to fit."},
+   {"at": "[data-out]", "title": "Saved on the first try", "text": "Type ana.silva and Save reports “Tries: 1”.", "wait": "Type ana.silva and press Save to see this.", "reveal": [["fill", "[data-u]", "ana.silva"], ["click", "[data-save]"]]}
+  ]
+ },
+ "pat-constraints-4": {
+  "bad": [
+   {"at": "[data-n]", "title": "The list offers up to 30", "text": "Nights 29 and 30 look bookable, so people pick them."},
+   {"at": ".field-help", "title": "The help text promises 31", "text": "A third number, and none of them match the real limit."},
+   {"at": "[data-msg]", "title": "Refused at the very end", "text": "The 28-night limit shows up only after people press Book.", "wait": "Pick 30 and press Book to see this.", "reveal": [["select", "[data-n]", "30"], ["click", "[data-book]"]]}
+  ],
+  "good": [
+   {"at": "[data-n]", "title": "The list stops at 28", "text": "People can’t pick a stay the check would refuse."},
+   {"at": ".field-help", "title": "The help text says 28 too", "text": "What people read matches what they can pick."},
+   {"at": ".pc-src", "title": "One rule feeds all three", "text": "Change the limit once, and the list, text and check move together."}
+  ]
+ },
+ "pat-forgiving-input-1": {
+  "bad": [
+   {"at": "[data-kg]", "title": "The comma in 5,5 is dropped", "text": "Written the European way, 5.5 kg becomes 55 kg."},
+   {"at": "[data-price]", "title": "The price is the only clue", "text": "$86.50 instead of $12.25, and nothing says why."}
+  ],
+  "good": [
+   {"at": "[data-kg]", "title": "A comma works as a decimal point", "text": "5,5 and 5.5 mean the same, and 500 g works too."},
+   {"at": "[data-read]", "title": "The reading, in words", "text": "“Read as 5.5 kg.” shows before people pay, so a wrong guess is caught.", "wait": "Type 5,5 to see this.", "reveal": [["fill", "[data-kg]", "5,5"]]},
+   {"at": "[data-price]", "title": "A price that matches the parcel", "text": "$12.25 for 5.5 kg, with no surprise at checkout."}
+  ]
+ },
+ "pat-forgiving-input-2": {
+  "bad": [
+   {"at": "[data-t]", "title": "“7” could be morning or evening", "text": "Dinner with Ana is almost surely 7 pm, but the field never asks."},
+   {"at": ".pf-ev", "title": "Dinner lands at 7:00 am", "text": "Nothing flags the guess, so people may only notice on Friday.", "wait": "Type 7 and press Add to see this.", "reveal": [["fill", "[data-t]", "7"], ["click", "[data-add]"]]}
+  ],
+  "good": [
+   {"at": "[data-ask]", "title": "Asks only when it’s two-way", "text": "7:00 am and 7:00 pm, each one click away.", "wait": "Type 7 and press Add to see this.", "reveal": [["fill", "[data-t]", "7"], ["click", "[data-add]"]]},
+   {"at": ".pf-ev", "title": "“7pm” goes straight in", "text": "No question when there’s only one reading.", "wait": "Type 7pm and press Add to see this.", "reveal": [["fill", "[data-t]", "7pm"], ["click", "[data-add]"]]}
+  ]
+ },
+ "pat-forgiving-input-3": {
+  "bad": [
+   {"at": "[data-h=\"skip\"]", "title": "Skip to wants mm:ss only", "text": "12m 30s is refused, though that’s how people say it."},
+   {"at": "[data-h=\"sleep\"]", "title": "Sleep timer wants plain minutes", "text": "1h fails here, and so does the 12:30 that Skip to wanted."}
+  ],
+  "good": [
+   {"at": "[data-h=\"skip\"]", "title": "Skip to takes the common formats", "text": "12:30, 12m 30s and 45 min all work."},
+   {"at": "[data-h=\"sleep\"]", "title": "Sleep timer reads the same ones", "text": "1h works, and so does anything that worked in Skip to."}
+  ]
+ },
+ "pat-forgiving-input-4": {
+  "bad": [
+   {"at": "[data-p]", "title": "10 x 14 turns into 10 × 15", "text": "The field rewrites the size, and no message says so."},
+   {"at": "[data-got]", "title": "The order changes without a word", "text": "Type 100 x 150, and it quietly orders 30 × 45 cm."}
+  ],
+  "good": [
+   {"at": "[data-p]", "title": "Tidies 10x15cm quietly", "text": "Spaces and “cm” get cleaned up without comment, since the size stays the same."},
+   {"at": "[data-h]", "title": "Names the change it made", "text": "It says it changed 10 × 14 to 10 × 15 cm, so people know what they’ll get.", "wait": "Type 10 x 14 and press Tab to see this.", "reveal": [["fill", "[data-p]", "10 x 14"], ["press", "[data-p]", "Tab"]]},
+   {"at": "[data-msg=\"p\"]", "title": "Refuses a size it can’t print", "text": "100 x 150 gets the 30 × 45 cm limit instead of a guess.", "wait": "Type 100 x 150 and press Tab to see this.", "reveal": [["fill", "[data-p]", "100 x 150"], ["press", "[data-p]", "Tab"]]}
+  ]
+ },
+ "pat-autosave-1": {
+  "bad": [
+   {"at": ".app-bar", "title": "No save status anywhere", "text": "People can’t tell if the list is saved, so they don’t trust it."},
+   {"at": "[data-ta]", "title": "Offline lines vanish on reopen", "text": "Add a line with Wi-Fi off, reopen, and it’s gone without a word."}
+  ],
+  "good": [
+   {"at": "[data-st]", "title": "“Saved” in the title bar", "text": "It sits where people already look, and updates after each edit."},
+   {"at": ".pa-st.off", "title": "Offline says so and keeps the work", "text": "It sends the changes once Wi-Fi is back.", "wait": "Turn Wi-Fi off to see this.", "reveal": [["click", ".pa-net"]]},
+   {"at": "[data-ta]", "title": "Nothing lost on reopen", "text": "Lines added offline are still there after Close and reopen."}
+  ]
+ },
+ "pat-autosave-2": {
+  "bad": [
+   {"at": "[data-st]", "title": "Saved, with nothing behind it", "text": "The delete is saved a second later, and no older copy exists."},
+   {"at": ".pa-doc", "title": "The pencil story is gone", "text": "No History and no undo, so people rewrite it from memory.", "wait": "Press Delete paragraph to see this.", "reveal": [["click", "[data-del]"]]}
+  ],
+  "good": [
+   {"at": "[data-hist]", "title": "History right next to Saved", "text": "Every autosave becomes a version people can go back to."},
+   {"at": ".pa-hist", "title": "Restore on each older version", "text": "The 10:02 version with 3 paragraphs brings the pencil story back.", "wait": "Press History to see this.", "reveal": [["click", "[data-hist]"]]}
+  ]
+ },
+ "pat-autosave-3": {
+  "bad": [
+   {"at": "[data-tab=\"1\"] [data-add]", "title": "Tab 2 saves over Tab 1", "text": "Its copy never saw Apples, so adding Coffee wipes Apples out."},
+   {"at": "[data-out]", "title": "Apples drops off the saved list", "text": "After both adds, only Coffee is saved, and nobody is told."}
+  ],
+  "good": [
+   {"at": "[data-tab=\"1\"] .banner", "title": "Tab 2 notices the clash", "text": "Nothing saves until people choose what to keep.", "wait": "Add an item in Tab 1, then in Tab 2, to see this.", "reveal": [["click", "[data-tab=\"0\"] [data-add]"], ["click", "[data-tab=\"1\"] [data-add]"]]},
+   {"at": "[data-copy]", "title": "Neither tab’s work is lost", "text": "Keep mine as a copy saves Coffee aside, and Apples stays in the list.", "wait": "Add an item in Tab 1, then in Tab 2, to see this.", "reveal": [["click", "[data-tab=\"0\"] [data-add]"], ["click", "[data-tab=\"1\"] [data-add]"]]}
+  ]
+ },
+ "pat-autosave-4": {
+  "bad": [
+   {"at": ".banner", "title": "Asks even when nothing was lost", "text": "A plain Close and reopen still offers to restore a draft.", "wait": "Press Close and reopen to see this.", "reveal": [["click", "[data-reopen]"]]},
+   {"at": "[data-discard]", "title": "Discard has no way back", "text": "Once people learn to wave it away, a real lost draft goes with it.", "wait": "Press Close and reopen to see this.", "reveal": [["click", "[data-reopen]"]]}
+  ],
+  "good": [
+   {"at": "[data-out]", "title": "No prompt when nothing’s lost", "text": "After Close and reopen, it just says there’s nothing to recover.", "wait": "Press Close and reopen to see this.", "reveal": [["click", "[data-reopen]"]]},
+   {"at": ".banner", "title": "Shows up after a real crash", "text": "It appears only when the draft differs from the save, so people read it.", "wait": "Type something and press Crash to see this.", "reveal": [["fill", "[data-ta]", "Friday works. See you at 2."], ["click", "[data-crash]"]]}
+  ]
+ }
+}

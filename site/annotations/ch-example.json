@@ -1,0 +1,93 @@
+{
+ "eff-worked-example-1": {
+  "bad": [
+   {"at": "[data-steps] li:nth-child(2)", "title": "The first idea goes straight to code", "text": "An unread dot on each reply, built on day 1 with nothing to compare it to.", "wait": "Press Next step twice to see this.", "reveal": [["click", "[data-go]"], ["click", "[data-go]"]]},
+   {"at": "[data-steps] li.bad", "title": "The better idea turns up in review", "text": "“Jump to the first unread reply” comes on day 3, after the build.", "wait": "Press Next step three times to see this.", "reveal": [["click", "[data-go]"], ["click", "[data-go]"], ["click", "[data-go]"]]},
+   {"at": "[data-sum].bad", "title": "Six days, two builds", "text": "The dot work is thrown away, and the jump is built from scratch.", "wait": "Press Next step until the work is done to see this.", "reveal": [["click", "[data-go]"], ["click", "[data-go]"], ["click", "[data-go]"], ["click", "[data-go]"], ["click", "[data-go]"]]}
+  ],
+  "good": [
+   {"at": "[data-steps] li:nth-child(2)", "title": "Three directions in an hour", "text": "Unread dots, jump to the first unread, and fold the read replies.", "wait": "Press Next step twice to see this.", "reveal": [["click", "[data-go]"], ["click", "[data-go]"]]},
+   {"at": "[data-steps] li.good", "title": "Picked before any real code", "text": "Jump to the first unread, with a count on the button, still on day 1.", "wait": "Press Next step three times to see this.", "reveal": [["click", "[data-go]"], ["click", "[data-go]"], ["click", "[data-go]"]]},
+   {"at": "[data-sum]:not(:empty)", "title": "Three days, one build", "text": "Half the time, because the choice came before the code.", "wait": "Press Next step until the work is done to see this.", "reveal": [["click", "[data-go]"], ["click", "[data-go]"], ["click", "[data-go]"], ["click", "[data-go]"], ["click", "[data-go]"]]}
+  ]
+ },
+ "eff-worked-example-2": {
+  "bad": [
+   {"at": ".we-chat", "title": "The reason is buried in the chat", "text": "“ok let’s go with 10” is the closest thing to a reason Sam can find."},
+   {"at": ".we-meta", "title": "14 of 214 messages", "text": "Sam would have to read 200 more to learn why it isn’t 30."}
+  ],
+  "good": [
+   {"at": ".we-links", "title": "Four links on the ticket", "text": "Brief, directions, decision and checks, each one short enough to read."},
+   {"at": "[data-out]:not(:empty)", "title": "The reason, in the pull request", "text": "8 of 10 events were short meetings nearby, and people dismissed a 30-minute reminder.", "wait": "Press Decision (in the PR) to see this.", "reveal": [["click", "[data-doc=\"dec\"]"]]}
+  ]
+ },
+ "eff-worked-example-3": {
+  "bad": [
+   {"at": ".we-steps", "title": "Seven stages for one word", "text": "Six sources, three prototypes and a scoring table, for a spelling fix."},
+   {"at": ".we-sum", "title": "A day and a half", "text": "The same fix takes 15 minutes when the stages are scaled down."},
+   {"at": ".we-meta", "title": "The fix gets lost", "text": "The reviewer can’t find the one line that changed."}
+  ],
+  "good": [
+   {"at": ".we-steps", "title": "Three stages, one line each", "text": "A brief, one changed word and a test. That’s all a typo needs."},
+   {"at": ".we-steps li.skip", "title": "The rest skipped, with a reason", "text": "None of the other four stages would change a decision here."},
+   {"at": ".we-meta", "title": "“Looks good.”", "text": "The one-word change is easy to spot in review."}
+  ]
+ },
+ "eff-worked-example-4": {
+  "bad": [
+   {"at": "[data-status]", "title": "Closed at merge", "text": "The ticket is done before anyone has used the change."},
+   {"at": ".we-plan", "title": "A plan nobody comes back to", "text": "Five sessions, a 6% baseline and a month of threads, written and then left."},
+   {"at": "[data-sum].bad", "title": "All three lines still unchecked", "text": "The next filter change starts from guesses again.", "wait": "Press One month later to see this.", "reveal": [["click", "[data-go]"]]}
+  ],
+  "good": [
+   {"at": "[data-status]", "title": "Open until checked", "text": "The ticket stays open until the plan is read against real use."},
+   {"at": "[data-p=\"1\"] strong", "title": "From 6% to 15% of searches", "text": "Each line gets its real result, next to what was planned.", "wait": "Press One month later to see this.", "reveal": [["click", "[data-go]"]]},
+   {"at": "[data-sum]:not(:empty)", "title": "One thing learned, written down", "text": "Filters next to the search button get found, so the price filter goes there too.", "wait": "Press One month later to see this.", "reveal": [["click", "[data-go]"]]}
+  ]
+ },
+ "eff-toolkit-1": {
+  "bad": [
+   {"at": ".tk-job b", "title": "One job called Everything", "text": "Exploring, picking and building all run together in one chat."},
+   {"at": ".tk-job small", "title": "40 files and a 300-message chat", "text": "What’s left can’t show which directions were tried, or why this one won."}
+  ],
+  "good": [
+   {"at": ".tk-job:nth-child(1)", "title": "Explore with three subagents", "text": "One direction each, so the first idea isn’t the only one."},
+   {"at": ".tk-job:nth-child(2)", "title": "Decide on a shared page", "text": "All three side by side, and the reason for the pick written down."},
+   {"at": ".tk-job:nth-child(3)", "title": "Build in a worktree, tests first", "text": "The PR lists the behaviors and the checks that prove them."}
+  ]
+ },
+ "eff-toolkit-2": {
+  "bad": [
+   {"at": ".tk-btn", "title": "A button built from guesses", "text": "Close to the design, and off in four small ways at once."},
+   {"at": ".tk-vals", "title": "Every value a little off", "text": "5px radius instead of 10px, and 14px text instead of 15px."},
+   {"at": "[data-note]:not(:empty)", "title": "The outline doesn’t line up", "text": "The design’s dashed outline shows the built button is smaller and squarer.", "wait": "Turn on Overlay the design to see this.", "reveal": [["check", "[data-sw]"]]}
+  ],
+  "good": [
+   {"at": ".tk-btn", "title": "Built from the real values", "text": "Same color, radius, padding and text size as the Figma frame."},
+   {"at": ".tk-vals", "title": "Token names instead of guesses", "text": "color/primary and radius/md come straight from the design file."},
+   {"at": "[data-note]:not(:empty)", "title": "The outline sits right on it", "text": "With the overlay on, there’s no gap between the design and the build.", "wait": "Turn on Overlay the design to see this.", "reveal": [["check", "[data-sw]"]]}
+  ]
+ },
+ "eff-toolkit-3": {
+  "bad": [
+   {"at": ".tk-agent", "title": "“Done,” with nothing to show", "text": "No test comes with it, so the claim only means the code runs."},
+   {"at": "[data-note] .tk-bad", "title": "The cart empties on sign-in", "text": "The exact bug the agent said it had fixed.", "wait": "Add an item, then press Sign in to see this.", "reveal": [["click", "[data-add]"], ["click", "[data-in]"]]}
+  ],
+  "good": [
+   {"at": "[data-test]", "title": "A test to run, not a claim", "text": "It adds 1 item, signs in and expects the item to still be there."},
+   {"at": "[data-res] .tk-bad", "title": "It failed before the change", "text": "The cart had 0 items, so the test really catches this bug.", "wait": "Press Run the test to see this.", "reveal": [["click", "[data-test]"], ["wait", 700]]},
+   {"at": "[data-note] .tk-good", "title": "The socks survive sign-in", "text": "Trying it by hand matches what the test said.", "wait": "Add an item, then press Sign in to see this.", "reveal": [["click", "[data-add]"], ["click", "[data-in]"]]}
+  ]
+ },
+ "eff-toolkit-4": {
+  "bad": [
+   {"at": ".tk-fake", "title": "Skip is part of the picture", "text": "It looks like a button, but nobody can press it in a recording."},
+   {"at": ".tk-msg:nth-of-type(2)", "title": "Lee’s question stays open", "text": "What Skip does isn’t anywhere in the 48 seconds of video."}
+  ],
+  "good": [
+   {"at": ".tk-link", "title": "A link anyone can click through", "text": "It sits on the ticket, so it’s still there next week."},
+   {"at": ".tk-proto .tk-fake", "title": "Skip and Next really work", "text": "People can take any path, at their own pace.", "wait": "Open the link to see this.", "reveal": [["click", "[data-open]"]]},
+   {"at": "[data-note]:not(:empty)", "title": "Lee answers it himself", "text": "Skip goes straight to notifications, and nobody had to ask.", "wait": "Open the link and press Skip to see this.", "reveal": [["click", "[data-open]"], ["click", ".tk-proto [data-to]"]]}
+  ]
+ }
+}

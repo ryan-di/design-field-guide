@@ -1,0 +1,134 @@
+{
+ "pat-jakobs-law-1": {
+  "bad": [
+   {"at": "[data-tile]", "title": "A plain tile with the quantity", "text": "Nothing hints that a tap adds one and only a long press takes one away."},
+   {"at": "[data-total]", "title": "Each try to lower it adds one", "text": "People tapping to get back to 1 watch €24 climb to €36, then €48."}
+  ],
+  "good": [
+   {"at": "[data-minus]", "title": "A − button takes one away", "text": "The stepper people know from other shops, so 1 is one click away."},
+   {"at": "[data-plus]", "title": "A + button beside it", "text": "Both directions are in view, and screen readers announce Remove one and Add one."},
+   {"at": "[data-out]", "title": "Stops at 1, and says so", "text": "The − button turns off at 1, so people know they’ve reached the floor.", "wait": "Press − to see this.", "reveal": [["click", "[data-minus]"]]}
+  ]
+ },
+ "pat-jakobs-law-2": {
+  "bad": [
+   {"at": "[data-cell=\"0\"]", "title": "Enter adds a line in the cell", "text": "Type 900 and press Enter, and the cursor stays in Rent on a new line."},
+   {"at": "[data-total]", "title": "The total breaks to #ERROR", "text": "Rent ends up holding 900 and 450 on two lines, so the sum fails."}
+  ],
+  "good": [
+   {"at": "[data-cell=\"0\"]", "title": "Enter saves and moves to Food", "text": "People type down the column the way they do in any spreadsheet."},
+   {"at": "[data-total]", "title": "The total updates on each Enter", "text": "900, then 450, gives 1350, with no stray lines in any cell."}
+  ]
+ },
+ "pat-jakobs-law-3": {
+  "bad": [
+   {"at": ".app-bar", "title": "No Save button, no status", "text": "The bar shows only “Gift ideas”, so people can’t tell if a change was kept."},
+   {"at": "[data-out]", "title": "Ctrl+S does nothing", "text": "The habit people bring from other apps meets silence, and the doubt stays.", "wait": "Press Ctrl+S in the note to see this.", "reveal": [["press", "[data-note]", "Control+s"]]}
+  ],
+  "good": [
+   {"at": "[data-status]", "title": "“Saved” in the bar", "text": "It turns to “Saving…” while people type, then back, so they can see it worked."},
+   {"at": "[data-hint]", "title": "Ctrl+S explains the new way", "text": "The usual shortcut still works, and the hint says notes save on their own.", "wait": "Press Ctrl+S in the note to see this.", "reveal": [["press", "[data-note]", "Control+s"]]}
+  ]
+ },
+ "pat-fitts-law-1": {
+  "bad": [
+   {"at": ".ft-ph.blur .ft-x", "title": "A 12-pixel target on each photo", "text": "The ✕ is the whole button, so a near miss lands on the photo."},
+   {"at": "[data-out]", "title": "Every miss opens the photo", "text": "The counter shows how often people miss, and each miss is a detour."}
+  ],
+  "good": [
+   {"at": ".ft-ph.blur .ft-x", "title": "Same icon, 32-pixel button", "text": "The ✕ still looks small, but the area that takes the click is much bigger."},
+   {"at": "[data-out]", "title": "Misses stay at 0", "text": "Three blurry photos take three clicks, even with a finger or a shaky hand."}
+  ]
+ },
+ "pat-fitts-law-2": {
+  "bad": [
+   {"at": "[data-save]", "title": "Save in the top corner", "text": "From Postcode, the pointer has to cross the whole form to reach it."},
+   {"at": "[data-last]", "title": "Postcode is where people finish", "text": "The last field sits at the far end of the form from Save."}
+  ],
+  "good": [
+   {"at": "[data-save]", "title": "Save right under Postcode", "text": "A short move down from the last field, in the order people read the form."},
+   {"at": "[data-last]", "title": "The pointer is already here", "text": "After the postcode, the next step is just below, not across the screen."}
+  ]
+ },
+ "pat-fitts-law-3": {
+  "bad": [
+   {"at": "[data-reply]", "title": "Reply is a tiny target", "text": "The action people use most is a small button tucked in the corner."},
+   {"at": "[data-del]", "title": "Delete touches Reply", "text": "Same size, 2 pixels apart, so a slip meant for Reply deletes the email."},
+   {"at": "[data-out]", "title": "Gone for good, no undo", "text": "One slip costs the whole email, with no way back.", "wait": "Press Delete to see this.", "reveal": [["click", "[data-del]"]]}
+  ],
+  "good": [
+   {"at": "[data-reply]", "title": "Reply is the big button", "text": "It spans the width under the email, right where people finish reading."},
+   {"at": "[data-del]", "title": "Delete sits apart, in the bar", "text": "A trash icon at the far end of the bar, nowhere near Reply."},
+   {"at": ".toast", "title": "Undo for six seconds", "text": "If a slip does happen, Undo brings the email back.", "wait": "Press the trash icon to see this.", "reveal": [["click", "[data-del]"]]}
+  ]
+ },
+ "pat-hicks-law-1": {
+  "bad": [
+   {"at": ".hk-list", "title": "22 cities in no order", "text": "Madrid, Oslo, Athens… Lisbon is number 15, so people read down until they find it.", "wait": "Open the list to see this.", "reveal": [["click", "[data-open]"]]},
+   {"at": "[data-out]", "title": "Seconds spent scanning", "text": "The demo times the pick, so people can compare it with the other side.", "wait": "Pick a city to see this.", "reveal": [["click", "[data-open]"], ["click", "[data-city=\"Lisbon\"]"]]}
+  ],
+  "good": [
+   {"at": "[data-q]", "title": "Type “lis” to narrow it", "text": "The search box has focus when the list opens, and three letters leave only Lisbon.", "wait": "Open the list to see this.", "reveal": [["click", "[data-open]"]]},
+   {"at": ".hk-sec", "title": "Recent trips first", "text": "Lisbon and Porto sit at the top, so a repeat trip is one click.", "wait": "Open the list to see this.", "reveal": [["click", "[data-open]"]]},
+   {"at": ".hk-sec:nth-of-type(2)", "title": "The rest, sorted A to Z", "text": "People who don’t search can still guess where their city sits.", "wait": "Open the list to see this.", "reveal": [["click", "[data-open]"]]}
+  ]
+ },
+ "pat-hicks-law-2": {
+  "bad": [
+   {"at": ".hk-dlg .acts", "title": "Four gray buttons in a row", "text": "Save as copy, Don’t save, Save and Cancel look alike, so people read every one.", "wait": "Press Close document to see this.", "reveal": [["click", "[data-close]"]]},
+   {"at": "[data-pick=\"drop\"]", "title": "Don’t save sits next to Save", "text": "With equal weight, it’s easy to throw away the edits by mistake.", "wait": "Press Close document to see this.", "reveal": [["click", "[data-close]"]]},
+   {"at": "[data-pick=\"copy\"]", "title": "Focus lands on Save as copy", "text": "Pressing Enter right away makes a copy, not the save people wanted.", "wait": "Press Close document to see this.", "reveal": [["click", "[data-close]"]]}
+  ],
+  "good": [
+   {"at": "[data-pick=\"save\"]", "title": "Save is the one primary button", "text": "It sits last and has focus, so Enter does the usual thing.", "wait": "Press Close document to see this.", "reveal": [["click", "[data-close]"]]},
+   {"at": "[data-pick=\"drop\"]", "title": "Don’t save is a quieter button", "text": "Still easy to find, but it no longer competes with Save.", "wait": "Press Close document to see this.", "reveal": [["click", "[data-close]"]]},
+   {"at": "[data-pick=\"copy\"]", "title": "Rare choices are plain text", "text": "Save as copy and Cancel step back, so the eye goes to Save first.", "wait": "Press Close document to see this.", "reveal": [["click", "[data-close]"]]}
+  ]
+ },
+ "pat-hicks-law-3": {
+  "bad": [
+   {"at": ".hk-share", "title": "Three options, nothing more", "text": "Copy link, Send to… and Save to device. Full-size download was cut."},
+   {"at": "[data-act=\"save\"]", "title": "Save to device shrinks the photo", "text": "It saves at 1600 px, and nothing else offers the original."}
+  ],
+  "good": [
+   {"at": "[data-act=\"save\"]", "title": "The common three stay in view", "text": "Most people still pick from the same short list as before."},
+   {"at": "[data-more]", "title": "More options, with a count", "text": "The 3 tells people there’s more, without showing it all the time."},
+   {"at": "[data-act=\"orig\"]", "title": "Full size is one click in", "text": "Download original (24 MP) saves the photo at 6000 × 4000.", "wait": "Press More options to see this.", "reveal": [["click", "[data-more]"]]}
+  ]
+ },
+ "pat-teslers-law-1": {
+  "bad": [
+   {"at": "[data-export]", "title": "Export, with no size choice", "text": "It always makes a 1080 px file, and nothing on screen offers another."},
+   {"at": ".tl-need", "title": "The print shop needs 3,000 px", "text": "The photo is 4032 px wide, so the app throws away what the task needs."},
+   {"at": "[data-res]", "title": "A dead end after Export", "text": "“There’s no way to pick another size.” People can’t finish the task here.", "wait": "Press Export to see this.", "reveal": [["click", "[data-export]"]]}
+  ],
+  "good": [
+   {"at": "[data-export]", "title": "Export is still one click", "text": "People who just want to share get the 1080 px default, as before."},
+   {"at": "[data-toggle]", "title": "More options next to Export", "text": "The size choice is one click away for the people who need it."},
+   {"at": "label.check:has(input[value=\"4032\"])", "title": "Full size, labeled for printing", "text": "“Good for printing” tells people which size suits the print shop.", "wait": "Press More options to see this.", "reveal": [["click", "[data-toggle]"]]}
+  ]
+ },
+ "pat-teslers-law-2": {
+  "bad": [
+   {"at": ".field-help", "title": "One exact format, spelled out", "text": "+447700900123 with no spaces is how the system stores it, not how people write it."},
+   {"at": "[data-msg]", "title": "A vague error for a real number", "text": "The number is right, but people have to retype it in the app’s format.", "wait": "Type 07700 900 123 and press Save to see this.", "reveal": [["fill", "[data-ph]", "07700 900 123"], ["click", "[data-save]"]]}
+  ],
+  "good": [
+   {"at": ".field-help", "title": "Help says why, not how", "text": "“We’ll text you when the parcel is close” explains what the number is for."},
+   {"at": "[data-ph]", "title": "Any common format works", "text": "Spaces, a leading 0 or 0044 are all fine. The product tidies them up."},
+   {"at": "[data-res]", "title": "Saved as +44 7700 900123", "text": "The app adds the country code and spacing, so it works on the first try.", "wait": "Type 07700 900 123 and press Save to see this.", "reveal": [["fill", "[data-ph]", "07700 900 123"], ["click", "[data-save]"]]}
+  ]
+ },
+ "pat-teslers-law-3": {
+  "bad": [
+   {"at": ".tl-card > .cs-meta", "title": "Tested with one sample photo", "text": "One 1 MB sample.jpg is nothing like what people’s phones make."},
+   {"at": ".tl-file:nth-child(2) [data-st]", "title": "Error 415 on the HEIC photo", "text": "An iPhone’s usual format fails with a code people can’t act on.", "wait": "Press Upload 4 files to see this.", "reveal": [["click", "[data-up]"], ["wait", 1500]]},
+   {"at": "[data-res]", "title": "Only 1 of 4 uploaded", "text": "The errors don’t say what to do, so people try again or give up.", "wait": "Press Upload 4 files to see this.", "reveal": [["click", "[data-up]"], ["wait", 1500]]}
+  ],
+  "good": [
+   {"at": ".tl-card > .cs-meta", "title": "Tested with real phone files", "text": "HEIC photos, odd names and big videos were part of the test, not a surprise."},
+   {"at": ".tl-file:nth-child(2) [data-st]", "title": "The HEIC photo becomes a JPG", "text": "People never see the format problem. The product converts it.", "wait": "Press Upload 4 files to see this.", "reveal": [["click", "[data-up]"], ["wait", 1500]]},
+   {"at": "[data-res]", "title": "All 4 uploaded", "text": "The 1.8 GB video goes up in parts, so a big file just takes longer.", "wait": "Press Upload 4 files to see this.", "reveal": [["click", "[data-up]"], ["wait", 2200]]}
+  ]
+ }
+}

@@ -1,0 +1,127 @@
+{
+ "spinner-1": {
+  "bad": [
+   {"at": "[data-res]", "title": "A blink where the results go", "text": "At 0.3 s the spinner is gone before anyone can read “Searching…”, so it looks like a glitch."},
+   {"at": "[data-t]", "title": "Spinner shown, even at 0.3 s", "text": "Press Chairs and the line below admits it. Every fast search pays for a flash."}
+  ],
+  "good": [
+   {"at": "[data-res]", "title": "Fast results just appear", "text": "The old list swaps straight to the new one, with no flash in between."},
+   {"at": "[data-t]", "title": "No spinner at 0.3 s", "text": "The line below confirms it, so fast searches feel as fast as they are."},
+   {"at": ".sp-net", "title": "Slow network still gets one", "text": "At 2 s the spinner shows after 400 ms, so it means a real wait."}
+  ]
+ },
+ "spinner-2": {
+  "bad": [
+   {"at": ".sp-wait", "title": "Uploading video… and nothing else", "text": "No percent and no time left, so a minute of this looks like a stuck upload.", "wait": "Press Upload video to see this.", "reveal": [["click", "[data-go]"]]},
+   {"at": "[data-clock]", "title": "Only the clock moves", "text": "Time so far keeps climbing, but nothing says how much is left."}
+  ],
+  "good": [
+   {"at": ".sp-st .bar", "title": "A bar that fills with the work", "text": "It moves every second, so people can see the upload is alive.", "wait": "Press Upload video to see this.", "reveal": [["click", "[data-go]"]]},
+   {"at": "[data-left]", "title": "GB sent and seconds left", "text": "“1.1 of 6.5 GB · about 50 s left” lets people choose to wait or step away.", "wait": "Press Upload video to see this.", "reveal": [["click", "[data-go]"], ["wait", 300]]}
+  ]
+ },
+ "spinner-3": {
+  "bad": [
+   {"at": ".sp-cover", "title": "A cover over the whole app", "text": "Everything goes gray for four seconds, though only the folder list is loading.", "wait": "Press Refresh to see this.", "reveal": [["click", "[data-ref]"]]},
+   {"at": "[data-txt]", "title": "The reply stops taking keys", "text": "Someone halfway through “book a table for” has to wait for a folder count."}
+  ],
+  "good": [
+   {"at": "[data-f] .sp-wait", "title": "Loading folders…, right where it’s busy", "text": "The spinner sits in the folder list, so people see what’s loading and what isn’t.", "wait": "Press Refresh to see this.", "reveal": [["click", "[data-ref]"]]},
+   {"at": "[data-txt]", "title": "The reply keeps taking text", "text": "People can finish the sentence while the folders load."}
+  ]
+ },
+ "spinner-4": {
+  "bad": [
+   {"at": "[data-list] .sp-wait", "title": "One short row for three files", "text": "The spinner holds a fraction of the height the list will need.", "wait": "Press Refresh to see this.", "reveal": [["click", "[data-re]"]]},
+   {"at": "[data-up]", "title": "Upload file drops a whole list", "text": "Anyone reaching for it during loading clicks a file row instead."}
+  ],
+  "good": [
+   {"at": "[data-list]:has(.skel)", "title": "Three placeholder rows for three files", "text": "Each has the thumbnail and line of a real row, so the height is right.", "wait": "Press Refresh to see this.", "reveal": [["click", "[data-re]"]]},
+   {"at": "[data-up]", "title": "Upload file stays where it was", "text": "Same spot before and after the files land, so a click always hits it."}
+  ]
+ },
+ "progress-bar-1": {
+  "bad": [
+   {"at": "[data-bar]", "title": "Empty until it’s suddenly full", "text": "The bar jumps from nothing to 100%, with no sign of life in between."},
+   {"at": "[data-num]:not(:empty)", "title": "0% for six seconds", "text": "The number never moves, so working and stuck look the same.", "wait": "Press Restore to see this.", "reveal": [["click", "[data-go]"]]}
+  ],
+  "good": [
+   {"at": "[data-bar]", "title": "A bar that keeps moving", "text": "The stripe runs the whole time, so people see the restore is alive."},
+   {"at": "[data-num]:not(:empty)", "title": "Step 1 of 3, not 0%", "text": "People see how many stages there are and which one they’re in.", "wait": "Press Restore to see this.", "reveal": [["click", "[data-go]"]]},
+   {"at": "[data-stages] b", "title": "Finished stages get a check", "text": "Checking files ticks off and Copying turns bold, so it’s plainly getting somewhere.", "wait": "Press Restore and wait two seconds to see this.", "reveal": [["click", "[data-go]"], ["wait", 2300]]}
+  ]
+ },
+ "progress-bar-2": {
+  "bad": [
+   {"at": "[data-num]:not(:empty)", "title": "99% after one second", "text": "It races through 30, 62, 85 and 96, then sits at 99 for four seconds.", "wait": "Press Export album to see this.", "reveal": [["click", "[data-go]"], ["wait", 1400]]},
+   {"at": "[data-clock]:not(:empty)", "title": "The clock shows the stall", "text": "Time keeps running while the bar doesn’t, so people think it froze.", "wait": "Press Export album to see this.", "reveal": [["click", "[data-go]"], ["wait", 1400]]}
+  ],
+  "good": [
+   {"at": "[data-num]:not(:empty)", "title": "One photo at a time", "text": "Photo 12 of 30 is real work, so the bar moves at the pace of the export.", "wait": "Press Export album to see this.", "reveal": [["click", "[data-go]"], ["wait", 1400]]},
+   {"at": "[data-bar].indeterminate", "title": "Finishing up… with a moving bar", "text": "The part that can’t be counted says so instead of posing as 99%.", "wait": "Press Export album and wait four seconds to see this.", "reveal": [["click", "[data-go]"], ["wait", 3800]]}
+  ]
+ },
+ "progress-bar-3": {
+  "bad": [
+   {"at": ".cs-dlg", "title": "A dialog over the whole editor", "text": "Title and clips are out of reach for six seconds.", "wait": "Press Export to see this.", "reveal": [["click", "[data-exp]"]]},
+   {"at": ".cs-dlg .bar", "title": "No way to stop it", "text": "Nothing here cancels, so a wrong export runs to the end.", "wait": "Press Export to see this.", "reveal": [["click", "[data-exp]"]]}
+  ],
+  "good": [
+   {"at": "[data-q]", "title": "A small strip at the bottom", "text": "The percent shows here without covering the title or the clips."},
+   {"at": "[data-cancel]", "title": "Cancel right beside the bar", "text": "One press stops it, and the editor says Export canceled.", "wait": "Press Export to see this.", "reveal": [["click", "[data-exp]"]]},
+   {"at": "[data-title]", "title": "Still editable while it runs", "text": "People can rename the video or pick a clip, and hear back when it’s ready."}
+  ]
+ },
+ "progress-bar-4": {
+  "bad": [
+   {"at": "[data-bar]", "title": "A tiny bar labeled Status", "text": "It sits under the list, with no file name and no number."},
+   {"at": ".cs-row:has(use[href=\"#i-play\"])", "title": "trip-video.mov already looks done", "text": "It shows 3 GB like any finished file while the upload is still running.", "wait": "Press Upload trip-video.mov to see this.", "reveal": [["click", "[data-up]"]]}
+  ],
+  "good": [
+   {"at": ".pb-file .bar", "title": "The bar is on the file", "text": "People looking at trip-video.mov see how far it has got.", "wait": "Press Upload trip-video.mov to see this.", "reveal": [["click", "[data-up]"]]},
+   {"at": "[data-amt]", "title": "GB sent, next to the name", "text": "“0.9 of 3 GB” is an amount people can judge at a glance.", "wait": "Press Upload trip-video.mov to see this.", "reveal": [["click", "[data-up]"]]},
+   {"at": ".pb-chip", "title": "1 uploading in the top bar", "text": "A summary that stays in view, then turns into Uploaded.", "wait": "Press Upload trip-video.mov to see this.", "reveal": [["click", "[data-up]"]]}
+  ]
+ },
+ "skeleton-1": {
+  "bad": [
+   {"at": ".sk-lines", "title": "Text lines where photos go", "text": "They’re far shorter than the grid, so the space is wrong from the start.", "wait": "Press Reload to see this.", "reveal": [["click", "[data-go]"]]},
+   {"at": "[data-share]", "title": "Share album drops when photos land", "text": "Anyone reaching for it during the reload clicks empty space."}
+  ],
+  "good": [
+   {"at": ".sk-grid:has(.skel)", "title": "Six tiles in the grid’s shape", "text": "Same rows, same size, so nothing below has to move.", "wait": "Press Reload to see this.", "reveal": [["click", "[data-go]"]]},
+   {"at": "[data-share]", "title": "Share album stays put", "text": "The note under the frame says “Share album didn’t move” once the photos arrive."}
+  ]
+ },
+ "skeleton-2": {
+  "bad": [
+   {"at": "[data-area]", "title": "Gray bars for a blink", "text": "Each switch flashes empty rows that are gone before they read as loading."},
+   {"at": "[data-k=\"albums\"]", "title": "Every tab switch flickers", "text": "Going back and forth makes the list flash each time, so the app feels jumpy."}
+  ],
+  "good": [
+   {"at": "[data-area]", "title": "The list just swaps", "text": "Playlists turns straight into Albums, so the switch feels instant."},
+   {"at": "[data-k=\"albums\"]", "title": "Held back for 400 ms", "text": "Placeholders would show only if loading ran slow, so a quick tab never flickers."}
+  ]
+ },
+ "skeleton-3": {
+  "bad": [
+   {"at": "[data-area]", "title": "Still loading, forever", "text": "The gray rows look the same at 2 seconds and at 2 minutes."},
+   {"at": "[data-m]:not(:empty)", "title": "Only the demo knows it failed", "text": "This line is behind the scenes. People on the page see no change.", "wait": "Wait two seconds to see this.", "reveal": [["wait", 2300]]}
+  ],
+  "good": [
+   {"at": ".sk-err", "title": "Couldn’t load your inbox, said plainly", "text": "It takes the place of the gray rows and points to the connection.", "wait": "Wait two seconds to see this.", "reveal": [["wait", 2300]]},
+   {"at": "[data-retry]", "title": "Retry right under the message", "text": "One press loads the inbox, with no need to reload the page.", "wait": "Wait two seconds to see this.", "reveal": [["wait", 2300]]}
+  ]
+ },
+ "skeleton-4": {
+  "bad": [
+   {"at": ".sk-head:has(.sk-loud)", "title": "Even the account name shimmers", "text": "“Everyday account” is already known, yet it stays hidden until everything arrives.", "wait": "Press Reload to see this.", "reveal": [["click", "[data-go]"]]},
+   {"at": "[data-tx]", "title": "Fast shimmer on every row", "text": "Every block flashes for 2.6 seconds, which is tiring to watch.", "wait": "Press Reload to see this.", "reveal": [["click", "[data-go]"]]}
+  ],
+  "good": [
+   {"at": ".sk-head", "title": "Everyday account, at once", "text": "The name and Last 7 days show right away, so people know where they are."},
+   {"at": ".sk-bal", "title": "The balance comes next", "text": "$2,480.16 lands after 0.7 s, well before the transactions.", "wait": "Press Reload and wait a moment to see this.", "reveal": [["click", "[data-go]"], ["wait", 900]]},
+   {"at": "[data-tx]", "title": "Only the rows still loading pulse", "text": "Slow and soft, so the waiting part is clear without pulling at the eye.", "wait": "Press Reload to see this.", "reveal": [["click", "[data-go]"]]}
+  ]
+ }
+}

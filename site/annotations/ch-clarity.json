@@ -1,0 +1,160 @@
+{
+ "good-visual-hierarchy-1": {
+  "bad": [
+   {"at": ".vh-wrap:has(.vh-cover[hidden]) .vh-loud", "title": "Nine fields, all shouting", "text": "Every label is bold caps and every value 17px bold, so people read all nine to find one.", "wait": "Press Glance, then pick a gate, to see this.", "reveal": [["click", "[data-go]"], ["wait", 1200], ["click", "[data-g=\"B21\"]"]]},
+   {"at": ".vh-wrap:has(.vh-cover[hidden]) .vh-loud span:nth-child(5)", "title": "Gate B21 hides in the middle", "text": "It’s red, but so are Flight and Boarding. In one second, most people miss it.", "wait": "Press Glance, then pick a gate, to see this.", "reveal": [["click", "[data-go]"], ["wait", 1200], ["click", "[data-g=\"B21\"]"]]}
+  ],
+  "good": [
+   {"at": ".vh-wrap:has(.vh-cover[hidden]) .vh-lead", "title": "Gate and Boarding at 30px", "text": "The two things people check at the airport sit on top, set off by a dashed line.", "wait": "Press Glance, then pick a gate, to see this.", "reveal": [["click", "[data-go]"], ["wait", 1200], ["click", "[data-g=\"B21\"]"]]},
+   {"at": ".vh-wrap:has(.vh-cover[hidden]) .vh-quiet", "title": "The other seven step down", "text": "Small gray labels and smaller values stay readable, but don’t compete for the glance.", "wait": "Press Glance, then pick a gate, to see this.", "reveal": [["click", "[data-go]"], ["wait", 1200], ["click", "[data-g=\"B21\"]"]]}
+  ]
+ },
+ "good-visual-hierarchy-2": {
+  "bad": [
+   {"at": ".vh-h:nth-of-type(2)", "title": "Push looks like a setting row", "text": "Same 14px and weight as Messages below it. Only a blue tint sets it apart."},
+   {"at": ".vh-set.vh-gray", "title": "In gray, the sections run together", "text": "Nine lines of the same text. People can’t see where Email ends and Push begins.", "wait": "Turn on Grayscale to see this.", "reveal": [["check", "[data-gray]"]]}
+  ],
+  "good": [
+   {"at": ".vh-h:nth-of-type(2)", "title": "Push is bigger, bolder, set apart", "text": "16px bold with space above it starts a new group at a glance."},
+   {"at": ".vh-set.vh-gray", "title": "Still clear without the blue", "text": "Size, weight and space carry the order, so the color is only extra.", "wait": "Turn on Grayscale to see this.", "reveal": [["check", "[data-gray]"]]}
+  ]
+ },
+ "good-visual-hierarchy-3": {
+  "bad": [
+   {"at": ".vh-rec p:nth-child(3)", "title": "Serves 4 and 25 minutes don’t match", "text": "Two facts of the same kind in two sizes and two weights. Which one matters more?"},
+   {"at": "[data-count]:not(:empty)", "title": "Eight styles for one card", "text": "From 22px down to 12px, mostly 1 to 3px apart. Too close to read as an order.", "wait": "Turn on Show styles to see this.", "reveal": [["check", "[data-show]"]]}
+  ],
+  "good": [
+   {"at": ".vh-rec p:nth-child(2)", "title": "Serves 4 · 25 minutes on one line", "text": "Both key facts share one style, so they read as one level."},
+   {"at": "[data-count]:not(:empty)", "title": "Four styles, each a clear step", "text": "Title, key facts, body, small print. Ingredients reuses the key-fact style instead of adding one.", "wait": "Turn on Show styles to see this.", "reveal": [["check", "[data-show]"]]}
+  ]
+ },
+ "good-visual-hierarchy-4": {
+  "bad": [
+   {"at": "[data-b=\"shop\"]", "title": "Continue shopping looks like the way on", "text": "Filled and first in line, so some people press it and land back in the shop."},
+   {"at": "[data-b=\"pay\"]", "title": "Check out gets no extra weight", "text": "Same fill, same size. People have to read both to find the next step."}
+  ],
+  "good": [
+   {"at": "[data-b=\"shop\"]", "title": "Continue shopping steps back", "text": "Still there for people who want it, but outlined, so it doesn’t compete."},
+   {"at": "[data-b=\"pay\"]", "title": "Check out is the only fill", "text": "The eye lands there first, and that’s the step after the bag."}
+  ]
+ },
+ "good-proximity-1": {
+  "bad": [
+   {"at": ".px-cap:nth-of-type(2)", "title": "Lake, June floats between photos", "text": "12px above and 12px below, so it could label photo 2 or photo 3."},
+   {"at": ".px-photo[data-i=\"2\"]", "title": "Photo 3 seems to own the caption", "text": "Many people read captions as headings for what follows, and pick this one."}
+  ],
+  "good": [
+   {"at": ".px-cap:nth-of-type(2)", "title": "Lake, June hugs its photo", "text": "4px under photo 2 and 20px before photo 3. The gap says where it belongs."},
+   {"at": ".px-photo[data-i=\"2\"]", "title": "Photo 3 starts a new group", "text": "The wider gap above it shows that Lake, June isn’t its label."}
+  ]
+ },
+ "good-proximity-2": {
+  "bad": [
+   {"at": ".px-sec:first-child .px-r:nth-child(2)", "title": "A box around every single row", "text": "Name, Email and Phone each get a frame, inside the frame of their group."},
+   {"at": "hr", "title": "A rule plus two box edges", "text": "Three lines mark one break between Profile and Privacy."},
+   {"at": "[data-out]:not(:empty)", "title": "10 lines for five settings", "text": "People read past more lines than words, and the page looks busy.", "wait": "Turn on Show lines to see this.", "reveal": [["check", "[data-hl]"]]}
+  ],
+  "good": [
+   {"at": ".px-sec:first-child .px-r:nth-child(2)", "title": "Rows sit on plain space", "text": "No frames needed. Name, Email and Phone still read as one group."},
+   {"at": ".px-sec + .px-sec", "title": "A 20px gap instead of a rule", "text": "The bigger gap and the Privacy label do what the lines and boxes did."}
+  ]
+ },
+ "good-proximity-3": {
+  "bad": [
+   {"at": "[data-r]", "title": "The slider moves, the photo doesn’t", "text": "Dragging Brightness changes nothing yet, so people think it’s broken."},
+   {"at": ".px-panel", "title": "Apply sits past four other options", "text": "It’s below Crop, Rotate, Filter and Frame, out of sight until people scroll."}
+  ],
+  "good": [
+   {"at": "[data-r]", "title": "Slider and button as a pair", "text": "The button sits right under the slider, so people see they work together."},
+   {"at": "[data-apply]", "title": "Apply is in view from the start", "text": "No scrolling past Crop, Rotate, Filter and Frame to find it."}
+  ]
+ },
+ "good-proximity-4": {
+  "bad": [
+   {"at": "[data-err]", "title": "The error hugs Postcode", "text": "22px under Phone and 3px above Postcode, so people check the postcode first.", "wait": "Press Create account to see this.", "reveal": [["click", "button[type=\"submit\"]"]]},
+   {"at": "[data-phone]", "title": "The real problem sits far above", "text": "The a at the end of the phone number is what needs fixing."}
+  ],
+  "good": [
+   {"at": "[data-err]", "title": "Tight under Phone", "text": "5px under the field and 20px before Postcode. It reads as part of Phone.", "wait": "Press Create account to see this.", "reveal": [["click", "button[type=\"submit\"]"]]},
+   {"at": "[data-phone]", "title": "The field it’s about, right above", "text": "People look up from the message and spot the a at the end of 12a."}
+  ]
+ },
+ "good-spacing-rhythm-1": {
+  "bad": [
+   {"at": ".sr-ing:nth-of-type(2)", "title": "Three rows, two different gaps", "text": "7px above Lemons and 11px below. People see a wobble, not a choice."},
+   {"at": "[data-add]", "title": "19 above the button, 15 below", "text": "Close to 16, but not quite, so the card looks slightly off."},
+   {"at": "[data-out]:not(:empty)", "title": "Seven sizes for one card", "text": "From 3 to 19px, none of them repeating on purpose.", "wait": "Turn on Show gaps to see this.", "reveal": [["check", "[data-sw]"]]}
+  ],
+  "good": [
+   {"at": ".sr-ing:nth-of-type(2)", "title": "8px above and below every row", "text": "The ingredients sit evenly, so they read as one list."},
+   {"at": "[data-add]", "title": "24 before the button, 16 after", "text": "A full step more than the rows, so the action stands apart on purpose."},
+   {"at": "[data-out]:not(:empty)", "title": "Four steps, each one used again", "text": "4, 8, 16 and 24. Every gap has a reason a review can name.", "wait": "Turn on Show gaps to see this.", "reveal": [["check", "[data-sw]"]]}
+  ]
+ },
+ "good-spacing-rhythm-2": {
+  "bad": [
+   {"at": ".sr-bk .cs-meta", "title": "The dates sit 2px to the right", "text": "Too small to mean anything, but big enough to look like a slip."},
+   {"at": ".sr-price", "title": "Total pokes out to the left", "text": "The price row and its rule start 3px before the title."},
+   {"at": ".sr-note", "title": "The note is off by 4px", "text": "Free cancellation is pushed in a little. It reads as a mistake, not a note."}
+  ],
+  "good": [
+   {"at": ".sr-bk .cs-meta", "title": "The dates share the title’s edge", "text": "Every line starts at 16px, so the card reads as one clean column."},
+   {"at": ".sr-price", "title": "Total lines up too", "text": "The price row and its rule start on the same edge as the rest."},
+   {"at": ".sr-note", "title": "Indented by a full step", "text": "32px in, with a green bar. Free cancellation reads as a note on the price."}
+  ]
+ },
+ "good-spacing-rhythm-3": {
+  "bad": [
+   {"at": ".sr-row.tight", "title": "Playlist rows are cramped", "text": "Tiny thumbnails, no song count and a small tap target. Easy to hit the wrong one."},
+   {"at": ".sr-row.roomy", "title": "Recently played is roomy", "text": "Rows nearly three times as tall. Scrolling between lists feels like two apps."}
+  ],
+  "good": [
+   {"at": ".sr-row.mid", "title": "One row height for both lists", "text": "Every row has a 32px thumbnail and its count, so tapping feels the same everywhere."},
+   {"at": ".sr-h:nth-of-type(2)", "title": "Recently played, same rhythm", "text": "Crossing into the second list changes nothing but the heading."}
+  ]
+ },
+ "good-contrast-1": {
+  "bad": [
+   {"at": ".ct-card p:nth-of-type(2)", "title": "The address fades to pale gray", "text": "It’s the line people need at the door, and the hardest to read."},
+   {"at": ".ct-cap", "title": "Order 4821 is fainter still", "text": "People who need the order number for support have to squint at it."},
+   {"at": ".ct-glare", "title": "In sunlight, the text is gone", "text": "The glare washes out the pale gray. Only the heading is left.", "wait": "Turn on Bright sunlight to see this.", "reveal": [["check", "[data-sw]"]]}
+  ],
+  "good": [
+   {"at": ".ct-card p:nth-of-type(2)", "title": "The address in full text color", "text": "Far above 4.5 : 1, so it holds up on a dim screen or in sun."},
+   {"at": ".ct-cap", "title": "A quieter caption that still passes", "text": "It steps back from the body text without dropping below 4.5 : 1."},
+   {"at": ".ct-glare", "title": "Still readable in the glare", "text": "The same sunlight leaves every line, even the caption, easy to read.", "wait": "Turn on Bright sunlight to see this.", "reveal": [["check", "[data-sw]"]]}
+  ]
+ },
+ "good-contrast-2": {
+  "bad": [
+   {"at": ".ct-tx:nth-child(3) .ct-amt", "title": "€18.50, in or out?", "text": "Only the green says Ana paid it back. Nothing else on the row does."},
+   {"at": ".ct-bank.grey", "title": "Without color, five lookalike amounts", "text": "Salary and Rent read the same, so people can’t tell what came in.", "wait": "Turn on Remove color to see this.", "reveal": [["check", "[data-sw]"]]}
+  ],
+  "good": [
+   {"at": ".ct-tx:nth-child(3) .ct-amt", "title": "+€18.50 with an arrow", "text": "The sign and the arrow say money came in, with or without the green."},
+   {"at": ".ct-tx:nth-child(3) small", "title": "Received, in words", "text": "The word sits under the name, where people already look."},
+   {"at": ".ct-bank.grey", "title": "Still clear in gray", "text": "Signs, arrows and words carry the meaning. Color only speeds up the scan.", "wait": "Turn on Remove color to see this.", "reveal": [["check", "[data-sw]"]]}
+  ]
+ },
+ "good-contrast-3": {
+  "bad": [
+   {"at": "[data-seat=\"B3\"]", "title": "Taken and free, equally light", "text": "With red-green color blindness, B3 looks just like the free B2 next to it."},
+   {"at": ".ct-legend", "title": "The legend can’t help", "text": "Its chips use the same two colors, so it can’t settle which is which."}
+  ],
+  "good": [
+   {"at": "[data-seat=\"B3\"]", "title": "Taken is dark and crossed out", "text": "Even with the colors muddied, B3 is darker and has a cross, so nobody picks it."},
+   {"at": "[data-seat=\"B2\"]", "title": "Free is light with a green edge", "text": "Light seats read as open in any color vision."}
+  ]
+ },
+ "good-contrast-4": {
+  "bad": [
+   {"at": "[data-ev] small", "title": "Light-theme gray, reused in dark", "text": "On the dark card, “Bring your insurance card” sinks into the background."},
+   {"at": "[data-out]", "title": "Passes in Light, fails in Dark", "text": "In Dark the same caption drops to 2.5 : 1, far below 4.5 : 1."}
+  ],
+  "good": [
+   {"at": "[data-ev] small", "title": "Its own gray in each theme", "text": "Dark gets a lighter, warmer gray, so the caption stays readable."},
+   {"at": "[data-out]", "title": "Each theme measured on its own", "text": "Light 6.1 : 1 and Dark 6.2 : 1. Both pairs pass."}
+  ]
+ }
+}

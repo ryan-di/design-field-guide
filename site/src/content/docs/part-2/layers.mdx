@@ -55,13 +55,13 @@ The same product serves someone on day one and someone on day five hundred. Newc
 
 A layered interface shows a simple set of controls first and keeps the full set one step away. New and occasional users get the few choices that matter, and experts open the advanced layer to change the rest. Both layers change the same settings, so switching between them loses nothing.
 
-Where [progressive disclosure](/part-2/overload/#pat-progressive-disclosure) tucks away the settings few people change, a layered interface gives newcomers and experts each a named layer of the same controls, and people pick the one they work in.
+Where [progressive disclosure](../../part-2/overload/#pat-progressive-disclosure) tucks away the settings few people change, a layered interface gives newcomers and experts each a named layer of the same controls, and people pick the one they work in.
 
 <Raw html={F1} />
 
 ### Ways to do it \{#pat-layered-ui-ways\}
 
-There are a few ways to layer. Show more and a separate page work as in [progressive disclosure](/part-2/overload/#pat-progressive-disclosure). The other two split the work into two versions: a mode switch flips the whole screen between a basic and a full version, and a quick form handles the common case and opens the full form for the rest.
+There are a few ways to layer. Show more and a separate page work as in [progressive disclosure](../../part-2/overload/#pat-progressive-disclosure). The other two split the work into two versions: a mode switch flips the whole screen between a basic and a full version, and a quick form handles the common case and opens the full form for the rest.
 
 <Raw html={F2} />
 
@@ -85,7 +85,7 @@ If Simple and Advanced are two separate forms, they drift apart: a value typed i
 
 #### 2. Keep the way to more in sight \{#pat-layered-ui-rule-2-h\}
 
-If the way to the full controls is hard to find, people assume the simple layer is all there is, and they scroll through everything or leave. Put the way in a fixed, visible place, as a named button or a [segmented control](/part-3/inputs/#segmented), and [say what’s behind it](/part-2/overload/#pat-progressive-disclosure), such as “Filters: size, color, price”.
+If the way to the full controls is hard to find, people assume the simple layer is all there is, and they scroll through everything or leave. Put the way in a fixed, visible place, as a named button or a [segmented control](../../part-3/inputs/#segmented), and [say what’s behind it](../../part-2/overload/#pat-progressive-disclosure), such as “Filters: size, color, price”.
 
 <Raw html={F4} />
 
@@ -95,7 +95,7 @@ If the way to the full controls is hard to find, people assume the simple layer 
 
 #### 3. Show what changed out of sight \{#pat-layered-ui-rule-3-h\}
 
-Settings changed in the advanced layer still apply after people go back to the simple one, and [a change nobody can see](/part-2/overload/#pat-progressive-disclosure) makes results look wrong for no clear reason. Show a short summary in the simple layer, such as “1 advanced setting changed”, with a way to show it and a way to reset it.
+Settings changed in the advanced layer still apply after people go back to the simple one, and [a change nobody can see](../../part-2/overload/#pat-progressive-disclosure) makes results look wrong for no clear reason. Show a short summary in the simple layer, such as “1 advanced setting changed”, with a way to show it and a way to reset it.
 
 <Raw html={F5} />
 
@@ -133,7 +133,7 @@ When nobody decides where a new option goes, it lands in Advanced, which over ti
 
 A keyboard shortcut runs a command from the keyboard, without the mouse. People who repeat the same commands all day save a second or two each time, and that adds up. Shortcuts are for people who already know the command, while new people find it in a button or a menu and learn the key from there.
 
-Where a [command palette](/part-2/find/#pat-command-palette) lets people search for a command by name, a shortcut runs one they already know with a single key press.
+Where a [command palette](../../part-2/find/#pat-command-palette) lets people search for a command by name, a shortcut runs one they already know with a single key press.
 
 <Raw html={F9} />
 
@@ -153,7 +153,7 @@ Four rules keep shortcuts useful.
 
 #### 1. Show the keys where people look \{#pat-shortcuts-rule-1-h\}
 
-A shortcut nobody knows about saves nobody any time, and people don’t read help pages, so they never learn the key and keep clicking. Show each key next to its command, in buttons, menus and [tooltips](/part-3/overlays/#tooltip), and keep the full list behind “?”.
+A shortcut nobody knows about saves nobody any time, and people don’t read help pages, so they never learn the key and keep clicking. Show each key next to its command, in buttons, menus and [tooltips](../../part-3/overlays/#tooltip), and keep the full list behind “?”.
 
 <Raw html={F11} />
 
@@ -173,7 +173,7 @@ People rely on keys like copy, paste, undo, find and close tab in every app. If 
 
 #### 3. Ignore single keys while people type \{#pat-shortcuts-rule-3-h\}
 
-A single-letter shortcut is fast in a list, but in a text field the same letter is part of a word. As with [a palette that opens on “/”](/part-2/find/#pat-command-palette), a shortcut that still fires there runs commands people didn’t ask for. Turn single keys off while focus is in a text field, and give each shortcut a clear area where it works.
+A single-letter shortcut is fast in a list, but in a text field the same letter is part of a word. As with [a palette that opens on “/”](../../part-2/find/#pat-command-palette), a shortcut that still fires there runs commands people didn’t ask for. Turn single keys off while focus is in a text field, and give each shortcut a clear area where it works.
 
 <Raw html={F13} />
 
@@ -261,7 +261,7 @@ Help articles and support staff say things like “open the third item”. If cu
 
 #### 4. Keep the pinned list short \{#pat-customization-rule-4-h\}
 
-Pins are added in a second but often removed only from a settings page, so the pinned section keeps growing until it is as long as the list it was meant to shorten. Let people unpin right where the pin appears, and when nothing is pinned, show an [empty state](/part-3/states/#empty-state) that explains how pinning works.
+Pins are added in a second but often removed only from a settings page, so the pinned section keeps growing until it is as long as the list it was meant to shorten. Let people unpin right where the pin appears, and when nothing is pinned, show an [empty state](../../part-3/states/#empty-state) that explains how pinning works.
 
 <Raw html={F22} />
 

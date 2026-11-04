@@ -1,0 +1,123 @@
+{
+ "side-nav-1": {
+  "bad": [
+   {"at": "[data-k=newf]", "title": "New folder looks like a place", "text": "It sits between Photos and Trash, so people expect a page, not an action."},
+   {"at": "[data-k=upload]", "title": "Upload sends people away too", "text": "It opens a page of its own, and the photo lands in Files, not Photos."},
+   {"at": ".cs-ok", "title": "The folder ends up in Files", "text": "People started in Photos and now sit somewhere else, away from what they were doing.", "wait": "Press New folder, then Create, to see this.", "reveal": [["click", "[data-k=newf]"], ["click", "[data-create]"]]}
+  ],
+  "good": [
+   {"at": ".sn-nav", "title": "Only places in the sidebar", "text": "Files, Photos and Trash. Every item goes somewhere."},
+   {"at": "[data-new]", "title": "New folder acts on this page", "text": "The folder appears in Photos, where people already are."},
+   {"at": ".cs-ok", "title": "It says where the folder went", "text": "“Summer trip” lands at the top of Photos, in plain view.", "wait": "Press New folder to see this.", "reveal": [["click", "[data-new]"]]}
+  ]
+ },
+ "side-nav-2": {
+  "bad": [
+   {"at": ".sn-nav", "title": "Eleven items, all the same weight", "text": "Orders, used every day, looks no different from Staff, set up once."},
+   {"at": "[data-k=taxes]", "title": "Setup pages among the daily ones", "text": "Shipping, Taxes and Payments sit in the same list as Orders and Products."}
+  ],
+  "good": [
+   {"at": ".sn-h", "title": "Sell and Grow as headings", "text": "People skip to the right group instead of reading all eleven."},
+   {"at": "[data-more]", "title": "Rare pages fold under More (2)", "text": "Gift cards and Reviews stay one click away, out of the way."},
+   {"at": "[data-k=settings]", "title": "Setup moves into Settings", "text": "Shipping, Taxes, Payments and Staff wait there, off the daily list."}
+  ]
+ },
+ "side-nav-3": {
+  "bad": [
+   {"at": ".sn-rail", "title": "Five icons, no words", "text": "People point at each one to read its tooltip, and do it again next time."},
+   {"at": "[data-k=presets]", "title": "Presets is just a cube", "text": "Nothing about the shape says presets, so people hover until they hit it."}
+  ],
+  "good": [
+   {"at": ".sn-rail", "title": "Every icon carries its name", "text": "Library, Adjust, Layers, Presets and Help, readable at a glance."},
+   {"at": "[data-k=presets]", "title": "Presets, found by reading", "text": "The label does the first finding, and the cube helps people remember it."}
+  ]
+ },
+ "side-nav-4": {
+  "bad": [
+   {"at": ".sn-nav", "title": "No item is marked", "text": "Home, Search and Library look the same, so the sidebar can’t say where people are."},
+   {"at": ".sn-title", "title": "“Your music” matches nothing", "text": "No sidebar item uses those words, so people can’t link the page to Library."}
+  ],
+  "good": [
+   {"at": "[aria-current]", "title": "Library is highlighted", "text": "The sidebar answers where people are at a glance."},
+   {"at": ".sn-title", "title": "The title says Library too", "text": "Page and sidebar use the same word, so either side confirms it."}
+  ]
+ },
+ "breadcrumbs-1": {
+  "bad": [
+   {"at": ".bc-trail", "title": "Home / My trips above My trips", "text": "The trail repeats the title right under it, one more line to read."},
+   {"at": "[data-logo]", "title": "Stays already goes home", "text": "The logo does the job of the trail’s Home link."}
+  ],
+  "good": [
+   {"at": ".bc-title", "title": "The title alone says where people are", "text": "My trips, with nothing repeated above it."},
+   {"at": "[data-logo]", "title": "Stays still leads home", "text": "The trail’s Home link isn’t missed, because the logo covers it."},
+   {"at": ".bc-back", "title": "One link covers the way up", "text": "← My trips is named for where it goes.", "wait": "Open a trip to see this.", "reveal": [["click", "[data-go=lisbon]"]]}
+  ]
+ },
+ "breadcrumbs-2": {
+  "bad": [
+   {"at": ".bc-trail", "title": "Search, Sale, Wishlist, in visiting order", "text": "None of them is where running shoes live in the shop."},
+   {"at": "[data-go=search]", "title": "Search starts the trail, not the shop", "text": "It leads back to results for “gifts”, not to more shoes."}
+  ],
+  "good": [
+   {"at": ".bc-trail", "title": "Shoes, then Running", "text": "The same trail however people got here, from a search, a sale or a link."},
+   {"at": "li:nth-child(2) .bc-link", "title": "More running shoes, one click away", "text": "Running opens Road racer 2 and the GTX next to this one."}
+  ]
+ },
+ "breadcrumbs-3": {
+  "bad": [
+   {"at": ".bc-trail", "title": "Seven levels fill the trail", "text": "It wraps onto a second line and pushes March and its files down."},
+   {"at": "li:nth-child(3) .bc-link", "title": "Clients, third of seven", "text": "People read past Files and Work to reach it, every time."}
+  ],
+  "good": [
+   {"at": ".bc-trail", "title": "Files / … / March on one line", "text": "The top level and the current one, with the page right below."},
+   {"at": ".bc-more", "title": "… holds the five middle levels", "text": "Work through Invoices stay one click away, without taking up the line."},
+   {"at": ".bc-menu button:nth-child(2)", "title": "Clients in a short list", "text": "The hidden levels appear in order, so the jump takes two clicks.", "wait": "Press … to see this.", "reveal": [["click", ".bc-more"]]}
+  ]
+ },
+ "stepper-1": {
+  "bad": [
+   {"at": ".st-steps", "title": "Address and Card are ticked but locked", "text": "They show as done, yet a click on either does nothing."},
+   {"at": ".st-sum", "title": "Review lists the answers with no Edit", "text": "Switching to Work costs Back, Back, a pick, Next and Next."},
+   {"at": "[data-clicks]", "title": "Five clicks for one change", "text": "That cost is why people stop checking their answers."}
+  ],
+  "good": [
+   {"at": ".st-steps", "title": "Finished steps open with a click", "text": "Address is one press away from Review, skipping Card."},
+   {"at": ".st-edit", "title": "Edit beside each answer", "text": "It opens that step, and Next becomes Back to review."},
+   {"at": "[data-clicks]", "title": "Three clicks for one change", "text": "Edit, pick Work, Back to review. Checking stays cheap."}
+  ]
+ },
+ "stepper-2": {
+  "bad": [
+   {"at": ".st-q", "title": "The same welcome every month", "text": "Regulars read “Let’s create an invoice” before they can do anything."},
+   {"at": ".st-count", "title": "Four steps for a known invoice", "text": "Northwind and the retainer never change, yet each gets its own screen."},
+   {"at": "[data-clicks]", "title": "Six clicks for a repeat job", "text": "Three Nexts, two picks and Send, every single month."}
+  ],
+  "good": [
+   {"at": ".st-tpl", "title": "Saved templates on the first screen", "text": "Northwind · Monthly retainer is waiting, so regulars skip the questions."},
+   {"at": ".st-tpl button", "title": "Use jumps to Check and send", "text": "Client and work are filled in, and the guided path stays for newcomers."},
+   {"at": "[data-clicks]", "title": "Two clicks for a repeat job", "text": "Use, then Send invoice."}
+  ]
+ },
+ "stepper-3": {
+  "bad": [
+   {"at": ".st-chips", "title": "Back clears the size", "text": "5×7 is no longer picked, and Next is off until people choose again.", "wait": "Pick a size, set Copies to 3, press Next, then Back to see this.", "reveal": [["click", ".st-chip:nth-child(2)"], ["fill", "[data-copies]", "3"], ["click", "[data-next]"], ["click", "[data-back]"]]},
+   {"at": "[data-copies]", "title": "Copies quietly back to 1", "text": "People who miss it order one print instead of three.", "wait": "Set Copies to 3, press Next, then Back to see this.", "reveal": [["click", ".st-chip:nth-child(2)"], ["fill", "[data-copies]", "3"], ["click", "[data-next]"], ["click", "[data-back]"]]}
+  ],
+  "good": [
+   {"at": ".st-chips", "title": "The size is still picked", "text": "5×7 stays pressed, so checking the step costs nothing.", "wait": "Pick a size, set Copies to 3, press Next, then Back to see this.", "reveal": [["click", ".st-chip:nth-child(2)"], ["fill", "[data-copies]", "3"], ["click", "[data-next]"], ["click", "[data-back]"]]},
+   {"at": "[data-copies]", "title": "Copies still says 3", "text": "The number people typed survives Back, so the order stays right.", "wait": "Set Copies to 3, press Next, then Back to see this.", "reveal": [["click", ".st-chip:nth-child(2)"], ["fill", "[data-copies]", "3"], ["click", "[data-next]"], ["click", "[data-back]"]]}
+  ]
+ },
+ "stepper-4": {
+  "bad": [
+   {"at": ".st-dots", "title": "Nine dots and no names", "text": "People can count the screens but can’t tell what’s left."},
+   {"at": ".st-count", "title": "Step 1 of 9 for one flight", "text": "Seat, bags, meals, insurance and extras each take a whole screen."},
+   {"at": ".st-count:last-child", "title": "Eight presses of Next before Pay", "text": "Most of those screens only confirm a default that was already fine."}
+  ],
+  "good": [
+   {"at": ".st-steps", "title": "Three named steps on one line", "text": "Flight, Travelers, Pay. The end is in sight from the start."},
+   {"at": ".st-def", "title": "Defaults in one line, with Change", "text": "Standard seat, 1 cabin bag and No meal, all changed in one place.", "wait": "Press Next to see this.", "reveal": [["click", "[data-next]"]]},
+   {"at": ".st-count:last-child", "title": "Two presses of Next before Pay", "text": "The seat, bags and meal no longer cost a screen each."}
+  ]
+ }
+}

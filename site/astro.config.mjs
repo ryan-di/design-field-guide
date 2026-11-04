@@ -8,6 +8,9 @@ import sidebar from './src/sidebar.json' with { type: 'json' };
 const fonts = 'https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Fraunces:wght@300;400;500&family=JetBrains+Mono:wght@400;500;600&display=swap';
 
 export default defineConfig({
+	// GitHub Pages serves the site under /design-field-guide/ (the deploy workflow sets DFG_BASE); locally it is at /.
+	site: 'https://ryan-di.github.io',
+	base: process.env.DFG_BASE || '/',
 	markdown: { remarkPlugins: [remarkHeadingId] },
 	devToolbar: { enabled: false },
 	integrations: [

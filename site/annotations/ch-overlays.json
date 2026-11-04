@@ -1,0 +1,132 @@
+{
+ "tooltip-1": {
+  "bad": [
+   {"at": "[data-q]", "title": "An info button that does nothing", "text": "The tip waits for a hover that a phone never sends."},
+   {"at": ".tt-opt:has(input[value=\"Flexible\"]) b", "title": "£31 with no reason given", "text": "People see £7 more than Standard and can’t learn what it buys, so they skip it."},
+   {"at": "[data-m]", "title": "Each tap gets the same nothing", "text": "The taps add up, and the answer never appears.", "wait": "Tap the info button to see this.", "reveal": [["click", "[data-q]"]]}
+  ],
+  "good": [
+   {"at": "[data-q]", "title": "Tap opens it, tap again closes", "text": "Works the same with a finger, a mouse or the Enter key."},
+   {"at": ".tt-opt:has(input[value=\"Flexible\"]) b", "title": "£31 now has a reason", "text": "With the fee explained, the £7 over Standard reads as a choice, not a surprise."},
+   {"at": "[data-pp]", "title": "The extra fee explained in one line", "text": "Free date changes up to a day before travel. People can judge if it’s worth it.", "wait": "Tap the info button to see this.", "reveal": [["click", "[data-q]"]]}
+  ]
+ },
+ "tooltip-2": {
+  "bad": [
+   {"at": "[data-q]", "title": "The warning hides behind this icon", "text": "Most people never point at it, so they change the setting without reading it."},
+   {"at": "[data-sel]", "title": "Nothing near the choice warns", "text": "After 24 hours looks like it only affects new messages."},
+   {"at": "[data-m]", "title": "Two messages gone for everyone", "text": "Mum’s and Sam’s messages vanish for all 4 people, and Off won’t bring them back.", "wait": "Set Disappearing messages to After 24 hours to see this.", "reveal": [["select", "[data-sel]", "1"]]}
+  ],
+  "good": [
+   {"at": ".field-help", "title": "The warning sits under the choice", "text": "People read it on the way to the dropdown, before anything is deleted."},
+   {"at": "[data-sel]", "title": "Same choice, now made knowingly", "text": "After 24 hours still deletes old messages, but people pick it with the facts in view."}
+  ]
+ },
+ "tooltip-3": {
+  "bad": [
+   {"at": "[data-q]", "title": "Hover is the only way in", "text": "The tip shows on hover or focus and closes the moment either moves on."},
+   {"at": ".tt-tip .tt-a", "title": "Learn more only looks like a link", "text": "It’s plain text in a tooltip, so neither a click nor Tab can reach it.", "wait": "Point at the info icon to see this.", "reveal": [["hover", "[data-q]"]]}
+  ],
+  "good": [
+   {"at": "[data-q]", "title": "A click opens it, and it stays", "text": "The popover waits until people click again, press Esc or click elsewhere."},
+   {"at": "[data-more]", "title": "Learn more is a real button", "text": "People can click it or Tab to it, and it opens the help page.", "wait": "Click the info icon to see this.", "reveal": [["click", "[data-q]"]]}
+  ]
+ },
+ "tooltip-4": {
+  "bad": [
+   {"at": "[data-add]", "title": "The label already says it all", "text": "Add to cart with a plus icon needs no extra words."},
+   {"at": ".tt-tip", "title": "The tip repeats the same three words", "text": "It pops up over the card next to £39.00 and tells people nothing new.", "wait": "Point at Add to cart to see this.", "reveal": [["hover", "[data-add]"]]},
+   {"at": "[data-m]", "title": "Screen readers say it twice", "text": "People who listen hear “Add to cart” two times on every visit.", "wait": "Point at Add to cart to see this.", "reveal": [["hover", "[data-add]"]]}
+  ],
+  "good": [
+   {"at": "[data-add]", "title": "The label does the job alone", "text": "Nothing pops up, so the price and photo stay clear while people point."},
+   {"at": "[data-m]", "title": "Heard once, then done", "text": "People who listen hear the label and the role, nothing repeated.", "wait": "Point at Add to cart to see this.", "reveal": [["hover", "[data-add]"]]}
+  ]
+ },
+ "popover-1": {
+  "bad": [
+   {"at": "[data-pp]", "title": "Seven fields in a 150px box", "text": "Only two or three fit at once, so people scroll inside it to find Place.", "wait": "Click Team lunch to see this.", "reveal": [["click", "[data-ev]"]]},
+   {"at": "[data-k=\"place\"]", "title": "Place sits below the fold", "text": "The one field the task needs is hidden until people scroll the box.", "wait": "Click Team lunch, then scroll the box, to see this.", "reveal": [["click", "[data-ev]"], ["click", "[data-k=\"place\"]"]]}
+  ],
+  "good": [
+   {"at": "[data-pp]", "title": "A side panel with room for all", "text": "All seven fields show at once, beside the day, with no scrolling.", "wait": "Click Team lunch to see this.", "reveal": [["click", "[data-ev]"]]},
+   {"at": ".pv-h:nth-of-type(2)", "title": "Grouped under When, Where and Who", "text": "People jump to Where for the place without reading every label.", "wait": "Click Team lunch to see this.", "reveal": [["click", "[data-ev]"]]},
+   {"at": ".pv-sf [data-save]", "title": "Save stays in view", "text": "The footer doesn’t scroll, so people finish without hunting for it.", "wait": "Click Team lunch to see this.", "reveal": [["click", "[data-ev]"]]}
+  ]
+ },
+ "popover-2": {
+  "bad": [
+   {"at": "[data-apply]", "title": "The name counts only after Apply", "text": "Typing alone changes nothing, so the new name lives only in the box.", "wait": "Press Rename to see this.", "reveal": [["click", "[data-open]"]]},
+   {"at": "[data-name]", "title": "A stray click drops the name", "text": "Click outside, and the file is still Budget 2026. The typed name is gone.", "wait": "Press Rename, type a name, then click outside to see this.", "reveal": [["click", "[data-open]"], ["fill", "[data-in]", "Budget 2027"], ["click", ".app-bar"]]}
+  ],
+  "good": [
+   {"at": "[data-st]", "title": "Saved as people type", "text": "Each letter applies to the file at once, so there’s no step left to forget.", "wait": "Press Rename to see this.", "reveal": [["click", "[data-open]"]]},
+   {"at": "[data-name]", "title": "The new name survives the click", "text": "Click outside, press Esc or Enter. The file keeps the name typed.", "wait": "Press Rename, type a name, then click outside to see this.", "reveal": [["click", "[data-open]"], ["fill", "[data-in]", "Budget 2027"], ["click", ".app-bar"]]}
+  ]
+ },
+ "popover-3": {
+  "bad": [
+   {"at": "[data-style]", "title": "Every pick sends people back here", "text": "Choosing Orange closes all the layers, so Large starts again from Text style."},
+   {"at": "[data-l=\"more\"]", "title": "Orange sits three layers deep", "text": "People open Text style, Color and More colors before they can pick it.", "wait": "Open Text style, Color, then More colors to see this.", "reveal": [["click", "[data-style]"], ["click", "[data-go=\"color\"]"], ["click", "[data-go=\"more\"]"]]},
+   {"at": "[data-m]", "title": "The click count keeps climbing", "text": "An orange, large title takes 7 clicks across four popovers."}
+  ],
+  "good": [
+   {"at": ".pv-sws", "title": "Every color in one row", "text": "Orange is one click, with no More colors layer to open.", "wait": "Press Text style to see this.", "reveal": [["click", "[data-style]"]]},
+   {"at": ".pv-seg", "title": "Size sits right below", "text": "S, M and L are plain buttons, and the popover stays open after each pick.", "wait": "Press Text style to see this.", "reveal": [["click", "[data-style]"]]},
+   {"at": "[data-m]", "title": "Done in 3 clicks", "text": "Text style, Orange, then L. Under half the clicks of the nested menus."}
+  ]
+ },
+ "popover-4": {
+  "bad": [
+   {"at": "[data-pp]", "title": "The slider sits on the photo", "text": "It covers the hills and sky that people are trying to brighten.", "wait": "Press Brightness to see this.", "reveal": [["click", "[data-open]"]]},
+   {"at": "[data-photo]", "title": "Only the edges show the change", "text": "People drag, press Done to look, then open Brightness again to adjust."}
+  ],
+  "good": [
+   {"at": "[data-pp]", "title": "Slider beside, photo uncovered", "text": "Dragging from 70% shows the effect live on the whole picture.", "wait": "Press Brightness to see this.", "reveal": [["click", "[data-open]"]]},
+   {"at": "[data-photo]", "title": "Every drag shows on the photo", "text": "People stop when it looks right, with no closing and reopening."}
+  ]
+ },
+ "menu-1": {
+  "bad": [
+   {"at": "[data-menu]", "title": "Twenty items, no groups", "text": "Nothing to skip, so people read every item from Open down.", "wait": "Open the ⋯ menu to see this.", "reveal": [["click", "[data-btn]"]]},
+   {"at": ".mn-it:nth-child(16)", "title": "Copy link sits 16th", "text": "It starts out of view, so people scroll past it or give up first.", "wait": "Open the ⋯ menu and scroll to see this.", "reveal": [["click", "[data-btn]"], ["hover", ".mn-it:nth-child(16)"]]}
+  ],
+  "good": [
+   {"at": "[data-groups] .mn-it:nth-of-type(2)", "title": "Copy link is second, near the top", "text": "Sharing actions come first, so it’s found at a glance.", "wait": "Open the ⋯ menu to see this.", "reveal": [["click", "[data-btn]"]]},
+   {"at": ".mn-it.danger", "title": "Move to trash on its own", "text": "A divider sets it apart from Rename and Move to…, so it’s hard to hit by mistake.", "wait": "Open the ⋯ menu to see this.", "reveal": [["click", "[data-btn]"]]},
+   {"at": ".mn-find", "title": "Search reaches the other 13", "text": "Type “col” and Change color… appears, though it isn’t in the short list.", "wait": "Open the ⋯ menu to see this.", "reveal": [["click", "[data-btn]"]]}
+  ]
+ },
+ "menu-2": {
+  "bad": [
+   {"at": "[data-btn]", "title": "Reply hides behind ⋯", "text": "Nothing on screen says Reply, so people open the menu to look for it."},
+   {"at": ".mn-it:nth-child(5)", "title": "Reply is fifth of seven", "text": "People read past Mark as unread, Snooze, Move to… and Add label every time.", "wait": "Open the ⋯ menu to see this.", "reveal": [["click", "[data-btn]"]]}
+  ],
+  "good": [
+   {"at": "[data-reply]", "title": "Reply is one click away", "text": "The action people take most sits in the bar, so answering Lena takes 1 click."},
+   {"at": "[data-btn]", "title": "⋯ keeps the six rare ones", "text": "Forward, Snooze and Print still have a home, out of the way."}
+  ]
+ },
+ "menu-3": {
+  "bad": [
+   {"at": "[data-btn]", "title": "Only Standard shows", "text": "The other three options stay hidden until people open the menu."},
+   {"at": "[data-info]", "title": "One price and date at a time", "text": "People must remember Free and Thu 29 Oct while they go and check Express."},
+   {"at": "[data-menu]", "title": "Names only, no prices", "text": "Nothing in the list says which option is cheap or which is fast.", "wait": "Open the Delivery menu to see this.", "reveal": [["click", "[data-btn]"]]}
+  ],
+  "good": [
+   {"at": ".mn-cards", "title": "All four options in one look", "text": "Price and date sit on every row, so people compare without opening anything."},
+   {"at": ".mn-card:nth-of-type(4)", "title": "Free and ready by Wednesday", "text": "Pick up in store answers the task at a glance: no cost, ready Wed 28 Oct."}
+  ]
+ },
+ "menu-4": {
+  "bad": [
+   {"at": "[data-sub=\"l2\"]", "title": "Download opens a second menu", "text": "Whole document or Selected text comes next, then a third menu for the format.", "wait": "Open File to see this.", "reveal": [["click", "[data-btn]"]]},
+   {"at": "[data-l=\"l3\"]", "title": "Word is three levels deep", "text": "A slip onto Selected text on the way swaps the menu, and the wrong part downloads.", "wait": "Open File, Download, then Whole document to see this.", "reveal": [["click", "[data-btn]"], ["click", "[data-sub=\"l2\"]"], ["click", "[data-branch=\"whole document\"]"]]}
+  ],
+  "good": [
+   {"at": "[data-dl]", "title": "Download… promises a dialog", "text": "The … says more choices follow in one place, not another menu to steer through.", "wait": "Open File to see this.", "reveal": [["click", "[data-btn]"]]},
+   {"at": ".mn-dlg fieldset:first-of-type", "title": "Every format, with what it’s for", "text": "PDF for sharing, Word for editing, Plain text for words only.", "wait": "Open File, then Download…, to see this.", "reveal": [["click", "[data-btn]"], ["click", "[data-dl]"]]},
+   {"at": ".mn-dlg fieldset:nth-of-type(2)", "title": "Whole or selected, side by side", "text": "Nothing switches on hover, so a slip of the pointer can’t change the choice.", "wait": "Open File, then Download…, to see this.", "reveal": [["click", "[data-btn]"], ["click", "[data-dl]"]]}
+  ]
+ }
+}

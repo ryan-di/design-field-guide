@@ -1,0 +1,99 @@
+{
+ "dialog-1": {
+  "bad": [
+   {"at": ".cs-modal", "title": "News blocks the inbox", "text": "People came to read Sam’s email, and a release note stands in the way."},
+   {"at": ".cs-dlg", "title": "Got it is the only way out", "text": "Most people press it without reading a word, so the news is lost anyway."}
+  ],
+  "good": [
+   {"at": ".banner", "title": "One line above the mail", "text": "“New: smarter search.” The inbox works right away, with Sam’s email one click off."},
+   {"at": ".dl-more", "title": "See what’s new, when people want it", "text": "The details open in place, only for those who ask."},
+   {"at": ".dl-x", "title": "Close it and it’s gone", "text": "People who don’t care remove the note with one click."}
+  ]
+ },
+ "dialog-2": {
+  "bad": [
+   {"at": "[data-arc]", "title": "Archive asks first", "text": "Archiving loses nothing, yet each one takes two clicks."},
+   {"at": ".cs-dlg", "title": "The same “Are you sure?” every time", "text": "Archive and Delete get the same box with OK, so people stop reading it.", "wait": "Press Archive to see this.", "reveal": [["click", "[data-arc]"]]},
+   {"at": "[data-count]", "title": "Every action costs a second click", "text": "Two archives and one delete come to 6 clicks."}
+  ],
+  "good": [
+   {"at": "[data-arc]", "title": "Archive happens at once", "text": "One click, and the chat leaves the list."},
+   {"at": ".toast", "title": "Undo, in case of a slip", "text": "The toast stays 5 seconds, so a wrong archive costs one more click.", "wait": "Press Archive to see this.", "reveal": [["click", "[data-arc]"]]},
+   {"at": ".cs-dlg .btn-danger", "title": "Delete chat names the loss", "text": "The dialog says all messages and photos go for good, and the button says Delete chat.", "wait": "Press a trash icon to see this.", "reveal": [["click", "[data-del]"]]}
+  ]
+ },
+ "dialog-3": {
+  "bad": [
+   {"at": ".cs-dlg", "title": "Eight fields over the chart", "text": "The dialog covers the bars, so people can’t see which day was slowest.", "wait": "Press Edit report to see this.", "reveal": [["click", "[data-edit]"]]},
+   {"at": ".dl-chart", "title": "The chart people need to check", "text": "Wednesday’s 0.8k is the low point, but the form hides it once it opens."},
+   {"at": "[data-st]", "title": "An alert that fires at once", "text": "Guess 900 and Wednesday’s $800 is already below it.", "wait": "Press Edit report, type 900 as the alert and save to see this.", "reveal": [["click", "[data-edit]"], ["fill", ".cs-dlg [data-alert]", "900"], ["click", ".cs-dlg .btn-primary"]]}
+  ],
+  "good": [
+   {"at": ".dl-panel", "title": "Settings in a side panel", "text": "All eight fields have room to scroll beside the chart.", "wait": "Press Edit report to see this.", "reveal": [["click", "[data-edit]"]]},
+   {"at": ".dl-chart", "title": "The chart stays in view", "text": "People can read Wednesday’s 0.8k while they type the alert."},
+   {"at": "[data-alert]", "title": "Set the alert just under 800", "text": "With the chart beside it, people type 750 and get it right the first time.", "wait": "Press Edit report to see this.", "reveal": [["click", "[data-edit]"]]}
+  ]
+ },
+ "dialog-4": {
+  "bad": [
+   {"at": ".cs-dlg .btn-secondary", "title": "Cancel could mean either", "text": "Cancel the crop or cancel leaving? People have to read the whole question.", "wait": "Press ← Photos to see this.", "reveal": [["click", "[data-back]"]]},
+   {"at": ".cs-dlg .btn-primary", "title": "OK has focus and drops the crop", "text": "Pressing Enter out of habit throws the edit away.", "wait": "Press ← Photos to see this.", "reveal": [["click", "[data-back]"]]}
+  ],
+  "good": [
+   {"at": ".cs-dlg .btn-secondary", "title": "Keep editing has focus", "text": "Enter keeps the crop, the safe choice when people act on habit.", "wait": "Press ← Photos to see this.", "reveal": [["click", "[data-back]"]]},
+   {"at": ".cs-dlg .btn-danger", "title": "Discard crop names the loss", "text": "The red button says what it throws away, so the buttons alone answer the question.", "wait": "Press ← Photos to see this.", "reveal": [["click", "[data-back]"]]}
+  ]
+ },
+ "dialog-5": {
+  "bad": [
+   {"at": ".cs-dlg", "title": "Rate us before doing anything", "text": "People haven’t played a song yet, so they close it unread.", "wait": "Press Reset and wait a moment to see this.", "reveal": [["wait", 1000]]},
+   {"at": ".cs-dlg .btn-primary", "title": "A rating with nothing to rate", "text": "Asked before any use, Rate now gets a guess at best.", "wait": "Press Reset and wait a moment to see this.", "reveal": [["wait", 1000]]}
+  ],
+  "good": [
+   {"at": "[data-lib]", "title": "The library, with nothing in front", "text": "Road trip, Focus and Chill are ready to play from the start."},
+   {"at": ".cs-dlg", "title": "Download asks about mobile data", "text": "Road trip is 240 MB off Wi‑Fi, so people read the question before they answer.", "wait": "Press Download to see this.", "reveal": [["wait", 1000], ["click", "[data-dl]"]]},
+   {"at": ".cs-dlg .btn-secondary", "title": "Wait for Wi‑Fi has focus", "text": "The choice that saves data is the default.", "wait": "Press Download to see this.", "reveal": [["wait", 1000], ["click", "[data-dl]"]]}
+  ]
+ },
+ "side-panel-1": {
+  "bad": [
+   {"at": ".sp-side", "title": "The reply gets a 160 px strip", "text": "The panel is narrower than the email it answers.", "wait": "Press Reply to see this.", "reveal": [["click", "[data-reply]"]]},
+   {"at": ".sp-ta", "title": "A few words per line", "text": "The draft wraps every few words, so people can’t read back what they wrote.", "wait": "Press Reply to see this.", "reveal": [["click", "[data-reply]"]]}
+  ],
+  "good": [
+   {"at": ".sp-compose", "title": "The reply takes the full width", "text": "The draft reads in long lines, like the email it answers.", "wait": "Press Reply to see this.", "reveal": [["click", "[data-reply]"]]},
+   {"at": "[data-back]", "title": "← Inbox keeps the draft", "text": "People can check Sam’s notes and come back to the same text.", "wait": "Press Reply to see this.", "reveal": [["click", "[data-reply]"]]}
+  ]
+ },
+ "side-panel-2": {
+  "bad": [
+   {"at": ".sp-side", "title": "Filters take half the phone", "text": "A 140 px panel leaves the shoes a sliver beside it.", "wait": "Press Filters to see this.", "reveal": [["click", "[data-filt]"]]},
+   {"at": "[data-grid]", "title": "Shoes squeezed into a thin column", "text": "With the panel open, names and prices are too cramped to compare."}
+  ],
+  "good": [
+   {"at": ".sp-sheet", "title": "Filters cover the whole screen", "text": "Sizes S, M and L get the full width, with nothing squeezed beside them.", "wait": "Press Filters to see this.", "reveal": [["click", "[data-filt]"]]},
+   {"at": "[data-show]", "title": "Show results gives a count", "text": "Pick M and it reads Show 4 results, before people leave the filters.", "wait": "Press Filters to see this.", "reveal": [["click", "[data-filt]"]]},
+   {"at": ".sp-sheet [data-x]", "title": "Close is in the corner", "text": "People get back to the full-size shoes in one tap.", "wait": "Press Filters to see this.", "reveal": [["click", "[data-filt]"]]}
+  ]
+ },
+ "side-panel-3": {
+  "bad": [
+   {"at": ".sp-tool", "title": "Each button opens its own panel", "text": "Outline, Comments and History stack up side by side instead of taking turns."},
+   {"at": ".sp-doc", "title": "The doc shrinks with each panel", "text": "With all three open, the trip plan becomes a thin strip."}
+  ],
+  "good": [
+   {"at": ".sp-tool", "title": "Buttons switch what the panel shows", "text": "Comments replaces Outline in the same spot, so the layout doesn’t move."},
+   {"at": ".sp-doc", "title": "The doc keeps its width", "text": "Only one panel ever sits beside the trip plan."}
+  ]
+ },
+ "side-panel-4": {
+  "bad": [
+   {"at": ".sp-scrim", "title": "A dim layer over the photos", "text": "The gray tells people the photos are off-limits, so they don’t think to click them."},
+   {"at": ".sp-info .sp-kv", "title": "Info is stuck on IMG_201", "text": "Clicking another photo closes the panel instead of showing its details."}
+  ],
+  "good": [
+   {"at": "[data-grid]", "title": "Photos stay bright and clickable", "text": "Nothing says hands off, so people try the next photo."},
+   {"at": ".sp-info .sp-kv", "title": "Info follows the selected photo", "text": "Pick IMG_203 and the panel shows 4.0 MB, taken 13 Aug."}
+  ]
+ }
+}

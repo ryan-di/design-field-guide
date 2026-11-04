@@ -122,7 +122,7 @@ Open questions about a step don’t go away when the next step starts. Later ste
 
 When an agent says it’s done, ask it to show the proof: which unit tests ran, the end-to-end specs for the screens it changed, screenshots before and after, and a clean type check. Then you can see what was checked and what wasn’t.
 
-Proof isn’t the same as trying the change. Checks cover only what someone thought to test, so the proof tells you where the agent looked. Trying the change yourself, as in [Check output that looks finished](/part-4/decide/#eff-spot-plausible), covers the rest.
+Proof isn’t the same as trying the change. Checks cover only what someone thought to test, so the proof tells you where the agent looked. Trying the change yourself, as in [Check output that looks finished](../../part-4/decide/#eff-spot-plausible), covers the rest.
 
 <Raw html={F7} />
 
@@ -156,7 +156,7 @@ Unit tests check logic, not screens, so a change can pass every unit test and st
 
 #### 3. Get screenshots for each theme, width and state \{#eff-agent-verification-rule-3-h\}
 
-A screenshot in one theme at one width shows only the case that was easiest to check. Ask for light and dark, wide and narrow, and the states that matter, such as empty, error and long names. Each one catches different problems, as [Let an agent run design QA](/part-4/evaluate/#eff-design-qa) shows.
+A screenshot in one theme at one width shows only the case that was easiest to check. Ask for light and dark, wide and narrow, and the states that matter, such as empty, error and long names. Each one catches different problems, as [Let an agent run design QA](../../part-4/evaluate/#eff-design-qa) shows.
 
 <Raw html={F10} />
 
@@ -166,7 +166,7 @@ A screenshot in one theme at one width shows only the case that was easiest to c
 
 #### 4. Try it yourself anyway \{#eff-agent-verification-rule-4-h\}
 
-Green checks only mean that nothing tested broke, so a case nobody thought of still gets through. Before you approve, [try it in the real app](/part-4/loop/#eff-loop) for a few minutes, the way people will.
+Green checks only mean that nothing tested broke, so a case nobody thought of still gets through. Before you approve, [try it in the real app](../../part-4/loop/#eff-loop) for a few minutes, the way people will.
 
 <Raw html={F11} />
 

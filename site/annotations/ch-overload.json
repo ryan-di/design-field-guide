@@ -1,0 +1,130 @@
+{
+ "pat-progressive-disclosure-1": {
+  "bad": [
+   {"at": "[data-tg]", "title": "Three settings behind a vague label", "text": "Send later, priority and read receipt all sit here, and the button names none of them."},
+   {"at": ".pd-box .switch:first-child", "title": "Send later was here all along", "text": "Someone who wants it sent tomorrow at 8:00 only finds out by opening the box.", "wait": "Press More options to see this.", "reveal": [["click", "[data-tg]"]]}
+  ],
+  "good": [
+   {"at": "[data-tg]", "title": "The button lists what’s inside", "text": "“Send later” is on the label, so people know it exists before they open anything."},
+   {"at": ".pd-box .switch:first-child", "title": "Inside matches the label", "text": "The three switches are the three names on the button, nothing more.", "wait": "Press the More options button to see this.", "reveal": [["click", "[data-tg]"]]}
+  ]
+ },
+ "pat-progressive-disclosure-2": {
+  "bad": [
+   {"at": "[data-tg]", "title": "Closed again for every photo", "text": "Advanced (2) folds shut after each Export, so every photo costs one more click."},
+   {"at": "[data-n]", "title": "The click count keeps climbing", "text": "Five photos with Advanced each time means five extra clicks."}
+  ],
+  "good": [
+   {"at": "[data-tg]", "title": "Stays open once it’s opened", "text": "Open Advanced once and it’s still open for the next photo."},
+   {"at": "label.check", "title": "Always show, or press Alt+A", "text": "People who change these every time can skip the button for good."},
+   {"at": "[data-n]", "title": "One click covers all five photos", "text": "Clicks on Advanced stays at 1, however many photos people export."}
+  ]
+ },
+ "pat-progressive-disclosure-3": {
+  "bad": [
+   {"at": "[data-tg]", "title": "Four options, one that people need", "text": "More options (4) hides the video call among settings few people touch."},
+   {"at": ".pd-card > .pd-stat:not([data-n])", "title": "The split saves almost nobody a click", "text": "Opened in 82% of events, so nearly every new event pays the extra click."}
+  ],
+  "good": [
+   {"at": ".pd-box:not([data-box])", "title": "Add video call sits in the basics", "text": "The one switch most people change is right under When."},
+   {"at": "[data-tg]", "title": "Three options few people touch", "text": "Busy for others, Private and Color stay tucked away."},
+   {"at": ".pd-card > .pd-stat:not([data-n])", "title": "Hidden is now the rare case", "text": "At 6% of events, the extra click costs almost nobody anything."}
+  ]
+ },
+ "pat-progressive-disclosure-4": {
+  "bad": [
+   {"at": "[data-tg]", "title": "Filters looks like nothing is on", "text": "The button reads the same with or without last week’s Under €20 filter."},
+   {"at": "[data-res]:not(:empty)", "title": "One lamp, and no reason why", "text": "Only the €18 clip-on lamp shows. Three others are filtered out of sight.", "wait": "Press Search to see this.", "reveal": [["click", "[data-go]"]]}
+  ],
+  "good": [
+   {"at": ".pd-chip", "title": "Under €20 shows beside Filters", "text": "People see the filter that’s on without opening anything, and the × clears it."},
+   {"at": "[data-res]:not(:empty)", "title": "One result, with the cause in view", "text": "The chip above explains why only the €18 lamp is left.", "wait": "Press Search to see this.", "reveal": [["click", "[data-go]"]]}
+  ]
+ },
+ "pat-smart-defaults-1": {
+  "bad": [
+   {"at": "[data-size]", "title": "Starts on a size few people want", "text": "Twelve summer photos rarely go on passports, so people change Size first."},
+   {"at": "[data-n]", "title": "Fixed by hand on every order", "text": "Order 13 × 18 cm twice and the count reads 2, because Size snaps back to Passport."}
+  ],
+  "good": [
+   {"at": "[data-size]", "title": "Starts on 10 × 15 cm", "text": "The size most people order needs no change at all."},
+   {"at": "[data-why]", "title": "The reason, in words", "text": "“Most people pick this” says why the size is already chosen, and turns into “Your last size” later."},
+   {"at": "[data-n]", "title": "One change, then remembered", "text": "Order 13 × 18 cm twice and the count stays at 1."}
+  ]
+ },
+ "pat-smart-defaults-2": {
+  "bad": [
+   {"at": ".sd-up", "title": "6000 × 4000, and no size setting", "text": "Nothing on the form hints that the photo will be shrunk."},
+   {"at": "[data-out]:not(:empty)", "title": "2048 × 1365 in the album", "text": "People find out after the upload, and the full-size photo isn’t there.", "wait": "Press Upload to see this.", "reveal": [["click", "[data-go]"], ["wait", 900]]}
+  ],
+  "good": [
+   {"at": "[data-size]", "title": "Reduce to 2048 px, in plain view", "text": "People see the default and can pick Original size before uploading."},
+   {"at": "[data-mk]:not(:empty)", "title": "Changed, marked in words", "text": "The edit reads the same without color, so nobody misses it.", "wait": "Pick Original size to see this.", "reveal": [["select", "[data-size]", "full"]]},
+   {"at": "[data-out]:not(:empty)", "title": "The result matches the form", "text": "2048 × 1365, as the form said. Nothing comes as a surprise.", "wait": "Press Upload to see this.", "reveal": [["click", "[data-go]"], ["wait", 900]]}
+  ]
+ },
+ "pat-smart-defaults-3": {
+  "bad": [
+   {"at": "label.check", "title": "Public is ticked from the start", "text": "Kids at the beach goes to anyone with the link unless people spot the box."},
+   {"at": "[data-out]:not(:empty)", "title": "Kids’ photos, public by default", "text": "One press on Create album, and people outside their contacts can see them.", "wait": "Press Create album to see this.", "reveal": [["click", "[data-go]"]]}
+  ],
+  "good": [
+   {"at": "label.check", "title": "Starts private, sharing is opt-in", "text": "Nothing leaves people’s contacts unless they tick the box themselves."},
+   {"at": "[data-out]:not(:empty)", "title": "Private now, shared when ready", "text": "“Only you can see it,” and sharing stays one tick away.", "wait": "Press Create album to see this.", "reveal": [["click", "[data-go]"]]}
+  ]
+ },
+ "pat-smart-defaults-4": {
+  "bad": [
+   {"at": "[data-ppl]", "title": "Gray text that looks filled in", "text": "“2 people” is only a placeholder, so people skip the field."},
+   {"at": "[data-out]:not(:empty)", "title": "Refused for an empty field", "text": "Book fails on a field people thought they had answered.", "wait": "Press Book to see this.", "reveal": [["click", "[data-go]"]]}
+  ],
+  "good": [
+   {"at": "[data-ppl]", "title": "2 people is already chosen", "text": "A real value, so Book works without touching the field."},
+   {"at": "[data-out]:not(:empty)", "title": "Booked on the first press", "text": "A table for 2 on Friday at 19:30, with no error first.", "wait": "Press Book to see this.", "reveal": [["click", "[data-go]"]]}
+  ]
+ },
+ "pat-presets-1": {
+  "bad": [
+   {"at": "[data-r]", "title": "Three names, no values", "text": "Eco, Comfort and Away say nothing about the temperatures they set."},
+   {"at": "[data-out]:not(:empty)", "title": "17 °C an hour later", "text": "People learn what Eco does only when the room gets cold.", "wait": "Pick Eco to see this.", "reveal": [["click", "[role=\"radio\"]:nth-child(1)"], ["wait", 1200]]}
+  ],
+  "good": [
+   {"at": "[data-tbl]", "title": "Day, night and away temperatures", "text": "Eco shows 18 °C, 16 °C and Off before the house cools down."},
+   {"at": "[aria-label=\"Day temperature\"]", "title": "Every value can be edited", "text": "Someone who wants 19 °C by day types it in and keeps the rest of Eco."}
+  ]
+ },
+ "pat-presets-2": {
+  "bad": [
+   {"at": "[data-hd]", "title": "Still says Focus: Sleep", "text": "Calls from Everyone isn’t Sleep anymore, but the phone says it is.", "wait": "Set Calls from to Everyone to see this.", "reveal": [["select", "[data-f=\"0\"]", "all"]]},
+   {"at": "[role=\"radio\"][aria-checked=\"true\"]", "title": "Sleep stays picked", "text": "Nothing marks the edit, so people later trust Sleep to block calls.", "wait": "Set Calls from to Everyone to see this.", "reveal": [["select", "[data-f=\"0\"]", "all"]]}
+  ],
+  "good": [
+   {"at": "[data-hd]", "title": "Custom, based on Sleep", "text": "The status line says what’s on and where it came from.", "wait": "Set Calls from to Everyone to see this.", "reveal": [["select", "[data-f=\"0\"]", "all"]]},
+   {"at": "[data-cu]", "title": "Custom takes over the selection", "text": "Sleep is no longer picked, and picking it again brings its values back.", "wait": "Set Calls from to Everyone to see this.", "reveal": [["select", "[data-f=\"0\"]", "all"]]},
+   {"at": ".ps-tbl > span:has([data-mk]:not(:empty))", "title": "Edited marks the changed row", "text": "People see exactly which value differs from Sleep.", "wait": "Set Calls from to Everyone to see this.", "reveal": [["select", "[data-f=\"0\"]", "all"]]}
+  ]
+ },
+ "pat-presets-3": {
+  "bad": [
+   {"at": "[data-r]", "title": "Twelve codes like JPG-80-2048", "text": "People have to decode format, quality and size just to email three photos."},
+   {"at": "[data-out]:not(:empty)", "title": "A size in MB, but no answer", "text": "4.1 MB still doesn’t say whether it fits an email or opens on Grandma’s tablet.", "wait": "Pick JPG-80-2048 to see this.", "reveal": [["click", "[role=\"radio\"]:nth-child(1)"]]}
+  ],
+  "good": [
+   {"at": "[data-r]", "title": "Four choices, one per purpose", "text": "Email, Web, Print and Original cover what people do with photos."},
+   {"at": ".ps-opt:first-child small", "title": "Each one says what it’s for", "text": "“Small, fits in any email” answers the question people came with."},
+   {"at": "[data-out]:not(:empty)", "title": "1.8 MB, opens anywhere", "text": "Picking Email confirms Grandma can open the photos on any device.", "wait": "Pick Email to see this.", "reveal": [["click", ".ps-opt:first-child"]]}
+  ]
+ },
+ "pat-presets-4": {
+  "bad": [
+   {"at": "[data-pre]", "title": "Cheapest and Fastest, nothing else", "text": "Neither one is Nonstop plus Under €150, the mix people want."},
+   {"at": "[data-fl]", "title": "Set by hand on every route", "text": "New search clears all four filters, so the same taps start over."},
+   {"at": "[data-n]", "title": "The count only goes up", "text": "Two taps per route adds up to eight for four routes."}
+  ],
+  "good": [
+   {"at": "[data-p=\"mine\"]", "title": "My usual sits beside the built-in ones", "text": "One tap brings back Nonstop and Under €150 on any route.", "wait": "Turn on Nonstop and Under €150, then press Save as preset to see this.", "reveal": [["click", "[data-i=\"0\"]"], ["click", "[data-i=\"1\"]"], ["click", "[data-save]"]]},
+   {"at": "[data-save]", "title": "Save as preset keeps the mix", "text": "It turns on once a filter is set and saves exactly those filters."},
+   {"at": "[data-n]", "title": "The count stops at 2", "text": "After saving, New search and My usual skip the taps."}
+  ]
+ }
+}

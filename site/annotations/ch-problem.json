@@ -1,0 +1,138 @@
+{
+ "good-needs-hierarchy-1": {
+  "bad": [
+   {"at": ".nh-heart[data-i=\"0\"]", "title": "The heart pops and cheers", "text": "The bounce and the pop-up label promise the recipe is kept."},
+   {"at": "[data-tab=\"saved\"]", "title": "Saved stays at 0", "text": "Open it after a few hearts and it says No saved recipes yet."}
+  ],
+  "good": [
+   {"at": ".nh-heart[data-i=\"0\"]", "title": "A plain red fill, no pop", "text": "The heart just turns red. That’s enough to show the tap landed."},
+   {"at": "[data-tab=\"saved\"]", "title": "Saved counts every heart", "text": "The number goes up with each heart, and the recipes are there when people open it."}
+  ]
+ },
+ "good-needs-hierarchy-2": {
+  "bad": [
+   {"at": "[data-body]:empty", "title": "One blank box for every problem", "text": "Slow, Empty and Error all look like this. People can’t tell waiting from no mail from broken.", "wait": "Pick Slow network, Empty or Error to see this.", "reveal": [["click", "[data-case=\"error\"]"]]},
+   {"at": "[data-case=\"error\"]", "title": "Error offers no way out", "text": "No message and no Retry, so people can only reload and hope."}
+  ],
+  "good": [
+   {"at": ".nh-state:has(.spinner)", "title": "Loading your mail… while it waits", "text": "A spinner and a line tell people the mail is on its way.", "wait": "Pick Slow network to see this.", "reveal": [["click", "[data-case=\"slow\"]"]]},
+   {"at": ".nh-state:not(:has(.spinner)):not(:has([data-retry]))", "title": "No mail yet, not a blank", "text": "An empty inbox looks different from a broken one, and says where new mail will show.", "wait": "Pick Empty to see this.", "reveal": [["click", "[data-case=\"empty\"]"]]},
+   {"at": "[data-retry]", "title": "Retry right inside the error", "text": "It says what failed, and one press brings the mail back.", "wait": "Pick Error to see this.", "reveal": [["click", "[data-case=\"error\"]"]]}
+  ]
+ },
+ "good-needs-hierarchy-3": {
+  "bad": [
+   {"at": "label.nh-task:nth-of-type(4)", "title": "The last tick looks like the first", "text": "Water the plants gets the same strike-through as every other task."},
+   {"at": "[data-count]", "title": "Only the count changes", "text": "4 of 4 done is the whole reward for clearing the day’s list."}
+  ],
+  "good": [
+   {"at": "label.nh-task:nth-of-type(4)", "title": "Each tick stays quick and quiet", "text": "The care is saved for the end, so ticking off tasks doesn’t get noisy."},
+   {"at": ".nh-done", "title": "A drawn tick and a kind line", "text": "“Four things off your mind.” It shows once, when the list is empty.", "wait": "Tick the last two tasks to see this.", "reveal": [["check", "label.nh-task:nth-of-type(3) input"], ["check", "label.nh-task:nth-of-type(4) input"]]}
+  ]
+ },
+ "good-needs-hierarchy-4": {
+  "bad": [
+   {"at": ".nh-joke", "title": "Payment hamsters, but no reason", "text": "Nothing says the card was declined, or whether the €89.00 was taken.", "wait": "Press Pay to see this.", "reveal": [["click", "[data-pay]"], ["wait", 900]]},
+   {"at": "[data-card]", "title": "The card on file looks fine", "text": "Visa ending 4242 stays put, so people try the same expired card again later."}
+  ],
+  "good": [
+   {"at": ".nh-err", "title": "Declined, and the reason why", "text": "The bank says the card expired in September, so people know what to fix.", "wait": "Press Pay to see this.", "reveal": [["click", "[data-pay]"], ["wait", 900]]},
+   {"at": "[data-other]", "title": "Use another card, one press away", "text": "People fix it right here, without leaving the checkout.", "wait": "Press Pay to see this.", "reveal": [["click", "[data-pay]"], ["wait", 900]]},
+   {"at": "[data-card]", "title": "The new card shows before paying", "text": "After the swap it reads Mastercard ending 5100, so people know what Pay will charge."}
+  ]
+ },
+ "good-problem-framing-1": {
+  "bad": [
+   {"at": ".pf-title", "title": "The ticket already names the answer", "text": "“Export to PDF” is a design, so the deciding is done before the work starts."},
+   {"at": ".pf-opts", "title": "Three spots, one question left", "text": "Top bar, Next to Send or In the More menu. Picking one ends the design work."}
+  ],
+  "good": [
+   {"at": ".pf-title", "title": "The same request, read as a hint", "text": "Clients asking for a file is the clue. The button is one possible answer."},
+   {"at": ".pf-frame", "title": "The real pain is a screenshot", "text": "Freelancers screenshot the page today. That’s what any answer has to fix.", "wait": "Press Restate as a problem to see this.", "reveal": [["click", "[data-go]"]]},
+   {"at": ".pf-list", "title": "Three answers instead of one", "text": "Emailing the PDF or sending a payable link fix it too.", "wait": "Press Restate as a problem to see this.", "reveal": [["click", "[data-go]"]]}
+  ]
+ },
+ "good-problem-framing-2": {
+  "bad": [
+   {"at": ".pf-frame", "title": "Fits almost any screen", "text": "No person, no moment, no obstacle. Easier for whom, doing what?"},
+   {"at": ".pf-pair", "title": "Ana and Ben picture different fixes", "text": "A search box versus fewer categories. Both match, so there’s no way to pick.", "wait": "Press Ask two people to see this.", "reveal": [["click", "[data-go]"]]}
+  ],
+  "good": [
+   {"at": ".pf-frame", "title": "Who, when and what’s in the way", "text": "A new phone, lost notification choices, every app set by hand. Each part narrows the fix."},
+   {"at": ".pf-pair", "title": "Two takes on one problem", "text": "Copy at setup or restore with the backup. Both aim at the same loss, so they compare.", "wait": "Press Ask two people to see this.", "reveal": [["click", "[data-go]"]]}
+  ]
+ },
+ "good-problem-framing-3": {
+  "bad": [
+   {"at": ".pf-card > p:not(.pf-frame)", "title": "One hunch as the evidence", "text": "No count, no session, no quote. Nobody can tell how often it happens."},
+   {"at": ".pf-cmts:not(:empty)", "title": "The talk turns to opinions", "text": "“I find the picker fine.” Then a survey gets suggested before any fix.", "wait": "Press Share with the team to see this.", "reveal": [["click", "[data-go]"], ["wait", 1300]]}
+  ],
+  "good": [
+   {"at": ".pf-ev", "title": "Three sources, each with a number", "text": "14 support requests, 2 of 5 sessions and a quote show how often and how much."},
+   {"at": ".pf-cmts:not(:empty)", "title": "The talk turns to fixing it", "text": "Ben wants to fix the picker, and Cy joins a session to see it.", "wait": "Press Share with the team to see this.", "reveal": [["click", "[data-go]"], ["wait", 1300]]}
+  ]
+ },
+ "good-problem-framing-4": {
+  "bad": [
+   {"at": ".pf-frame", "title": "A control inside the problem", "text": "Once the frame says Sort button, only a Sort button can solve it."},
+   {"at": ".pf-list li.no", "title": "Good ideas get ruled out", "text": "Recently played would help, but it isn’t a Sort button, so it fails.", "wait": "Press Check the answers to see this.", "reveal": [["click", "[data-go]"]]}
+  ],
+  "good": [
+   {"at": ".pf-frame", "title": "The goal, with no control named", "text": "Get back to an album played last week. Any design that does that counts."},
+   {"at": ".pf-list li.yes:nth-child(2)", "title": "Recently played now counts", "text": "All three ideas fit, so the team can compare them on the merits.", "wait": "Press Check the answers to see this.", "reveal": [["click", "[data-go]"]]}
+  ]
+ },
+ "good-problem-framing-5": {
+  "bad": [
+   {"at": ".nf-row:nth-child(3)", "title": "Slow and confusing, says who?", "text": "A vague obstacle with no source. Nobody can tell which part to fix."},
+   {"at": ".nf-row:nth-child(4)", "title": "All the time, with no count", "text": "It sounds measured, but nobody looked, so nobody will check it."}
+  ],
+  "good": [
+   {"at": ".nf-row:nth-child(3)", "title": "A specific obstacle, seen twice", "text": "Export overwrites a file with the same name, in 2 of 5 sessions."},
+   {"at": ".nf-row:nth-child(4)", "title": "Unknown, with a way to check", "text": "How often stays empty until the export logs say. Nobody builds on a made-up number."},
+   {"at": ".nf-row:nth-child(5)", "title": "The guess is labeled as one", "text": "It says how it gets checked: ask in the next sessions."}
+  ]
+ },
+ "good-success-criteria-1": {
+  "bad": [
+   {"at": ".sc-tile:nth-child(1)", "title": "Page views count visits, not answers", "text": "Views and clicks both rise when people hunt around a confusing page."},
+   {"at": ".sc-tile:nth-child(3)", "title": "Longer time counts as good", "text": "When 0:48 climbs to 1:35 it reads as interest. Here it means people were stuck."},
+   {"at": "[data-out]", "title": "All up, read as a win", "text": "Up 57%, 74% and 98%, and nothing says whether anyone found an answer.", "wait": "Press Release the redesign to see this.", "reveal": [["click", "[data-go]"]]}
+  ],
+  "good": [
+   {"at": ".sc-tile:nth-child(1)", "title": "Found an answer comes first", "text": "64% is the share of people who got what they came for."},
+   {"at": ".sc-tile:nth-child(2)", "title": "Time to answer, not time on page", "text": "The same 0:48 now measures waiting, so a climb to 1:35 is plainly bad news."},
+   {"at": "[data-out]", "title": "The same release, read as worse", "text": "Found an answer drops from 64% to 47%, and 340 people contact support.", "wait": "Press Release the redesign to see this.", "reveal": [["click", "[data-go]"]]}
+  ]
+ },
+ "good-success-criteria-2": {
+  "bad": [
+   {"at": ".sc-big", "title": "58%, down from 72%", "text": "The drop is clear. Which field on the form caused it is not."},
+   {"at": "[data-out]", "title": "Why? gets no answer", "text": "The dashboard only counts finishes, so the team is left to guess.", "wait": "Press Why? to see this.", "reveal": [["click", "[data-go]"]]}
+  ],
+  "good": [
+   {"at": ".sc-sess", "title": "Five people next to the number", "text": "Each short session is one press away from the drop it explains."},
+   {"at": "[data-sum]", "title": "Four of five stop at one field", "text": "Phone number is where sign-up breaks. No dashboard tile points there.", "wait": "Open all five sessions to see this.", "reveal": [["click", "[data-i=\"0\"]"], ["click", "[data-i=\"1\"]"], ["click", "[data-i=\"2\"]"], ["click", "[data-i=\"3\"]"], ["click", "[data-i=\"4\"]"]]}
+  ]
+ },
+ "good-success-criteria-3": {
+  "bad": [
+   {"at": ".sc-pill", "title": "Shipped is the only finish line", "text": "Done means it went out, not that the filters got better for shoppers."},
+   {"at": ".sc-cmt", "title": "The review checks only looks", "text": "“Looks good to me.” The reviewer has nothing to test the change against.", "wait": "Press Review the change to see this.", "reveal": [["click", "[data-go]"]]}
+  ],
+  "good": [
+   {"at": ".sc-list", "title": "Three checks, written first", "text": "Price in under 10 seconds, fewer empty searches, keyboard alone. Each can pass or fail."},
+   {"at": ".sc-list li.no", "title": "The review finds a real gap", "text": "The price slider can’t be moved with the keyboard, so it isn’t done yet.", "wait": "Press Review the change to see this.", "reveal": [["click", "[data-go]"], ["wait", 1400]]}
+  ]
+ },
+ "good-success-criteria-4": {
+  "bad": [
+   {"at": ".sc-card > span:has(b)", "title": "Easier, compared to what?", "text": "A feeling can’t pass or fail. Each person reads it their own way."},
+   {"at": "[data-list]:not(:empty)", "title": "Five shrugs, no result", "text": "From “It was okay.” to “Nice colors.” None of it adds up to a pass.", "wait": "Press Run the test to see this.", "reveal": [["click", "[data-go]"], ["wait", 2100]]}
+  ],
+  "good": [
+   {"at": ".sc-card > span:has(b)", "title": "Without help, on the first try", "text": "Two things anyone can watch. Each person either did them or didn’t."},
+   {"at": "[data-list]:not(:empty)", "title": "Each person passes or fails", "text": "4 of 5 book on the first try. The one who needed help points at the times.", "wait": "Press Run the test to see this.", "reveal": [["click", "[data-go]"], ["wait", 2100]]}
+  ]
+ }
+}

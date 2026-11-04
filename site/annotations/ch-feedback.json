@@ -1,0 +1,176 @@
+{
+ "im1": {
+  "bad": [
+   {"at": "[data-submit]", "title": "Nothing changes next to the button", "text": "Press Place order and this part of the form looks the same, so people press again."},
+   {"at": "[data-box]", "title": "Email is scrolled out of sight", "text": "The form opens at Street, so the Email error appears where nobody is looking."}
+  ],
+  "good": [
+   {"at": "[data-submit]", "title": "Pressing it scrolls the form up", "text": "The view jumps to the problem instead of staying by the button."},
+   {"at": ".cs-sum", "title": "1 problem, said at the top", "text": "It gets focus, so screen readers announce it too.", "wait": "Press Place order to see this.", "reveal": [["click", "[data-submit]"]]},
+   {"at": ".cs-sum .cs-link", "title": "Email is missing is a link", "text": "One press puts the cursor in Email, ready to type.", "wait": "Press Place order to see this.", "reveal": [["click", "[data-submit]"]]}
+  ]
+ },
+ "im2": {
+  "bad": [
+   {"at": "[data-em] .field-msg", "title": "Three lines for one missing domain", "text": "“Add the part after @”, “Must include a domain” and “Must be a valid email” all mean the same.", "wait": "Press Create account to see this.", "reveal": [["click", "[data-submit]"]]},
+   {"at": "[data-pm] .field-msg", "title": "Four rules at once for abc", "text": "Length, number, capital and symbol all show, with no hint which to fix first.", "wait": "Press Create account to see this.", "reveal": [["click", "[data-submit]"]]}
+  ],
+  "good": [
+   {"at": "[data-em] .field-msg", "title": "One line that shows the fix", "text": "“Finish the address, like maya@mail.com” shows the missing part by example.", "wait": "Press Create account to see this.", "reveal": [["click", "[data-submit]"]]},
+   {"at": "[data-pm] .field-msg", "title": "Only the length rule for now", "text": "Fix that first. The number rule shows up only if it’s still missing.", "wait": "Press Create account to see this.", "reveal": [["click", "[data-submit]"]]}
+  ]
+ },
+ "im3": {
+  "bad": [
+   {"at": "[data-ph]", "title": "Wrong from the first digit", "text": "Nobody types 10 digits at once, yet 1 key press already marks the field wrong."},
+   {"at": "[data-m] .field-msg", "title": "The same scolding nine times", "text": "“Must be 10 digits” stays up for every digit until the tenth.", "wait": "Type a digit in Phone to see this.", "reveal": [["fill", "[data-ph]", "5"]]}
+  ],
+  "good": [
+   {"at": "[data-ph]", "title": "Quiet while people type", "text": "Nothing shows until they press Tab or click away, so a half-typed number is fine."},
+   {"at": "[data-m] .field-msg", "title": "Shows on leaving, clears at ten", "text": "The tenth digit removes it at once, without leaving the field again.", "wait": "Type a few digits and press Tab to see this.", "reveal": [["fill", "[data-ph]", "555"], ["press", "[data-ph]", "Tab"]]}
+  ]
+ },
+ "im4": {
+  "bad": [
+   {"at": "[data-m] .field-msg", "title": "“Invalid date” names no date", "text": "Both fields are dates, so people may well change Check-in, the one that was fine.", "wait": "Press Search stays to see this.", "reveal": [["click", "[data-submit]"]]},
+   {"at": "[data-out]", "title": "Check-out falls before check-in", "text": "12 Nov to 10 Nov is a backwards stay, and nothing on screen says so."}
+  ],
+  "good": [
+   {"at": "[data-m] .field-msg", "title": "Names the field and the rule", "text": "It quotes 12 Nov, so people know the date to beat.", "wait": "Press Search stays to see this.", "reveal": [["click", "[data-submit]"]]},
+   {"at": "[data-fix]", "title": "One press sets 13 Nov", "text": "Set check-out to 13 Nov fixes the stay and runs the search.", "wait": "Press Search stays to see this.", "reveal": [["click", "[data-submit]"]]}
+  ]
+ },
+ "t1": {
+  "bad": [
+   {"at": ".toast", "title": "Gone after three seconds", "text": "Anyone who looked away comes back to a list with only beach.jpg in it.", "wait": "Press Upload photo.heic to see this.", "reveal": [["click", "[data-up]"], ["wait", 700]]},
+   {"at": "[data-list]", "title": "The list never mentions photo.heic", "text": "Only beach.jpg shows, so the failed photo leaves no trace."}
+  ],
+  "good": [
+   {"at": "[data-heic] .cs-row", "title": "Not uploaded, right on the file", "text": "The row stays until people act, so one glance at the list tells them.", "wait": "Press Upload photo.heic to see this.", "reveal": [["click", "[data-up]"], ["wait", 700]]},
+   {"at": "[data-heic] .field-msg", "title": "The size and the limit", "text": "34 MB against a 20 MB limit, so people know how far off it is.", "wait": "Press Upload photo.heic to see this.", "reveal": [["click", "[data-up]"], ["wait", 700]]},
+   {"at": "[data-zip]", "title": "Compress and upload, right here", "text": "One press fixes it, with no other tool and no starting over.", "wait": "Press Upload photo.heic to see this.", "reveal": [["click", "[data-up]"], ["wait", 700]]}
+  ]
+ },
+ "t2": {
+  "bad": [
+   {"at": ".toast-action", "title": "Restart rides on the toast", "text": "Four seconds later the button is gone, and the update has no other way to finish.", "wait": "Press Check for updates to see this.", "reveal": [["click", "[data-go]"], ["wait", 600]]},
+   {"at": "[data-go]", "title": "Checking again is the only way back", "text": "People who missed it must ask again and catch the next toast."}
+  ],
+  "good": [
+   {"at": "[data-rs]", "title": "Restart waits in the banner", "text": "No timer, so people can finish their note first.", "wait": "Press Check for updates to see this.", "reveal": [["click", "[data-go]"], ["wait", 600]]},
+   {"at": "[data-later]", "title": "Later is a real choice", "text": "It answers “We’ll remind you tomorrow” instead of letting the chance slip by.", "wait": "Press Check for updates to see this.", "reveal": [["click", "[data-go]"], ["wait", 600]]}
+  ]
+ },
+ "t3": {
+  "bad": [
+   {"at": "[data-go]", "title": "One press, three messages", "text": "People asked for one upload and get a toast per file."},
+   {"at": ".cs-toasts", "title": "The same news three times", "text": "IMG_201, IMG_202 and IMG_203 each say “uploaded”, stacked over the page.", "wait": "Press Upload 3 photos to see this.", "reveal": [["click", "[data-go]"], ["wait", 1100]]}
+  ],
+  "good": [
+   {"at": "[data-go]", "title": "One press, one message", "text": "The result reads as one job, the way people asked for it."},
+   {"at": ".cs-toasts .toast", "title": "One toast that counts up", "text": "“Uploading 1 of 3…” turns into “3 photos uploaded” in the same spot.", "wait": "Press Upload 3 photos to see this.", "reveal": [["click", "[data-go]"], ["wait", 200]]}
+  ]
+ },
+ "t4": {
+  "bad": [
+   {"at": "[data-tab=\"files\"]", "title": "Files shows no sign of it", "text": "Come back from Messages after the export and nothing says report.pdf is ready."},
+   {"at": ".toast", "title": "A toast for an empty room", "text": "It shows only if people stayed on Files, and leaves after three seconds.", "wait": "Press Export report and wait 4 seconds to see this.", "reveal": [["click", "[data-exp]"], ["wait", 4300]]}
+  ],
+  "good": [
+   {"at": "[data-tab=\"files\"] .badge", "title": "A 1 on Files while people are away", "text": "It waits for them to come back, and clears when they open Files.", "wait": "Press Export report, open Messages and wait 4 seconds to see this.", "reveal": [["click", "[data-exp]"], ["click", "[data-tab=\"msgs\"]"], ["wait", 4300]]},
+   {"at": "[data-dl] .cs-row", "title": "report.pdf marked Ready in the list", "text": "The result stays put, whether or not anyone saw the toast.", "wait": "Press Export report and wait 4 seconds to see this.", "reveal": [["click", "[data-exp]"], ["wait", 4300]]}
+  ]
+ },
+ "t5": {
+  "bad": [
+   {"at": ".cs-dlg", "title": "A dialog for every delete", "text": "By the second email people press Delete without reading what it says.", "wait": "Press a trash button to see this.", "reveal": [["click", ".icon-btn"]]},
+   {"at": "[data-count]", "title": "Two clicks per email", "text": "Deleting two emails shows 4 here, and one slip still can’t be taken back."}
+  ],
+  "good": [
+   {"at": ".toast", "title": "Undo stays for five seconds", "text": "A slip is one press to fix, and the email returns to its old place.", "wait": "Press a trash button to see this.", "reveal": [["click", ".icon-btn"]]},
+   {"at": "[data-count]", "title": "One click per email", "text": "Deleting two emails shows 2 here, and Undo adds just one more."}
+  ]
+ },
+ "banner-1": {
+  "bad": [
+   {"at": "[data-bans] .banner", "title": "The top slot sells a Family plan", "text": "People learn this stripe is for offers and stop reading it."},
+   {"at": "[data-off]", "title": "Offline lands under the ad", "text": "The one notice that matters now sits below the one people learned to skip.", "wait": "Turn Online off to see this.", "reveal": [["click", "[data-net]"]]}
+  ],
+  "good": [
+   {"at": "[data-new]", "title": "A dot on What’s new", "text": "The offer is one click away for people who want it, and quiet for the rest."},
+   {"at": "[data-off]", "title": "Offline gets the stripe to itself", "text": "It’s the only banner there, so people read it at once.", "wait": "Turn Online off to see this.", "reveal": [["click", "[data-net]"]]}
+  ]
+ },
+ "banner-2": {
+  "bad": [
+   {"at": "[data-tip] .banner", "title": "No way to close the tip", "text": "Once people know about /, it still takes a row above the plan."},
+   {"at": "[data-note]", "title": "Day 2, same tip", "text": "It comes back every day, so people learn to look past the top row.", "wait": "Press Open the next day to see this.", "reveal": [["click", "[data-next]"]]}
+  ],
+  "good": [
+   {"at": "[data-x]", "title": "A close button on the tip", "text": "Once read, one press gives the row back to the trip plan."},
+   {"at": "[data-note]", "title": "Day 2, no tip", "text": "The choice is remembered, so the tip doesn’t return on the next day.", "wait": "Close the tip, then press Open the next day to see this.", "reveal": [["click", "[data-x]"], ["click", "[data-next]"]]}
+  ]
+ },
+ "banner-3": {
+  "bad": [
+   {"at": "[data-bans]", "title": "Two banners before any numbers", "text": "Read-only and a tip push the budget down while nothing is wrong yet."},
+   {"at": ".bn-bad", "title": "Offline makes it three", "text": "The serious one joins the pile, and more of the budget drops out of view.", "wait": "Turn Online off to see this.", "reveal": [["click", "[data-net]"]]}
+  ],
+  "good": [
+   {"at": "[data-bans] .banner", "title": "One banner, the most serious", "text": "Read-only shows for now. Going offline takes its place."},
+   {"at": "[data-more]", "title": "1 more holds the tip", "text": "The rest wait in a list, and the budget keeps its rows."},
+   {"at": ".bn-bad", "title": "Offline takes the top", "text": "The button now says 2 more, and the sheet stays where it was.", "wait": "Turn Online off to see this.", "reveal": [["click", "[data-net]"]]}
+  ]
+ },
+ "banner-4": {
+  "bad": [
+   {"at": "[data-send]", "title": "Send moves under the pointer", "text": "Every 1.4 seconds the banner shifts the reply box, so clicks miss."},
+   {"at": "[data-count]", "title": "Missed counts the slips", "text": "Each click that lands beside Send adds one, and it climbs fast."}
+  ],
+  "good": [
+   {"at": "[data-send]", "title": "Send stays where people aim", "text": "Clicks during a reconnect still land on it."},
+   {"at": "[data-count]", "title": "Missed stays at 0", "text": "Every press on Send counts as sent."}
+  ]
+ },
+ "badge-1": {
+  "bad": [
+   {"at": "[data-b]", "title": "3 on Shared, before and after", "text": "It still says 3 after people have seen all of Lena’s photos."},
+   {"at": "[data-sh] .bd-grid", "title": "All three photos, already seen", "text": "Beach day, Birthday cake and Sunset are on screen, yet the badge stays.", "wait": "Open Shared to see this.", "reveal": [["click", "[data-tab=\"sh\"]"]]}
+  ],
+  "good": [
+   {"at": "[data-b]", "title": "3 until people open Shared", "text": "Then it’s gone, so the next badge means something new."},
+   {"at": "[data-sh] .bd-grid", "title": "Seeing them is enough", "text": "Opening Shared counts as viewed, with no need to open each photo.", "wait": "Open Shared to see this.", "reveal": [["click", "[data-tab=\"sh\"]"]]}
+  ]
+ },
+ "badge-2": {
+  "bad": [
+   {"at": "[data-i=\"0\"] .badge", "title": "48 on Files looks urgent", "text": "It’s just a total, but it wears the same badge as real news."},
+   {"at": "[data-i=\"3\"] .badge", "title": "Shared’s 2 is lost among them", "text": "The only new files look like every other count, so people open folders one by one."}
+  ],
+  "good": [
+   {"at": "[data-i=\"0\"] .cs-meta", "title": "48 as plain text", "text": "The total is still there to read, but it doesn’t ask for a click."},
+   {"at": "[data-i=\"3\"] .badge", "title": "Shared’s 2 is the only badge", "text": "People find Budget.xlsx and Trip.pdf on the first try."}
+  ]
+ },
+ "badge-3": {
+  "bad": [
+   {"at": "[data-b]", "title": "486 stretches the badge wide", "text": "Three digits already cover the icon’s corner, and Get new mail makes it 1286."},
+   {"at": "[data-head]", "title": "The exact count, said twice", "text": "Inbox · 486 unread already gives the number, so the badge adds only width."}
+  ],
+  "good": [
+   {"at": "[data-b]", "title": "99+ fits on the icon", "text": "It stays the same width at 486 or 1,286, and still reads as “a lot”."},
+   {"at": "[data-head]", "title": "The exact count, where people read", "text": "Inbox · 486 unread sits at the top of the list the icon opens."}
+  ]
+ },
+ "badge-4": {
+  "bad": [
+   {"at": "[data-b]", "title": "A red 3 with no meaning", "text": "Red reads as danger, so people worry about errors that are only updates."},
+   {"at": "[data-open]", "title": "The gear says nothing on hover", "text": "No label and no tooltip, so the only way to learn is to open it."}
+  ],
+  "good": [
+   {"at": "[data-b]", "title": "The same 3, not in red", "text": "The count reads as news, not as danger."},
+   {"at": "[data-open]", "title": "Settings, spelled out", "text": "The button names itself, and screen readers hear “Settings, 3 updates available”."},
+   {"at": "[data-tip]", "title": "The tooltip says what it counts", "text": "People can decide whether to look now, before opening anything.", "wait": "Point at Settings to see this.", "reveal": [["hover", "[data-open]"]]}
+  ]
+ }
+}

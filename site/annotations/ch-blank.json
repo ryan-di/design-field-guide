@@ -1,0 +1,96 @@
+{
+ "pat-templates-1": {
+  "bad": [
+   {"at": ".tp-tile[data-i=\"0\"] .tp-mini", "title": "Every preview is the same deck", "text": "A title and three bullets in each. Only the accent color changes."},
+   {"at": ".tp-tile[data-i=\"1\"] b", "title": "Named by color, not by use", "text": "Blue, Green, Coral and Mono say nothing about a trip slideshow."},
+   {"at": "[data-out]:not(:empty)", "title": "The photos end up in small boxes", "text": "Whichever tile people pick, it’s bullets again.", "wait": "Pick any start to see this.", "reveal": [["click", ".tp-tile[data-i=\"2\"]"]]}
+  ],
+  "good": [
+   {"at": ".tp-tile[data-i=\"1\"] .tp-mini", "title": "Each preview shows a different shape", "text": "A full photo, a question mark, bars. People see the range before reading a word."},
+   {"at": ".tp-tile[data-i=\"1\"] small", "title": "One line on what it’s for", "text": "“Full-page photos, one line of text each” matches the trip slideshow at a glance."},
+   {"at": "[data-out]:not(:empty)", "title": "A wrong pick explains itself", "text": "Pick Pitch, and it says the photos would sit in small boxes.", "wait": "Pick Pitch to see this.", "reveal": [["click", ".tp-tile[data-i=\"0\"]"]]}
+  ]
+ },
+ "pat-templates-2": {
+  "bad": [
+   {"at": ".tp-card .cs-meta", "title": "No owner, no last check", "text": "Nothing hints that this template hasn’t been touched in years."},
+   {"at": ".tp-sheet h6", "title": "Opens as Budget 2023", "text": "People’s first sheet starts three years out of date.", "wait": "Press Use template to see this.", "reveal": [["click", "[data-use]"]]},
+   {"at": ".tp-chart", "title": "The chart is broken on arrival", "text": "“This chart type is no longer supported” is the first thing people see.", "wait": "Press Use template to see this.", "reveal": [["click", "[data-use]"]]}
+  ],
+  "good": [
+   {"at": ".tp-card .cs-meta", "title": "An owner and a release check", "text": "Budget team, checked with the October 2026 release. Someone answers for it."},
+   {"at": ".tp-sheet h6", "title": "Opens as Budget 2026", "text": "The year matches today, so people can start filling it in.", "wait": "Press Use template to see this.", "reveal": [["click", "[data-use]"]]},
+   {"at": ".tp-chart", "title": "The chart works from the start", "text": "Rent, food, phone and streaming already show as bars.", "wait": "Press Use template to see this.", "reveal": [["click", "[data-use]"]]}
+  ]
+ },
+ "pat-templates-3": {
+  "bad": [
+   {"at": "[data-p=\"name\"]", "title": "Jane Doe looks like a real name", "text": "Nothing says it’s an example, so it’s easy to leave in."},
+   {"at": "[data-h]", "title": "Headings and content look alike", "text": "Experience is as clickable as the text under it, so people can’t tell what’s theirs."},
+   {"at": "[data-out]:not(:empty)", "title": "Example text slips through", "text": "Press Check after changing one part, and four still hold Jane’s details.", "wait": "Press Check to see this.", "reveal": [["click", "[data-p=\"name\"]"], ["click", "[data-check]"]]}
+  ],
+  "good": [
+   {"at": "[data-p=\"name\"]", "title": "A dashed border and the word edit", "text": "Each part to change says so in words, not only in color."},
+   {"at": ".tp-hint", "title": "One line names the first step", "text": "Start with your name and the job you want."},
+   {"at": "[data-out]:not(:empty)", "title": "The mark clears once it’s yours", "text": "Change all five parts, and Check says “All parts are yours.”", "wait": "Change every marked part and press Check to see this.", "reveal": [["click", "[data-p=\"name\"]"], ["click", "[data-p=\"title\"]"], ["click", "[data-p=\"job\"]"], ["click", "[data-p=\"skills\"]"], ["click", "[data-p=\"email\"]"], ["click", "[data-check]"]]}
+  ]
+ },
+ "pat-templates-4": {
+  "bad": [
+   {"at": "[data-new]", "title": "New form always opens the gallery", "text": "People who want a blank form have to go through templates first."},
+   {"at": "[data-more]", "title": "Blank hides under More options", "text": "It takes three clicks to reach an empty form, every time.", "wait": "Press New form to see this.", "reveal": [["click", "[data-new]"]]},
+   {"at": "[data-count]", "title": "The clicks pile up", "text": "Three blank forms cost nine clicks."}
+  ],
+  "good": [
+   {"at": "[data-blank]", "title": "Blank form is a button of its own", "text": "One click, and an untitled form joins the list."},
+   {"at": "[data-new]", "title": "Templates sit right beside it", "text": "People who want a head start still get the gallery."},
+   {"at": "[data-count]", "title": "One click per form", "text": "Three blank forms cost three clicks."}
+  ]
+ },
+ "pat-contextual-hints-1": {
+  "bad": [
+   {"at": ".ch-tip", "title": "Four hints open at once", "text": "Zoom, compare, crop and share all speak up before people do anything."},
+   {"at": ".ch-tools", "title": "The bubbles cover the tools", "text": "Crop and Share sit under hints, so a press lands on the hint instead."},
+   {"at": "[data-out]", "title": "The count only goes down by hand", "text": "Hints open: 4 until people close each one."}
+  ],
+  "good": [
+   {"at": ".ch-tools", "title": "The tools start clear", "text": "No hint is open, so the photo and all four buttons are free to use."},
+   {"at": ".ch-tip", "title": "One hint, right after Adjust", "text": "It talks about the Light slider people just opened.", "wait": "Press Adjust to see this.", "reveal": [["click", "[data-tool=\"Adjust\"]"]]},
+   {"at": "[data-out]:not(:empty)", "title": "No hint for a tool already used", "text": "Press Crop, and it opens with no hint because people have used it before.", "wait": "Press Crop to see this.", "reveal": [["click", "[data-tool=\"Crop\"]"]]}
+  ]
+ },
+ "pat-contextual-hints-2": {
+  "bad": [
+   {"at": "[data-ok]", "title": "Got it doesn’t stick", "text": "The hint closes now, but the app forgets the choice."},
+   {"at": "[data-out]", "title": "Shown every time the app opens", "text": "Press Got it and reopen, and it says the hint was shown twice."},
+   {"at": "[data-again]", "title": "No way to manage tips", "text": "Open the app again is the only control, so people can’t turn them off."}
+  ],
+  "good": [
+   {"at": "[data-ok]", "title": "Got it is remembered", "text": "Saved with the account, so the hint stays closed on every device."},
+   {"at": "[data-out]", "title": "Reopen, and it stays closed", "text": "The count of hints shown stops at 1."},
+   {"at": "[data-tips]", "title": "Show tips again brings them back", "text": "People who closed a hint too fast have one place to find it."}
+  ]
+ },
+ "pat-contextual-hints-3": {
+  "bad": [
+   {"at": ".ch-tip", "title": "The hint sits on Filters", "text": "It talks about the button while hiding it."},
+   {"at": "[data-sort]", "title": "Sort is covered too", "text": "Both toolbar buttons are out of reach while the hint is open."},
+   {"at": "[data-out]:not(:empty)", "title": "A press lands on the hint", "text": "Press Filters, and it says Filters is underneath.", "wait": "Press Filters to see this.", "reveal": [["click", ".ch-tip span"]]}
+  ],
+  "good": [
+   {"at": ".ch-tip", "title": "The hint points up at Filters", "text": "It sits below the toolbar, so the button stays in view."},
+   {"at": "[data-filters]", "title": "Filters works with the hint open", "text": "Press it, and the sizes open right away."},
+   {"at": "[data-panel]", "title": "Using it closes the hint", "text": "Sizes 38 to 42 appear, and the hint goes because its job is done.", "wait": "Press Filters to see this.", "reveal": [["click", "[data-filters]"]]}
+  ]
+ },
+ "pat-contextual-hints-4": {
+  "bad": [
+   {"at": ".ch-tip", "title": "The only place it’s explained", "text": "Close it, and nothing else says how to drag an event longer."},
+   {"at": ".ch-help", "title": "Help leaves it out", "text": "Three topics, and none is about an event’s length.", "wait": "Press Help to see this.", "reveal": [["click", "[data-help]"]]}
+  ],
+  "good": [
+   {"at": "[data-more]", "title": "Learn more links to the help", "text": "People see where the full answer lives before closing the hint."},
+   {"at": ".ch-help", "title": "Help lists it as a topic", "text": "“Change an event’s length” is there, with a keyboard way too.", "wait": "Press Help to see this.", "reveal": [["click", "[data-help]"]]}
+  ]
+ }
+}

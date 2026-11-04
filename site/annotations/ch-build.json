@@ -1,0 +1,138 @@
+{
+ "eff-small-steps-1": {
+  "bad": [
+   {"at": "[data-build]", "title": "One prompt, straight to code", "text": "The agent decides where pins are saved on its own, and nobody sees that choice."},
+   {"at": "[data-res]", "title": "14 files and 900 lines, then review", "text": "The first chance to question its choices comes after the code exists.", "wait": "Press Build it to see this.", "reveal": [["click", "[data-build]"], ["wait", 900]]},
+   {"at": "[data-out]", "title": "The wrong guess costs 900 lines", "text": "Pins saved in one browser vanish on another computer, so most of the code changes.", "wait": "Press Build it, then Review, to see this.", "reveal": [["click", "[data-build]"], ["wait", 900], ["click", "[data-review]"]]}
+  ],
+  "good": [
+   {"at": "[data-plan]", "title": "A plan before any code", "text": "Four short steps to read, and nothing is built yet."},
+   {"at": "[data-steps] li:nth-child(2)", "title": "The wrong step shows in the plan", "text": "“Save pins in this browser” fails anyone who uses two computers.", "wait": "Press Ask for a plan to see this.", "reveal": [["click", "[data-plan]"]]},
+   {"at": "[data-out]", "title": "Fixed with one sentence", "text": "Pins move to the account before a line is written, so no code is thrown away.", "wait": "Press Ask for a plan, Change, then Approve plan to see this.", "reveal": [["click", "[data-plan]"], ["click", "[data-change]"], ["click", "[data-ok]"]]}
+  ]
+ },
+ "eff-small-steps-2": {
+  "bad": [
+   {"at": "[data-steps]", "title": "Four layers, none usable alone", "text": "An index, a server and a results list do nothing until the search box lands."},
+   {"at": "[data-out]", "title": "Nothing to try for three steps", "text": "Each landed step says the same thing, so a problem can hide in any of them."},
+   {"at": "[data-app] p.cs-meta", "title": "Everything at once, and “dark” finds nothing", "text": "Dark mode is right there, but nobody knows which of four steps broke it.", "wait": "Press Land next step four times to see this.", "reveal": [["click", "[data-next]"], ["click", "[data-next]"], ["click", "[data-next]"], ["click", "[data-next]"]]}
+  ],
+  "good": [
+   {"at": "[data-steps]", "title": "Each step is something to try", "text": "Search by name, jump, match descriptions, then the empty result."},
+   {"at": ".ss-search", "title": "Something to try after step 1", "text": "Typing “dark” already narrows the list to Dark mode.", "wait": "Press Land next step to see this.", "reveal": [["click", "[data-next]"]]},
+   {"at": "[data-app] p.cs-meta", "title": "Even no match is its own step", "text": "“xyz” gets “Try a shorter word.”, tested on its own.", "wait": "Press Land next step four times to see this.", "reveal": [["click", "[data-next]"], ["click", "[data-next]"], ["click", "[data-next]"], ["click", "[data-next]"]]}
+  ]
+ },
+ "eff-small-steps-3": {
+  "bad": [
+   {"at": "[data-steps]", "title": "No check next to any step", "text": "Four steps, and nothing says how each one will be proven to work."},
+   {"at": "[data-steps] li.bad", "title": "“Done” on a broken step", "text": "The agent said done, but double-click does nothing on the active tab.", "wait": "Run all four steps, then press Try it yourself to see this.", "reveal": [["click", "[data-run]"], ["click", "[data-run]"], ["click", "[data-run]"], ["click", "[data-run]"], ["click", "[data-try]"]]},
+   {"at": "[data-out]", "title": "Two more steps on top of it", "text": "Steps 3 and 4 were built on the break, so they need checking again too.", "wait": "Run all four steps, then press Try it yourself to see this.", "reveal": [["click", "[data-run]"], ["click", "[data-run]"], ["click", "[data-run]"], ["click", "[data-run]"], ["click", "[data-try]"]]}
+  ],
+  "good": [
+   {"at": "[data-steps]", "title": "A check written next to each step", "text": "Unit test, end-to-end spec or screenshot, picked before the agent starts."},
+   {"at": "[data-steps] li:nth-child(2) small[class]", "title": "Step 2 fails its spec first", "text": "The active tab ignored double-click, so the agent fixed it before step 3.", "wait": "Press Run next step twice to see this.", "reveal": [["click", "[data-run]"], ["click", "[data-run]"]]},
+   {"at": "[data-out].ok", "title": "Done means the check passed", "text": "All four pass, so step 3 builds on a step 2 that works.", "wait": "Run all four steps to see this.", "reveal": [["click", "[data-run]"], ["click", "[data-run]"], ["wait", 1300], ["click", "[data-run]"], ["click", "[data-run]"]]}
+  ]
+ },
+ "eff-small-steps-4": {
+  "bad": [
+   {"at": "[data-q]", "title": "An open question, and work goes on", "text": "Nobody knows yet if palettes belong to one person or the whole team."},
+   {"at": "[data-start]", "title": "Start step 2 works anyway", "text": "Nothing stops the next step while step 1 is still in review."},
+   {"at": "[data-steps] li.redo", "title": "Built for one person, then redone", "text": "The answer comes late, and steps 2 and 3 guessed wrong.", "wait": "Start steps 2 and 3, then answer the question to see this.", "reveal": [["click", "[data-start]"], ["click", "[data-start]"], ["click", "[data-ans]"]]}
+  ],
+  "good": [
+   {"at": "[data-q]", "title": "The same open question", "text": "Steps 2 and 3 depend on whether palettes are personal or shared."},
+   {"at": "[data-start]", "title": "Start step 2 is off until then", "text": "The line under it says what it’s waiting for."},
+   {"at": "[data-steps] li.done:nth-child(2)", "title": "Built for the team, once", "text": "Step 2 starts after the answer, so nothing has to be redone.", "wait": "Answer the question, then start step 2 to see this.", "reveal": [["click", "[data-ans]"], ["click", "[data-start]"]]}
+  ]
+ },
+ "eff-agent-verification-1": {
+  "bad": [
+   {"at": ".av-msg", "title": "“All tests pass” with nothing behind it", "text": "No test names, no count, no output to read."},
+   {"at": "[data-out]", "title": "The test file was empty", "text": "Export breaks a week later, and no test ever touched it.", "wait": "Press Approve to see this.", "reveal": [["click", "[data-ok]"]]}
+  ],
+  "good": [
+   {"at": "[data-show]", "title": "The output comes before Approve", "text": "Approve isn’t even offered until the test run is on screen."},
+   {"at": ".av-term", "title": "Green, with 0 tests", "text": "vitest says 1 file passed, and that file has no tests in it.", "wait": "Press Show the test output to see this.", "reveal": [["click", "[data-show]"]]},
+   {"at": "[data-out].ok", "title": "Three real tests, seen running", "text": "Three tests for image size, see-through background and file name.", "wait": "Press Show the test output, then Ask for real tests, to see this.", "reveal": [["click", "[data-show]"], ["click", "[data-ask]"], ["wait", 1000]]}
+  ]
+ },
+ "eff-agent-verification-2": {
+  "bad": [
+   {"at": ".av-checks", "title": "48 unit tests, no screen", "text": "None of them can see where the Share button is."},
+   {"at": "[data-out]", "title": "Share ends up in the ••• menu", "text": "People can’t find it after release, and nothing flagged the move.", "wait": "Press Approve to see this.", "reveal": [["click", "[data-ok]"]]}
+  ],
+  "good": [
+   {"at": "[data-checks] .cs-row:nth-child(2)", "title": "The spec fails on the change", "text": "share.spec.ts can’t find the Share button, while all 48 unit tests pass."},
+   {"at": ".av-tb:not(:has(> span:nth-child(5)))", "title": "After: no Share in the toolbar", "text": "Only Undo, Redo and ••• are left. The screenshot shows what the spec found.", "wait": "Press After to see this.", "reveal": [["click", "[data-v=\"after\"]"]]},
+   {"at": "[data-out].ok", "title": "The rerun proves the fix", "text": "Share is back, and the spec passes before anyone approves.", "wait": "Press Fix and rerun to see this.", "reveal": [["click", "[data-fix]"], ["wait", 1000]]}
+  ]
+ },
+ "eff-agent-verification-3": {
+  "bad": [
+   {"at": ".av-cap", "title": "Light, wide, and nothing else", "text": "The easiest case to get right is the only one anyone looked at."},
+   {"at": ".av-card em", "title": "“Unsaved” looks fine here", "text": "Its color is fixed, so it vanishes in dark mode. This shot can’t show that."}
+  ],
+  "good": [
+   {"at": ".av-seg", "title": "Four cases instead of one", "text": "Three of them show a problem the light, wide shot hides."},
+   {"at": ".av-shot.dark .av-card em", "title": "Dark mode: “Unsaved” disappears", "text": "The fixed dark gray label sits on a dark card.", "wait": "Press Dark · wide to see this.", "reveal": [["click", "[data-s=\"dw\"]"]]},
+   {"at": "[data-count]", "title": "A count of what’s left to see", "text": "It stays at 0 of 3 until someone opens the other screenshots."}
+  ]
+ },
+ "eff-agent-verification-4": {
+  "bad": [
+   {"at": ".av-checks", "title": "Four green checks, one missing case", "text": "None of them deletes two photos in a row."},
+   {"at": "[data-out]", "title": "Found by people, a week late", "text": "Undo brought back only one of two deleted photos.", "wait": "Press Approve to see this.", "reveal": [["click", "[data-ok]"]]}
+  ],
+  "good": [
+   {"at": ".av-checks", "title": "The same four green checks", "text": "They pass here too, so they aren’t a reason to skip trying it."},
+   {"at": ".av-col > .app-frame", "title": "The real Photos screen to try", "text": "A few minutes of deleting and undoing, the way people will."},
+   {"at": "[data-out].bad", "title": "The second Undo does nothing", "text": "The first photo is gone for good. No test deleted two in a row.", "wait": "Delete two photos, then press Undo twice to see this.", "reveal": [["click", "[data-del=\"Beach\"]"], ["click", "[data-del=\"Market\"]"], ["click", "[data-undo]"], ["click", "[data-undo]"]]}
+  ]
+ },
+ "eff-ux-calls-1": {
+  "bad": [
+   {"at": ".ux-col > p.cs-meta", "title": "Shipped as the agent wrote it", "text": "No list of choices, so every default goes out without anyone picking it."},
+   {"at": ".cs-dlg b", "title": "“Are you sure?” names nobody", "text": "It doesn’t say Ana, or that she loses the team’s files.", "wait": "Press Remove next to Ana to see this.", "reveal": [["click", "[data-rm]"]]},
+   {"at": ".cs-dlg [data-yes]", "title": "OK doesn’t say what happens", "text": "People can’t tell from the button that it removes someone.", "wait": "Press Remove next to Ana to see this.", "reveal": [["click", "[data-rm]"]]}
+  ],
+  "good": [
+   {"at": ".ux-dec", "title": "Every visible choice, listed", "text": "Title, text and button, each with Keep or Change."},
+   {"at": ".cs-dlg b", "title": "“Remove Ana from the team?”", "text": "The title names the person, and the text says she can be invited again.", "wait": "Press Change on each choice, then Remove, to see this.", "reveal": [["click", "[data-ch=\"title\"] [data-change]"], ["click", "[data-ch=\"body\"] [data-change]"], ["click", "[data-ch=\"ok\"] [data-change]"], ["click", "[data-rm]"]]},
+   {"at": ".cs-dlg [data-yes]", "title": "Remove Ana instead of OK", "text": "The button says exactly what pressing it does.", "wait": "Press Change on each choice, then Remove, to see this.", "reveal": [["click", "[data-ch=\"title\"] [data-change]"], ["click", "[data-ch=\"body\"] [data-change]"], ["click", "[data-ch=\"ok\"] [data-change]"], ["click", "[data-rm]"]]}
+  ]
+ },
+ "eff-ux-calls-2": {
+  "bad": [
+   {"at": ".ux-pr li:nth-child(3)", "title": "A font change in the file list", "text": "Sidebar.css goes from 14px to 12px, and the description never says so."},
+   {"at": "[data-app] .ux-side", "title": "Smaller text on every page", "text": "The sidebar shrinks everywhere, and nobody reviewed it.", "wait": "Press Approve to see this.", "reveal": [["click", "[data-ok]"]]}
+  ],
+  "good": [
+   {"at": "[data-flag]", "title": "Flagged as not part of this change", "text": "The same 14px → 12px line, marked so reviewers can’t miss it."},
+   {"at": "[data-new] .ux-pr", "title": "Its own pull request, its own note", "text": "“Smaller sidebar text” says why, with screenshots from before and after.", "wait": "Press Move to its own pull request to see this.", "reveal": [["click", "[data-move]"]]}
+  ]
+ },
+ "eff-ux-calls-3": {
+  "bad": [
+   {"at": ".ux-pr b.t", "title": "A title about the code", "text": "“Notification settings refactor” says nothing about the emails people get."},
+   {"at": ".ux-pr ul", "title": "Four lines of files and fields", "text": "Reviewers must work out from emailOnMention that a switch is gone."}
+  ],
+  "good": [
+   {"at": ".ux-pr b.t", "title": "A title about what people get", "text": "Teammates know the change from the title alone."},
+   {"at": ".ux-pr ul:nth-of-type(1)", "title": "Three lines in people’s words", "text": "The switch is gone, and old settings keep working until people choose."},
+   {"at": ".ux-pr ul:nth-of-type(2)", "title": "Code notes come last", "text": "The split and the migration are still there, for the people who need them."}
+  ]
+ },
+ "eff-ux-calls-4": {
+  "bad": [
+   {"at": "[data-claim]", "title": "“No visible change,” unchecked", "text": "No screenshots back it up, so reviewers take it on trust."},
+   {"at": "[data-out]", "title": "Shorter buttons and a new color", "text": "People see a different Export button, and nobody was told.", "wait": "Press Approve to see this.", "reveal": [["click", "[data-ok]"]]}
+  ],
+  "good": [
+   {"at": ".ux-seg", "title": "Before and After, one click apart", "text": "Comparing the two takes seconds, before anyone approves."},
+   {"at": ".ux-dlg.after", "title": "The buttons did change", "text": "Cancel and Export are 4px shorter, and Export takes the shared color.", "wait": "Press After to see this.", "reveal": [["click", "[data-v=\"a\"]"]]},
+   {"at": "[data-claim] b", "title": "The claim is corrected", "text": "The description now lists the change, so reviewers can decide on it.", "wait": "Press After to see this.", "reveal": [["click", "[data-v=\"a\"]"]]}
+  ]
+ }
+}

@@ -1,0 +1,138 @@
+{
+ "tabs-1": {
+  "bad": [
+   {"at": ".tablist", "title": "One room on screen at a time", "text": "To weigh $120 against $165, people keep one price in their head while the other tab opens."},
+   {"at": "[role=tabpanel]", "title": "Breakfast reads No, with nothing beside it", "text": "Whether Deluxe or Suite includes it takes another tab each."},
+   {"at": "[data-n]", "title": "Every comparison costs a switch", "text": "Finding the cheapest room with breakfast takes at least two."}
+  ],
+  "good": [
+   {"at": "thead", "title": "All three rooms in one header row", "text": "Standard, Deluxe and Suite stay in view together, so nothing has to be remembered."},
+   {"at": "tbody tr:nth-child(3)", "title": "Breakfast reads across one line", "text": "No, Yes, Yes. Deluxe at $165 is the cheapest with breakfast, at one look."}
+  ]
+ },
+ "tabs-2": {
+  "bad": [
+   {"at": ".tb-many", "title": "Nine tabs in one row", "text": "Only the first few fit, and the rest scroll out of sight behind the fade."},
+   {"at": "[role=tab]:nth-child(4)", "title": "Notifications cut off by the fade", "text": "Language, the eighth tab, sits further along, where people don’t think to scroll."}
+  ],
+  "good": [
+   {"at": ".tb-nav", "title": "All nine sections in one column", "text": "Language is the eighth item, in plain sight, and a tenth would fit below."},
+   {"at": ".tb-nav [aria-current]", "title": "The open section stays marked", "text": "Account is highlighted, so people know which settings they’re reading."}
+  ]
+ },
+ "tabs-3": {
+  "bad": [
+   {"at": "[role=tab]:nth-child(3)", "title": "Payment opens with one click", "text": "Nothing stops people from jumping past Address and Shipping."},
+   {"at": "[data-street]", "title": "The street is still empty", "text": "No step says so until Pay is pressed."},
+   {"at": "[data-pm] .field-msg", "title": "The problem shows up at the last step", "text": "People are sent back to the Address tab after they thought they were done.", "wait": "Open Payment and press Pay to see this.", "reveal": [["click", "[role=tab]:nth-child(3)"], ["click", "[data-pay]"]]}
+  ],
+  "good": [
+   {"at": ".tb-steps", "title": "Three numbered steps, in order", "text": "The current step is marked, and Payment can’t be opened out of turn."},
+   {"at": "[data-next]", "title": "Next checks the street first", "text": "With the street empty, it stays on Address instead of moving on."},
+   {"at": "[data-sm] .field-msg", "title": "The gap is flagged where it goes", "text": "People fix the street on the spot, long before paying.", "wait": "Press Next with the street empty to see this.", "reveal": [["click", "[data-next]"]]}
+  ]
+ },
+ "tabs-4": {
+  "bad": [
+   {"at": ".tablist", "title": "Three tabs for three fields", "text": "Title, guests and reminder each hide behind their own tab."},
+   {"at": "[data-save]", "title": "Save sits under one field", "text": "People can save with Guests and Reminder never seen."},
+   {"at": "[data-n]", "title": "Checking it all costs three clicks", "text": "Two tab switches plus Save, for an event with three fields."}
+  ],
+  "good": [
+   {"at": ".tb-h", "title": "Headings stand in for the tabs", "text": "Details, Guests and Reminder still label each part, with nothing hidden."},
+   {"at": "[data-save]", "title": "Save with everything in view", "text": "Team lunch, Lena, Sam and Maya, and the reminder are checked at a glance."},
+   {"at": "[data-n]", "title": "One click from start to saved", "text": "The count ends at 1, the Save itself."}
+  ]
+ },
+ "accordion-1": {
+  "bad": [
+   {"at": ".ac-acc details:first-child summary", "title": "The reason for the visit starts closed", "text": "Most people come for the arrival time, and it takes a click to see."},
+   {"at": "[data-reload]", "title": "Reload folds it away again", "text": "Every return visit costs the same click for the same answer."},
+   {"at": "[data-v]", "title": "The clicks add up per visit", "text": "Two visits, two clicks, for a status people check most."}
+  ],
+  "good": [
+   {"at": ".ac-status", "title": "Out for delivery, before anything else", "text": "The arrival window shows the moment the page loads."},
+   {"at": "[data-reload]", "title": "Still there after Reload", "text": "Coming back later shows the status again, with no click."},
+   {"at": "[data-v]", "title": "The count stays at 0", "text": "People never open anything to learn when it arrives."}
+  ]
+ },
+ "accordion-2": {
+  "bad": [
+   {"at": ".ac-acc", "title": "Four closed headers, nothing to read", "text": "Parking, pets and cancellation each sit in a different section, so that’s three clicks."},
+   {"at": ".ac-acc details:nth-child(2) summary", "title": "No pets hides under House rules", "text": "Someone booking with a dog only learns it after opening the header."}
+  ],
+  "good": [
+   {"at": ".ac-toc", "title": "Links jump to each part", "text": "Cancellation is one click away, and the page stays whole."},
+   {"at": ".ac-page", "title": "Everything readable in one scroll", "text": "Free parking, No pets and the 5-day cancellation show without opening anything."}
+  ]
+ },
+ "accordion-3": {
+  "bad": [
+   {"at": ".ac-acc > details:first-child > summary", "title": "Notifications, then Email, then Digest", "text": "People open three headers before they see the Send digest menu."},
+   {"at": "[data-dg]", "title": "The menu sits three boxes deep", "text": "Each level adds an indent, and people lose track of where they are.", "wait": "Open Notifications, Email and Digest to see this.", "reveal": [["click", ".ac-acc > details:first-child > summary"], ["click", ".ac-in > .ac-acc > details:first-child > summary"], ["click", ".ac-in .ac-in > .ac-acc > details:first-child > summary"]]},
+   {"at": "[data-n]", "title": "Three clicks before any change", "text": "The counter reads 3 just to reach Weekly."}
+  ],
+  "good": [
+   {"at": ".ac-acc > details:first-child > summary", "title": "One header to open", "text": "Notifications opens straight onto the Send digest menu."},
+   {"at": ".ac-h", "title": "Email and Push as small headings", "text": "They group the settings without adding a click or an indent.", "wait": "Open Notifications to see this.", "reveal": [["click", ".ac-acc > details:first-child > summary"]]},
+   {"at": "[data-n]", "title": "One click, then the change", "text": "The counter stops at 1 before Daily is picked."}
+  ]
+ },
+ "accordion-4": {
+  "bad": [
+   {"at": ".kv:nth-child(2)", "title": "Plan and payment look fine", "text": "Family, next payment Nov 12. Nothing on the open page hints at a problem."},
+   {"at": ".ac-acc summary", "title": "Details sounds like extras", "text": "People skip a closed header with that name, and the warning goes with it."},
+   {"at": "[data-warn]", "title": "The expired card, out of sight", "text": "People find out on Nov 12, when the plan stops.", "wait": "Open Details to see this.", "reveal": [["click", ".ac-acc summary"]]}
+  ],
+  "good": [
+   {"at": "[data-warn]", "title": "The warning where people look first", "text": "It sits right under Next payment, above the folded Details."},
+   {"at": "[data-upd]", "title": "The fix sits next to the problem", "text": "Update card is one click, with no billing page to hunt for."},
+   {"at": ".ac-acc summary", "title": "Details keeps only the extras", "text": "Billing email and Member since can wait behind a header."}
+  ]
+ },
+ "card-1": {
+  "bad": [
+   {"at": ".cd-doc:first-child .cd-acts", "title": "Five buttons on every card", "text": "Open, Share, Rename, Download and Delete crowd out the name and the picture."},
+   {"at": ".cd-doc:first-child .btn-danger", "title": "Delete one slip from Download", "text": "A missed click removes Q3 budget instead of saving a copy."}
+  ],
+  "good": [
+   {"at": ".cd-doc:first-child", "title": "The whole card opens Q3 budget", "text": "A click on the picture or the name does the everyday job."},
+   {"at": ".cd-doc:first-child [data-more]", "title": "One ⋯ for everything else", "text": "Share, Rename and Download wait in a menu, off the face of the card."},
+   {"at": ".cd-doc:first-child .danger", "title": "Delete set apart at the bottom", "text": "A line divides it from the everyday actions, so it’s hard to hit by accident.", "wait": "Press ⋯ on Q3 budget to see this.", "reveal": [["click", ".cd-doc:first-child [data-more]"]]}
+  ]
+ },
+ "card-2": {
+  "bad": [
+   {"at": ".cd-albs", "title": "Nine albums in a shuffled order", "text": "Hiking, Wedding, Garden… Nothing tells people which one came last."},
+   {"at": ".cd-alb:first-child", "title": "No date on any tile", "text": "The only way to learn when Hiking was is to open it."},
+   {"at": "[data-out]", "title": "One date per click", "text": "Finding the newest means opening all nine, one at a time.", "wait": "Click an album to see this.", "reveal": [["click", ".cd-alb:first-child"]]}
+  ],
+  "good": [
+   {"at": "[data-sort]", "title": "Newest first, and people can change it", "text": "Birthday, the latest album, leads the grid."},
+   {"at": ".cd-alb:first-child", "title": "Each tile shows its date", "text": "Oct 18 sits under Birthday, so no album needs opening to check."},
+   {"at": ".cd-tbl", "title": "Photo counts in one column", "text": "Wedding’s 310 and Picnic’s 18 line up for comparing, which tiles can’t do.", "wait": "Press List to see this.", "reveal": [["click", "[data-v=list]"]]}
+  ]
+ },
+ "card-3": {
+  "bad": [
+   {"at": "[data-go=shop]", "title": "The shop name leaves for another page", "text": "People who meant to open the shoe land on Peak Outdoors instead."},
+   {"at": "[data-go=reviews]", "title": "212 reviews is a link of its own", "text": "A third target inside one card, each going somewhere different."},
+   {"at": "[data-heart]", "title": "♡ saves and opens at once", "text": "The click goes through to the card, so saving one shoe leaves the results."}
+  ],
+  "good": [
+   {"at": ".cd-prod", "title": "Every click opens the shoe", "text": "Photo, name, shop or reviews, the card has one target and one result."},
+   {"at": ".cd-sub", "title": "Peak Outdoors is plain text", "text": "It still says who sells the shoe, without being a trap."},
+   {"at": "[data-heart]", "title": "♡ only saves", "text": "It sits outside the link, so people stay on the results."}
+  ]
+ },
+ "card-4": {
+  "bad": [
+   {"at": ".cd-boxes", "title": "Six boxes, six borders", "text": "Theme sits as far from Text size as from Time zone, so nothing groups."},
+   {"at": ".cd-box:first-child", "title": "Lifts on hover, does nothing", "text": "The box rises like a card people can open, but a click on it goes nowhere."}
+  ],
+  "good": [
+   {"at": ".cd-h", "title": "Two headings do the grouping", "text": "Appearance holds Theme and Text size. Region holds the other four."},
+   {"at": ".cd-prow", "title": "Plain rows, with the menu at the end", "text": "With no box around it, only the select looks like something to press."}
+  ]
+ }
+}

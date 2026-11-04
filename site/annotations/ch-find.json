@@ -1,0 +1,137 @@
+{
+ "pat-command-palette-1": {
+  "bad": [
+   {"at": ".app-bar .cs-meta", "title": "Only the word Month up top", "text": "Nothing in the top bar hints at a palette, so newcomers never learn it exists."},
+   {"at": "[data-cal]", "title": "Week numbers have no visible switch", "text": "No button or menu turns them on, so people who don’t know the shortcut give up."}
+  ],
+  "good": [
+   {"at": "[data-open]", "title": "A Commands button with the shortcut", "text": "People can see the palette, and ⌘K or Ctrl+K on the button teaches the keys."},
+   {"at": ".cp-opt:first-child", "title": "Show week numbers, first in the list", "text": "The command that hid behind a shortcut is now one click from the button.", "wait": "Press Commands to see this.", "reveal": [["click", "[data-open]"]]},
+   {"at": ".cp-opt:nth-child(2) .cp-k", "title": "Keys listed beside each command", "text": "Go to today shows T, so the palette teaches the faster way too.", "wait": "Press Commands to see this.", "reveal": [["click", "[data-open]"]]}
+  ]
+ },
+ "pat-command-palette-2": {
+  "bad": [
+   {"at": ".cp-opt:first-child", "title": "Change theme is the official name", "text": "People think “dark mode”, not “theme”, so the right command sits unnoticed in the list."},
+   {"at": ".cp-none", "title": "Just No results for dark mode", "text": "Nothing points to Change theme, so people decide the app can’t go dark.", "wait": "Type dark mode in the box to see this.", "reveal": [["fill", ".cp-q .input", "dark mode"]]}
+  ],
+  "good": [
+   {"at": ".cp-opt:first-child small", "title": "Matches “dark” under Change theme", "text": "The result says why it matched, so people learn the real name for next time.", "wait": "Type dark mode in the box to see this.", "reveal": [["fill", ".cp-q .input", "dark mode"]]},
+   {"at": ".cp-q .input", "title": "Letters in order count too", "text": "Typing thm still finds Change theme, so a rushed or partial word works."}
+  ]
+ },
+ "pat-command-palette-3": {
+  "bad": [
+   {"at": ".cp-pal", "title": "Sixteen one-word entries, A to Z", "text": "Advanced, Misc and Tools say nothing about what they do, and nothing is grouped."},
+   {"at": ".cp-opt:nth-child(4)", "title": "Export or PDF, which one saves", "text": "Both look right, and PDF only opens settings, so people try them one by one."}
+  ],
+  "good": [
+   {"at": ".cp-opt:nth-child(2)", "title": "Export to PDF at the very top", "text": "It sits under Recent, so people who saved a PDF last time get it in one click."},
+   {"at": ".cp-grp:nth-child(4)", "title": "Groups named File, View and Slide", "text": "People skip to the right group instead of reading every entry."},
+   {"at": ".cp-opt:nth-child(6)", "title": "Every name is a verb and an object", "text": "Export as images and Print handouts say what happens before people click."}
+  ]
+ },
+ "pat-command-palette-4": {
+  "bad": [
+   {"at": ".app-bar .cs-meta", "title": "Commands: / in the top bar", "text": "The slash is a key people type every day, in and/or, dates and links."},
+   {"at": ".cp-pal", "title": "The palette opens mid-sentence", "text": "Typing and/or pops it open, and the slash never reaches the note.", "wait": "Type a / in the note to see this.", "reveal": [["press", ".cp-note", "/"]]}
+  ],
+  "good": [
+   {"at": ".app-bar .cs-meta", "title": "Commands on ⌘ K, like most apps", "text": "People already know the key from other apps, and it never clashes with typing."},
+   {"at": ".cp-note", "title": "The slash types like any key", "text": "People can write and/or in the note, and nothing pops up."},
+   {"at": ".cp-pal", "title": "Opens only when people ask", "text": "Escape closes it and puts the cursor back where people were typing.", "wait": "Press Ctrl+K or ⌘K in the note to see this.", "reveal": [["press", ".cp-note", "Control+k"]]}
+  ]
+ },
+ "pat-search-filters-1": {
+  "bad": [
+   {"at": "[data-fbtn]", "title": "Size M hides behind Filters", "text": "Nothing on the button says a filter from an earlier visit is still on."},
+   {"at": "[data-count]", "title": "No results for rain jacket", "text": "Three rain jackets exist in other sizes, so people decide the shop has none.", "wait": "Search for rain jacket to see this.", "reveal": [["fill", "[data-q]", "rain jacket"]]}
+  ],
+  "good": [
+   {"at": "[data-size]", "title": "Size M stays in view as a chip", "text": "People see the leftover filter and can turn it off with one click."},
+   {"at": "[data-count]", "title": "The count names what’s left out", "text": "It says 3 more jackets come in other sizes, before people even search."},
+   {"at": "[data-all]", "title": "One click shows the other sizes", "text": "Show 3 in all sizes brings every match back without hunting for the filter."}
+  ]
+ },
+ "pat-search-filters-2": {
+  "bad": [
+   {"at": "[data-quick]", "title": "Under 30 min is quietly on", "text": "Both lasagnas take 45 minutes or more, so even the right spelling finds nothing."},
+   {"at": ".sf-none", "title": "No results, and nothing more", "text": "It doesn’t repeat lasagne or hint at lasagna, so people can’t tell what went wrong.", "wait": "Search for lasagne to see this.", "reveal": [["fill", "[data-q]", "lasagne"]]}
+  ],
+  "good": [
+   {"at": ".sf-none b", "title": "It repeats what people typed", "text": "No quick recipes match “lasagne” lets people spot their own spelling.", "wait": "Search for lasagne to see this.", "reveal": [["fill", "[data-q]", "lasagne"]]},
+   {"at": "[data-sug]", "title": "The close spelling is a button", "text": "Search for “lasagna” fixes the typo in one click, with no retyping.", "wait": "Search for lasagne to see this.", "reveal": [["fill", "[data-q]", "lasagne"]]},
+   {"at": "[data-clear]", "title": "Then a way past the filter", "text": "Show 2 that take longer turns off Under 30 min for this search.", "wait": "Search for lasagne, then press Search for “lasagna” to see this.", "reveal": [["fill", "[data-q]", "lasagne"], ["click", "[data-sug]"]]}
+  ]
+ },
+ "pat-search-filters-3": {
+  "bad": [
+   {"at": ".sf-grid", "title": "Fifteen checkboxes before any hotel", "text": "Pool, Spa and Bar get the same space as price and breakfast, the two most people want."},
+   {"at": ".check:has([data-k=\"u120\"])", "title": "Under €120 is the last of 15", "text": "The filter most people want first sits at the bottom of the grid."},
+   {"at": "[data-count]", "title": "The hotels start below the grid", "text": "People scroll past every checkbox before they see a single price."}
+  ],
+  "good": [
+   {"at": ".sf-chips", "title": "Four chips, price first", "text": "Under €120, Breakfast, Free cancellation and Rating 8+ match how people pick a hotel."},
+   {"at": "[data-more]", "title": "The other eleven wait here", "text": "Pool, parking and the rest stay one click away without crowding the results."},
+   {"at": "[data-count]", "title": "Hotels in view right away", "text": "People see the list shrink as they tap each chip."}
+  ]
+ },
+ "pat-search-filters-4": {
+  "bad": [
+   {"at": "[data-q]", "title": "Focus brings up nothing", "text": "People have to type Golden hour and recall the spelling, though they played it this morning."},
+   {"at": "[data-res]:not(:empty)", "title": "Gol matches two songs", "text": "Gold rush and Golden hour both show, so people still read and pick.", "wait": "Type gol in the box to see this.", "reveal": [["fill", "[data-q]", "gol"]]}
+  ],
+  "good": [
+   {"at": "[data-q]", "title": "Focus alone opens the list", "text": "People don’t have to type a letter or remember how a name is spelled."},
+   {"at": "[data-song=\"Golden hour\"]", "title": "Golden hour first, before typing", "text": "Recently played puts this morning’s song one click away.", "wait": "Click the search box to see this.", "reveal": [["click", "[data-q]"]]},
+   {"at": "[data-term]", "title": "Recent searches come back as chips", "text": "Clicking june lake or night runs an earlier search again.", "wait": "Click the search box to see this.", "reveal": [["click", "[data-q]"]]}
+  ]
+ },
+ "pat-information-scent-1": {
+  "bad": [
+   {"at": ".cs-f:nth-child(1)", "title": "Beneficiary entity, not who you pay", "text": "Every label is the bank’s word, so people read all five and guess."},
+   {"at": ".cs-f:nth-child(4)", "title": "Remittance information hides the message", "text": "People looking for where March rent goes skip it, because the word means nothing to them."},
+   {"at": "[data-msg]:not(:empty)", "title": "Each wrong guess is a click", "text": "The demo has to explain each bank word, which is what the label should have done.", "wait": "Click Beneficiary entity, then Value date, to see this.", "reveal": [["click", "[data-f=\"payee\"]"], ["click", "[data-f=\"date\"]"]]}
+  ],
+  "good": [
+   {"at": ".cs-f:nth-child(1)", "title": "A question people ask themselves", "text": "Who are you paying? matches the thought in their head, not a bank field."},
+   {"at": ".cs-f:nth-child(4)", "title": "Message for them, in plain words", "text": "People spot where March rent goes on the first try."},
+   {"at": "[data-msg]:not(:empty)", "title": "Found on the first try", "text": "The field fills in March rent, with no guessing on the way.", "wait": "Click Message for them to see this.", "reveal": [["click", "[data-f=\"msg\"]"]]}
+  ]
+ },
+ "pat-information-scent-2": {
+  "bad": [
+   {"at": "[data-tab=\"2\"]", "title": "Orbit holds the downloads", "text": "Nothing in the name says offline, so people open Vibes, The Vault and Spark first."},
+   {"at": "[data-tab=\"1\"]", "title": "The Vault could mean anything", "text": "Saved playlists, purchases or private files. People have to open it to find out."},
+   {"at": "[data-msg]:not(:empty)", "title": "Every wrong guess adds a click", "text": "People open sections one by one, and won’t remember which name meant what.", "wait": "Open The Vault and Spark to see this.", "reveal": [["click", "[data-tab=\"1\"]"], ["click", "[data-tab=\"3\"]"]]}
+  ],
+  "good": [
+   {"at": "[data-tab=\"2\"]", "title": "Downloads says what’s inside", "text": "People looking for offline songs go there first."},
+   {"at": "[data-tab=\"1\"]", "title": "Library for the saved playlists", "text": "A word people already use for their own collection."},
+   {"at": "[data-msg]:not(:empty)", "title": "Found in one click", "text": "The plain name gets people there on the first try.", "wait": "Click Downloads to see this.", "reveal": [["click", "[data-tab=\"2\"]"]]}
+  ]
+ },
+ "pat-information-scent-3": {
+  "bad": [
+   {"at": "[data-add]", "title": "Add to basket, the first name", "text": "People put the lamp in a basket."},
+   {"at": "[data-open]", "title": "Cart in the top bar", "text": "A second word, so people can’t be sure the lamp landed here."},
+   {"at": "[data-panel] b", "title": "Then it opens as Your bag", "text": "A third name for the same place, with Check out cart under it.", "wait": "Press Cart to see this.", "reveal": [["click", "[data-open]"]]}
+  ],
+  "good": [
+   {"at": "[data-add]", "title": "Add to basket, the only name", "text": "The word people read here is the word they’ll look for next."},
+   {"at": "[data-open]", "title": "Basket in the top bar", "text": "It matches the button, so people know where the lamp went."},
+   {"at": "[data-panel] b", "title": "Your basket, the same word", "text": "Check out basket follows, so the whole path reads as one place.", "wait": "Press Basket to see this.", "reveal": [["click", "[data-open]"]]}
+  ]
+ },
+ "pat-information-scent-4": {
+  "bad": [
+   {"at": "[data-i=\"1\"]", "title": "Passport details hides under Payments", "text": "People looking for a passport field rarely open a section about money."},
+   {"at": "[data-i=\"2\"]", "title": "Account, where people look first", "text": "It holds Profile, Password and Notifications, so the search dead-ends here."}
+  ],
+  "good": [
+   {"at": ".is-test", "title": "8 of 10 people chose Account", "text": "Watching where people click first showed which parent the label belongs under."},
+   {"at": "[data-i=\"2\"]", "title": "Account now holds the passport", "text": "The section people open first is the one with Passport details."},
+   {"at": ".is-mi[data-i=\"1\"]:not([data-branch])", "title": "Passport details, right under Profile", "text": "Two clicks from the menu, in the place people already checked.", "wait": "Open Account to see this.", "reveal": [["click", "[data-i=\"2\"]"]]}
+  ]
+ }
+}

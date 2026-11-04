@@ -1,0 +1,104 @@
+{
+ "eff-loop-1": {
+  "bad": [
+   {"at": ".lp-doc", "title": "The ticket already picks the fix", "text": "A red badge on the bell is decided before anyone asks why replies get missed."},
+   {"at": "[data-say]:not(:empty)", "title": "Built well, in 4 minutes", "text": "The agent does exactly what the ticket says, so the speed hides the wrong question.", "wait": "Press Send to agent to see this.", "reveal": [["click", "[data-send]"], ["wait", 800]]},
+   {"at": "[data-res] .lp-bad", "title": "3 of 5 still miss the reply", "text": "They don’t look at the bell while they write, so the fast build was wasted.", "wait": "Press Send to agent, then Check with people to see this.", "reveal": [["click", "[data-send]"], ["wait", 800], ["click", "[data-check]"]]}
+  ],
+  "good": [
+   {"at": ".lp-doc", "title": "Problem, goal and a test", "text": "People miss replies, should notice one within a day, and 4 of 5 must pass."},
+   {"at": "[data-say]:not(:empty)", "title": "Three answers to the question", "text": "A badge, a highlight in the doc or a daily email. The highlight is picked.", "wait": "Press Send to agent to see this.", "reveal": [["click", "[data-send]"], ["wait", 800]]},
+   {"at": "[data-res] .lp-good", "title": "5 of 5 notice the reply", "text": "It shows up where people are already reading.", "wait": "Press Send to agent, then Check with people to see this.", "reveal": [["click", "[data-send]"], ["wait", 800], ["click", "[data-check]"]]}
+  ]
+ },
+ "eff-loop-2": {
+  "bad": [
+   {"at": ".lp-doc .cs-meta", "title": "The brief lists two checks", "text": "“Lisbn” and “Barcellona” are right there, and nobody types them in."},
+   {"at": ".lp-pill.done", "title": "Done the moment it ships", "text": "The ticket closes at Ship, and the team moves on.", "wait": "Press Ship to see this.", "reveal": [["click", "[data-ship]"]]},
+   {"at": "[data-res] .lp-quote", "title": "The problem comes back as support", "text": "“I typed Barcellona and got no results,” two weeks after the ticket closed.", "wait": "Press Ship, then Two weeks later to see this.", "reveal": [["click", "[data-ship]"], ["click", "[data-acts] button"]]}
+  ],
+  "good": [
+   {"at": ".lp-doc .cs-meta", "title": "The brief becomes the test", "text": "Both spellings from the brief get typed into the real app after shipping."},
+   {"at": "[data-res] .lp-rows", "title": "One passes, one fails", "text": "“Lisbn” finds Lisbon, but “Barcellona” still gets no results.", "wait": "Press Ship to see this.", "reveal": [["click", "[data-ship]"]]},
+   {"at": "[data-res] .lp-good", "title": "The lesson starts round 2", "text": "Doubled letters become the next problem, before any support request arrives.", "wait": "Press Ship, Write down what we learned, then Start the next round to see this.", "reveal": [["click", "[data-ship]"], ["click", "[data-acts] button"], ["click", "[data-acts] button"]]}
+  ]
+ },
+ "eff-loop-3": {
+  "bad": [
+   {"at": ".lp-doc .cs-meta", "title": "The first idea it had", "text": "One approach in 3 files, with nothing to compare it to."},
+   {"at": "[data-res] .lp-quote", "title": "A question nobody can answer", "text": "Three weeks later, a reviewer asks why errors come after Sign up. Nobody knows.", "wait": "Press Merge, then Three weeks later to see this.", "reveal": [["click", "[data-merge]"], ["click", "[data-acts] button"]]}
+  ],
+  "good": [
+   {"at": ".lp-opts", "title": "Three options, each with a cost", "text": "Errors after Sign up are fast to build, but people fail once first."},
+   {"at": "[data-why]", "title": "One line about why", "text": "Record the decision stays off until an option is picked and a reason typed."},
+   {"at": "[data-res] .lp-good", "title": "The reason lives in the PR", "text": "Anyone who asks later reads the choice and why, not a guess.", "wait": "Pick an option, write why, then press Record the decision to see this.", "reveal": [["check", "input[value=\"2\"]"], ["fill", "[data-why]", "Clear feedback while people type."], ["click", "[data-rec]"]]}
+  ]
+ },
+ "eff-loop-4": {
+  "bad": [
+   {"at": ".lp-doc", "title": "12 tests, all green", "text": "Each one checks a case the agent thought of, like posting or an empty comment."},
+   {"at": "[data-res] .lp-quote", "title": "The keyboard covers Post", "text": "A bug report from a phone the next day, a case no test listed.", "wait": "Press Merge to see this.", "reveal": [["click", "[data-merge]"], ["wait", 900]]}
+  ],
+  "good": [
+   {"at": ".lp-card > .cs-meta", "title": "The brief names the phone", "text": "“People can comment from their phone” is the case to walk through by hand."},
+   {"at": "[data-kb]", "title": "One tap shows the problem", "text": "The keyboard rises and covers Post, before anything is merged.", "wait": "Press Try it on a phone, then tap the comment field to see this.", "reveal": [["click", "[data-try]"], ["click", "[data-field]"]]},
+   {"at": "[data-res] .lp-good", "title": "Back to Build, minutes later", "text": "One more test gets added instead of a bug report.", "wait": "Press Try it on a phone, then tap the comment field to see this.", "reveal": [["click", "[data-try]"], ["click", "[data-field]"]]}
+  ]
+ },
+ "eff-loop-5": {
+  "bad": [
+   {"at": ".lp-doc b", "title": "A hunch written as fact", "text": "“Build a template gallery” assumes templates are what new people need."},
+   {"at": ".lp-doc span", "title": "Done means shipped", "text": "Nothing in the brief says what result would count as success."},
+   {"at": "[data-res] .lp-bad", "title": "Two weeks, and nothing learned", "text": "Few people open it, and nobody knows if the idea or the place was wrong.", "wait": "Press Ship it to see this.", "reveal": [["click", "[data-go]"]]}
+  ],
+  "good": [
+   {"at": ".lp-doc b", "title": "A question to answer", "text": "Do new people reach a first result faster from a template than from a blank canvas?"},
+   {"at": ".lp-doc span:last-child", "title": "What would change our minds", "text": "If people pick a template and then delete most of it, the hunch is wrong."},
+   {"at": "[data-res] span:last-child", "title": "Learn rewrites the brief", "text": "People kept the layout, so round 2 tests a layout-only starter, again in two days.", "wait": "Press Finish round 1 to see this.", "reveal": [["click", "[data-go]"]]}
+  ]
+ },
+ "eff-ownership-1": {
+  "bad": [
+   {"at": ".ow-ag > span", "title": "A verdict with nothing to check", "text": "“Cleaner and more modern” is the whole reason given for B."},
+   {"at": "[data-res] .ow-bad", "title": "B beats options nobody saw", "text": "Nobody can say later why it won.", "wait": "Press Use B to see this.", "reveal": [["click", "[data-use]"]]}
+  ],
+  "good": [
+   {"at": ".ow-me", "title": "The ask is for trade-offs", "text": "Three options, and what each one is good at and costs."},
+   {"at": ".ow-opts .check:nth-child(2)", "title": "B’s cost is out in the open", "text": "Short pages, but some settings hide in tabs."},
+   {"at": "[data-res] .ow-good", "title": "The pick comes with its cost", "text": "Choosing C means knowing it’s hard to browse.", "wait": "Pick an option to see this.", "reveal": [["check", "input[value=\"C\"]"]]}
+  ]
+ },
+ "eff-ownership-2": {
+  "bad": [
+   {"at": "[data-file]", "title": "One file at a time", "text": "Each file is opened by hand to count the hits in it."},
+   {"at": "[data-res] .ow-bad", "title": "About an hour and a half", "text": "3 files take 6 minutes, and 45 are still left.", "wait": "Press Open the next file three times to see this.", "reveal": [["click", "[data-next]"], ["click", "[data-next]"], ["click", "[data-next]"]]}
+  ],
+  "good": [
+   {"at": ".ow-bars", "title": "16 files for each agent", "text": "Three agents split the 48 files and search at the same time."},
+   {"at": "[data-res] .ow-good", "title": "23 uses found in 2 minutes", "text": "The list comes back sorted by file, ready to read.", "wait": "Press Send to 3 agents to see this.", "reveal": [["click", "[data-go]"], ["wait", 2000]]},
+   {"at": "[data-res] span:nth-child(2)", "title": "The person still decides", "text": "What each use should become is the part left for people.", "wait": "Press Send to 3 agents to see this.", "reveal": [["click", "[data-go]"], ["wait", 2000]]}
+  ]
+ },
+ "eff-ownership-3": {
+  "bad": [
+   {"at": ".ow-step:nth-child(1):has([data-out]:not(:empty))", "title": "Explore misreads the task", "text": "“The problem is speed” flows straight into the plan.", "wait": "Press Start to see this.", "reveal": [["click", "[data-start]"], ["wait", 2000]]},
+   {"at": ".ow-step:nth-child(3):has([data-out]:not(:empty))", "title": "14 files built on it", "text": "A cache makes export faster, and nobody stopped to read why.", "wait": "Press Start to see this.", "reveal": [["click", "[data-start]"], ["wait", 2000]]},
+   {"at": "[data-res] .ow-bad", "title": "Faster, and still hidden", "text": "People still can’t find Export, after all 14 files changed.", "wait": "Press Start to see this.", "reveal": [["click", "[data-start]"], ["wait", 2000]]}
+  ],
+  "good": [
+   {"at": ".ow-step:nth-child(1):has([data-out]:not(:empty))", "title": "A stop after Explore", "text": "The agent waits with “The problem is speed,” so the misreading gets corrected.", "wait": "Press Start to see this.", "reveal": [["click", "[data-start]"], ["wait", 800]]},
+   {"at": ".ow-step:nth-child(2):has([data-out]:not(:empty))", "title": "The plan follows the correction", "text": "Move Export from the File menu into the toolbar.", "wait": "Press Start, then Correct it to see this.", "reveal": [["click", "[data-start]"], ["wait", 800], ["click", "[data-acts] .btn-primary"], ["wait", 800]]},
+   {"at": "[data-res] .ow-good", "title": "2 files, found on the first try", "text": "People see Export right away.", "wait": "Press Start, Correct it, then Approve the plan to see this.", "reveal": [["click", "[data-start]"], ["wait", 800], ["click", "[data-acts] .btn-primary"], ["wait", 800], ["click", "[data-acts] .btn-primary"], ["wait", 600]]}
+  ]
+ },
+ "eff-ownership-4": {
+  "bad": [
+   {"at": ".ow-diff", "title": "14 files, 612 lines added", "text": "The approach is read for the first time after it runs through everything."},
+   {"at": "[data-res] .ow-bad", "title": "Fixing it means building again", "text": "A new ShareModal instead of the existing Dialog is in all 14 files.", "wait": "Press Review the PR to see this.", "reveal": [["click", "[data-rev]"]]}
+  ],
+  "good": [
+   {"at": ".ow-plan", "title": "Four lines, nothing built", "text": "The whole approach fits in a list that takes a minute to read."},
+   {"at": ".ow-plan li.hl", "title": "Step 2 caught in the plan", "text": "Reuse the existing Dialog instead of a new ShareModal, before any file changes.", "wait": "Press Review the plan to see this.", "reveal": [["click", "[data-rev]"]]}
+  ]
+ }
+}

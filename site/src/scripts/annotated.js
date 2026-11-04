@@ -39,7 +39,8 @@
     };
     let queued = false;
     const later = () => { if (!queued) { queued = true; requestAnimationFrame(() => { queued = false; apply(); }); } };
-    new MutationObserver(later).observe(demo, { childList: true, subtree: true, characterData: true, attributes: true, attributeFilter: ['hidden', 'class', 'style', 'open', 'aria-hidden', 'aria-expanded'] });
+    // Every attribute, since a note's selector can name any state, like [aria-pressed="true"].
+    new MutationObserver(later).observe(demo, { childList: true, subtree: true, characterData: true, attributes: true });
     ['transitionend', 'animationend', 'toggle'].forEach(e => demo.addEventListener(e, later, true));
     addEventListener('resize', later);
 
