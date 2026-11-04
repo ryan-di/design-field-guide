@@ -1,0 +1,69 @@
+---
+// Replaces Starlight's Dark/Light/Auto select with one button. Until the reader picks, the page follows the system
+// setting; a click stores the choice under Starlight's own key, so its no-flash script applies it on the next load.
+import { Icon } from '@astrojs/starlight/components';
+---
+
+<dfg-theme-toggle>
+	<button type="button" class="dfg-theme-toggle" aria-label="Switch to dark theme">
+		<Icon name="moon" class="dfg-theme-moon" size="1.125rem" />
+		<Icon name="sun" class="dfg-theme-sun" size="1.125rem" />
+	</button>
+</dfg-theme-toggle>
+
+<script>
+	const key = 'starlight-theme';
+	const root = document.documentElement;
+	const system = () => (matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark');
+	const sync = () => {
+		const next = root.dataset.theme === 'dark' ? 'light' : 'dark';
+		document.querySelectorAll('.dfg-theme-toggle').forEach((b) => {
+			b.setAttribute('aria-label', `Switch to ${next} theme`);
+			b.title = `Switch to ${next} theme`;
+		});
+	};
+
+	matchMedia('(prefers-color-scheme: light)').addEventListener('change', () => {
+		if (!localStorage.getItem(key)) {
+			root.dataset.theme = system();
+			sync();
+		}
+	});
+
+	class ThemeToggle extends HTMLElement {
+		connectedCallback() {
+			sync();
+			this.querySelector('button')?.addEventListener('click', () => {
+				const theme = root.dataset.theme === 'dark' ? 'light' : 'dark';
+				root.dataset.theme = theme;
+				localStorage.setItem(key, theme);
+				sync();
+			});
+		}
+	}
+	customElements.define('dfg-theme-toggle', ThemeToggle);
+</script>
+
+<style>
+	.dfg-theme-toggle {
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+		width: 2.25rem;
+		height: 2.25rem;
+		padding: 0;
+		border: 1px solid transparent;
+		border-radius: 999px;
+		background: transparent;
+		color: var(--sl-color-gray-2);
+		cursor: pointer;
+	}
+	.dfg-theme-toggle:hover {
+		color: var(--sl-color-white);
+		border-color: var(--sl-color-hairline);
+	}
+	:global([data-theme='light']) .dfg-theme-sun,
+	:global([data-theme='dark']) .dfg-theme-moon {
+		display: none;
+	}
+</style>

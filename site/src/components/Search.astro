@@ -1,0 +1,21 @@
+---
+// Starlight's search, plus the theme toggle next to it on narrow screens, where Starlight moves the header's right
+// group (and the toggle with it) into the menu.
+import Default from '@astrojs/starlight/components/Search.astro';
+import ThemeToggle from './ThemeToggle.astro';
+---
+
+<Default {...Astro.props} />
+<div class="dfg-narrow-theme"><ThemeToggle /></div>
+
+<style>
+	.dfg-narrow-theme {
+		display: flex;
+		margin-inline-start: 0.25rem;
+	}
+	@media (min-width: 50rem) {
+		.dfg-narrow-theme {
+			display: none;
+		}
+	}
+</style>

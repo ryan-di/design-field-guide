@@ -20,7 +20,11 @@ export default defineConfig({
 				{ tag: 'link', attrs: { rel: 'stylesheet', href: fonts } },
 			],
 			customCss: ['./src/styles/book.css', './src/styles/theme.css'],
-			components: { PageTitle: './src/components/PageTitle.astro' },
+			components: {
+				PageTitle: './src/components/PageTitle.astro',
+				ThemeSelect: './src/components/ThemeToggle.astro',
+				Search: './src/components/Search.astro',
+			},
 			tableOfContents: { minHeadingLevel: 2, maxHeadingLevel: 3 },
 			sidebar,
 		}),
