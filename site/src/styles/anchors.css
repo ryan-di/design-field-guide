@@ -1,0 +1,9 @@
+/* Heading anchor links, styled like the book's "#" links: muted, accent when pointed at. */
+.sl-markdown-content .sl-anchor-link {
+	color: var(--muted);
+	transition: opacity 0.12s, color 0.12s;
+}
+.sl-markdown-content .sl-anchor-link:hover,
+.sl-markdown-content .sl-anchor-link:focus-visible {
+	color: var(--accent);
+}

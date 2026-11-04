@@ -19,6 +19,12 @@ ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)
 SITE = os.path.join(ROOT, 'site')
 LIVE = 'https://ryan-di.github.io/design-field-guide/'
 PILOT = None  # chapter ids to convert; None converts every chapter
+# tools/export.py writes these at the repo root; they are copied into site/public so the book's links to them stay on the site.
+SITE_FILES = ('llms.txt', 'CHANGELOG.md', 'references')
+# Prose that describes the one-page book's own controls, reworded for what the site shows.
+SITE_WORDING = {
+    'press the # next to its title': 'use the link icon that appears next to its title',
+}
 
 
 def converted(ch):
@@ -181,6 +187,7 @@ def esc(t):
 class Book:
     def __init__(self):
         self.src = open(os.path.join(ROOT, 'index.html'), encoding='utf-8').read()
+        self.reworded = set()
         p = Parser(self.src)
         p.feed(self.src)
         p.close()
@@ -235,6 +242,9 @@ class Book:
             return h if page == here else '/%s/%s' % (page, h)
         if h.startswith('http'):
             return h
+        if h.split('/')[0] in SITE_FILES:
+            # Relative to the page, so it holds under any base path; pages are served as /part/chapter/.
+            return '../' * (here.count('/') + 1) + h
         return LIVE + h
 
     def inline(self, n, here):
@@ -289,6 +299,10 @@ class Page:
         t = self.b.inline(n, self.here)
         if not t:
             return
+        for old, new in SITE_WORDING.items():
+            if old in t:
+                t = t.replace(old, new)
+                self.b.reworded.add(old)
         attrs = attr_str(n)
         self.lines += ['<p%s>%s</p>' % (attrs, t) if attrs else t, '']
 
@@ -526,6 +540,22 @@ def main():
     os.makedirs(os.path.join(SITE, 'public'), exist_ok=True)
     open(os.path.join(SITE, 'public', 'anchors.json'), 'w', encoding='utf-8').write(json.dumps(anchors, sort_keys=True, separators=(',', ':')) + '\n')
     print('wrote book.css, runtime, sidebar, %d anchors' % len(anchors))
+    for old in set(SITE_WORDING) - book.reworded:
+        print('warning: SITE_WORDING %r no longer matches the book' % old)
+
+    for name in SITE_FILES:
+        src, dst = os.path.join(ROOT, name), os.path.join(SITE, 'public', name)
+        if os.path.isdir(src):
+            shutil.rmtree(dst, ignore_errors=True)
+            shutil.copytree(src, dst)
+        else:
+            text = open(src, encoding='utf-8').read()
+            if name == 'llms.txt':
+                # Its links to the exported files become relative, so an agent reading the site's copy stays on the site.
+                for f in SITE_FILES:
+                    text = text.replace(LIVE + f, f)
+            open(dst, 'w', encoding='utf-8').write(text)
+    print('copied %s to public/' % ', '.join(SITE_FILES))
 
 
 if __name__ == '__main__':

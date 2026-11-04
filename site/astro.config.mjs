@@ -20,7 +20,7 @@ export default defineConfig({
 				{ tag: 'link', attrs: { rel: 'preconnect', href: 'https://fonts.gstatic.com', crossorigin: '' } },
 				{ tag: 'link', attrs: { rel: 'stylesheet', href: fonts } },
 			],
-			customCss: ['./src/styles/book.css', './src/styles/theme.css'],
+			customCss: ['./src/styles/book.css', './src/styles/theme.css', './src/styles/anchors.css'],
 			components: {
 				Hero: './src/components/Hero.astro',
 				PageTitle: './src/components/PageTitle.astro',
