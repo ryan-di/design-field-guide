@@ -536,6 +536,7 @@ eff-axes-rule-3
 eff-axes-rule-4
 eff-axes-rules
 eff-brief
+eff-brief-check
 eff-brief-products
 eff-brief-rule-1
 eff-brief-rule-2
@@ -591,6 +592,7 @@ eff-loop-rule-2
 eff-loop-rule-3
 eff-loop-rule-4
 eff-loop-rules
+eff-loop-stages
 eff-measure
 eff-measure-products
 eff-measure-rule-1
@@ -599,12 +601,14 @@ eff-measure-rule-3
 eff-measure-rule-4
 eff-measure-rules
 eff-ownership
+eff-ownership-draft
 eff-ownership-products
 eff-ownership-rule-1
 eff-ownership-rule-2
 eff-ownership-rule-3
 eff-ownership-rule-4
 eff-ownership-rules
+eff-ownership-split
 eff-prototype-in-code
 eff-prototype-in-code-products
 eff-prototype-in-code-rule-1
@@ -908,6 +912,7 @@ good-contrast-rule-4
 good-contrast-rules
 good-critique
 good-critique-kinds
+good-critique-kinds-table
 good-critique-products
 good-critique-rule-1
 good-critique-rule-2
@@ -942,11 +947,14 @@ good-error-copy-rule-3
 good-error-copy-rule-4
 good-error-copy-rules
 good-heuristic-review
+good-heuristic-review-a11y
 good-heuristic-review-products
 good-heuristic-review-rule-1
 good-heuristic-review-rule-2
 good-heuristic-review-rule-3
 good-heuristic-review-rules
+good-heuristic-review-severity
+good-heuristic-review-ten
 good-keyboard-focus
 good-keyboard-focus-products
 good-keyboard-focus-rule-1
@@ -1023,6 +1031,7 @@ good-success-criteria-rule-2
 good-success-criteria-rule-3
 good-success-criteria-rule-4
 good-success-criteria-rules
+good-success-criteria-words
 good-train-your-eye
 good-train-your-eye-products
 good-train-your-eye-rule-1

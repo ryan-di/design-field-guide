@@ -96,10 +96,29 @@ const CONFIGS = [[1280, 'light'], [1280, 'dark'], [390, 'light'], [390, 'dark']]
         await p.screenshot({ path: path.join(dir, s + '.png') });
       }
     }
+    // Demos that read their lists from the text: make sure each still works.
+    const probe = await p.evaluate(() => {
+      const bad = [], q = s => document.querySelector(s);
+      const rubrics = [...document.querySelectorAll('[data-rubric]')];
+      rubrics.forEach(t => { if (!t.querySelector('tbody tr')) bad.push('empty rubric ' + t.id); });
+      const rough = q('#p26-br-rough');
+      if (rough) {
+        rough.checked = true; rough.dispatchEvent(new Event('change', { bubbles: true }));
+        const t = q('#p26-br-list').textContent;
+        ['Missing', 'Vague', 'Too broad', 'Solution'].forEach(f => { if (!t.includes(f)) bad.push('brief check lacks ' + f); });
+      }
+      const sc = q('#p18-sc-text');
+      if (sc) { sc.value = 'the new checkout feels easier, cleaner and more intuitive'; sc.dispatchEvent(new Event('input')); if (q('#p18-sc-sugs').children.length !== 2) bad.push('success criteria rewrites ' + q('#p18-sc-sugs').children.length); }
+      if (q('#p25-d-name') && !(q('#p25-d-name').textContent.trim() && q('#p25-d-in').textContent.trim())) bad.push('loop stage empty');
+      if (q('#p25-bars') && !/[a-z]{4}/.test(q('#p25-bars').textContent)) bad.push('ownership notes empty');
+      return { bad, rubrics: rubrics.length };
+    });
+    r.bad.push(...probe.bad);
+    r.rubrics = probe.rubrics;
     const overflow = r.sw > r.vw + 1;
     const bad = r.bad.length + r.missingIds.length + errs.length + deep.length + (overflow ? 1 : 0) + r.dupIds.length;
     if (bad) failed++;
-    console.log(`${w} ${scheme} ${r.mode}: toc ${r.toc}, links ${r.links}, entries ${r.entries}, demos ${r.stages}, rule switches ${r.cases}, cw ${r.cw}, forms ${r.fm}, width ${r.sw}/${r.vw}` +
+    console.log(`${w} ${scheme} ${r.mode}: toc ${r.toc}, links ${r.links}, entries ${r.entries}, demos ${r.stages}, rule switches ${r.cases}, cw ${r.cw}, forms ${r.fm}, rubrics ${r.rubrics}, width ${r.sw}/${r.vw}` +
       (bad ? `\n  FAIL bad=${JSON.stringify(r.bad.slice(0, 15))} missingIds=${JSON.stringify(r.missingIds.slice(0, 15))} (${r.missingIds.length}) dupIds=${JSON.stringify(r.dupIds)} deep=${JSON.stringify(deep)} errors=${JSON.stringify(errs.slice(0, 10))}` : '  OK'));
     await ctx.close();
   }

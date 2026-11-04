@@ -515,7 +515,7 @@ code{font:500 .86em/1 var(--font-mono);background:var(--card);border:1px solid v
 .essay-cs .cs-reset{flex:none}.essay-cs .cs-try{flex:1 1 260px;margin:0}
 .essay .cw-wrap{background:transparent;padding:0}
 .essay .cw-wrap > p:first-of-type{font-size:18px;line-height:1.65;color:var(--body);max-width:64ch}
-.rule{scroll-margin-top:16px}.ess-h{scroll-margin-top:16px}.sec-link{margin-left:8px;color:var(--muted);text-decoration:none;font-weight:500;opacity:0;transition:opacity .12s}h3:hover>.sec-link,h4:hover>.sec-link,h5:hover>.sec-link,.sec-link:focus-visible{opacity:1}@media (hover:none){.sec-link{display:none}}@media (max-width:520px){.sec-link{display:none}.checklist .check a{white-space:normal}}
+.rule{scroll-margin-top:16px}.ess-h{scroll-margin-top:16px}.sec-link{margin-left:8px;color:var(--muted);text-decoration:none;font-weight:500;opacity:0;transition:opacity .12s}h3:hover>.sec-link,h4:hover>.sec-link,h5:hover>.sec-link,.sec-link:focus-visible{opacity:1}@media (hover:none){.sec-link{display:none}}@media (max-width:520px){.sec-link{display:none}.checklist .check a{white-space:normal}}.ref .cheat{min-width:0;font-size:15px}.ref .cheat td,.ref .cheat td:nth-child(2){font-weight:400;color:var(--body)}.ref .cheat td:first-child{color:var(--ink);font-weight:600}.ref .cheat td:nth-child(2) a{color:var(--blue)}.ref var{font:500 .86em var(--font-mono);padding:0 4px;border-radius:4px;background:var(--paper-2);color:var(--ink)}@media (max-width:640px){.ref .cheat thead{display:none}.ref .cheat tr{display:block;padding:10px 14px}.ref .cheat tbody tr+tr{border-top:1px solid var(--line)}.ref .cheat td{display:block;border:0;padding:2px 0}.ref .cheat td[data-label]::before{content:attr(data-label);display:block;margin-top:6px;font:600 10.5px var(--font-mono);letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}}
 </style>
 <script>
 window.csInit = cs => {
@@ -2174,11 +2174,11 @@ mark.p21-flag{background:transparent;color:inherit;text-decoration:underline wav
 <div class="cs essay-cs">
 <section class="rule" id="good-problem-framing-rule-1"><h5><span class="n">1</span>Restate the request as a problem</h5><p class="prose">A ticket often names its own answer, like “add an Export to PDF button”, and if the work starts there, the only question left is where the button goes. The request is a hint about what hurts, not a spec, so write down the problem behind it first, then look for answers.</p>
 <div class="cs-case" aria-label="Restate the request as a problem"><div class="cs-panel"><div class="cs-bar"><div class="cs-switch" role="radiogroup" aria-label="Show"><button type="button" role="radio" class="b" data-mode="broken"><span class="dot"></span>Common mistake</button><button type="button" role="radio" class="f" data-mode="fixed"><span class="dot"></span>Do this instead</button></div></div><section class="cs-side" data-mode="broken"><div class="cs-demo" data-d="good-problem-framing-1b"></div><div class="cs-foot"><p class="fig-cap">The work starts from the button the ticket asks for. <b>Try:</b> pick a spot for the button. Is anything else left to decide?</p><button class="cs-reset" type="button">Reset</button></div></section><section class="cs-side" data-mode="fixed"><div class="cs-demo" data-d="good-problem-framing-1f"></div><div class="cs-foot"><p class="fig-cap">The same ticket, with a button to restate it as a problem. <b>Try:</b> press Restate as a problem, then read the answers it opens up.</p><button class="cs-reset" type="button">Reset</button></div></section></div></div></section>
-<section class="rule" id="good-problem-framing-rule-2"><h5><span class="n">2</span>Name the person, the moment and the obstacle</h5><p class="prose">A frame like “make settings easier to use” fits almost any design: two people can read it, picture different screens, and both feel right. Say who it is, when it happens and what gets in their way. If two readers still picture different things, narrow it again.</p>
+<section class="rule" id="good-problem-framing-rule-2"><h5><span class="n">2</span>Name the person, the moment and the obstacle</h5><p class="prose">A frame like “make settings easier to use” fits almost any design: two people can read it, picture different screens, and both feel right. Say who it is, when it happens and what gets in their way. If two readers still picture different things, narrow it again. A who that’s only a group, like “users” or “everyone”, is always too broad. The <a href="#eff-brief-check">brief check</a> lists the words to watch for.</p>
 <div class="cs-case" aria-label="Name the person, the moment and the obstacle"><div class="cs-panel"><div class="cs-bar"><div class="cs-switch" role="radiogroup" aria-label="Show"><button type="button" role="radio" class="b" data-mode="broken"><span class="dot"></span>Common mistake</button><button type="button" role="radio" class="f" data-mode="fixed"><span class="dot"></span>Do this instead</button></div><p class="fig-cap cs-try"><b>Try:</b> press Ask two people.</p></div><section class="cs-side" data-mode="broken"><div class="cs-demo" data-d="good-problem-framing-2b"></div><div class="cs-foot"><p class="fig-cap">The frame says only “Make settings easier to use.”</p><button class="cs-reset" type="button">Reset</button></div></section><section class="cs-side" data-mode="fixed"><div class="cs-demo" data-d="good-problem-framing-2f"></div><div class="cs-foot"><p class="fig-cap">The frame names who, when and what stops them.</p><button class="cs-reset" type="button">Reset</button></div></section></div></div></section>
 <section class="rule" id="good-problem-framing-rule-3"><h5><span class="n">3</span>Show where you saw it</h5><p class="prose">A problem nobody has seen is a guess: the team can’t tell how often it happens or how much it hurts, so the talk turns into opinions. Point to where it came from: a support message, a session you watched, a count. One real example is worth more than a paragraph of reasons.</p>
 <div class="cs-case" aria-label="Show where you saw it"><div class="cs-panel"><div class="cs-bar"><div class="cs-switch" role="radiogroup" aria-label="Show"><button type="button" role="radio" class="b" data-mode="broken"><span class="dot"></span>Common mistake</button><button type="button" role="radio" class="f" data-mode="fixed"><span class="dot"></span>Do this instead</button></div><p class="fig-cap cs-try"><b>Try:</b> press Share with the team.</p></div><section class="cs-side" data-mode="broken"><div class="cs-demo" data-d="good-problem-framing-3b"></div><div class="cs-foot"><p class="fig-cap">The only evidence is “I think this happens a lot.”</p><button class="cs-reset" type="button">Reset</button></div></section><section class="cs-side" data-mode="fixed"><div class="cs-demo" data-d="good-problem-framing-3f"></div><div class="cs-foot"><p class="fig-cap">The evidence is a support count, a session count and a quote.</p><button class="cs-reset" type="button">Reset</button></div></section></div></div></section>
-<section class="rule" id="good-problem-framing-rule-4"><h5><span class="n">4</span>Keep the answer out of the frame</h5><p class="prose">“People can’t find the Sort button” already holds its answer: only one design fits it, so the frame just repeats the request. Describe what people are trying to get done, without naming a control. Then sketch at least two different answers.</p>
+<section class="rule" id="good-problem-framing-rule-4"><h5><span class="n">4</span>Keep the answer out of the frame</h5><p class="prose">“People can’t find the Sort button” already holds its answer: only one design fits it, so the frame just repeats the request. Any control name in the problem, like a button, a dialog or a toggle, is the sign to look for. Describe what people are trying to get done, without naming a control. Then sketch at least two different answers.</p>
 <div class="cs-case" aria-label="Keep the answer out of the frame"><div class="cs-panel"><div class="cs-bar"><div class="cs-switch" role="radiogroup" aria-label="Show"><button type="button" role="radio" class="b" data-mode="broken"><span class="dot"></span>Common mistake</button><button type="button" role="radio" class="f" data-mode="fixed"><span class="dot"></span>Do this instead</button></div><p class="fig-cap cs-try"><b>Try:</b> press Check the answers.</p></div><section class="cs-side" data-mode="broken"><div class="cs-demo" data-d="good-problem-framing-4b"></div><div class="cs-foot"><p class="fig-cap">The frame names a Sort button.</p><button class="cs-reset" type="button">Reset</button></div></section><section class="cs-side" data-mode="fixed"><div class="cs-demo" data-d="good-problem-framing-4f"></div><div class="cs-foot"><p class="fig-cap">The frame describes the goal without naming a control.</p><button class="cs-reset" type="button">Reset</button></div></section></div></div></section>
 <script>
 (() => {
@@ -2447,6 +2447,9 @@ mark.p21-flag{background:transparent;color:inherit;text-decoration:underline wav
 <section class="rule" id="good-success-criteria-rule-3"><h5><span class="n">3</span>Write them down before you build</h5><p class="prose">Without criteria, a change is done when it ships: nobody can say whether it helped, and the review only checks that it looks fine. Write the criteria in the ticket or the brief before work starts, so the review can test the change against them.</p>
 <div class="cs-case" aria-label="Write them down before you build"><div class="cs-panel"><div class="cs-bar"><div class="cs-switch" role="radiogroup" aria-label="Show"><button type="button" role="radio" class="b" data-mode="broken"><span class="dot"></span>Common mistake</button><button type="button" role="radio" class="f" data-mode="fixed"><span class="dot"></span>Do this instead</button></div><p class="fig-cap cs-try"><b>Try:</b> press Review the change.</p></div><section class="cs-side" data-mode="broken"><div class="cs-demo" data-d="good-success-criteria-3b"></div><div class="cs-foot"><p class="fig-cap">The ticket has no criteria.</p><button class="cs-reset" type="button">Reset</button></div></section><section class="cs-side" data-mode="fixed"><div class="cs-demo" data-d="good-success-criteria-3f"></div><div class="cs-foot"><p class="fig-cap">The ticket lists three criteria.</p><button class="cs-reset" type="button">Reset</button></div></section></div></div></section>
 <section class="rule" id="good-success-criteria-rule-4"><h5><span class="n">4</span>Turn feelings into things you can see</h5><p class="prose">Words like easier, cleaner and more intuitive sound like goals, but nobody can check them, so after a test people argue about whether it felt easier. Turn each feeling into something you can watch: found without help, finished on the first try, fewer questions to support.</p>
+<p class="prose">The demo at the top of this entry marks these words, and the <a href="#eff-brief-check">brief check</a> in Part 4 flags the same ones. Fill the slots with your own task and numbers.</p>
+<div class="table-wrap ref" id="good-success-criteria-words" data-rubric="vague-words"><table class="cheat"><thead><tr><th scope="col">Vague word</th><th scope="col">Write instead, for example</th></tr></thead><tbody><tr data-words="easy easier simple simpler intuitive user-friendly"><td>easy, easier, simple, simpler, intuitive, user-friendly</td><td data-label="Write instead, for example">People find <var>X</var> without help, in under <var>N</var> clicks.</td></tr><tr data-words="good better improve improved improves improvement nice nicer"><td>good, better, improve, improved, improves, improvement, nice, nicer</td><td data-label="Write instead, for example">Fewer support questions about <var>Y</var>, or fewer retries when people do it.</td></tr><tr data-words="clean cleaner clearer modern"><td>clean, cleaner, clearer, modern</td><td data-label="Write instead, for example">People spot the main action in a five-second look at <var>X</var>.</td></tr><tr data-words="seamless smooth smoother"><td>seamless, smooth, smoother</td><td data-label="Write instead, for example">Nobody gets stuck or asks for help between <var>X</var> and <var>Y</var>.</td></tr><tr data-words="somehow etc"><td>somehow, etc</td><td data-label="Write instead, for example">List what you mean: <var>X</var>, <var>Y</var> and <var>Z</var>.</td></tr></tbody></table></div>
+
 <div class="cs-case" aria-label="Turn feelings into things you can see"><div class="cs-panel"><div class="cs-bar"><div class="cs-switch" role="radiogroup" aria-label="Show"><button type="button" role="radio" class="b" data-mode="broken"><span class="dot"></span>Common mistake</button><button type="button" role="radio" class="f" data-mode="fixed"><span class="dot"></span>Do this instead</button></div><p class="fig-cap cs-try"><b>Try:</b> press Run the test.</p></div><section class="cs-side" data-mode="broken"><div class="cs-demo" data-d="good-success-criteria-4b"></div><div class="cs-foot"><p class="fig-cap">The goal is “Booking a table feels easier.”</p><button class="cs-reset" type="button">Reset</button></div></section><section class="cs-side" data-mode="fixed"><div class="cs-demo" data-d="good-success-criteria-4f"></div><div class="cs-foot"><p class="fig-cap">The goal is “People book a table without help, on the first try.”</p><button class="cs-reset" type="button">Reset</button></div></section></div></div></section>
 <script>
 (() => {
@@ -6538,7 +6541,9 @@ mark.p21-flag{background:transparent;color:inherit;text-decoration:underline wav
       <p class="try"><b>Try it:</b> pick a vague comment and read the rewrite. The card marks what each comment was really about. Then switch to Write your own, critique the same card, and press Assemble. Try leaving a field empty, or writing “I love the colors”.</p>
     </div>
 <h4 class="ess-h" id="good-critique-kinds">Kinds of critique</h4>
-<p class="prose">Work at different stages needs different feedback, so there is one kind of critique for each stage. Each kind wastes time when it comes at the wrong stage.</p>
+<p class="prose">Work at different stages needs different feedback, so there is one kind of critique for each stage. Each kind wastes time when it comes at the wrong stage, so <a href="#good-critique-rule-3">ask which one is wanted</a>. If you can’t ask, go by how finished the work is.</p>
+<div class="table-wrap ref" id="good-critique-kinds-table" data-rubric="critique-kinds"><table class="cheat"><thead><tr><th scope="col">Kind</th><th scope="col">When</th><th scope="col">Look at</th></tr></thead><tbody><tr><td>Direction</td><td data-label="When">Early sketches, while the idea can still change</td><td data-label="Look at">Whether it solves the right problem</td></tr><tr><td>Flow</td><td data-label="When">The steps exist as rough screens</td><td data-label="Look at">Whether people can get from start to finish without getting stuck</td></tr><tr><td>Polish</td><td data-label="When">The flow is settled and the screens are close to done</td><td data-label="Look at">Contrast, alignment and wording</td></tr></tbody></table></div>
+
 <div class="fm" data-fm>
   <div class="seg fm-seg" role="radiogroup" aria-label="Kind of critique">
     <input type="radio" name="fm-good-critique" id="fm-good-critique-1" value="direction" checked><label for="fm-good-critique-1">Direction</label>
@@ -6578,7 +6583,7 @@ mark.p21-flag{background:transparent;color:inherit;text-decoration:underline wav
           '<div class="fc-box fc-sketch fc-spot" data-s="1"><b>A · One shared list</b>' + L('80%') + L('64%') + L('72%') + '<span class="fc-q">all recipes → one list</span></div>' +
           '<div class="fc-box fc-sketch fc-spot" data-s="2"><b>B · A list per recipe</b>' + L('70%') + L('50%') + '<span class="fc-q">pasta · curry · soup</span></div></div>' +
           cmts(['Do people shop for one recipe or for the whole week? If it’s the week, A fits better.', 'With B, someone cooking three recipes walks the shop three times.']) + '</div>',
-        use: 'Use it for early sketches, while the idea can still change. Ask whether it solves the right problem.'
+        use: 'Two early sketches of a shopping list.'
       },
       flow: {
         html: '<div class="fc-wrap"><div class="fc-art">' +
@@ -6586,14 +6591,14 @@ mark.p21-flag{background:transparent;color:inherit;text-decoration:underline wav
           '<div class="fc-box fc-spot" data-s="1"><b>2 · Add to list</b>' + L('70%') + '<span class="fc-q">Serves? [ 2 ]</span></div><span class="fc-arrow">→</span>' +
           '<div class="fc-box"><b>3 · List</b>' + L('75%') + L('55%') + '</div></div>' +
           cmts(['Step 2 asks for servings again. People already set that on the recipe.', 'After adding, people stay on the recipe with no sign it worked, so they add it twice.']) + '</div>',
-        use: 'Use it once the steps exist as rough screens. Ask whether people can get from start to finish without getting stuck.'
+        use: 'Three rough screens, from a recipe to the list.'
       },
       polish: {
         html: '<div class="fc-wrap"><div class="fc-box" style="flex:none"><b>Shopping list</b>' +
           '<div class="fc-item"><span>Spaghetti</span><span>500 g</span></div><div class="fc-item fc-spot" data-s="2"><span>Tomatoes</span><span style="margin-right:14px">6</span></div>' +
           '<div class="fc-item"><span>Garlic</span><span>1 bulb</span></div><div class="fc-item done fc-spot" data-s="1"><span>Olive oil</span><span>1 bottle</span></div></div>' +
           cmts(['Ticked items are light grey on white. They’re hard to read in a bright shop.', 'One quantity is out of line with the rest, so the column is slower to scan.']) + '</div>',
-        use: 'Use it when the flow is settled and the screens are close to done. Look at contrast, alignment and wording.'
+        use: 'A shopping list that’s close to done.'
       }
     };
     const show = k => {
@@ -6886,6 +6891,10 @@ mark.p21-flag{background:transparent;color:inherit;text-decoration:underline wav
       </div>
       <p class="try"><b>Try it:</b> find the six problems in the export dialog. Click, or Tab and press Enter, on anything that looks wrong. Each find names the heuristic it breaks and a fix. Then tick Most severe first to see which one to fix first.</p>
     </div>
+<p class="prose">The dialog in the demo breaks six of the ten. Here are all ten, each with a question to ask and the entries that cover it.</p>
+<div class="table-wrap ref" id="good-heuristic-review-ten" data-rubric="heuristics"><table class="cheat"><thead><tr><th scope="col">Heuristic</th><th scope="col">Ask</th><th scope="col">In this book</th></tr></thead><tbody><tr><td>1 · Visibility of system status</td><td data-label="Ask">Does the screen always show what’s happening, and how long it will take?</td><td data-label="In this book"><a href="#pat-instant-feedback">Instant feedback</a>, <a href="#progress-bar">Progress bar</a></td></tr><tr><td>2 · Match between the system and the real world</td><td data-label="Ask">Does it use the words people use, in the order they think of things?</td><td data-label="In this book"><a href="#pat-information-scent">Labels in people’s words</a>, <a href="#good-plain-language">Plain words, one term per concept</a></td></tr><tr><td>3 · User control and freedom</td><td data-label="Ask">Can people back out of every step, even halfway through?</td><td data-label="In this book"><a href="#pat-undo">Undo instead of “Are you sure?”</a>, <a href="#dialog">Dialog</a></td></tr><tr><td>4 · Consistency and standards</td><td data-label="Ask">Does the same thing look and work the same here and in the apps people already use?</td><td data-label="In this book"><a href="#good-consistency">Internal and external consistency</a>, <a href="#pat-jakobs-law">Jakob’s law</a></td></tr><tr><td>5 · Error prevention</td><td data-label="Ask">Does the design stop the mistake before it happens?</td><td data-label="In this book"><a href="#pat-constraints">Constraints that prevent errors</a>, <a href="#pat-forgiving-input">Forgiving input</a></td></tr><tr><td>6 · Recognition rather than recall</td><td data-label="Ask">Can people see their options instead of remembering them?</td><td data-label="In this book"><a href="#good-labels">Labels that say what happens</a>, <a href="#pat-search-filters">Search with filters and recents</a>, <a href="#pat-command-palette">Command palette</a></td></tr><tr><td>7 · Flexibility and efficiency of use</td><td data-label="Ask">Do frequent users get faster paths that newcomers never have to learn?</td><td data-label="In this book"><a href="#pat-shortcuts">Keyboard shortcuts and accelerators</a>, <a href="#pat-layered-ui">Layered interface</a></td></tr><tr><td>8 · Aesthetic and minimalist design</td><td data-label="Ask">Does anything on the screen compete with what matters?</td><td data-label="In this book"><a href="#good-visual-hierarchy">Visual hierarchy</a>, <a href="#good-rams-principles">Rams’ ten principles</a></td></tr><tr><td>9 · Help users recognize, diagnose, and recover from errors</td><td data-label="Ask">Does each error say what went wrong and what to do next, in plain words?</td><td data-label="In this book"><a href="#good-error-copy">Error messages that help</a>, <a href="#error-state">Error state</a></td></tr><tr><td>10 · Help and documentation</td><td data-label="Ask">Is the help right where the question comes up?</td><td data-label="In this book"><a href="#pat-contextual-hints">Contextual hints over tours</a></td></tr></tbody></table></div>
+<p class="prose">Then make the accessibility pass. A mock shows only some of it, so most of these checks need a running build.</p>
+<div class="table-wrap ref" id="good-heuristic-review-a11y" data-rubric="a11y-pass"><table class="cheat"><thead><tr><th scope="col">Check</th><th scope="col">Passes when</th><th scope="col">Shows in a mock?</th><th scope="col">In this book</th></tr></thead><tbody><tr><td>Keyboard</td><td data-label="Passes when">You can finish the whole task with the keyboard alone, in reading order.</td><td data-label="Shows in a mock?">No, it needs a running build</td><td data-label="In this book"><a href="#good-keyboard-focus">Keyboard paths are craft</a></td></tr><tr><td>Focus</td><td data-label="Passes when">Focus is always visible, moves into a dialog when it opens and back when it closes.</td><td data-label="Shows in a mock?">No</td><td data-label="In this book"><a href="#good-keyboard-focus-rule-4">Move focus with what opens and closes</a></td></tr><tr><td>Contrast</td><td data-label="Passes when">Body text is at least 4.5 : 1 against its background; large text, edges and icons people need are at least 3 : 1.</td><td data-label="Shows in a mock?">Yes</td><td data-label="In this book"><a href="#good-contrast">Contrast, and never color alone</a></td></tr><tr><td>Color</td><td data-label="Passes when">No meaning is carried by color alone.</td><td data-label="Shows in a mock?">Yes</td><td data-label="In this book"><a href="#good-contrast-rule-2">Don’t carry meaning with color alone</a></td></tr><tr><td>Names</td><td data-label="Passes when">Every control says what it does, and is a real button or link that a screen reader can name.</td><td data-label="Shows in a mock?">Partly: the words show, the roles only in code</td><td data-label="In this book"><a href="#good-labels">Labels that say what happens</a>, <a href="#good-keyboard-focus-rule-3">Use real buttons and links</a></td></tr><tr><td>Announcements</td><td data-label="Passes when">Errors, toasts and finished work appear in text that screen readers announce.</td><td data-label="Shows in a mock?">No</td><td data-label="In this book"><a href="#pat-instant-feedback">Instant feedback</a></td></tr><tr><td>Motion</td><td data-label="Passes when">With reduce motion on, slides and zooms become an instant change or a short fade.</td><td data-label="Shows in a mock?">No</td><td data-label="In this book"><a href="#good-motion-rule-3">Respect reduced motion</a></td></tr></tbody></table></div>
 <h4 class="ess-h" id="good-heuristic-review-rules">Rules</h4>
 <p class="prose">Three rules keep a heuristic review useful. Each comes with a demo. Switch between “Common mistake” and “Do this instead” to see the difference.</p>
 <div class="cs essay-cs">
@@ -6893,7 +6902,9 @@ mark.p21-flag{background:transparent;color:inherit;text-decoration:underline wav
 <div class="cs-case" aria-label="Pair it with watching people"><div class="cs-panel"><div class="cs-bar"><div class="cs-switch" role="radiogroup" aria-label="Show"><button type="button" role="radio" class="b" data-mode="broken"><span class="dot"></span>Common mistake</button><button type="button" role="radio" class="f" data-mode="fixed"><span class="dot"></span>Do this instead</button></div></div><section class="cs-side" data-mode="broken"><div class="cs-demo" data-d="good-heuristic-review-1b"></div><div class="cs-foot"><p class="fig-cap">The review is the only test. <b>Try:</b> press Fix and ship. What happens after launch?</p><button class="cs-reset" type="button">Reset</button></div></section><section class="cs-side" data-mode="fixed"><div class="cs-demo" data-d="good-heuristic-review-1f"></div><div class="cs-foot"><p class="fig-cap">The team also watches five people try the flow. <b>Try:</b> press Watch 5 people, then Fix and ship.</p><button class="cs-reset" type="button">Reset</button></div></section></div></div></section>
 <section class="rule" id="good-heuristic-review-rule-2"><h5><span class="n">2</span>Ask three to five reviewers</h5><p class="prose">One reviewer finds only part of the problems, because each person notices different things. Ask three to five people to review on their own, then merge the lists. Past five, each new reviewer adds little.</p>
 <div class="cs-case" aria-label="Ask three to five reviewers"><div class="cs-panel"><div class="cs-bar"><div class="cs-switch" role="radiogroup" aria-label="Show"><button type="button" role="radio" class="b" data-mode="broken"><span class="dot"></span>Common mistake</button><button type="button" role="radio" class="f" data-mode="fixed"><span class="dot"></span>Do this instead</button></div></div><section class="cs-side" data-mode="broken"><div class="cs-demo" data-d="good-heuristic-review-2b"></div><div class="cs-foot"><p class="fig-cap">One person reviews alone. <b>Try:</b> count what the reviewer found, then press Show what was missed.</p><button class="cs-reset" type="button">Reset</button></div></section><section class="cs-side" data-mode="fixed"><div class="cs-demo" data-d="good-heuristic-review-2f"></div><div class="cs-foot"><p class="fig-cap">Several people review on their own, and the lists are merged. <b>Try:</b> press Add a reviewer three times and watch the count.</p><button class="cs-reset" type="button">Reset</button></div></section></div></div></section>
-<section class="rule" id="good-heuristic-review-rule-3"><h5><span class="n">3</span>Rate each problem by severity</h5><p class="prose">A flat list of problems gives the team no order, so they fix the quick ones first and the problem that stops people from paying waits. Rate each problem from 1, cosmetic, to 4, catastrophe, and fix from the top.</p>
+<section class="rule" id="good-heuristic-review-rule-3"><h5><span class="n">3</span>Rate each problem by severity</h5><p class="prose">A flat list of problems gives the team no order, so they fix the quick ones first and the problem that stops people from paying waits. Rate each problem from 0 to 4 and fix from the top. The rating weighs how many people hit the problem, how much it hurts and whether it gets in their way every time.</p>
+<div class="table-wrap ref" id="good-heuristic-review-severity" data-rubric="severity"><table class="cheat"><thead><tr><th scope="col">Severity</th><th scope="col">Means</th><th scope="col">Example</th></tr></thead><tbody><tr><td>0 · Not a problem</td><td data-label="Means">Not a usability problem after all. Drop it and write down why.</td><td data-label="Example">“I’d make it blue”, with no problem behind it</td></tr><tr><td>1 · Cosmetic</td><td data-label="Means">Fix it if there’s time left.</td><td data-label="Example">A typo: “Delivey fee”</td></tr><tr><td>2 · Minor</td><td data-label="Means">Low priority: people notice it but get past it.</td><td data-label="Example">Prices are low contrast</td></tr><tr><td>3 · Major</td><td data-label="Means">High priority: people struggle or lose work.</td><td data-label="Example">The basket empties when you switch restaurant</td></tr><tr><td>4 · Catastrophe</td><td data-label="Means">Fix it before release: people can’t finish the task.</td><td data-label="Example">Card payment fails if the address has an accent</td></tr></tbody></table></div>
+
 <div class="cs-case" aria-label="Rate each problem by severity"><div class="cs-panel"><div class="cs-bar"><div class="cs-switch" role="radiogroup" aria-label="Show"><button type="button" role="radio" class="b" data-mode="broken"><span class="dot"></span>Common mistake</button><button type="button" role="radio" class="f" data-mode="fixed"><span class="dot"></span>Do this instead</button></div><p class="fig-cap cs-try"><b>Try:</b> press Fix the first three. What’s still broken?</p></div><section class="cs-side" data-mode="broken"><div class="cs-demo" data-d="good-heuristic-review-3b"></div><div class="cs-foot"><p class="fig-cap">The problems come as a flat list in the order they were found.</p><button class="cs-reset" type="button">Reset</button></div></section><section class="cs-side" data-mode="fixed"><div class="cs-demo" data-d="good-heuristic-review-3f"></div><div class="cs-foot"><p class="fig-cap">Each problem has a severity from 1 to 4, and the list starts with the worst.</p><button class="cs-reset" type="button">Reset</button></div></section></div></div></section>
 <script>
 (() => {
@@ -30998,6 +31009,8 @@ mark.p21-flag{background:transparent;color:inherit;text-decoration:underline wav
       </div>
       <p class="try"><b>Try it:</b> pick a stage to see what goes in, what comes out and who owns it. Use Next stage (or the arrow keys on a stage) to walk around. After Learn, the loop comes back to Problem for round 2.</p>
     </div>
+<p class="prose">Each stage at a glance. <a href="#eff-ownership">What you own, what agents do</a> shows how the split moves with the kind of work.</p>
+<div class="table-wrap ref" id="eff-loop-stages" data-rubric="loop-stages"><table class="cheat"><thead><tr><th scope="col">Stage</th><th scope="col">Takes in</th><th scope="col">Hands on</th><th scope="col">Who owns it</th></tr></thead><tbody><tr><td>Problem</td><td data-label="Takes in">A signal: a support thread, a ticket, something you hit yourself.</td><td data-label="Hands on">One sentence: who has the problem, and what stops them.</td><td data-label="Who owns it">You</td></tr><tr><td>Brief</td><td data-label="Takes in">The problem statement and what you know about it.</td><td data-label="Hands on">A short brief: the goal, limits, what’s out of scope and how you’ll know it worked.</td><td data-label="Who owns it">You (agents can draft)</td></tr><tr><td>Explore</td><td data-label="Takes in">The brief.</td><td data-label="Hands on">Several real options, each with its trade-offs.</td><td data-label="Who owns it">Agents, you steer</td></tr><tr><td>Decide</td><td data-label="Takes in">The options, checked against the brief.</td><td data-label="Hands on">One direction, and why, written down.</td><td data-label="Who owns it">You</td></tr><tr><td>Build</td><td data-label="Takes in">The decision and the brief.</td><td data-label="Hands on">A pull request with tests.</td><td data-label="Who owns it">Agents, you review</td></tr><tr><td>Check</td><td data-label="Takes in">The PR and the brief’s “how you’ll know”.</td><td data-label="Hands on">Pass or fail against the brief, plus the gaps.</td><td data-label="Who owns it">Both</td></tr><tr><td>Learn</td><td data-label="Takes in">What the check found, and feedback after release.</td><td data-label="Hands on">A note, and the next problem or a sharper brief.</td><td data-label="Who owns it">You</td></tr></tbody></table></div>
 <h4 class="ess-h" id="eff-loop-rules">Rules</h4>
 <p class="prose">Four rules keep the loop useful. Each comes with a demo. Switch between “Common mistake” and “Do this instead” to see the difference.</p>
 <div class="cs essay-cs">
@@ -31315,6 +31328,8 @@ mark.p21-flag{background:transparent;color:inherit;text-decoration:underline wav
       </div>
       <p class="try"><b>Try it:</b> switch the kind of work and watch the split move. Decide stays yours in every case. Then tick the two mistakes to see what goes wrong.</p>
     </div>
+<p class="prose" id="eff-ownership-draft">An agent can draft any part of a brief, and any option or check, as long as it says where each part came from, such as a support thread, a ticket or a file. Confirming who has the problem, the evidence and the problem itself stays with you, and so do the choice between options and every judgment call. The table shows the split from the demo for each kind of work.</p>
+<div class="table-wrap ref" id="eff-ownership-split" data-rubric="ownership"><table class="cheat"><thead><tr><th scope="col">Stage</th><th scope="col">Small fix</th><th scope="col">New feature</th><th scope="col">Open exploration</th></tr></thead><tbody><tr><td>Problem</td><td data-label="Small fix">Reproduce it yourself. Is it really one line?</td><td data-label="New feature">You confirm people really lose work, and when.</td><td data-label="Open exploration">A hunch to test, not a spec.</td></tr><tr><td>Brief</td><td data-label="Small fix">Expected and actual, in one sentence.</td><td data-label="New feature">An agent can draft from the ticket; you cut and sharpen.</td><td data-label="Open exploration">What question should the prototypes answer?</td></tr><tr><td>Explore</td><td data-label="Small fix">An agent finds the cause. Usually one obvious option.</td><td data-label="New feature">Subagents sketch three options in parallel.</td><td data-label="Open exploration">Many quick prototypes as artifacts.</td></tr><tr><td>Decide</td><td data-label="Small fix">You approve the fix, or notice it isn’t small after all.</td><td data-label="New feature">You pick one and write why.</td><td data-label="Open exploration">You choose what to learn more about, or stop.</td></tr><tr><td>Build</td><td data-label="Small fix">The agent writes the fix and a test that failed before.</td><td data-label="New feature">Claude Code builds in a worktree, plan first.</td><td data-label="Open exploration">Throwaway build; speed over code quality.</td></tr><tr><td>Check</td><td data-label="Small fix">Tests run; you check the real app once.</td><td data-label="New feature">Agents run tests; you close real tabs.</td><td data-label="Open exploration">You watch people try it. That part is yours.</td></tr><tr><td>Learn</td><td data-label="Small fix">Is it a pattern? Note it, or close it.</td><td data-label="New feature">You decide what becomes the next problem.</td><td data-label="Open exploration">Write down what you now believe.</td></tr></tbody></table></div>
 <h4 class="ess-h" id="eff-ownership-rules">Rules</h4>
 <p class="prose">Four rules keep the split between you and agents useful. Each comes with a demo. Switch between “Common mistake” and “Do this instead” to see the difference.</p>
 <div class="cs essay-cs">
@@ -31689,36 +31704,25 @@ mark.p21-flag{background:transparent;color:inherit;text-decoration:underline wav
     const loopStage = section.querySelector('[data-demo="eff-loop"]');
     if (loopStage) {
       const STAGES = [
-        { name: 'Problem', owner: 'you', ownerText: 'You',
-          input: 'A signal: a support thread, a ticket, something you hit yourself.',
-          output: 'One sentence: who has the problem, and what stops them.',
+        { owner: 'you',
           ex: 'People lose unsaved work when they close a workflow tab. You reproduce it: change a graph, close the tab, and the change is gone.',
           ex2: 'Round 2 starts from what Learn found, for example: restore works in one window, but what happens with two windows open?' },
-        { name: 'Brief', owner: 'you', ownerText: 'You (agents can draft)',
-          input: 'The problem statement and what you know about it.',
-          output: 'A short brief: the goal, limits, what’s out of scope and how you’ll know it worked.',
+        { owner: 'you',
           ex: 'Goal: closing a tab never silently drops changes. Out of scope: cloud sync. Good means a Playwright test can close a modified tab and get the work back.' },
-        { name: 'Explore', owner: 'agents', ownerText: 'Agents, you steer',
-          input: 'The brief.',
-          output: 'Several real options, each with its trade-offs.',
+        { owner: 'agents',
           ex: 'Subagents work in parallel: one reads how tabs close today, others sketch a confirm dialog, autosaved drafts with restore, and reopen-closed-tab as artifacts.' },
-        { name: 'Decide', owner: 'you', ownerText: 'You',
-          input: 'The options, checked against the brief.',
-          output: 'One direction, and why, written down.',
+        { owner: 'you',
           ex: 'You pick drafts with restore, because a dialog interrupts every close. You write the reason in the Linear ticket.' },
-        { name: 'Build', owner: 'agents', ownerText: 'Agents, you review',
-          input: 'The decision and the brief.',
-          output: 'A pull request with tests.',
+        { owner: 'agents',
           ex: 'Claude Code works in a git worktree. You read its plan first, then it writes the change and a Playwright test that closes a modified tab and reopens it.' },
-        { name: 'Check', owner: 'both', ownerText: 'Both',
-          input: 'The PR and the brief’s “how you’ll know”.',
-          output: 'Pass or fail against the brief, plus the gaps.',
+        { owner: 'both',
           ex: 'Agents run Vitest and Playwright. You try it in the real app: close a tab, reload, close the whole browser. You note any case the test missed.' },
-        { name: 'Learn', owner: 'you', ownerText: 'You',
-          input: 'What the check found, and feedback after release.',
-          output: 'A note, and the next problem or a sharper brief.',
+        { owner: 'you',
           ex: 'You write one line in the ticket: what worked, and the case that still loses work. That case is the next round’s problem.' }
       ];
+      const ST = document.querySelectorAll('#eff-loop-stages tbody tr');
+      if (ST.length !== STAGES.length) throw new Error('Loop: the stage table is missing');
+      STAGES.forEach((s, i) => { const c = ST[i].cells; s.name = c[0].textContent; s.input = c[1].textContent; s.output = c[2].textContent; s.ownerText = c[3].textContent; });
       const list = loopStage.querySelector('#p25-stages');
       const svg = loopStage.querySelector('#p25-arcs');
       const roundEl = loopStage.querySelector('#p25-round');
@@ -31796,12 +31800,15 @@ mark.p21-flag{background:transparent;color:inherit;text-decoration:underline wav
       // you = rough share that is yours (0–100); note = what that looks like.
       const K = {
         fix: { cap: 'Small fix: the loop is short. Agents do most of the finding and fixing. You still frame it, approve it and check it once.',
-          rows: [[90, 'Reproduce it yourself. Is it really one line?'], [100, 'Expected and actual, in one sentence.'], [30, 'An agent finds the cause. Usually one obvious option.'], [100, 'You approve the fix, or notice it isn’t small after all.'], [15, 'The agent writes the fix and a test that failed before.'], [50, 'Tests run; you check the real app once.'], [100, 'Is it a pattern? Note it, or close it.']] },
+          rows: [[90], [100], [30], [100], [15], [50], [100]] },
         feature: { cap: 'New feature: every stage matters. Agents carry exploring and building. Framing, deciding and learning stay yours.',
-          rows: [[90, 'You confirm people really lose work, and when.'], [75, 'An agent can draft from the ticket; you cut and sharpen.'], [20, 'Subagents sketch three options in parallel.'], [100, 'You pick one and write why.'], [20, 'Claude Code builds in a worktree, plan first.'], [50, 'Agents run tests; you close real tabs.'], [90, 'You decide what becomes the next problem.']] },
+          rows: [[90], [75], [20], [100], [20], [50], [90]] },
         explore: { cap: 'Open exploration: agents make many cheap options. Your part grows at the ends: the question you ask and what you learn.',
-          rows: [[80, 'A hunch to test, not a spec.'], [90, 'What question should the prototypes answer?'], [15, 'Many quick prototypes as artifacts.'], [100, 'You choose what to learn more about, or stop.'], [40, 'Throwaway build; speed over code quality.'], [80, 'You watch people try it. That part is yours.'], [100, 'Write down what you now believe.']] }
+          rows: [[80], [90], [15], [100], [40], [80], [100]] }
       };
+      const OT = document.querySelector('#eff-ownership-split tbody');
+      if (!OT || OT.rows.length !== 7) throw new Error('Ownership: the split table is missing');
+      ['fix', 'feature', 'explore'].forEach((k, j) => K[k].rows.forEach((r, i) => { r[1] = OT.rows[i].cells[j + 1].textContent; }));
       const bars = ownStage.querySelector('#p25-bars');
       const cap = ownStage.querySelector('#p25-own-cap');
       const cbDecide = ownStage.querySelector('#p25-own-agentsdecide');
@@ -31939,6 +31946,8 @@ mark.p21-flag{background:transparent;color:inherit;text-decoration:underline wav
       </div>
       <p class="try"><b>Try it:</b> switch to Rough ticket and read the check. Then fix each flag: describe what goes wrong instead of the dialog, replace “better”, and add non-goals and success criteria. Copy the result when the check is clear.</p>
     </div>
+<p class="prose">The brief check in the demo flags four things. Passing it doesn’t make a brief clear, but each flag is worth fixing.</p>
+<div class="table-wrap ref" id="eff-brief-check" data-rubric="brief-check"><table class="cheat"><thead><tr><th scope="col">Flag</th><th scope="col">Shows when</th><th scope="col">Fix</th></tr></thead><tbody><tr><td>Missing</td><td data-label="Shows when">A field is empty: who, problem, goal, constraints, non-goals or success criteria.</td><td data-label="Fix">Fill it in. Without <a href="#eff-brief-rule-2">non-goals</a>, an agent may widen the scope, and without <a href="#eff-brief-rule-3">success criteria</a>, nobody can say when it’s done.</td></tr><tr><td>Vague</td><td data-label="Shows when">A field uses a word from the <a href="#good-success-criteria-words">vague-word table</a>, such as “better” or “intuitive”.</td><td data-label="Fix"><a href="#eff-brief-rule-4">Say what you’d see happen.</a></td></tr><tr><td>Too broad</td><td data-label="Shows when">Who is only <span data-words="broad" data-list="users|user|everyone|everybody|people|all users|anyone">“users”, “user”, “everyone”, “everybody”, “people”, “all users” or “anyone”</span>.</td><td data-label="Fix">Name the people and the moment, like “people editing in several tabs”.</td></tr><tr><td>Solution</td><td data-label="Shows when">The problem names a control: <span data-words="solution" data-list="dialog|modal|popup|pop-up|button|toggle|banner|toast|checkbox|menu">dialog, modal, popup, pop-up, button, toggle, banner, toast, checkbox or menu</span>.</td><td data-label="Fix"><a href="#eff-brief-rule-1">Describe what goes wrong instead.</a></td></tr></tbody></table></div>
 <h4 class="ess-h" id="eff-brief-rules">Rules</h4>
 <p class="prose">Four rules keep a brief useful. Each comes with a demo. Switch between “Common mistake” and “Do this instead” to see the difference.</p>
 <div class="cs essay-cs">
@@ -32761,9 +32770,14 @@ mark.p21-flag{background:transparent;color:inherit;text-decoration:underline wav
           success: ''
         }
       };
-      const VAGUE = ['better', 'intuitive', 'easy', 'easier', 'simple', 'simpler', 'clean', 'cleaner', 'nice', 'nicer', 'modern', 'seamless', 'smooth', 'user-friendly', 'improve', 'improved', 'etc', 'somehow', 'good'];
-      const BROAD = ['users', 'user', 'everyone', 'people', 'all users', 'anyone'];
-      const SOL = /\b(dialog|modal|popup|pop-up|button|toggle|banner|toast|checkbox|menu)\b/i;
+      const words = sel => {
+        const el = document.querySelector(sel);
+        if (!el) throw new Error('Brief check: missing ' + sel);
+        return el.dataset.list ? el.dataset.list.split('|') : [...el.querySelectorAll('tbody tr')].flatMap(tr => tr.dataset.words.split(' '));
+      };
+      const VAGUE = words('#good-success-criteria-words');
+      const BROAD = words('#eff-brief-check [data-words="broad"]');
+      const SOL = new RegExp('\\b(' + words('#eff-brief-check [data-words="solution"]').join('|') + ')\\b', 'i');
       const areas = [...st.querySelectorAll('textarea[data-k]')];
       const byK = k => areas.find(a => a.dataset.k === k);
       const list = st.querySelector('#p26-br-list'), sum = st.querySelector('#p26-br-sum');
@@ -34205,7 +34219,7 @@ mark.p21-flag{background:transparent;color:inherit;text-decoration:underline wav
   <article class="entry" id="eff-decision-matrix" data-entry data-name="Decision matrix">
     <div class="entry-head"><h3>Score directions against the brief</h3><label class="learned"><input type="checkbox" data-learned="eff-decision-matrix"> Learned</label></div>
 <div class="essay">
-<p class="prose">A decision matrix scores each direction against the criteria in the brief. Each criterion gets a weight, so the things the problem is about count more. The weighted total starts the decision, but it doesn’t make it.</p>
+<p class="prose">A decision matrix scores each direction from 1 to 5 against each criterion in the brief. Each criterion gets a weight, so the things the problem is about count more. The weighted total starts the decision, but it doesn’t make it.</p>
 <p class="prose">A score of 4 against a 3 is a judgment, not a measurement. Write one line of why next to each score, so a reviewer can argue with the reason instead of the number.</p>
 <div class="stage tall" data-demo="eff-decision-matrix">
       <div class="p28-dm">
@@ -36735,7 +36749,7 @@ mark.p21-flag{background:transparent;color:inherit;text-decoration:underline wav
   </script>
 </section>
 
-<section class="chapter" id="ch-evaluate" data-chapter data-short="Evaluate">
+<section class="chapter" id="ch-evaluate" data-chapter data-short="Check">
   <div class="chapter-head"><p class="eyebrow">Chapter 30</p><h2>Check it with evidence</h2></div>
   <div class="prose"><p>A change is done when you can show it solves the problem, <a href="#eff-loop">not when it merges</a>. Pick the evidence that fits the change: people using it, a number from the brief, or a design QA pass.</p></div>
 
@@ -38129,18 +38143,18 @@ mark.p21-flag{background:transparent;color:inherit;text-decoration:underline wav
   <article class="entry" id="eff-worked-example" data-entry data-name="Worked example">
     <div class="entry-head"><h3>Follow one problem through</h3><label class="learned"><input type="checkbox" data-learned="eff-worked-example"> Learned</label></div>
 <div class="essay">
-<p class="prose">This entry follows one problem from brief to release: people lose unsaved work when they close a workflow tab. Each stage ends with one small thing someone else can read: a brief, a context pack, directions, a decision, a plan, checks and a note on what you learned.</p>
+<p class="prose">This entry follows one problem from brief to release: people lose unsaved work when they close a workflow tab. Each stage ends with one small thing someone else can read: a brief, a context pack, directions, a decision, a plan, checks and a note on what you learned. The stages follow <a href="#eff-loop">the loop</a>, with Problem folded into the brief and the context pack as a step of its own.</p>
 <p class="prose">With those artifacts, anyone can pick up the problem at any stage and see why it went the way it did, including you a month later. The rule demos below use smaller problems of their own.</p>
 <div class="stage tall" data-demo="eff-worked-example">
       <div class="p31-ex">
         <ol class="p31-steps" aria-label="Stages">
           <li><button type="button" class="p31-step" data-i="0"><span class="p31-n">1</span><span class="p31-sl">Brief</span></button></li>
           <li><button type="button" class="p31-step" data-i="1"><span class="p31-n">2</span><span class="p31-sl">Context</span></button></li>
-          <li><button type="button" class="p31-step" data-i="2"><span class="p31-n">3</span><span class="p31-sl">Directions</span></button></li>
-          <li><button type="button" class="p31-step" data-i="3"><span class="p31-n">4</span><span class="p31-sl">Decision</span></button></li>
+          <li><button type="button" class="p31-step" data-i="2"><span class="p31-n">3</span><span class="p31-sl">Explore</span></button></li>
+          <li><button type="button" class="p31-step" data-i="3"><span class="p31-n">4</span><span class="p31-sl">Decide</span></button></li>
           <li><button type="button" class="p31-step" data-i="4"><span class="p31-n">5</span><span class="p31-sl">Build</span></button></li>
-          <li><button type="button" class="p31-step" data-i="5"><span class="p31-n">6</span><span class="p31-sl">Evaluate</span></button></li>
-          <li><button type="button" class="p31-step" data-i="6"><span class="p31-n">7</span><span class="p31-sl">Learned</span></button></li>
+          <li><button type="button" class="p31-step" data-i="5"><span class="p31-n">6</span><span class="p31-sl">Check</span></button></li>
+          <li><button type="button" class="p31-step" data-i="6"><span class="p31-n">7</span><span class="p31-sl">Learn</span></button></li>
         </ol>
         <div class="surface p31-panel">
           <p class="p31-ph" id="p31-ex-title" aria-live="polite"></p>
@@ -38202,15 +38216,15 @@ mark.p21-flag{background:transparent;color:inherit;text-decoration:underline wav
 
           <div class="p31-pane" data-pane="3" hidden>
             <div class="p31-doc">
-              <p class="p31-lbl">Sample scores · 1 to 3, criteria from the brief</p>
+              <p class="p31-lbl">Sample scores · 1 to 5, criteria from the brief</p>
               <div class="p31-tw">
                 <table class="p31-score">
                   <thead><tr><th scope="col">Criterion</th><th scope="col">A · Ask</th><th scope="col">B · Undo</th><th scope="col">C · Draft</th></tr></thead>
                   <tbody>
-                    <tr data-w><th scope="row">Never loses work <span class="p31-x" hidden>×2</span></th><td data-s="2"></td><td data-s="1"></td><td data-s="3"></td></tr>
-                    <tr><th scope="row">No extra step</th><td data-s="1"></td><td data-s="3"></td><td data-s="3"></td></tr>
-                    <tr><th scope="row">Pattern people know</th><td data-s="3"></td><td data-s="3"></td><td data-s="2"></td></tr>
-                    <tr><th scope="row">Small to build</th><td data-s="3"></td><td data-s="3"></td><td data-s="1"></td></tr>
+                    <tr data-w><th scope="row">Never loses work <span class="p31-x" hidden>×2</span></th><td data-s="3"></td><td data-s="1"></td><td data-s="5"></td></tr>
+                    <tr><th scope="row">No extra step</th><td data-s="1"></td><td data-s="5"></td><td data-s="5"></td></tr>
+                    <tr><th scope="row">Pattern people know</th><td data-s="5"></td><td data-s="5"></td><td data-s="3"></td></tr>
+                    <tr><th scope="row">Small to build</th><td data-s="5"></td><td data-s="5"></td><td data-s="1"></td></tr>
                   </tbody>
                   <tfoot><tr><th scope="row">Total</th><td data-t="0"></td><td data-t="1"></td><td data-t="2"></td></tr></tfoot>
                 </table>
@@ -38277,7 +38291,7 @@ mark.p21-flag{background:transparent;color:inherit;text-decoration:underline wav
           <button type="button" class="btn btn-primary" id="p31-ex-next">Next stage</button>
         </div>
       </div>
-      <p class="try"><b>Try it:</b> step through the seven stages with Next, the numbers, or the arrow keys on a number. At Decision, count “never loses work” twice and watch the winner change.</p>
+      <p class="try"><b>Try it:</b> step through the seven stages with Next, the numbers, or the arrow keys on a number. At Decide, count “never loses work” twice and watch the winner change.</p>
     </div>
 <h4 class="ess-h" id="eff-worked-example-rules">Rules</h4>
 <p class="prose">Four rules keep the stages useful. Each comes with a demo. Switch between “Common mistake” and “Do this instead” to see the difference.</p>
@@ -38394,8 +38408,8 @@ mark.p21-flag{background:transparent;color:inherit;text-decoration:underline wav
     ['Explore', 'Three directions for the label, each prototyped.'],
     ['Decide', 'A scoring table for the three directions.'],
     ['Build', 'A build plan and its own worktree.'],
-    ['Evaluate', 'A three-line evaluation plan.'],
-    ['Learned', 'A session tally.']
+    ['Check', 'A three-line evaluation plan.'],
+    ['Learn', 'A session tally.']
   ], 'Took a day and a half.', 'Reviewer: “Which line is the actual change?”', true), () => {});
   D('eff-worked-example-3f', typo([
     ['Brief', '“Settings says Recieve. Fix the spelling.”'],
@@ -38878,6 +38892,7 @@ mark.p21-flag{background:transparent;color:inherit;text-decoration:underline wav
     .p31-score td{white-space:nowrap;letter-spacing:.08em;color:var(--ui-sel)}
     .p31-score tfoot th,.p31-score tfoot td{font-weight:700;color:var(--ui-text);letter-spacing:0}
     .p31-score tfoot td.win{color:var(--ui-ok)}
+    @media (max-width:520px){.p31-score th,.p31-score td{padding:6px 4px}.p31-score tbody td{letter-spacing:0;font-size:11px}}
     .p31-x{font:600 13px var(--font-mono);color:var(--ui-danger)}
     .p31-verdict{font-size:14px;color:var(--ui-text);min-height:42px}
     .p31-plan{margin:0;padding-left:20px;display:flex;flex-direction:column;gap:4px}
@@ -38976,8 +38991,8 @@ mark.p21-flag{background:transparent;color:inherit;text-decoration:underline wav
     const rows = [...ex.querySelectorAll('.p31-score tbody tr')];
     rows.forEach(r => r.querySelectorAll('td[data-s]').forEach(td => {
       const s = +td.dataset.s;
-      td.textContent = '●'.repeat(s) + '○'.repeat(3 - s);
-      td.setAttribute('aria-label', s + ' of 3');
+      td.textContent = '●'.repeat(s) + '○'.repeat(5 - s);
+      td.setAttribute('aria-label', s + ' of 5');
     }));
     const score = () => {
       const w = weight.checked, t = [0, 0, 0];
@@ -41568,12 +41583,9 @@ demo('pat-customization', st => {
 
   demo('good-success-criteria', st => {
     const text = $('#p18-sc-text', st), verdict = $('#p18-sc-verdict', st), preview = $('#p18-sc-preview', st), sugs = $('#p18-sc-sugs', st);
-    const groups = [
-      { words: ['easier', 'easy', 'simpler', 'simple', 'intuitive', 'user-friendly'], rewrite: ['People find ', 'X', ' without help, in under ', 'N', ' clicks.'] },
-      { words: ['better', 'improve', 'improved', 'improves', 'improvement', 'nice', 'nicer'], rewrite: ['Fewer support questions about ', 'Y', ', or fewer retries when people do it.'] },
-      { words: ['cleaner', 'clean', 'clearer'], rewrite: ['People spot the main action in a five-second look at ', 'X', '.'] },
-      { words: ['seamless', 'smooth', 'smoother'], rewrite: ['Nobody gets stuck or asks for help between ', 'X', ' and ', 'Y', '.'] }
-    ];
+    const groups = [...document.querySelectorAll('#good-success-criteria-words tbody tr')]
+      .map(tr => ({ words: tr.dataset.words.split(' '), rewrite: [...tr.cells[1].childNodes].map(n => n.textContent) }));
+    if (!groups.length) throw new Error('Success criteria: the vague-word table is missing');
     const lookup = {};
     groups.forEach((g, i) => g.words.forEach(w => { lookup[w] = i; }));
     const vague = new RegExp('\\b(' + Object.keys(lookup).sort((a, b) => b.length - a.length).map(w => w.replace('-', '\\-')).join('|') + ')\\b', 'gi');
