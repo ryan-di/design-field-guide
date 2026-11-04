@@ -1,0 +1,339 @@
+---
+// The home page's cover: the book's own hero type, the real counts, and one small demo in the book's stage style.
+// `_top` and `data-page-title` are what Starlight's hero gives its title.
+import { Icon } from '@astrojs/starlight/components';
+import { getContents } from '../lib/contents';
+
+const { data } = Astro.locals.starlightRoute.entry;
+const { title = data.title, tagline, actions = [] } = data.hero || {};
+const { chapters, entries, demos } = await getContents();
+const base = import.meta.env.BASE_URL.replace(/\/?$/, '/');
+const href = (link: string) => (link.startsWith('/') ? base + link.slice(1) : link);
+---
+
+<header class="dfg-hero">
+	<div class="dfg-hero-copy">
+		{data.eyebrow && <p class="dfg-hero-eyebrow">{data.eyebrow}</p>}
+		<h1 id="_top" data-page-title set:html={title} />
+		{tagline && <p class="dfg-hero-lede" set:html={tagline} />}
+		{
+			actions.length > 0 && (
+				<div class="dfg-hero-actions">
+					{actions.map(({ link, text, icon, variant = 'primary' }) => (
+						<a class:list={['dfg-hero-action', variant]} href={href(link)}>
+							{text}
+							{icon?.name && <Icon name={icon.name} />}
+							{icon?.html && <Fragment set:html={icon.html} />}
+						</a>
+					))}
+				</div>
+			)
+		}
+		<p class="dfg-hero-meta">
+			<span>{chapters} chapters</span>
+			<span>{entries} entries</span>
+			<span>{demos} live demos</span>
+		</p>
+	</div>
+
+	<figure class="dfg-hero-figure">
+		<dfg-hero-demo class="dfg-hero-stage" data-state="ask">
+			<div class="dfg-hero-dialog" role="group" aria-labelledby="dfg-hero-dialog-title">
+				<p class="dfg-hero-dialog-title" id="dfg-hero-dialog-title">Move “Q3 launch” to Trash?</p>
+				<p class="dfg-hero-dialog-body">Its 12 files go with it. You can restore them from Trash for 30 days.</p>
+				<div class="dfg-hero-dialog-actions">
+					<button type="button" class="dfg-hero-btn" data-act="cancel">Cancel</button>
+					<button type="button" class="dfg-hero-btn danger" data-act="trash">Move to Trash</button>
+				</div>
+			</div>
+			<div class="dfg-hero-toast" role="status" aria-live="polite">
+				<span class="dfg-hero-toast-text"></span>
+				<button type="button" class="dfg-hero-toast-undo" data-act="undo">Undo</button>
+			</div>
+		</dfg-hero-demo>
+		<figcaption>
+			<span>Try it: move it to Trash, then undo.</span>
+			<a href={base + 'part-2/safety/'}>Chapter 9 · Scared to click <span aria-hidden="true">→</span></a>
+		</figcaption>
+	</figure>
+</header>
+
+<script>
+	class HeroDemo extends HTMLElement {
+		timer = 0;
+		connectedCallback() {
+			const text = this.querySelector('.dfg-hero-toast-text')!;
+			const undo = this.querySelector<HTMLButtonElement>('[data-act="undo"]')!;
+			const show = (state: string, message = '') => {
+				clearTimeout(this.timer);
+				this.dataset.state = state;
+				if (message) text.textContent = message;
+			};
+			const settle = (message: string) => {
+				show('settled', message);
+				this.timer = window.setTimeout(() => show('ask'), 1800);
+			};
+			this.addEventListener('click', (e) => {
+				const act = (e.target as Element).closest<HTMLElement>('[data-act]')?.dataset.act;
+				if (act === 'trash') {
+					show('trashed', 'Moved “Q3 launch” to Trash');
+					undo.focus({ preventScroll: true });
+				} else if (act === 'undo') settle('Restored “Q3 launch”');
+				else if (act === 'cancel') settle('Nothing moved');
+			});
+		}
+	}
+	customElements.define('dfg-hero-demo', HeroDemo);
+</script>
+
+<style>
+	.dfg-hero {
+		display: grid;
+		gap: 3rem;
+		padding-block: 2.5rem 1rem;
+	}
+	.dfg-hero-copy {
+		display: flex;
+		flex-direction: column;
+		align-items: flex-start;
+		gap: 1.25rem;
+	}
+	.dfg-hero-eyebrow {
+		font: 500 12.5px/1.3 var(--font-mono);
+		letter-spacing: 0.1em;
+		text-transform: uppercase;
+		color: var(--accent);
+	}
+	.dfg-hero h1#_top {
+		margin: 0;
+		font: 300 clamp(46px, 7.4vw, 88px) / 0.98 var(--font-display);
+		letter-spacing: -0.025em;
+		color: var(--ink);
+		text-wrap: balance;
+	}
+	.dfg-hero-lede {
+		max-width: 30ch;
+		font-size: clamp(1.125rem, 1rem + 0.6vw, 1.3rem);
+		line-height: 1.55;
+		color: var(--body);
+		text-wrap: balance;
+	}
+	.dfg-hero-actions {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 0.75rem;
+		margin-top: 0.5rem;
+	}
+	.dfg-hero-action {
+		display: inline-flex;
+		align-items: center;
+		gap: 0.5rem;
+		padding: 0.75rem 1.25rem;
+		border: 1px solid var(--ink);
+		border-radius: 999px;
+		font: 600 0.9375rem/1.2 var(--font-body);
+		text-decoration: none;
+		transition:
+			background-color 0.15s,
+			color 0.15s,
+			border-color 0.15s;
+	}
+	.dfg-hero-action.primary {
+		background: var(--ink);
+		color: var(--dfg-page);
+	}
+	.dfg-hero-action.primary:hover {
+		background: var(--accent);
+		border-color: var(--accent);
+	}
+	.dfg-hero-action:not(.primary) {
+		border-color: var(--line);
+		color: var(--ink);
+	}
+	.dfg-hero-action:not(.primary):hover {
+		border-color: var(--ink);
+	}
+	.dfg-hero-action :global(svg) {
+		width: 1.1em;
+		height: 1.1em;
+		transition: transform 0.15s;
+	}
+	.dfg-hero-action.primary:hover :global(svg) {
+		transform: translateX(2px);
+	}
+	.dfg-hero-action:not(.primary):hover :global(svg) {
+		transform: translateY(2px);
+	}
+	.dfg-hero-meta {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 0.375rem 0;
+		margin-top: 0.75rem;
+		font: 500 13px/1.4 var(--font-mono);
+		color: var(--muted);
+	}
+	.dfg-hero-meta span + span::before {
+		content: '·';
+		margin-inline: 0.625rem;
+	}
+
+	.dfg-hero-figure {
+		display: flex;
+		flex-direction: column;
+		gap: 0.875rem;
+		margin: 0;
+	}
+	.dfg-hero-stage {
+		position: relative;
+		display: grid;
+		place-items: center;
+		min-height: 22rem;
+		padding: 3.25rem 1.25rem 4.75rem;
+		overflow: hidden;
+		border: 1px solid var(--line);
+		border-radius: 16px;
+		background-color: var(--canvas);
+		background-image: radial-gradient(var(--dot) 1.15px, transparent 1.3px);
+		background-size: 18px 18px;
+		color: var(--ui-text);
+	}
+	.dfg-hero-stage::before {
+		content: 'Live demo';
+		position: absolute;
+		top: 14px;
+		left: 16px;
+		font: 600 10.5px/1 var(--font-mono);
+		letter-spacing: 0.14em;
+		text-transform: uppercase;
+		color: var(--muted);
+	}
+	.dfg-hero-dialog {
+		width: min(100%, 21rem);
+		padding: 1.25rem 1.25rem 1rem;
+		border: 1px solid var(--ui-border);
+		border-radius: 14px;
+		background: var(--ui-raised);
+		box-shadow: var(--ui-shadow);
+		transition:
+			opacity 0.2s,
+			transform 0.2s;
+	}
+	.dfg-hero-dialog p {
+		margin: 0;
+	}
+	.dfg-hero-dialog-title {
+		font: 600 1.0625rem/1.3 var(--font-body);
+		color: var(--ui-text);
+	}
+	.dfg-hero-dialog-body {
+		margin-top: 0.375rem !important;
+		font-size: 0.9375rem;
+		line-height: 1.5;
+		color: var(--ui-muted);
+	}
+	.dfg-hero-dialog-actions {
+		display: flex;
+		justify-content: flex-end;
+		gap: 0.5rem;
+		margin-top: 1.125rem;
+	}
+	.dfg-hero-btn {
+		padding: 0.5rem 0.875rem;
+		border: 1px solid var(--ui-border);
+		border-radius: 8px;
+		background: var(--ui-surface);
+		color: var(--ui-text);
+		font: 600 0.875rem/1.2 var(--font-body);
+		cursor: pointer;
+	}
+	.dfg-hero-btn:hover {
+		background: var(--ui-hover);
+	}
+	.dfg-hero-btn.danger {
+		border-color: var(--ui-danger);
+		background: var(--ui-danger);
+		color: var(--ui-on-danger);
+	}
+	.dfg-hero-btn.danger:hover {
+		filter: brightness(1.08);
+	}
+	.dfg-hero-toast {
+		position: absolute;
+		left: 50%;
+		bottom: 1.25rem;
+		display: flex;
+		align-items: center;
+		gap: 1rem;
+		max-width: calc(100% - 2rem);
+		padding: 0.625rem 0.625rem 0.625rem 1rem;
+		border-radius: 10px;
+		background: var(--ui-toast);
+		color: var(--ui-on-toast);
+		box-shadow: var(--ui-shadow);
+		font-size: 0.875rem;
+		white-space: nowrap;
+		opacity: 0;
+		transform: translate(-50%, 0.75rem);
+		pointer-events: none;
+		transition:
+			opacity 0.2s,
+			transform 0.2s;
+	}
+	.dfg-hero-toast-text {
+		overflow: hidden;
+		text-overflow: ellipsis;
+	}
+	.dfg-hero-toast-undo {
+		padding: 0.25rem 0.5rem;
+		border: 0;
+		border-radius: 6px;
+		background: transparent;
+		color: var(--ui-toast-action);
+		font: 700 0.875rem/1.2 var(--font-body);
+		cursor: pointer;
+	}
+	.dfg-hero-stage:not([data-state='ask']) .dfg-hero-dialog {
+		opacity: 0;
+		transform: scale(0.97);
+		pointer-events: none;
+	}
+	.dfg-hero-stage:not([data-state='ask']) .dfg-hero-toast {
+		opacity: 1;
+		transform: translate(-50%, 0);
+		pointer-events: auto;
+	}
+	.dfg-hero-stage:not([data-state='trashed']) .dfg-hero-toast-undo {
+		display: none;
+	}
+	.dfg-hero-figure figcaption {
+		display: flex;
+		flex-wrap: wrap;
+		justify-content: space-between;
+		gap: 0.25rem 1rem;
+		font-size: 0.875rem;
+		color: var(--muted);
+	}
+	.dfg-hero-figure figcaption a {
+		font: 500 12px/1.6 var(--font-mono);
+		letter-spacing: 0.04em;
+		color: var(--muted);
+		text-decoration: none;
+	}
+	.dfg-hero-figure figcaption a:hover {
+		color: var(--accent);
+	}
+	@media (prefers-reduced-motion: reduce) {
+		.dfg-hero-dialog,
+		.dfg-hero-toast {
+			transition: none;
+		}
+	}
+	@media (min-width: 60rem) {
+		.dfg-hero {
+			grid-template-columns: minmax(0, 1.1fr) minmax(0, 0.9fr);
+			align-items: center;
+			gap: clamp(2.5rem, 5vw, 4.5rem);
+			padding-block: clamp(3rem, 8vh, 5.5rem) 2rem;
+		}
+	}
+</style>

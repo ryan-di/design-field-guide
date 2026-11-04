@@ -1,0 +1,137 @@
+---
+import { getContents } from '../lib/contents';
+
+const { groups } = await getContents();
+const base = import.meta.env.BASE_URL.replace(/\/?$/, '/');
+---
+
+<section class="dfg-contents not-content" id="contents" aria-labelledby="contents-title">
+	<h2 id="contents-title">Contents</h2>
+	{
+		groups.map((group) => (
+			<section class="dfg-contents-part" aria-labelledby={`contents-${group.id}`}>
+				<div class="dfg-contents-head">
+					<p class="dfg-contents-label">{group.label}</p>
+					<h3 id={`contents-${group.id}`}>{group.title}</h3>
+					{group.sub && <p class="dfg-contents-sub">{group.sub}</p>}
+				</div>
+				<ol class:list={{ numbered: group.pages.some((p) => p.number) }}>
+					{group.pages.map((page) => (
+						<li>
+							<a href={`${base}${page.slug}/`}>
+								<span class="dfg-contents-num">{page.number}</span>
+								<span class="dfg-contents-title">{page.title}</span>
+								{page.meta && <span class="dfg-contents-meta">{page.meta}</span>}
+							</a>
+						</li>
+					))}
+				</ol>
+			</section>
+		))
+	}
+</section>
+
+<style>
+	.dfg-contents {
+		margin-top: 3.5rem !important;
+	}
+	.dfg-contents > h2 {
+		margin: 0 0 1.25rem;
+		font: 500 12.5px/1.3 var(--font-mono);
+		letter-spacing: 0.1em;
+		text-transform: uppercase;
+		color: var(--muted);
+	}
+	.dfg-contents-part {
+		display: grid;
+		gap: 1.25rem;
+		padding-block: 2rem 2.25rem;
+		border-top: 1px solid var(--line);
+	}
+	.dfg-contents-head p,
+	.dfg-contents-head h3 {
+		margin: 0;
+	}
+	.dfg-contents-label {
+		font: 600 12px/1.3 var(--font-mono);
+		letter-spacing: 0.14em;
+		text-transform: uppercase;
+		color: var(--accent);
+	}
+	.dfg-contents-head h3 {
+		margin-top: 0.5rem;
+		font: 400 clamp(1.625rem, 1.3rem + 1vw, 2rem) / 1.1 var(--font-display);
+		letter-spacing: -0.01em;
+		color: var(--ink);
+		text-wrap: balance;
+	}
+	.dfg-contents-sub {
+		max-width: 38ch;
+		margin-top: 0.625rem !important;
+		font-size: 0.9375rem;
+		line-height: 1.55;
+		color: var(--muted);
+	}
+	.dfg-contents ol {
+		margin: 0;
+		padding: 0;
+		list-style: none;
+	}
+	.dfg-contents li + li {
+		border-top: 1px solid color-mix(in srgb, var(--line) 55%, transparent);
+	}
+	.dfg-contents li a {
+		display: grid;
+		grid-template-columns: 2.25rem minmax(0, 1fr) auto;
+		align-items: baseline;
+		gap: 0.75rem;
+		padding: 0.6875rem 0.25rem;
+		color: var(--ink);
+		text-decoration: none;
+	}
+	.dfg-contents-num {
+		font: 500 13px/1 var(--font-mono);
+		font-variant-numeric: tabular-nums;
+		color: var(--muted);
+	}
+	.dfg-contents-title {
+		font-size: 1.0625rem;
+		line-height: 1.4;
+	}
+	.dfg-contents-meta {
+		font: 500 12px/1 var(--font-mono);
+		color: var(--muted);
+		white-space: nowrap;
+	}
+	.dfg-contents li a:hover :is(.dfg-contents-title, .dfg-contents-num) {
+		color: var(--accent);
+	}
+	@media (max-width: 35.99rem) {
+		.dfg-contents li a {
+			grid-template-columns: 2rem minmax(0, 1fr);
+			gap: 0.25rem 0.5rem;
+			padding-inline: 0;
+		}
+		.dfg-contents ol:not(.numbered) li a {
+			grid-template-columns: minmax(0, 1fr);
+		}
+		.dfg-contents ol:not(.numbered) .dfg-contents-num {
+			display: none;
+		}
+		.dfg-contents-meta {
+			grid-column: -2;
+		}
+	}
+	@media (min-width: 50rem) {
+		.dfg-contents-part {
+			grid-template-columns: minmax(0, 0.85fr) minmax(0, 1.5fr);
+			gap: 3.5rem;
+			padding-block: 2.5rem 2.75rem;
+		}
+		.dfg-contents-head {
+			position: sticky;
+			top: calc(var(--sl-nav-height) + 1.5rem);
+			align-self: start;
+		}
+	}
+</style>

@@ -2,6 +2,7 @@
 import { defineConfig } from 'astro/config';
 import starlight from '@astrojs/starlight';
 import remarkHeadingId from './src/plugins/remark-heading-id.mjs';
+import canonicalAnchors from './src/plugins/rehype-canonical-anchors.mjs';
 import sidebar from './src/sidebar.json' with { type: 'json' };
 
 const fonts = 'https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Fraunces:wght@300;400;500&family=JetBrains+Mono:wght@400;500;600&display=swap';
@@ -21,6 +22,7 @@ export default defineConfig({
 			],
 			customCss: ['./src/styles/book.css', './src/styles/theme.css'],
 			components: {
+				Hero: './src/components/Hero.astro',
 				PageTitle: './src/components/PageTitle.astro',
 				ThemeSelect: './src/components/ThemeToggle.astro',
 				Search: './src/components/Search.astro',
@@ -28,5 +30,6 @@ export default defineConfig({
 			tableOfContents: { minHeadingLevel: 2, maxHeadingLevel: 3 },
 			sidebar,
 		}),
+		canonicalAnchors(),
 	],
 });

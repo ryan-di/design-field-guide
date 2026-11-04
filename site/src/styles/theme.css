@@ -112,6 +112,23 @@ h1#_top {
 	margin-top: 3px;
 }
 
+.dfg-home-note {
+	margin-top: 1rem !important;
+	padding-top: 1.5rem;
+	border-top: 1px solid var(--line);
+	max-width: 62ch;
+	font-size: 0.875rem;
+	line-height: 1.6;
+	color: var(--muted);
+}
+.dfg-home-note a {
+	color: inherit;
+	text-underline-offset: 0.2em;
+}
+.dfg-home-note a:hover {
+	color: var(--ink);
+}
+
 /* The book's rail marks the current page with color, not a filled block. */
 .sidebar-content a[aria-current='page'],
 .sidebar-content a[aria-current='page']:hover {
@@ -145,4 +162,16 @@ h1#_top {
 .dfg-part-sub {
 	margin-top: 0.375rem !important;
 	color: var(--body);
+}
+
+/* Light mode: white surfaces, set off from the white page by their hairline borders. --canvas stays beige
+   because mock apps inside the demos use it for their own canvases and maps. */
+:root[data-theme='light'] .sl-markdown-content {
+	--card: #fff;
+}
+:root[data-theme='light'] :is(.stage, .fm-stage, .cs-demo, .cw, .fx-side, .dfg-part, .in-short) {
+	background-color: #fff;
+}
+:where(:root[data-theme='light'] .sl-markdown-content) .badge {
+	box-shadow: 0 0 0 2px #fff;
 }
