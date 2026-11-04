@@ -4,6 +4,7 @@ One line per push. Cite the book as “Design Field Guide v35, #<anchor>”; anc
 
 ## v35 (2026-11)
 
+- v35-6: the contents can be hidden: a button beside the search box on wide screens, the “Contents” heading on phones. The choice is remembered, and / or Cmd+K brings the contents back.
 - v35-5: the contents search box matches the page; badge icons centered in three demos (sync status, playlist cover, failed check); the lede is one line.
 - v35-4c: back matter after Part 4 (`#back`): where to go from here (`#ch-afterword`), a glossary (`#ch-glossary`, each term at `#gl-<term>`), sources by part (`#ch-sources`) and about this edition (`#ch-colophon`), which now holds the companion decks. “Prototype in code” is now “Prototype at the fidelity the question needs” (same anchor). US spelling for gray.
 - v35-4b: “In short” at the end of every chapter lists its rules, each linked (`#<chapter>-in-short`). Parts 1 to 3 end with a short bridge to the next part (`#part-1-next`, `#part-2-next`, `#part-3-next`).
