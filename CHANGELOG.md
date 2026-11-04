@@ -4,6 +4,7 @@ One line per push. Cite the book as “Design Field Guide v35, #<anchor>”; anc
 
 ## v35 (2026-11)
 
+- v35-4b: “In short” at the end of every chapter lists its rules, each linked (`#<chapter>-in-short`). Parts 1 to 3 end with a short bridge to the next part (`#part-1-next`, `#part-2-next`, `#part-3-next`).
 - v35-4a: a preface, “How to read this book” (`#ch-preface`), before Start here. Parts 3 and 4 get “How each entry reads”. The demo sentence in every rule intro is now said once, in the preface.
 - v35-3: `llms.txt` and `references/` for agents (one markdown file per entry and chapter, `index.json`, `rubrics.json`), generated from the page by `tools/export.py`. Page metadata for version and description.
 - v35-2: four new rules: leave what you don’t know empty (`#good-problem-framing-rule-5`), hear their read first (`#good-critique-rule-4`), say what a mock can’t show (`#good-heuristic-review-rule-4`, with the fidelity table), frame a hunch as a question (`#eff-loop-rule-5`).

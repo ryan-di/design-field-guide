@@ -47,3 +47,7 @@ Start from what the person needs, then read across. Each component links to its 
 | See that a control heard them | [Interaction states](https://ryan-di.github.io/design-field-guide/#interaction-states) on the control | One look for every state |
 | Start when there’s nothing yet | [Empty state](https://ryan-di.github.io/design-field-guide/#empty-state), with one way to start | “No items” |
 | Recover when something fails | [Error state](https://ryan-di.github.io/design-field-guide/#error-state), with a next step | “Something went wrong” |
+
+Next · Part 4
+
+Parts 1 to 3 are about what to build and how to judge it. The next part puts them to work on one problem, and links back to them where they apply.

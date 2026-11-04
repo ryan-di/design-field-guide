@@ -112,6 +112,9 @@ const CONFIGS = [[1280, 'light'], [1280, 'dark'], [390, 'light'], [390, 'dark']]
       if (sc) { sc.value = 'the new checkout feels easier, cleaner and more intuitive'; sc.dispatchEvent(new Event('input')); if (q('#p18-sc-sugs').children.length !== 2) bad.push('success criteria rewrites ' + q('#p18-sc-sugs').children.length); }
       if (q('#p25-d-name') && !(q('#p25-d-name').textContent.trim() && q('#p25-d-in').textContent.trim())) bad.push('loop stage empty');
       if (q('#p25-bars') && !/[a-z]{4}/.test(q('#p25-bars').textContent)) bad.push('ownership notes empty');
+      const shorts = document.querySelectorAll('.in-short');
+      const shortRules = document.querySelectorAll('.in-short ol a').length, rules = document.querySelectorAll('section.rule[id]').length;
+      if (shorts.length && (shorts.length !== 31 || shortRules !== rules)) bad.push('in short: ' + shorts.length + ' boxes, ' + shortRules + ' of ' + rules + ' rules');
       return { bad, rubrics: rubrics.length };
     });
     r.bad.push(...probe.bad);

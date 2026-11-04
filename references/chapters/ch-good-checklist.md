@@ -45,3 +45,7 @@ A review checklist built from this part. Tick through it on your next change. Ea
 - [ ] Has someone critiqued it against the goal? [Critique against the goal](https://ryan-di.github.io/design-field-guide/#good-critique)
 - [ ] Did I do a quick heuristic pass? [Heuristic review](https://ryan-di.github.io/design-field-guide/#good-heuristic-review)
 - [ ] Is the reasoning written down where others will find it? [Write down the reasoning](https://ryan-di.github.io/design-field-guide/#good-design-rationale)
+
+Next · Part 2
+
+This part was about judgment: telling whether a design is good, and why. The next part starts from problems instead of principles. Every pattern in it has a cost, and the judgment from this part tells you when it’s worth paying.

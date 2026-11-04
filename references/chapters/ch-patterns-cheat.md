@@ -28,3 +28,7 @@ Start from what people say or do, pick the pattern, then check its trade-off bef
 | “I lost my work.” | [Autosave](https://ryan-di.github.io/design-field-guide/#pat-autosave) | People not trusting it |
 | “This is overwhelming.” / “This is too slow for me.” | [Layered interface](https://ryan-di.github.io/design-field-guide/#pat-layered-ui) | Two layers drifting apart |
 | “I do this a hundred times a day.” | [Keyboard shortcuts](https://ryan-di.github.io/design-field-guide/#pat-shortcuts) or [customization](https://ryan-di.github.io/design-field-guide/#pat-customization) | Undiscoverable shortcuts |
+
+Next · Part 3
+
+Patterns describe what should happen, and the next part is about the pieces you build them from. The wrong piece can undo a good pattern: an error in a toast is gone before anyone reads it.
