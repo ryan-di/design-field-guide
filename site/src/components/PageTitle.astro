@@ -1,0 +1,7 @@
+---
+// Starlight's page title with the book's eyebrow ("Chapter 1") above it. `_top` is the id Starlight's own title uses.
+const { title, eyebrow } = Astro.locals.starlightRoute.entry.data;
+---
+
+{eyebrow && <p class="dfg-eyebrow">{eyebrow}</p>}
+<h1 id="_top">{title}</h1>

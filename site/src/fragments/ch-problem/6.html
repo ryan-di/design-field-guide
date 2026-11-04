@@ -1,0 +1,103 @@
+<div class="note comfy cw-wrap"><p>Notice that each product shows its base is dependable before it adds anything playful.</p>
+  <div class="seg cw-seg" role="radiogroup" aria-label="Example">
+    <input type="radio" name="cw-good-needs-hierarchy-w" id="cw-good-needs-hierarchy-w-1" value="dbx" checked><label for="cw-good-needs-hierarchy-w-1">Dropbox</label>
+    <input type="radio" name="cw-good-needs-hierarchy-w" id="cw-good-needs-hierarchy-w-2" value="wa"><label for="cw-good-needs-hierarchy-w-2">WhatsApp</label>
+    <input type="radio" name="cw-good-needs-hierarchy-w" id="cw-good-needs-hierarchy-w-3" value="asana"><label for="cw-good-needs-hierarchy-w-3">Asana</label>
+    <input type="radio" name="cw-good-needs-hierarchy-w" id="cw-good-needs-hierarchy-w-4" value="duo"><label for="cw-good-needs-hierarchy-w-4">Duolingo</label>
+  </div>
+  <div class="cw cw-gnh-view" data-cw-view role="img" aria-label=""></div>
+  <p class="cw-cap" data-cw-cap aria-live="polite"></p>
+  <style>
+    .cw-gnh-view{min-height:236px;align-items:center}
+    .cw-gnh-layer{align-self:flex-start;font:600 11.5px var(--font-mono);letter-spacing:.06em;text-transform:uppercase;color:var(--ui-muted);background:var(--ui-surface);border:1px solid var(--ui-border);border-radius:999px;padding:3px 9px}
+    .cw-gnh-layer b{color:var(--ui-text);font-weight:600}
+    .cw-gnh-win{width:min(340px,100%);background:var(--ui-surface);border:1px solid var(--ui-border);border-radius:9px;overflow:hidden;box-shadow:var(--ui-shadow);color:var(--ui-text);font-size:12.5px}
+    .cw-gnh-phone{width:min(230px,100%);background:var(--ui-bg);border:1px solid var(--ui-border);border-radius:18px;overflow:hidden;box-shadow:var(--ui-shadow);color:var(--ui-text);font-size:12.5px}
+    .cw-gnh-bar{display:flex;align-items:center;gap:8px;padding:7px 10px;background:var(--ui-surface);border-bottom:1px solid var(--ui-border);font:600 12.5px var(--font-body)}
+    .cw-gnh-files{display:flex;flex-direction:column;padding:4px 0}
+    .cw-gnh-file{display:flex;align-items:center;gap:8px;padding:6px 10px}
+    .cw-gnh-file + .cw-gnh-file{border-top:1px solid var(--ui-border)}
+    .cw-gnh-file .grow{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+    .cw-gnh-file i{font-style:normal;color:var(--ui-muted);font-size:12px}
+    .cw-gnh-fic{width:14px;height:17px;border-radius:2px;border:1.5px solid var(--ui-muted);flex:none}
+    .cw-gnh-fic.dir{width:18px;height:14px;border-radius:3px;background:var(--ui-sel-soft);border-color:var(--ui-sel)}
+    .cw-gnh-sync{display:inline-grid;place-items:center;width:18px;height:18px;border-radius:50%;flex:none}
+    .cw-gnh-sync .icon{width:12px;height:12px;stroke-width:3}
+    .cw-gnh-sync.ok{background:var(--ui-ok);color:var(--ui-surface)}
+    .cw-gnh-sync.run{background:var(--ui-sel);color:var(--ui-surface)}
+    .cw-gnh-key{display:flex;flex-wrap:wrap;justify-content:center;gap:6px 14px;font-size:12px;color:var(--ink)}
+    .cw-gnh-key > span{display:inline-flex;align-items:center;gap:5px}
+    .cw-gnh-chat{display:flex;flex-direction:column;gap:6px;padding:10px}
+    .cw-gnh-msg{align-self:flex-start;max-width:85%;background:var(--ui-surface);border:1px solid var(--ui-border);border-radius:10px;padding:5px 8px;display:inline-flex;align-items:flex-end;gap:6px;line-height:1.3}
+    .cw-gnh-msg.out{align-self:flex-end;background:var(--ui-sel-soft);border-color:transparent}
+    .cw-gnh-msg .icon{width:15px;height:15px;color:var(--ui-muted);flex:none}
+    .cw-gnh-av{width:22px;height:22px;border-radius:50%;background:var(--thumb-a);flex:none}
+    .cw-gnh-key .icon{width:15px;height:15px;color:var(--ui-muted)}
+    .cw-gnh-key .cw-gnh-sync .icon{width:12px;height:12px;color:inherit}
+    .cw-gnh-fly{display:block;width:100%;height:46px;color:var(--ui-muted)}
+    .cw-gnh-tasks{display:flex;flex-direction:column;padding:0 10px 8px}
+    .cw-gnh-tasks span{display:flex;align-items:center;gap:8px;padding:6px 0}
+    .cw-gnh-tasks span + span{border-top:1px solid var(--ui-border)}
+    .cw-gnh-tasks .icon{color:var(--ui-muted)}
+    .cw-gnh-tasks .done{color:var(--ui-muted)}
+    .cw-gnh-tasks .done .icon{color:var(--ui-ok)}
+    .cw-gnh-duo{display:flex;flex-direction:column;align-items:center;gap:8px;padding:14px 12px 12px;background:var(--ui-surface)}
+    .cw-gnh-burst{width:58px;height:58px;color:var(--ui-ok)}
+    .cw-gnh-duo > b{font:700 16px var(--font-body)}
+    .cw-gnh-tiles{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px;width:100%}
+    .cw-gnh-tiles span{display:flex;flex-direction:column;align-items:center;border:1.5px solid var(--ui-border);border-radius:8px;padding:5px 2px}
+    .cw-gnh-tiles small{font-size:11.5px;color:var(--ui-muted)}
+    .cw-gnh-tiles b{font:700 15px var(--font-body)}
+    .cw-gnh-duo .btn{width:100%;justify-content:center;font-size:13px;padding:7px 10px}
+  </style>
+  <script>
+  (() => {
+    const wrap = document.currentScript.closest('.cw-wrap');
+    const view = wrap.querySelector('[data-cw-view]'), cap = wrap.querySelector('[data-cw-cap]');
+    const sv = body => '<svg class="icon sm" viewBox="0 0 24 24" aria-hidden="true">' + body + '</svg>';
+    const check = sv('<path d="M5 12.5l4.5 4.5L19 7.5"/>');
+    const arrows = sv('<path d="M19 9a7.5 7.5 0 0 0-13.5-1.5M5 15a7.5 7.5 0 0 0 13.5 1.5"/><path d="M5.5 3.5v4h4M18.5 20.5v-4h-4"/>');
+    const clock = sv('<circle cx="12" cy="12" r="8"/><path d="M12 8v4.5l3 2"/>');
+    const tick = sv('<path d="M5 12.5l4 4 9-9"/>');
+    const ticks = sv('<path d="M1.5 12.5l4 4 9-9"/><path d="M11 16.5l.5.5 9-9"/>');
+    const ring = sv('<circle cx="12" cy="12" r="8"/>');
+    const ringCheck = sv('<circle cx="12" cy="12" r="8"/><path d="M8.5 12.2l2.4 2.4 4.6-4.8"/>');
+    const layer = name => '<span class="cw-gnh-layer">Layer: <b>' + name + '</b></span>';
+    const file = (name, meta, state, dir) => '<span class="cw-gnh-file"><span class="cw-gnh-fic' + (dir ? ' dir' : '') + '"></span><span class="grow">' + name + '</span><i>' + meta + '</i><span class="cw-gnh-sync ' + state + '">' + (state === 'ok' ? check : arrows) + '</span></span>';
+    const msg = (text, status) => '<span class="cw-gnh-msg' + (status ? ' out' : '') + '">' + text + (status || '') + '</span>';
+    const creature = '<svg class="cw-gnh-fly" viewBox="0 0 240 46" preserveAspectRatio="xMaxYMid meet" aria-hidden="true">' +
+      '<path d="M40 38 C 90 6, 130 44, 186 22" fill="none" stroke="currentColor" stroke-width="2" stroke-dasharray="4 5" stroke-linecap="round"/>' +
+      '<ellipse cx="204" cy="22" rx="16" ry="10" fill="var(--ui-sel-soft)" stroke="var(--ui-sel)" stroke-width="2"/>' +
+      '<path d="M218 16 L232 6" stroke="var(--ui-sel)" stroke-width="2.5" stroke-linecap="round"/>' +
+      '<path d="M188 22 L180 14 M188 22 L180 30" stroke="var(--ui-sel)" stroke-width="2" stroke-linecap="round"/>' +
+      '<circle cx="211" cy="19" r="1.8" fill="var(--ui-text)"/></svg>';
+    const burst = '<svg class="cw-gnh-burst" viewBox="0 0 58 58" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round">' +
+      '<circle cx="29" cy="29" r="13"/><path d="M23 29.5l4 4 8-8.5"/>' +
+      '<path d="M29 3v6M29 49v6M3 29h6M49 29h6M10.6 10.6l4.2 4.2M43.2 43.2l4.2 4.2M10.6 47.4l4.2-4.2M43.2 14.8l4.2-4.2"/></svg>';
+    const S = {
+      dbx: { html: layer('Reliable') + '<div class="cw-gnh-win"><div class="cw-gnh-bar">Work</div><div class="cw-gnh-files">' +
+          file('Q3 budget', 'Sheet', 'ok') + file('Pitch deck', 'Slides', 'run') + file('Photos', 'Folder', 'ok', true) + file('Contract draft', 'PDF', 'ok') + '</div></div>' +
+          '<div class="cw-gnh-key"><span><span class="cw-gnh-sync run">' + arrows + '</span>Syncing</span><span><span class="cw-gnh-sync ok">' + check + '</span>Up to date</span></div>',
+        alt: 'A folder of four files. Three show a round check icon, up to date. Pitch deck shows circling arrows, still syncing.',
+        cap: 'Dropbox: each file in the synced folder shows a small icon, arrows while it syncs and a check once it’s up to date. People trust it with work files because they can see that each one is safe.' },
+      wa: { html: layer('Reliable') + '<div class="cw-gnh-phone"><div class="cw-gnh-bar"><span class="cw-gnh-av"></span>Sam</div><div class="cw-gnh-chat">' +
+          msg('Where are you?') + msg('On my way', ticks) + msg('Traffic is slow', tick) + msg('Be there at 6', clock) + '</div></div>' +
+          '<div class="cw-gnh-key"><span>' + clock + 'Waiting to send</span><span>' + tick + 'Sent</span><span>' + ticks + 'Delivered</span></div>',
+        alt: 'A chat. The newest message shows a clock, the one before it one tick, the one before that two ticks. A key explains: waiting to send, sent, delivered.',
+        cap: 'WhatsApp: a message shows a clock until it has really left the phone, then one tick when it’s sent and two when it’s delivered. It never claims a message went out when it didn’t.' },
+      asana: { html: layer('Pleasurable') + '<div class="cw-gnh-win"><div class="cw-gnh-bar">My tasks</div>' + creature +
+          '<div class="cw-gnh-tasks"><span class="done">' + ringCheck + 'Draft the brief</span><span>' + ring + 'Review the copy</span><span>' + ring + 'Book the venue</span></div></div>',
+        alt: 'A task list. The first task was just checked off, and a small cartoon creature flies across the top, trailing a dashed line.',
+        cap: 'Asana: finishing a task now and then sends a cartoon creature across the screen. It’s a small, rare treat on top of a task list that already works.' },
+      duo: { html: layer('Pleasurable') + '<div class="cw-gnh-phone cw-gnh-duo">' + burst + '<b>Lesson complete!</b>' +
+          '<div class="cw-gnh-tiles"><span><small>Total XP</small><b>15</b></span><span><small>Accuracy</small><b>93%</b></span><span><small>Time</small><b>2:14</b></span></div>' +
+          '<span class="btn btn-primary">Continue</span></div>',
+        alt: 'A cheerful lesson complete screen with a burst of lines around a check. Three tiles show XP earned, accuracy and time, above a Continue button.',
+        cap: 'Duolingo: the cheerful end-of-lesson screen also shows the XP you earned and your accuracy. The fun celebrates progress that was really counted.' }
+    };
+    const render = k => { view.innerHTML = S[k].html; view.setAttribute('aria-label', 'Sketch: ' + S[k].alt); cap.textContent = S[k].cap; };
+    wrap.querySelectorAll('input[name="cw-good-needs-hierarchy-w"]').forEach(r => r.addEventListener('change', () => render(r.value)));
+    render('dbx');
+  })();
+  </script>
+</div>

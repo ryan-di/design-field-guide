@@ -1,0 +1,44 @@
+<div class="stage tall" data-demo="good-problem-framing">
+      <div class="seg" role="radiogroup" aria-label="Version">
+        <input type="radio" name="p18-pf-mode" id="p18-pf-before" value="before" checked><label for="p18-pf-before">Before</label>
+        <input type="radio" name="p18-pf-mode" id="p18-pf-after" value="after"><label for="p18-pf-after">After</label>
+      </div>
+
+      <div class="p18-view" id="p18-pf-v-before">
+        <div class="surface p18-ticket">
+          <p class="p18-tk-meta"><span class="p18-pill">Feature request</span><span>Ticket</span></p>
+          <h5>Add a “Duplicate event” button to the toolbar</h5>
+          <p>People keep asking for a way to duplicate events. Add a Duplicate button next to Delete in the top toolbar.</p>
+          <div class="p18-tk-sol">
+            <span class="p18-tk-label">The only answer on the table</span>
+            <span class="toolbar surface p18-tb" aria-label="Toolbar mockup">
+              <span class="p18-tbi"><svg class="icon sm" aria-hidden="true"><use href="#i-search"/></svg>Find</span>
+              <span class="p18-tbi"><svg class="icon sm" aria-hidden="true"><use href="#i-trash"/></svg>Delete</span>
+              <span class="p18-tbi p18-tbi-new"><svg class="icon sm" aria-hidden="true"><use href="#i-plus"/></svg>Duplicate</span>
+            </span>
+          </div>
+        </div>
+        <p class="state-caption">The ticket already picked the answer. All that’s left to decide is where the button goes.</p>
+      </div>
+
+      <div class="p18-view" id="p18-pf-v-after" hidden>
+        <div class="p18-qs">
+          <div class="field"><label class="field-label" for="p18-pf-who">Who is it for?</label><textarea class="input" id="p18-pf-who" data-q="who" rows="2" spellcheck="false">People who plan a weekly class in their calendar</textarea></div>
+          <div class="field"><label class="field-label" for="p18-pf-goal">What are they trying to get done?</label><textarea class="input" id="p18-pf-goal" data-q="goal" rows="2" spellcheck="false">set up a similar event without typing it all again</textarea></div>
+          <div class="field"><label class="field-label" for="p18-pf-block">What gets in their way today?</label><textarea class="input" id="p18-pf-block" data-q="block" rows="2" spellcheck="false">they make a new event and copy each detail by hand, and often miss one</textarea></div>
+          <div class="field"><label class="field-label" for="p18-pf-know">How will we know it’s better?</label><textarea class="input" id="p18-pf-know" data-q="know" rows="2" spellcheck="false">people make a similar event in one step, and fewer events go out without a room or a link</textarea></div>
+        </div>
+        <div class="surface p18-card" aria-labelledby="p18-pf-card-h" role="group">
+          <p class="p18-card-h" id="p18-pf-card-h">Problem statement</p>
+          <p class="p18-stmt" id="p18-pf-stmt"></p>
+          <p class="p18-warn" id="p18-pf-warn" hidden></p>
+        </div>
+        <button class="btn btn-secondary" type="button" id="p18-pf-show" aria-expanded="false" aria-controls="p18-pf-sols">Show 3 solutions this opens up</button>
+        <div class="p18-sols" id="p18-pf-sols" hidden>
+          <div class="surface p18-sol"><b>Duplicate from the event</b><p>Copy an event with all its details from its own menu or a shortcut, right where people are working.</p></div>
+          <div class="surface p18-sol"><b>Copy and paste details</b><p>Copy the details of one event and paste them onto another day.</p></div>
+          <div class="surface p18-sol"><b>Make it repeat</b><p>Turn the event into a repeating one, so people don’t need a copy at all.</p></div>
+        </div>
+      </div>
+      <p class="try"><b>Try it:</b> read the ticket, then switch to After. Edit the answers and watch the problem statement update. Type “everyone” into the first box to see a framing that’s too broad. Then open the solutions: the toolbar button is still an option, now one of several.</p>
+    </div>

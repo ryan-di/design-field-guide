@@ -1,0 +1,133 @@
+<script>
+(() => {
+  const cs = document.currentScript.closest('.cs');
+  /* The shared case helpers are defined later in the book, so wait for them. */
+  const start = () => {
+  const D = (k, html, wire) => csDemo(cs.querySelector('[data-d="' + k + '"]'), html, wire);
+  const css = document.createElement('style');
+  css.textContent = `
+#good-problem-framing .pf-card{width:min(360px,100%);display:flex;flex-direction:column;gap:10px;text-align:left;background:var(--ui-surface);border:1px solid var(--ui-border);border-radius:12px;padding:14px;box-shadow:var(--ui-shadow);font-size:14px;line-height:1.45}
+#good-problem-framing .pf-k{font:600 11.5px var(--font-mono);letter-spacing:.06em;text-transform:uppercase;color:var(--ui-muted)}
+#good-problem-framing .pf-title{font:600 15.5px/1.35 var(--font-body)}
+#good-problem-framing .pf-frame{padding:9px 11px;border-radius:9px;background:var(--ui-hover);font-size:14px}
+#good-problem-framing .pf-opts{display:flex;flex-wrap:wrap;gap:6px}
+#good-problem-framing .pf-opts .btn[aria-pressed="true"]{background:var(--ui-sel-soft);border-color:var(--ui-sel)}
+#good-problem-framing .pf-list{display:flex;flex-direction:column;gap:6px;margin:0;padding:0;list-style:none}
+#good-problem-framing .pf-list li{display:flex;gap:8px;align-items:flex-start;padding:7px 9px;border:1px solid var(--ui-border);border-radius:8px}
+#good-problem-framing .pf-list li .icon{flex:none;margin-top:2px}
+#good-problem-framing .pf-list li.yes .icon{color:var(--ui-ok)}
+#good-problem-framing .pf-list li.no{color:var(--ui-muted)}
+#good-problem-framing .pf-list li.no .icon{color:var(--ui-danger)}
+#good-problem-framing .pf-pair{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+@media (max-width:420px){#good-problem-framing .pf-pair{grid-template-columns:1fr}}
+#good-problem-framing .pf-who{display:flex;flex-direction:column;gap:6px;padding:9px;border:1px solid var(--ui-border);border-radius:9px;font-size:13.5px}
+#good-problem-framing .pf-who b{font-size:13px}
+#good-problem-framing .pf-sk{display:flex;flex-direction:column;gap:4px;padding:6px;border-radius:6px;background:var(--ui-bg);border:1px dashed var(--ui-border)}
+#good-problem-framing .pf-sk i{display:block;height:8px;border-radius:4px;background:var(--ui-skel)}
+#good-problem-framing .pf-sk .q{height:16px;border:1.5px solid var(--ui-muted);background:transparent;border-radius:8px}
+#good-problem-framing .pf-sk .hi{background:var(--ui-sel-soft);border:1.5px solid var(--ui-sel);height:16px}
+#good-problem-framing .pf-verdict{font-weight:600}
+#good-problem-framing .pf-verdict.bad{color:var(--ui-danger)}
+#good-problem-framing .pf-verdict.ok{color:var(--ui-ok)}
+#good-problem-framing .pf-ev{margin:0;padding-left:18px;display:flex;flex-direction:column;gap:4px}
+#good-problem-framing .pf-cmts{display:flex;flex-direction:column;gap:6px}
+#good-problem-framing .pf-cmt{display:flex;gap:8px;align-items:flex-start;font-size:13.5px}
+#good-problem-framing .pf-cmt .av{width:22px;height:22px;border-radius:50%;flex:none;background:var(--thumb-b)}
+#good-problem-framing .pf-cmt .av.c{background:var(--thumb-c)}
+`;
+  cs.appendChild(css);
+  const icon = n => '<svg class="icon sm" aria-hidden="true"><use href="#i-' + n + '"/></svg>';
+
+  /* 1. Starting from the ticket's answer */
+  const ticket = '<span class="pf-k">Ticket</span><span class="pf-title">Add an “Export to PDF” button to the invoice page</span><span>Clients keep asking for invoices as a file.</span>';
+  D('good-problem-framing-1b', '<div class="pf-card">' + ticket + '<span class="pf-k">Where should the button go?</span><div class="pf-opts" role="group" aria-label="Button position">' +
+    ['Top bar', 'Next to Send', 'In the More menu'].map(o => '<button class="btn btn-secondary cs-sm" type="button" aria-pressed="false">' + o + '</button>').join('') + '</div><p class="cs-meta" data-out aria-live="polite"></p></div>', d => {
+    d.querySelectorAll('.pf-opts .btn').forEach(b => b.addEventListener('click', () => {
+      d.querySelectorAll('.pf-opts .btn').forEach(x => x.setAttribute('aria-pressed', String(x === b)));
+      d.querySelector('[data-out]').textContent = 'Decided: ' + b.textContent.toLowerCase() + '. That was the only open question.';
+    }));
+  });
+  D('good-problem-framing-1f', '<div class="pf-card">' + ticket + '<button class="btn btn-secondary cs-sm" type="button" data-go style="align-self:flex-start">Restate as a problem</button><div data-out aria-live="polite"></div></div>', d => {
+    const go = d.querySelector('[data-go]');
+    go.addEventListener('click', () => {
+      go.remove();
+      d.querySelector('[data-out]').innerHTML = '<div style="display:flex;flex-direction:column;gap:8px"><span class="pf-k">Problem</span><p class="pf-frame">Freelancers need to send an invoice to a client who wants a file. Today they take a screenshot of the page.</p>' +
+        '<span class="pf-k">Answers that fit</span><ul class="pf-list"><li class="yes">' + icon('check') + 'An Export to PDF button</li><li class="yes">' + icon('check') + 'Email the invoice as a PDF straight from the app</li><li class="yes">' + icon('check') + 'Send a link the client can open, save and pay from</li></ul></div>';
+    });
+  });
+
+  /* 2. Too broad */
+  const sk = rows => '<span class="pf-sk" aria-hidden="true">' + rows.map(r => '<i class="' + r[0] + '" style="width:' + r[1] + '%"></i>').join('') + '</span>';
+  const broadHtml = frame => '<div class="pf-card"><span class="pf-k">Problem</span><p class="pf-frame">' + frame + '</p>' +
+    '<button class="btn btn-secondary cs-sm" type="button" data-go style="align-self:flex-start">Ask two people</button><div data-out aria-live="polite"></div></div>';
+  const broadWire = (a, b, verdict, tone) => d => {
+    const go = d.querySelector('[data-go]');
+    go.addEventListener('click', () => {
+      go.remove();
+      d.querySelector('[data-out]').innerHTML = '<div style="display:flex;flex-direction:column;gap:8px"><div class="pf-pair">' +
+        '<div class="pf-who"><b>Ana pictures</b>' + a[1] + a[0] + '</div><div class="pf-who"><b>Ben pictures</b>' + b[1] + b[0] + '</div></div><p class="pf-verdict ' + tone + '">' + verdict + '</p></div>';
+    });
+  };
+  D('good-problem-framing-2b', broadHtml('Make settings easier to use.'), broadWire(
+    ['A search box at the top of Settings.', sk([['q', 100], ['', 80], ['', 64], ['', 72]])],
+    ['Fewer categories, with the common ones first.', sk([['hi', 100], ['hi', 100], ['', 50], ['', 50]])],
+    'Two different screens. Both match the frame.', 'bad'));
+  D('good-problem-framing-2f', broadHtml('People who just got a new phone want their notification choices back, but have to set each app again by hand.'), broadWire(
+    ['During setup, offer to copy notification choices from the old phone.', sk([['', 70], ['hi', 100], ['', 40]])],
+    ['Bring notification choices back with the rest of the backup.', sk([['', 60], ['', 80], ['hi', 100]])],
+    'Different details, same problem. Now they can compare.', 'ok'));
+
+  /* 3. No evidence */
+  const evHtml = ev => '<div class="pf-card"><span class="pf-k">Problem</span><p class="pf-frame">Travelers book the wrong return date, because the date picker starts the week on Sunday.</p>' +
+    '<span class="pf-k">Where we saw it</span>' + ev + '<button class="btn btn-secondary cs-sm" type="button" data-go style="align-self:flex-start">Share with the team</button><div class="pf-cmts" data-out aria-live="polite"></div></div>';
+  const evWire = cmts => (d, t) => {
+    const go = d.querySelector('[data-go]'), out = d.querySelector('[data-out]');
+    go.addEventListener('click', () => {
+      go.remove();
+      cmts.forEach((c, i) => t.after(() => out.insertAdjacentHTML('beforeend', '<div class="pf-cmt"><span class="av' + (i ? ' c' : '') + '"></span><span><b>' + c[0] + ':</b> ' + c[1] + '</span></div>'), 350 + i * 700));
+    });
+  };
+  D('good-problem-framing-3b', evHtml('<p>I think this happens a lot.</p>'), evWire([['Ben', 'Does it? I’ve never seen that happen.'], ['Cy', 'I find the picker fine. Should we run a survey first?']]));
+  D('good-problem-framing-3f', evHtml('<ul class="pf-ev"><li>Support: 14 date-change requests last week mention the calendar.</li><li>Sessions: 2 of 5 people picked Sunday when they meant Monday.</li><li>“I booked the wrong day twice.” (support chat)</li></ul>'),
+    evWire([['Ben', '14 in one week is a lot. Let’s fix the picker.'], ['Cy', 'I’ll join the next session to see it myself.']]));
+
+  /* 4. Answer inside the frame */
+  const ans = ['Add a Sort button', 'A “Recently played” row at the top', 'Search that finds albums by name'];
+  const fitHtml = frame => '<div class="pf-card"><span class="pf-k">Problem</span><p class="pf-frame">' + frame + '</p><span class="pf-k">Ideas</span><ul class="pf-list" data-list>' +
+    ans.map(a => '<li>' + icon('info') + '<span>' + a + '</span></li>').join('') + '</ul><button class="btn btn-secondary cs-sm" type="button" data-go style="align-self:flex-start">Check the answers</button><p class="pf-verdict" data-out aria-live="polite"></p></div>';
+  const fitWire = (fits, verdict, tone) => d => {
+    const go = d.querySelector('[data-go]');
+    go.addEventListener('click', () => {
+      go.remove();
+      d.querySelectorAll('[data-list] li').forEach((li, i) => {
+        li.className = fits[i] ? 'yes' : 'no';
+        li.querySelector('use').setAttribute('href', fits[i] ? '#i-check' : '#i-x');
+        li.querySelector('span').textContent = ans[i] + (fits[i] ? ': fits' : ': doesn’t fit, it’s not a Sort button');
+      });
+      const v = d.querySelector('[data-out]'); v.className = 'pf-verdict ' + tone; v.textContent = verdict;
+    });
+  };
+  D('good-problem-framing-4b', fitHtml('People can’t find the Sort button in their music library.'), fitWire([true, false, false], 'Only one answer fits: the one the frame already named.', 'bad'));
+  D('good-problem-framing-4f', fitHtml('Listeners with a big library want to get back to an album they played last week, but scroll for a long time to find it.'), fitWire([true, true, true], 'All three fit. Now you can compare them.', 'ok'));
+
+  /* 5. Guesses that read like facts */
+  const nfRow = (k, v, tag, g) => '<div class="nf-row"><span class="pf-k">' + k + '</span><span>' + v + (tag ? '<br><span class="nf-tag' + (g ? ' g' : '') + '">' + tag + '</span>' : '') + '</span></div>';
+  const nfHtml = rows => '<div class="pf-card"><span class="pf-k">Problem frame · Export</span><div>' + rows + '</div>' +
+    '<div class="pf-opts"><button class="btn btn-secondary cs-sm" type="button" data-go>Share with the team</button></div><p class="nf-out" data-out></p></div>';
+  const nfWire = msg => d => { const o = d.querySelector('[data-out]'), g = d.querySelector('[data-go]'); g.addEventListener('click', () => { o.innerHTML = msg; g.disabled = true; }); };
+  D('good-problem-framing-5b', nfHtml(nfRow('Who', 'Photographers on a deadline') + nfRow('Trying to', 'Send a finished album to a client') +
+    nfRow('In the way', 'Export is slow and confusing') + nfRow('How often', 'All the time')),
+    nfWire('<b>Ben:</b> Where does “on a deadline” come from? And “all the time”? Nobody can tell what was seen and what was guessed, so the team argues instead of checking.'));
+  D('good-problem-framing-5f', nfHtml(nfRow('Who', 'People exporting albums for clients', 'Support · 14 threads') +
+    nfRow('Trying to', 'Send a finished album to a client', 'They said so') +
+    nfRow('In the way', 'Export overwrites a file with the same name', 'Seen in 2 of 5 sessions') +
+    nfRow('How often', '<em>Unknown</em>', 'To check · export logs', true) +
+    nfRow('Why', 'Guess: they export late, close to a deadline', 'Guess · ask in the next sessions', true)),
+    nfWire('<b>Ben:</b> I can pull the export logs today. The rest we can build on, and the guess gets checked in Thursday’s sessions.'));
+
+  csInit(cs);
+  };
+  if (window.csDemo) start(); else document.addEventListener('DOMContentLoaded', start);
+})();
+
+</script>

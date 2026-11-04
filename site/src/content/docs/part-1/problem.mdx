@@ -1,0 +1,316 @@
+---
+title: "Get the problem right first"
+description: "Most bad design is a good answer to the wrong question: the layout is tidy and the button works, yet it solves something nobody had, or skips what people needed first."
+eyebrow: "Chapter 1"
+sidebar:
+  label: "Start from the problem"
+---
+
+import Raw from '../../../components/Raw.astro';
+import Learned from '../../../components/Learned.astro';
+import Runtime from '../../../components/Runtime.astro';
+import F0 from '../../../fragments/ch-problem/0.html?raw';
+import F1 from '../../../fragments/ch-problem/1.html?raw';
+import F2 from '../../../fragments/ch-problem/2.html?raw';
+import F3 from '../../../fragments/ch-problem/3.html?raw';
+import F4 from '../../../fragments/ch-problem/4.html?raw';
+import F5 from '../../../fragments/ch-problem/5.html?raw';
+import F6 from '../../../fragments/ch-problem/6.html?raw';
+import F7 from '../../../fragments/ch-problem/7.html?raw';
+import F8 from '../../../fragments/ch-problem/8.html?raw';
+import F9 from '../../../fragments/ch-problem/9.html?raw';
+import F10 from '../../../fragments/ch-problem/10.html?raw';
+import F11 from '../../../fragments/ch-problem/11.html?raw';
+import F12 from '../../../fragments/ch-problem/12.html?raw';
+import F13 from '../../../fragments/ch-problem/13.html?raw';
+import F14 from '../../../fragments/ch-problem/14.html?raw';
+import F15 from '../../../fragments/ch-problem/15.html?raw';
+import F16 from '../../../fragments/ch-problem/16.html?raw';
+import F17 from '../../../fragments/ch-problem/17.html?raw';
+import F18 from '../../../fragments/ch-problem/18.html?raw';
+import F19 from '../../../fragments/ch-problem/19.html?raw';
+import F20 from '../../../fragments/ch-problem/20.html?raw';
+import F21 from '../../../fragments/ch-problem/21.html?raw';
+import F22 from '../../../fragments/ch-problem/22.html?raw';
+
+<div class="dfg-chapter" id="ch-problem">
+
+Most bad design is a good answer to the wrong question: the layout is tidy and the button works, yet it solves something nobody had, or skips what people needed first. The three entries below are the work that comes before any pixels: know what has to hold, frame the problem, and decide how you’ll tell it worked.
+
+<article class="entry essay" id="good-needs-hierarchy" data-entry data-name="Hierarchy of needs">
+
+<div class="entry-head">
+
+## Hierarchy of needs \{#good-needs-hierarchy-h\}
+
+<Learned id="good-needs-hierarchy" />
+
+</div>
+
+The hierarchy of needs is an order for building a feature. First it has to work, then work every time, then be easy to use. Only after that does delight count, like a small animation or a friendly line of text.
+
+Each layer rests on the ones below it, so a pleasant touch on a feature that sometimes fails doesn’t feel pleasant: it feels like nobody checked. Easy to use includes people who use a keyboard or a screen reader, so accessibility belongs in that layer and can’t wait for the polish.
+
+<Raw html={F0} />
+
+### Rules \{#good-needs-hierarchy-rules\}
+
+Four rules keep the layers in order.
+
+<div class="cs essay-cs">
+
+<section class="rule" id="good-needs-hierarchy-rule-1">
+
+#### 1. Make it work before you polish it \{#good-needs-hierarchy-rule-1-h\}
+
+When the animation is done before the feature, people get the nice moment and then find nothing behind it. The polish makes the failure feel worse, because it promised something. Build from the bottom up, and add the polish last.
+
+<Raw html={F1} />
+
+</section>
+
+<section class="rule" id="good-needs-hierarchy-rule-2">
+
+#### 2. Check more than the happy path \{#good-needs-hierarchy-rule-2-h\}
+
+A feature can work when everything goes right and still fail people often, because networks are slow, lists are empty and servers return errors. If those cases show a blank screen, people can’t tell whether to wait or leave. Try each case before you call the feature done, and give each one a clear state.
+
+<Raw html={F2} />
+
+</section>
+
+<section class="rule" id="good-needs-hierarchy-rule-3">
+
+#### 3. Make room for delight once it holds \{#good-needs-hierarchy-rule-3-h\}
+
+There is always another bug, so delight can wait forever. The product then works but feels flat: finishing something feels the same as nothing happening. Once the base holds, plan small moments of care, like a friendly confirmation or a smooth transition, as part of the work.
+
+<Raw html={F3} />
+
+</section>
+
+<section class="rule" id="good-needs-hierarchy-rule-4">
+
+#### 4. Don’t cover a failure with a joke \{#good-needs-hierarchy-rule-4-h\}
+
+A cheerful message on a failed payment leaves people with no idea what went wrong, and it can feel like the product doesn’t take their money seriously. Say plainly what failed and what they can do about it. Keep the playful touches for moments that went well.
+
+<Raw html={F4} />
+
+</section>
+
+<Raw html={F5} />
+
+</div>
+
+### In real products \{#good-needs-hierarchy-products\}
+
+<Raw html={F6} />
+
+</article>
+
+<article class="entry essay" id="good-problem-framing" data-entry data-name="Problem framing">
+
+<div class="entry-head">
+
+## Frame the problem \{#good-problem-framing-h\}
+
+<Learned id="good-problem-framing" />
+
+</div>
+
+Framing the problem means writing down who has it, what they’re trying to do and what stops them, before anyone draws a screen. It also says how you’ll know the problem got smaller, which [success criteria](#good-success-criteria) then spell out.
+
+When a request arrives as a solution, the frame turns it back into the problem behind it, so the team can compare more than one answer. Name the person closely enough to include how they work, for example with a keyboard only or on a small phone.
+
+<Raw html={F7} />
+
+### Rules \{#good-problem-framing-rules\}
+
+Five rules keep a problem frame useful.
+
+<div class="cs essay-cs">
+
+<section class="rule" id="good-problem-framing-rule-1">
+
+#### 1. Restate the request as a problem \{#good-problem-framing-rule-1-h\}
+
+A ticket often names its own answer, like “add an Export to PDF button”, and if the work starts there, the only question left is where the button goes. The request is a hint about what hurts, not a spec, so write down the problem behind it first, then look for answers.
+
+<Raw html={F8} />
+
+</section>
+
+<section class="rule" id="good-problem-framing-rule-2">
+
+#### 2. Name the person, the moment and the obstacle \{#good-problem-framing-rule-2-h\}
+
+A frame like “make settings easier to use” fits almost any design: two people can read it, picture different screens, and both feel right. Say who it is, when it happens and what gets in their way. If two readers still picture different things, narrow it again. A who that’s only a group, like “users” or “everyone”, is always too broad. The [brief check](https://ryan-di.github.io/design-field-guide/#eff-brief-check) lists the words to watch for.
+
+<Raw html={F9} />
+
+</section>
+
+<section class="rule" id="good-problem-framing-rule-3">
+
+#### 3. Show where you saw it \{#good-problem-framing-rule-3-h\}
+
+A problem nobody has seen is a guess: the team can’t tell how often it happens or how much it hurts, so the talk turns into opinions. Point to where it came from: a support message, a session you watched, a count. One real example is worth more than a paragraph of reasons.
+
+<Raw html={F10} />
+
+</section>
+
+<section class="rule" id="good-problem-framing-rule-4">
+
+#### 4. Keep the answer out of the frame \{#good-problem-framing-rule-4-h\}
+
+“People can’t find the Sort button” already holds its answer: only one design fits it, so the frame just repeats the request. Any control name in the problem, like a button, a dialog or a toggle, is the sign to look for. Describe what people are trying to get done, without naming a control. Then sketch at least two different answers.
+
+<Raw html={F11} />
+
+</section>
+
+<section class="rule" id="good-problem-framing-rule-5">
+
+#### 5. Leave what you don’t know empty \{#good-problem-framing-rule-5-h\}
+
+A frame filled with guesses reads like fact, so nobody checks it, and the team builds for a problem that may not exist. Say where each part came from: something people told you, something you read or saw, or your own guess. Look before you guess, in the support threads, tickets and notes that already exist. When nobody knows yet, leave the part empty and add it to a list of things to check. Label any guess with how you’ll check it, and when two sources disagree, show both.
+
+<Raw html={F12} />
+
+</section>
+
+<Raw html={F13} />
+
+</div>
+
+### In real products \{#good-problem-framing-products\}
+
+<Raw html={F14} />
+
+</article>
+
+<article class="entry essay" id="good-success-criteria" data-entry data-name="Success criteria">
+
+<div class="entry-head">
+
+## Define “good” before building \{#good-success-criteria-h\}
+
+<Learned id="good-success-criteria" />
+
+</div>
+
+Success criteria say what you would see or count if a change worked. Where the [problem frame](#good-problem-framing) says what to solve, they say what “done” looks like.
+
+Good criteria describe what people do, not how the design feels. “People find Export without help” can be checked, but “Export is more intuitive” can’t. Include the other ways people work too, for example “people using only a keyboard can finish checkout”.
+
+<Raw html={F15} />
+
+### Rules \{#good-success-criteria-rules\}
+
+Four rules keep success criteria useful.
+
+<div class="cs essay-cs">
+
+<section class="rule" id="good-success-criteria-rule-1">
+
+#### 1. Count people who got it done \{#good-success-criteria-rule-1-h\}
+
+Views, clicks and time on page can all go up when a design gets worse, because a confusing page makes people click around and stay longer. Count what people came to do instead: how many finished the task, how long it took and how many errors they hit.
+
+<Raw html={F16} />
+
+</section>
+
+<section class="rule" id="good-success-criteria-rule-2">
+
+#### 2. Watch people, not only numbers \{#good-success-criteria-rule-2-h\}
+
+A number tells you that something changed, not why: a drop in sign-ups could come from any field on the form. Watch a few people use it. Five short sessions often show the exact place where people stop, which no dashboard will.
+
+<Raw html={F17} />
+
+</section>
+
+<section class="rule" id="good-success-criteria-rule-3">
+
+#### 3. Write them down before you build \{#good-success-criteria-rule-3-h\}
+
+Without criteria, a change is done when it ships: nobody can say whether it helped, and the review only checks that it looks fine. Write the criteria in the ticket or the brief before work starts, so the review can test the change against them.
+
+<Raw html={F18} />
+
+</section>
+
+<section class="rule" id="good-success-criteria-rule-4">
+
+#### 4. Turn feelings into things you can see \{#good-success-criteria-rule-4-h\}
+
+Words like easier, cleaner and more intuitive sound like goals, but nobody can check them, so after a test people argue about whether it felt easier. Turn each feeling into something you can watch: found without help, finished on the first try, fewer questions to support.
+
+The demo at the top of this entry marks these words, and the [brief check](https://ryan-di.github.io/design-field-guide/#eff-brief-check) in Part 4 flags the same ones. Fill the slots with your own task and numbers.
+
+<Raw html={F19} />
+
+<Raw html={F20} />
+
+</section>
+
+<Raw html={F21} />
+
+</div>
+
+### In real products \{#good-success-criteria-products\}
+
+<Raw html={F22} />
+
+</article>
+
+<aside class="in-short" id="ch-problem-in-short" aria-labelledby="ch-problem-in-short-h">
+
+## In short \{#ch-problem-in-short-h\}
+
+<div class="is-grid">
+
+<div>
+
+<a class="is-e" href="#good-needs-hierarchy">Hierarchy of needs</a>
+
+1. [Make it work before you polish it](#good-needs-hierarchy-rule-1)
+2. [Check more than the happy path](#good-needs-hierarchy-rule-2)
+3. [Make room for delight once it holds](#good-needs-hierarchy-rule-3)
+4. [Don’t cover a failure with a joke](#good-needs-hierarchy-rule-4)
+
+</div>
+
+<div>
+
+<a class="is-e" href="#good-problem-framing">Frame the problem</a>
+
+1. [Restate the request as a problem](#good-problem-framing-rule-1)
+2. [Name the person, the moment and the obstacle](#good-problem-framing-rule-2)
+3. [Show where you saw it](#good-problem-framing-rule-3)
+4. [Keep the answer out of the frame](#good-problem-framing-rule-4)
+5. [Leave what you don’t know empty](#good-problem-framing-rule-5)
+
+</div>
+
+<div>
+
+<a class="is-e" href="#good-success-criteria">Define “good” before building</a>
+
+1. [Count people who got it done](#good-success-criteria-rule-1)
+2. [Watch people, not only numbers](#good-success-criteria-rule-2)
+3. [Write them down before you build](#good-success-criteria-rule-3)
+4. [Turn feelings into things you can see](#good-success-criteria-rule-4)
+
+</div>
+
+</div>
+
+</aside>
+
+</div>
+
+<Runtime chapter="ch-problem" />

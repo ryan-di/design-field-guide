@@ -1,0 +1,45 @@
+<div class="stage tall" data-demo="good-needs-hierarchy">
+      <div class="p18-hn">
+        <div class="p18-pyr" role="group" aria-label="Hierarchy of needs, top to bottom">
+          <div class="p18-layer p18-w4" data-layer="pleasurable">
+            <span class="p18-ltext"><b>Pleasurable</b><small data-status>Holds</small></span>
+            <button class="p18-brk" type="button" aria-pressed="false" aria-label="Break Pleasurable">Break</button>
+          </div>
+          <div class="p18-layer p18-w3" data-layer="usable">
+            <span class="p18-ltext"><b>Usable</b><small data-status>Holds</small></span>
+            <button class="p18-brk" type="button" aria-pressed="false" aria-label="Break Usable">Break</button>
+          </div>
+          <div class="p18-layer p18-w2" data-layer="reliable">
+            <span class="p18-ltext"><b>Reliable</b><small data-status>Holds</small></span>
+            <button class="p18-brk" type="button" aria-pressed="false" aria-label="Break Reliable">Break</button>
+          </div>
+          <div class="p18-layer p18-w1" data-layer="functional">
+            <span class="p18-ltext"><b>Functional</b><small data-status>Holds</small></span>
+            <button class="p18-brk" type="button" aria-pressed="false" aria-label="Break Functional">Break</button>
+          </div>
+        </div>
+        <div class="app-frame p18-app">
+          <div class="app-bar">
+            <span class="p18-title">Trip notes <small id="p18-hn-saved">Not saved yet</small></span>
+            <span class="p18-savewrap">
+              <button class="btn btn-primary p18-save" type="button" id="p18-hn-save"><svg class="icon sm" aria-hidden="true"><use href="#i-check"/></svg><span>Save</span></button>
+              <span class="anchor" id="p18-hn-morewrap" hidden>
+                <button class="icon-btn" type="button" id="p18-hn-more" aria-label="More" aria-haspopup="menu" aria-expanded="false" aria-controls="p18-hn-menu"><svg class="icon" aria-hidden="true"><use href="#i-dots"/></svg></button>
+                <span class="surface p18-menu" id="p18-hn-menu" role="menu" aria-label="More" hidden>
+                  <button type="button" role="menuitem" data-item="props">Document properties</button>
+                  <button type="button" role="menuitem" data-item="save">Persist document state</button>
+                  <button type="button" role="menuitem" data-item="json">Export as HTML</button>
+                </span>
+              </span>
+              <span class="p18-burst" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i></span>
+            </span>
+          </div>
+          <div class="app-body">
+            <div class="row p18-nodes" aria-label="Sections in this document"><span class="node">Flights</span><span class="node">Hotel</span><span class="node">Day trips</span><span class="node">Packing</span></div>
+            <p class="p18-ver" id="p18-hn-ver">Saved versions: 0</p>
+          </div>
+        </div>
+      </div>
+      <p class="state-caption" id="p18-hn-cap" aria-live="polite"></p>
+      <p class="try"><b>Try it:</b> press Save and enjoy the little check. Then break Reliable and save twice: the celebration plays, then the save fails. Break Usable to hide Save in a menu, or Functional to see everything above it go shaky.</p>
+    </div>

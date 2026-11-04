@@ -1,0 +1,122 @@
+<script>
+(() => {
+  const cs = document.currentScript.closest('.cs');
+  /* The shared case helpers are defined later in the book, so wait for them. */
+  const start = () => {
+  const D = (k, html, wire) => csDemo(cs.querySelector('[data-d="' + k + '"]'), html, wire);
+  const css = document.createElement('style');
+  css.textContent = `
+#good-success-criteria .sc-card{width:min(360px,100%);display:flex;flex-direction:column;gap:10px;text-align:left;background:var(--ui-surface);border:1px solid var(--ui-border);border-radius:12px;padding:14px;box-shadow:var(--ui-shadow);font-size:14px;line-height:1.45}
+#good-success-criteria .sc-k{font:600 11.5px var(--font-mono);letter-spacing:.06em;text-transform:uppercase;color:var(--ui-muted)}
+#good-success-criteria .sc-title{font:600 15.5px/1.35 var(--font-body)}
+#good-success-criteria .sc-tiles{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px}
+#good-success-criteria .sc-tile{display:flex;flex-direction:column;gap:2px;padding:8px;border:1px solid var(--ui-border);border-radius:8px;min-width:0}
+#good-success-criteria .sc-tile small{font-size:11.5px;line-height:1.25;color:var(--ui-muted)}
+#good-success-criteria .sc-tile b{font:700 17px var(--font-body)}
+#good-success-criteria .sc-tile span{font:600 12px var(--font-mono)}
+#good-success-criteria .up{color:var(--ui-ok)}
+#good-success-criteria .down{color:var(--ui-danger)}
+#good-success-criteria .sc-verdict{font-weight:600}
+#good-success-criteria .sc-verdict:empty{display:none}
+#good-success-criteria .sc-big{display:flex;align-items:baseline;gap:8px}
+#good-success-criteria .sc-big b{font:700 24px var(--font-body)}
+#good-success-criteria .sc-sess{display:flex;flex-wrap:wrap;gap:6px}
+#good-success-criteria .sc-sess .btn[aria-pressed="true"]{background:var(--ui-sel-soft);border-color:var(--ui-sel)}
+#good-success-criteria .sc-note{padding:9px 11px;border-radius:9px;background:var(--ui-hover);min-height:44px}
+#good-success-criteria .sc-note:empty{display:none}
+#good-success-criteria .sc-list{display:flex;flex-direction:column;gap:5px;margin:0;padding:0;list-style:none}
+#good-success-criteria .sc-list li{display:flex;gap:8px;align-items:flex-start}
+#good-success-criteria .sc-list .icon{flex:none;margin-top:2px;color:var(--ui-muted)}
+#good-success-criteria .sc-list li.ok .icon{color:var(--ui-ok)}
+#good-success-criteria .sc-list li.no .icon{color:var(--ui-danger)}
+#good-success-criteria .sc-list small{display:block;color:var(--ui-muted);font-size:12.5px}
+#good-success-criteria .sc-pill{align-self:flex-start;font:600 11.5px var(--font-mono);padding:2px 8px;border-radius:999px;background:var(--ui-hover);color:var(--ui-muted)}
+#good-success-criteria .sc-cmt{display:flex;gap:8px;align-items:flex-start;font-size:13.5px}
+#good-success-criteria .sc-cmt .av{width:22px;height:22px;border-radius:50%;flex:none;background:var(--thumb-b)}
+`;
+  cs.appendChild(css);
+  const icon = n => '<svg class="icon sm" aria-hidden="true"><use href="#i-' + n + '"/></svg>';
+
+  /* 1. Vanity metrics */
+  const relHtml = '<div class="sc-card"><span class="sc-k">Help center · after the redesign</span><div class="sc-tiles" data-tiles></div>' +
+    '<button class="btn btn-primary cs-sm" type="button" data-go style="align-self:flex-start">Release the redesign</button><p class="sc-verdict" data-out aria-live="polite"></p></div>';
+  const relWire = (tiles, verdict, tone) => d => {
+    const box = d.querySelector('[data-tiles]'), go = d.querySelector('[data-go]');
+    const draw = after => { box.innerHTML = tiles.map(x => '<div class="sc-tile"><small>' + x[0] + '</small><b>' + (after ? x[2] : x[1]) + '</b><span class="' + (after ? x[3] : '') + '">' + (after ? x[4] : 'before') + '</span></div>').join(''); };
+    draw(false);
+    go.addEventListener('click', () => { go.remove(); draw(true); const v = d.querySelector('[data-out]'); v.className = 'sc-verdict ' + tone; v.textContent = verdict; });
+  };
+  D('good-success-criteria-1b', relHtml, relWire([['Page views', '8,200', '12,900', 'up', '↑ 57%'], ['Clicks per visit', '3.1', '5.4', 'up', '↑ 74%'], ['Time on page', '0:48', '1:35', 'up', '↑ 98%']], 'Every number went up. Looks like a win.', 'up'));
+  D('good-success-criteria-1f', relHtml, relWire([['Found an answer', '64%', '47%', 'down', '↓ 17 pts'], ['Time to answer', '0:48', '1:35', 'down', '↑ slower'], ['Contacted support', '210', '340', 'down', '↑ 62%']], 'Fewer people found an answer, and it took longer. The redesign made it worse.', 'down'));
+
+  /* 2. Numbers only */
+  const funnel = '<span class="sc-k">Bank app · finished sign-up</span><div class="sc-big"><b>58%</b><span class="down">↓ from 72% last month</span></div>';
+  D('good-success-criteria-2b', '<div class="sc-card">' + funnel + '<button class="btn btn-secondary cs-sm" type="button" data-go style="align-self:flex-start">Why?</button><p class="sc-note" data-out aria-live="polite"></p></div>', d => {
+    d.querySelector('[data-go]').addEventListener('click', () => { d.querySelector('[data-out]').textContent = 'The dashboard can’t say. It only counts who finished, not what happened on the way.'; });
+  });
+  const SESS = [
+    'Stopped at Phone number. Said: “Why do they need my number?”',
+    'Finished in about a minute.',
+    'Stopped at Phone number and closed the app.',
+    'Paused at Phone number for a while, then typed it.',
+    'Stopped at Phone number. Looked for a Skip button.'
+  ];
+  D('good-success-criteria-2f', '<div class="sc-card">' + funnel + '<span class="sc-k">Sessions you watched</span><div class="sc-sess" role="group" aria-label="Sessions">' +
+    SESS.map((s, i) => '<button class="btn btn-secondary cs-sm" type="button" aria-pressed="false" data-i="' + i + '">Person ' + (i + 1) + '</button>').join('') + '</div><p class="sc-note" data-out aria-live="polite"></p><p class="sc-verdict" data-sum></p></div>', d => {
+    const seen = new Set();
+    d.querySelectorAll('[data-i]').forEach(b => b.addEventListener('click', () => {
+      d.querySelectorAll('[data-i]').forEach(x => x.setAttribute('aria-pressed', String(x === b)));
+      const i = Number(b.dataset.i); seen.add(i);
+      d.querySelector('[data-out]').textContent = 'Person ' + (i + 1) + ': ' + SESS[i];
+      if (seen.size === SESS.length) d.querySelector('[data-sum]').textContent = '4 of 5 stopped or paused at the same field: Phone number.';
+    }));
+  });
+
+  /* 3. No criteria written down */
+  const tkHead = '<span class="sc-k">Ticket</span><span class="sc-title">New search filters</span><span>Redesign the filters on the shop’s search page.</span>';
+  D('good-success-criteria-3b', '<div class="sc-card">' + tkHead + '<span class="sc-pill">Shipped</span><button class="btn btn-secondary cs-sm" type="button" data-go style="align-self:flex-start">Review the change</button><div data-out aria-live="polite"></div></div>', d => {
+    const go = d.querySelector('[data-go]');
+    go.addEventListener('click', () => {
+      go.remove();
+      d.querySelector('[data-out]').innerHTML = '<div class="sc-cmt"><span class="av"></span><span><b>Reviewer:</b> Looks good to me. Did it help shoppers? Nothing here says what to check.</span></div>';
+    });
+  });
+  const CRIT = [
+    ['People filter by price in under 10 seconds', '9 seconds on average in the test', 'ok'],
+    ['Fewer searches end with no results', 'Down from 18% to 11%', 'ok'],
+    ['The filters work with the keyboard alone', 'The price slider can’t be moved with the keyboard', 'no']
+  ];
+  D('good-success-criteria-3f', '<div class="sc-card">' + tkHead + '<span class="sc-k">We’ll know it worked when</span><ul class="sc-list" data-list>' +
+    CRIT.map(c => '<li>' + icon('info') + '<span>' + c[0] + '<small></small></span></li>').join('') + '</ul><button class="btn btn-secondary cs-sm" type="button" data-go style="align-self:flex-start">Review the change</button><p class="sc-verdict down" data-out aria-live="polite"></p></div>', (d, t) => {
+    const go = d.querySelector('[data-go]');
+    go.addEventListener('click', () => {
+      go.remove();
+      d.querySelectorAll('[data-list] li').forEach((li, i) => t.after(() => {
+        li.className = CRIT[i][2];
+        li.querySelector('use').setAttribute('href', CRIT[i][2] === 'ok' ? '#i-check' : '#i-x');
+        li.querySelector('small').textContent = CRIT[i][1];
+      }, 250 + i * 450));
+      t.after(() => { d.querySelector('[data-out]').textContent = 'Not done yet: one criterion fails.'; }, 250 + CRIT.length * 450);
+    });
+  });
+
+  /* 4. Criteria as feelings */
+  const testHtml = goal => '<div class="sc-card"><span class="sc-k">Restaurant app · booking test</span><span><b>Goal:</b> ' + goal + '</span><ul class="sc-list" data-list></ul>' +
+    '<button class="btn btn-primary cs-sm" type="button" data-go style="align-self:flex-start">Run the test</button><p class="sc-verdict" data-out aria-live="polite"></p></div>';
+  const testWire = (rows, verdict, tone) => (d, t) => {
+    const go = d.querySelector('[data-go]'), list = d.querySelector('[data-list]');
+    go.addEventListener('click', () => {
+      go.remove();
+      rows.forEach((r, i) => t.after(() => list.insertAdjacentHTML('beforeend', '<li class="' + r[0] + '">' + icon(r[0] === 'ok' ? 'check' : r[0] === 'no' ? 'x' : 'info') + '<span>Person ' + (i + 1) + ': ' + r[1] + '</span></li>'), 200 + i * 350));
+      t.after(() => { const v = d.querySelector('[data-out]'); v.className = 'sc-verdict ' + tone; v.textContent = verdict; }, 200 + rows.length * 350);
+    });
+  };
+  D('good-success-criteria-4b', testHtml('Booking a table feels easier.'), testWire([['', '“It was okay.”'], ['', '“Easier than before, I think.”'], ['', '“About the same?”'], ['', '“Nice colors.”'], ['', '“Fine.”']], 'Did it pass? Nobody can say.', 'down'));
+  D('good-success-criteria-4f', testHtml('People book a table without help, on the first try.'), testWire([['ok', 'booked on the first try'], ['ok', 'booked on the first try'], ['no', 'needed help to find the times'], ['ok', 'booked on the first try'], ['ok', 'booked on the first try']], 'Passed: 4 of 5. Next, look at how the times are shown.', 'up'));
+
+  csInit(cs);
+  };
+  if (window.csDemo) start(); else document.addEventListener('DOMContentLoaded', start);
+})();
+
+</script>

@@ -1,0 +1,11 @@
+---
+// The book's shared helpers, then this chapter's demo code. Placed at the end of the page so the demos exist.
+import runtime from '../fragments/runtime.html?raw';
+
+const demos = import.meta.glob('../fragments/*/demos.html', { query: '?raw', import: 'default', eager: true });
+const { chapter } = Astro.props;
+const own = demos[`../fragments/${chapter}/demos.html`] ?? '';
+---
+
+<Fragment set:html={runtime} />
+<Fragment set:html={own} />

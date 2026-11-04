@@ -1,0 +1,83 @@
+<div class="note comfy cw-wrap">
+  <div class="seg cw-seg" role="radiogroup" aria-label="Example">
+    <input type="radio" name="cw-good-success-criteria-w" id="cw-good-success-criteria-w-1" value="gh" checked><label for="cw-good-success-criteria-w-1">GitHub</label>
+    <input type="radio" name="cw-good-success-criteria-w" id="cw-good-success-criteria-w-2" value="yt"><label for="cw-good-success-criteria-w-2">YouTube Studio</label>
+    <input type="radio" name="cw-good-success-criteria-w" id="cw-good-success-criteria-w-3" value="watch"><label for="cw-good-success-criteria-w-3">Apple Watch</label>
+  </div>
+  <div class="cw cw-gsc-view" data-cw-view role="img" aria-label=""></div>
+  <p class="cw-cap" data-cw-cap aria-live="polite"></p>
+  <style>
+    .cw-gsc-view{min-height:216px;align-items:center;justify-content:center}
+    .cw-gsc-box{width:min(360px,100%);background:var(--ui-surface);border:1px solid var(--ui-border);border-radius:9px;overflow:hidden;box-shadow:var(--ui-shadow);color:var(--ui-text);font-size:12.5px}
+    .cw-gsc-head{display:flex;gap:8px;align-items:flex-start;padding:9px 11px;border-bottom:1px solid var(--ui-border)}
+    .cw-gsc-head > span:not(.cw-gsc-x){display:flex;flex-direction:column;gap:1px}
+    .cw-gsc-head b{font:600 13px var(--font-body)}
+    .cw-gsc-head small{font-size:12px;color:var(--ui-muted)}
+    .cw-gsc-x{display:inline-grid;place-items:center;width:20px;height:20px;border-radius:50%;flex:none;background:var(--ui-danger);color:var(--ui-on-danger)}
+    .cw-gsc-x.ok{background:var(--ui-ok)}
+    .cw-gsc-x .icon{width:12px;height:12px;stroke-width:3}
+    .cw-gsc-checks{list-style:none;margin:0;padding:4px 11px}
+    .cw-gsc-checks li{display:flex;align-items:center;gap:8px;padding:5px 0}
+    .cw-gsc-checks li + li{border-top:1px solid var(--ui-border)}
+    .cw-gsc-checks li > span{flex:1;min-width:0}
+    .cw-gsc-checks em{font-style:normal;font-size:11.5px;color:var(--ui-muted);border:1px solid var(--ui-border);border-radius:999px;padding:0 7px}
+    .cw-gsc-checks .icon{width:16px;height:16px}
+    .cw-gsc-checks .ok .icon{color:var(--ui-ok)}
+    .cw-gsc-checks .bad .icon{color:var(--ui-danger)}
+    .cw-gsc-foot{display:flex;align-items:center;gap:10px;padding:8px 11px;border-top:1px solid var(--ui-border);background:var(--ui-bg)}
+    .cw-gsc-foot .btn{font-size:12.5px;padding:5px 12px;cursor:default}
+    .cw-gsc-foot small{font-size:12px;color:var(--ui-muted)}
+    .cw-gsc-tiles{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;padding:10px 11px 0}
+    .cw-gsc-tile{border:1px solid var(--ui-border);border-radius:7px;padding:6px 8px;display:flex;flex-direction:column;gap:1px}
+    .cw-gsc-tile small{font-size:11.5px;color:var(--ui-muted)}
+    .cw-gsc-tile b{font:700 16px var(--font-body)}
+    .cw-gsc-tile.hl{border-color:var(--ui-sel);box-shadow:0 0 0 2px var(--ui-sel-soft)}
+    .cw-gsc-chart{padding:8px 11px 10px;display:flex;flex-direction:column;gap:4px}
+    .cw-gsc-chart > b{font:600 12px var(--font-body)}
+    .cw-gsc-plot{position:relative}
+    .cw-gsc-chart svg{display:block;width:100%;height:74px}
+    .cw-gsc-note{position:absolute;left:17%;top:6px;font-size:11.5px;color:var(--ui-muted);background:var(--ui-surface);padding:0 4px;border-left:1.5px dashed var(--ui-sel)}
+    .cw-gsc-axis{display:flex;justify-content:space-between;font-size:11.5px;color:var(--ui-muted)}
+    .cw-gsc-sample{font-size:11.5px;color:var(--ui-muted);padding:0 11px 8px}
+    .cw-gsc-watch{display:flex;align-items:center;gap:16px;flex-wrap:wrap;justify-content:center}
+    .cw-gsc-face{width:132px;height:150px;border-radius:34px;background:var(--ui-surface);border:1px solid var(--ui-border);box-shadow:var(--ui-shadow);display:grid;place-items:center;flex:none}
+    .cw-gsc-face svg{width:108px;height:108px}
+    .cw-gsc-legend{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:8px;font-size:12.5px;color:var(--ui-text)}
+    .cw-gsc-legend li{display:grid;grid-template-columns:12px auto;gap:0 8px;align-items:center}
+    .cw-gsc-legend i{width:12px;height:12px;border-radius:50%}
+    .cw-gsc-legend b{font-weight:600}
+    .cw-gsc-legend small{grid-column:2;font-size:12px;color:var(--ui-muted)}
+  </style>
+  <script>
+  (() => {
+    const wrap = document.currentScript.closest('.cw-wrap');
+    const view = wrap.querySelector('[data-cw-view]'), cap = wrap.querySelector('[data-cw-cap]');
+    const ic = id => '<svg class="icon sm" aria-hidden="true"><use href="#i-' + id + '"/></svg>';
+    const check = (name, ok) => '<li class="' + (ok ? 'ok' : 'bad') + '">' + ic(ok ? 'check' : 'x') + '<span>' + name + '</span><em>Required</em></li>';
+    const ring = (r, pct, color) => { const c = 2 * Math.PI * r; return '<circle cx="54" cy="54" r="' + r + '" fill="none" stroke="var(--ui-skel)" stroke-width="10"/>' +
+      '<circle cx="54" cy="54" r="' + r + '" fill="none" stroke="' + color + '" stroke-width="10" stroke-linecap="round" stroke-dasharray="' + (c * pct).toFixed(1) + ' ' + c.toFixed(1) + '" transform="rotate(-90 54 54)"/>'; };
+    const S = {
+      gh: { html: '<div class="cw-gsc-box"><div class="cw-gsc-head"><span class="cw-gsc-x"><svg class="icon sm" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 7l10 10M17 7L7 17"/></svg></span><span><b>Merging is blocked</b><small>1 required check failed</small></span></div>' +
+          '<ul class="cw-gsc-checks">' + check('Build', true) + check('Unit tests', true) + check('Lint', false) + '</ul>' +
+          '<div class="cw-gsc-foot"><span class="btn btn-primary" aria-disabled="true">Merge</span><small>Fix the failing check first</small></div></div>',
+        alt: 'A pull request merge box: Merging is blocked, 1 required check failed. Build and Unit tests pass, Lint fails. The Merge button is disabled.',
+        cap: 'GitHub: a repo can require named checks to pass before a pull request can merge, and every change is held to them.' },
+      yt: { html: '<div class="cw-gsc-box"><div class="cw-gsc-tiles"><span class="cw-gsc-tile"><small>Views</small><b>12.4K</b></span><span class="cw-gsc-tile hl"><small>Average watched</small><b>1:52</b></span></div>' +
+          '<div class="cw-gsc-chart"><b>Audience retention</b><div class="cw-gsc-plot"><span class="cw-gsc-note">Big drop in the first seconds</span><svg viewBox="0 0 300 74" preserveAspectRatio="none" aria-hidden="true">' +
+          '<path d="M0 73 H300" stroke="var(--ui-border)" stroke-width="1.5" fill="none"/>' +
+          '<path d="M0 4 C 18 6, 26 34, 44 40 S 120 48, 170 50 S 260 56, 300 60" stroke="var(--ui-sel)" stroke-width="2.5" fill="none" vector-effect="non-scaling-stroke"/></svg></div>' +
+          '<span class="cw-gsc-axis"><span>Start of video</span><span>End</span></span></div><p class="cw-gsc-sample">Sample numbers</p></div>',
+        alt: 'Two tiles, Views 12.4K and Average watched 1:52, the second highlighted. Below, an audience retention line drops steeply at the start, then flattens.',
+        cap: 'YouTube Studio: next to views, it shows how long people watched and where they dropped off. Views can climb while most people leave in the first seconds.' },
+      watch: { html: '<div class="cw-gsc-watch"><div class="cw-gsc-face"><svg viewBox="0 0 108 108" aria-hidden="true">' +
+          ring(46, .64, 'var(--accent)') + ring(33, .73, 'var(--ui-ok)') + ring(20, .75, 'var(--ui-sel)') + '</svg></div>' +
+          '<ul class="cw-gsc-legend"><li><i style="background:var(--accent)"></i><b>Move</b><small>320 of 500 cal</small></li><li><i style="background:var(--ui-ok)"></i><b>Exercise</b><small>22 of 30 min</small></li><li><i style="background:var(--ui-sel)"></i><b>Stand</b><small>9 of 12 hours</small></li></ul></div>',
+        alt: 'A watch face with three nested rings, each about two thirds closed. A legend reads Move 320 of 500 cal, Exercise 22 of 30 min, Stand 9 of 12 hours.',
+        cap: 'Apple Watch: each Activity ring is a daily goal you can count, like minutes of exercise. One glance shows how close you are, with nothing left to judge by feel.' }
+    };
+    const render = k => { view.innerHTML = S[k].html; view.setAttribute('aria-label', 'Sketch: ' + S[k].alt); cap.textContent = S[k].cap; };
+    wrap.querySelectorAll('input[name="cw-good-success-criteria-w"]').forEach(r => r.addEventListener('change', () => render(r.value)));
+    render('gh');
+  })();
+  </script>
+</div>

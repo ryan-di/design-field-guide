@@ -1,0 +1,228 @@
+<script>
+(() => {
+  const { $, $$, store, demo, toast } = window.dfg;
+
+  /* js-41-problem.js */
+  demo('good-needs-hierarchy', st => {
+    const order = ['functional', 'reliable', 'usable', 'pleasurable'];
+    const broken = { functional: false, reliable: false, usable: false, pleasurable: false };
+    const layers = {};
+    $$('[data-layer]', st).forEach(el => { layers[el.dataset.layer] = el; });
+    const saveBtn = $('#p18-hn-save', st), moreWrap = $('#p18-hn-morewrap', st), more = $('#p18-hn-more', st), menu = $('#p18-hn-menu', st);
+    const wrap = $('.p18-savewrap', st), savedEl = $('#p18-hn-saved', st), verEl = $('#p18-hn-ver', st), cap = $('#p18-hn-cap', st);
+    const items = $$('[role="menuitem"]', menu);
+    let attempts = 0, versions = 0, celebrateTimer = 0, failTimer = 0;
+
+    const lowestBroken = () => order.find(k => broken[k]);
+    const captions = {
+      none: 'Every layer holds. Save is easy to find, works every time, and the small check feels good.',
+      functional: 'Functional is broken: pressing Save does nothing at all. Every layer above it is shaky, however nice it looks.',
+      reliable: 'Reliable is broken: every other save fails. When the celebration plays first, it feels like noise.',
+      usable: 'Usable is broken: saving works, but it hides under More with a name nobody would guess.',
+      pleasurable: 'Pleasurable is broken: it works and it’s easy to find. It just feels flat. Add care here once the rest holds.'
+    };
+    const render = () => {
+      const low = lowestBroken();
+      const lowIdx = low ? order.indexOf(low) : order.length;
+      order.forEach((k, i) => {
+        const el = layers[k], btn = $('.p18-brk', el), status = $('[data-status]', el);
+        const shaky = !broken[k] && i > lowIdx;
+        el.classList.toggle('is-broken', broken[k]);
+        el.classList.toggle('is-shaky', shaky);
+        btn.setAttribute('aria-pressed', String(broken[k]));
+        status.textContent = broken[k] ? 'Broken' : shaky ? 'Shaky' : 'Holds';
+      });
+      saveBtn.hidden = broken.usable;
+      moreWrap.hidden = !broken.usable;
+      if (!broken.usable) closeMenu(false);
+      cap.textContent = captions[low || 'none'];
+    };
+
+    const celebrate = () => {
+      clearTimeout(celebrateTimer);
+      wrap.classList.remove('p18-party');
+      void wrap.offsetWidth;
+      wrap.classList.add('p18-party');
+      celebrateTimer = setTimeout(() => wrap.classList.remove('p18-party'), 1100);
+    };
+    const doSave = () => {
+      clearTimeout(failTimer);
+      const delight = !broken.pleasurable;
+      if (delight) celebrate();
+      if (broken.functional) return;
+      attempts += 1;
+      if (broken.reliable && attempts % 2 === 1) {
+        failTimer = setTimeout(() => {
+          toast(st, 'Save failed. Your changes weren’t saved.', { tone: 'error', action: { label: 'Retry', run: doSave } });
+        }, delight ? 650 : 0);
+        return;
+      }
+      versions += 1;
+      savedEl.textContent = delight ? 'Saved just now · v' + versions : 'Saved';
+      verEl.textContent = 'Saved versions: ' + versions;
+      if (!delight) toast(st, 'Saved');
+      else toast(st, 'Document saved as v' + versions);
+    };
+
+    const openMenu = () => {
+      menu.hidden = false;
+      more.setAttribute('aria-expanded', 'true');
+      items[0].focus();
+    };
+    function closeMenu(focusTrigger) {
+      if (menu.hidden) return;
+      menu.hidden = true;
+      more.setAttribute('aria-expanded', 'false');
+      if (focusTrigger) more.focus();
+    }
+
+    $$('.p18-brk', st).forEach(btn => btn.addEventListener('click', () => {
+      const k = btn.closest('[data-layer]').dataset.layer;
+      broken[k] = !broken[k];
+      if (k === 'reliable') attempts = 0;
+      render();
+    }));
+    saveBtn.addEventListener('click', doSave);
+    more.addEventListener('click', () => { if (menu.hidden) openMenu(); else closeMenu(false); });
+    menu.addEventListener('keydown', e => {
+      const i = items.indexOf(document.activeElement);
+      if (e.key === 'ArrowDown') { e.preventDefault(); items[(i + 1) % items.length].focus(); }
+      else if (e.key === 'ArrowUp') { e.preventDefault(); items[(i - 1 + items.length) % items.length].focus(); }
+      else if (e.key === 'Home') { e.preventDefault(); items[0].focus(); }
+      else if (e.key === 'End') { e.preventDefault(); items[items.length - 1].focus(); }
+      else if (e.key === 'Escape') { e.preventDefault(); e.stopPropagation(); closeMenu(true); }
+      else if (e.key === 'Tab') closeMenu(false);
+    });
+    items.forEach(it => it.addEventListener('click', () => {
+      closeMenu(true);
+      if (it.dataset.item === 'save') doSave();
+      else toast(st, 'Not the save. That one isn’t part of this demo.');
+    }));
+    document.addEventListener('click', e => { if (!menu.hidden && !moreWrap.contains(e.target)) closeMenu(false); });
+    render();
+  });
+
+  demo('good-problem-framing', st => {
+    const views = { before: $('#p18-pf-v-before', st), after: $('#p18-pf-v-after', st) };
+    const fields = {};
+    $$('[data-q]', st).forEach(el => { fields[el.dataset.q] = el; });
+    const stmt = $('#p18-pf-stmt', st), warn = $('#p18-pf-warn', st), show = $('#p18-pf-show', st), sols = $('#p18-pf-sols', st);
+    const placeholders = { who: 'who?', goal: 'do what?', block: 'what stops them?', know: 'what would you see?' };
+    const broad = /\b(everyone|everybody|anyone|all users|users|easier|easy|better|improve\w*|intuitive|more efficient)\b/i;
+    const clean = v => v.trim().replace(/\s+/g, ' ').replace(/[.\s]+$/, '');
+    const part = (key, cap) => {
+      let v = clean(fields[key].value);
+      const s = document.createElement('b');
+      if (!v) { s.className = 'p18-gap'; s.textContent = '[' + placeholders[key] + ']'; return s; }
+      if (cap) v = v.charAt(0).toUpperCase() + v.slice(1);
+      s.textContent = v;
+      return s;
+    };
+    const render = () => {
+      stmt.textContent = '';
+      stmt.append(part('who', true), ' want to ', part('goal'), ', but ', part('block'), '. We’ll know it’s better when ', part('know'), '.');
+      const hits = [];
+      ['who', 'goal', 'block'].forEach(k => {
+        const m = fields[k].value.match(broad);
+        if (m) hits.push(m[0].toLowerCase());
+      });
+      warn.hidden = !hits.length;
+      if (hits.length) warn.textContent = '“' + hits[0] + '” is too broad to design for. Name the person, the moment and the obstacle.';
+    };
+    const setMode = () => {
+      const m = ($('input[name="p18-pf-mode"]:checked', st) || {}).value || 'before';
+      views.before.hidden = m !== 'before';
+      views.after.hidden = m !== 'after';
+    };
+    Object.values(fields).forEach(el => el.addEventListener('input', render));
+    $$('input[name="p18-pf-mode"]', st).forEach(r => r.addEventListener('change', setMode));
+    show.addEventListener('click', () => {
+      const open = sols.hidden;
+      sols.hidden = !open;
+      show.setAttribute('aria-expanded', String(open));
+      show.textContent = open ? 'Hide the solutions' : 'Show 3 solutions this opens up';
+    });
+    setMode();
+    render();
+  });
+
+  demo('good-success-criteria', st => {
+    const text = $('#p18-sc-text', st), verdict = $('#p18-sc-verdict', st), preview = $('#p18-sc-preview', st), sugs = $('#p18-sc-sugs', st);
+    const groups = [...document.querySelectorAll('#good-success-criteria-words tbody tr')]
+      .map(tr => ({ words: tr.dataset.words.split(' '), rewrite: [...tr.cells[1].childNodes].map(n => n.textContent) }));
+    if (!groups.length) throw new Error('Success criteria: the vague-word table is missing');
+    const lookup = {};
+    groups.forEach((g, i) => g.words.forEach(w => { lookup[w] = i; }));
+    const vague = new RegExp('\\b(' + Object.keys(lookup).sort((a, b) => b.length - a.length).map(w => w.replace('-', '\\-')).join('|') + ')\\b', 'gi');
+    const observable = /\d|without help|support|error|retr(y|ies)|click|second|minute|first try|fewer|finish|complete|succeed|ask/i;
+    let lastVerdict = '';
+    const setVerdict = (tone, msg) => {
+      verdict.dataset.tone = tone;
+      if (msg !== lastVerdict) { verdict.textContent = msg; lastVerdict = msg; }
+    };
+    const render = () => {
+      const v = text.value.trim();
+      preview.textContent = '';
+      sugs.textContent = '';
+      if (!v) { preview.hidden = true; setVerdict('idle', 'Write how you’d tell the change worked.'); return; }
+      preview.hidden = false;
+      const found = [];
+      let last = 0;
+      v.replace(vague, (m, w, idx) => {
+        preview.append(v.slice(last, idx));
+        const mark = document.createElement('mark');
+        mark.className = 'p18-vague';
+        mark.textContent = m;
+        preview.append(mark);
+        last = idx + m.length;
+        if (!found.includes(m.toLowerCase())) found.push(m.toLowerCase());
+        return m;
+      });
+      preview.append(v.slice(last));
+      if (found.length) {
+        setVerdict('vague', 'Can’t check this yet: ' + found.map(w => '“' + w + '”').join(', ') + (found.length === 1 ? ' is a feeling.' : ' are feelings.'));
+        const used = [];
+        found.forEach(w => {
+          const gi = lookup[w];
+          if (used.includes(gi)) return;
+          used.push(gi);
+          const li = document.createElement('li');
+          const lead = document.createElement('span');
+          lead.className = 'p18-sug-w';
+          lead.textContent = 'Instead of “' + w + '”:';
+          li.append(lead, ' ');
+          groups[gi].rewrite.forEach((bit, j) => {
+            if (j % 2) { const s = document.createElement('span'); s.className = 'p18-slot'; s.textContent = bit; li.append(s); }
+            else li.append(bit);
+          });
+          sugs.append(li);
+        });
+      } else if (!observable.test(v)) {
+        setVerdict('meh', 'No vague words, but nothing to count or watch yet. Add a task, a number or a time.');
+      } else {
+        setVerdict('ok', 'You could check this. Watch for it in a test, or count it after release.');
+      }
+      sugs.hidden = !sugs.children.length;
+    };
+    text.addEventListener('input', render);
+    $$('.p18-chip', st).forEach(c => c.addEventListener('click', () => { text.value = c.textContent; render(); text.focus(); }));
+
+    const M = {
+      vanity: { label: 'Checkout page views this week', value: '18,240', delta: 'Up 40%', why: 'It only says people looked. A confusing checkout can raise views too, because people go back and forth more.' },
+      behavior: { label: 'People who start checkout and place the order', value: '44%', delta: 'Up from 31%', why: 'It counts people who got the job done, so it only rises when the design actually helps.' }
+    };
+    const renderMetric = () => {
+      const k = ($('input[name="p18-sc-metric"]:checked', st) || {}).value || 'vanity';
+      $('#p18-sc-mlabel', st).textContent = M[k].label;
+      $('#p18-sc-mvalue', st).textContent = M[k].value;
+      $('#p18-sc-mdelta', st).textContent = M[k].delta;
+      $('#p18-sc-mwhy', st).textContent = M[k].why;
+    };
+    $$('input[name="p18-sc-metric"]', st).forEach(r => r.addEventListener('change', renderMetric));
+    render();
+    renderMetric();
+  });
+
+
+})();
+</script>
