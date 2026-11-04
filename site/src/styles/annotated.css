@@ -1,0 +1,213 @@
+/* Annotated comparisons: tools/starlight/convert.py builds them from site/annotations/, and
+   src/scripts/annotated.js pins each note's ring and number to the element it explains. */
+.sl-markdown-content .cs-case.ac {
+	--bad: var(--accent);
+	--good: var(--ui-ok);
+	container-type: inline-size;
+	display: flex;
+	flex-direction: column;
+	border: 1px solid var(--line);
+	border-radius: 14px;
+	background: var(--card);
+	padding: 16px 18px 18px;
+}
+.sl-markdown-content .ac-side {
+	--tone: var(--bad);
+	position: relative;
+	display: flex;
+	flex-direction: column;
+	gap: 12px;
+	min-width: 0;
+}
+.sl-markdown-content .ac-side[data-tone='good'] {
+	--tone: var(--good);
+}
+.sl-markdown-content .ac-side + .ac-side {
+	margin-top: 20px;
+	padding-top: 18px;
+}
+.sl-markdown-content .ac-side + .ac-side::before {
+	content: '';
+	position: absolute;
+	top: 0;
+	left: -18px;
+	right: -18px;
+	border-top: 1px dashed var(--line);
+}
+.sl-markdown-content .ac-head {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: 6px 12px;
+}
+.sl-markdown-content .ac-chip {
+	display: inline-flex;
+	align-items: center;
+	gap: 6px;
+	font: 600 13.5px/1 var(--font-body);
+	padding: 7px 12px 7px 9px;
+	border-radius: 999px;
+	background: var(--tone);
+	color: var(--dfg-page);
+	white-space: nowrap;
+}
+.sl-markdown-content .ac-chip .icon {
+	width: 14px;
+	height: 14px;
+	stroke-width: 2.6;
+}
+.sl-markdown-content .ac-cap {
+	flex: 1 1 220px;
+	margin: 0;
+	font-size: 14.5px;
+	line-height: 1.45;
+	color: var(--muted);
+}
+.sl-markdown-content .ac-cap b {
+	color: var(--ink);
+	font-weight: 600;
+}
+.sl-markdown-content .ac-head .cs-reset {
+	flex: none;
+	margin-left: auto;
+}
+.sl-markdown-content .ac-body {
+	display: grid;
+	grid-template-columns: minmax(0, 1fr) minmax(200px, 34%);
+	column-gap: 28px;
+	align-items: start;
+}
+.sl-markdown-content .ac-stage {
+	position: relative;
+	min-width: 0;
+}
+.sl-markdown-content .ac-stack .ac-body {
+	grid-template-columns: minmax(0, 1fr);
+	row-gap: 16px;
+}
+.sl-markdown-content .ac-try {
+	margin: 16px 0 0;
+}
+@container (max-width: 540px) {
+	.sl-markdown-content .ac-body {
+		grid-template-columns: minmax(0, 1fr);
+		row-gap: 16px;
+	}
+}
+
+.sl-markdown-content .ac-notes {
+	list-style: none;
+	margin: 0;
+	padding: 4px 0 0;
+	display: flex;
+	flex-direction: column;
+	gap: 14px;
+}
+.sl-markdown-content .ac-note {
+	display: flex;
+	gap: 10px;
+	align-items: flex-start;
+	margin: 0;
+	cursor: default;
+}
+.sl-markdown-content .ac-n {
+	flex: none;
+	width: 21px;
+	height: 21px;
+	border-radius: 50%;
+	background: var(--tone);
+	color: var(--card);
+	font: 600 11.5px/21px var(--font-mono);
+	text-align: center;
+}
+.sl-markdown-content .ac-t {
+	display: flex;
+	flex-direction: column;
+	gap: 1px;
+	padding-top: 1px;
+	min-width: 0;
+}
+.sl-markdown-content .ac-t b {
+	font: 600 14.5px/1.35 var(--font-body);
+	color: var(--ink);
+}
+.sl-markdown-content .ac-t span {
+	font-size: 13.5px;
+	line-height: 1.45;
+	color: var(--muted);
+}
+.sl-markdown-content .ac-t .ac-wait {
+	display: none;
+	font: 500 12px/1.4 var(--font-mono);
+	color: var(--tone);
+	margin-top: 2px;
+}
+.sl-markdown-content .ac-note.is-wait .ac-n {
+	background: transparent;
+	color: var(--tone);
+	box-shadow: inset 0 0 0 1.5px var(--tone);
+}
+.sl-markdown-content .ac-note.is-wait :is(b, .ac-t > span:not(.ac-wait)) {
+	opacity: 0.62;
+}
+.sl-markdown-content .ac-note.is-wait .ac-wait {
+	display: block;
+}
+
+/* Rings and numbers sit in a layer over the demo and follow their element through CSS anchor positioning,
+   so the demo's own markup and styles are left alone. The number hangs mid-height outside the ring's right
+   edge, and flips to the left edge when there is no room. */
+.sl-markdown-content .ac-layer {
+	/* Not a box of its own: the rings' containing block has to be .ac-stage, which also holds the demo. */
+	display: contents;
+}
+.sl-markdown-content .ac-ring,
+.sl-markdown-content .ac-pin {
+	position: absolute;
+	pointer-events: none;
+	position-visibility: anchors-visible;
+	transition: opacity 0.15s, outline-color 0.15s;
+}
+.sl-markdown-content .ac-ring {
+	top: anchor(top);
+	left: anchor(left);
+	right: anchor(right);
+	bottom: anchor(bottom);
+	border-radius: 8px;
+	outline: 1.5px dashed color-mix(in srgb, var(--tone) 80%, transparent);
+	outline-offset: 3px;
+}
+.sl-markdown-content .ac-pin {
+	position-area: right;
+	margin-left: 2px;
+	position-try-fallbacks: flip-inline;
+	width: 18px;
+	height: 18px;
+	border-radius: 50%;
+	font: 600 10.5px/18px var(--font-mono);
+	text-align: center;
+	color: var(--ui-surface);
+	background: var(--tone);
+	box-shadow: 0 0 0 2px var(--ui-surface);
+}
+.sl-markdown-content .ac-side.hl .ac-note:not(.on) > * {
+	opacity: 0.3;
+}
+.sl-markdown-content .ac-note > * {
+	transition: opacity 0.15s;
+}
+.sl-markdown-content .ac-side.hl .ac-ring:not(.on) {
+	outline-color: transparent;
+}
+.sl-markdown-content .ac-side.hl .ac-pin:not(.on) {
+	opacity: 0.3;
+}
+.sl-markdown-content .ac-ring.on {
+	outline-style: solid;
+	outline-color: var(--tone);
+}
+/* Without anchor positioning the script outlines the elements themselves and leaves out the numbers. */
+.sl-markdown-content [data-ac-plain] {
+	outline: 1.5px dashed var(--tone) !important;
+	outline-offset: 3px;
+}

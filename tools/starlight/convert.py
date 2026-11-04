@@ -13,6 +13,7 @@ import json
 import os
 import re
 import shutil
+from html import escape
 from html.parser import HTMLParser
 
 ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
@@ -25,6 +26,10 @@ SITE_FILES = ('llms.txt', 'CHANGELOG.md', 'references')
 SITE_WORDING = {
     'press the # next to its title': 'use the link icon that appears next to its title',
 }
+# Notes for the annotated comparisons, one file per chapter: {case: {"bad": [note], "good": [note]}}, where a case is a
+# demo's data-d without its b/f and a note is {"at": selector in the demo, "title", "text", optional "wait", "reveal"}.
+# "layout": "stack" puts a wide demo's notes under it instead of beside it.
+NOTES = os.path.join(SITE, 'annotations')
 
 
 def converted(ch):
@@ -188,6 +193,10 @@ class Book:
     def __init__(self):
         self.src = open(os.path.join(ROOT, 'index.html'), encoding='utf-8').read()
         self.reworded = set()
+        self.notes, self.noted = {}, set()
+        for f in sorted(os.listdir(NOTES)) if os.path.isdir(NOTES) else []:
+            if f.endswith('.json'):
+                self.notes.update(json.load(open(os.path.join(NOTES, f), encoding='utf-8')))
         p = Parser(self.src)
         p.feed(self.src)
         p.close()
@@ -273,6 +282,41 @@ class Book:
         return re.sub(r' {2,}', ' ', ''.join(out)).strip()
 
 
+def case_key(case):
+    demo = case.find(lambda x: 'cs-demo' in x.cls and x.get('data-d'))
+    return demo.get('data-d')[:-1] if demo else None
+
+
+def annotated(book, case, notes):
+    """A rule's two sides as one canvas: both demos live, each beside numbered notes that point into it.
+    The demos, their data-d and the .cs-side/.cs-reset/.cs-case they look up stay as the book has them."""
+    inner = lambda n: (lambda r: r[r.index('>') + 1:r.rindex('</')])(book.raw(n)) if n else ''
+    label = {b.get('data-mode'): b.text() for b in case.iter() if b.tag == 'button' and b.get('data-mode')}
+    tri = case.find(lambda x: 'cs-try' in x.cls)
+    out = ['<div class="cs-case ac%s" aria-label="%s" data-ac="%s">'
+           % (' ac-stack' if notes.get('layout') == 'stack' else '', escape(case.get('aria-label')), case_key(case))]
+    for s in (x for x in case.iter() if x.tag == 'section' and 'cs-side' in x.cls):
+        mode = s.get('data-mode')
+        tone = 'bad' if mode == 'broken' else 'good'
+        demo = s.find(lambda x: 'cs-demo' in x.cls)
+        cap = s.find(lambda x: x.tag == 'p' and 'fig-cap' in x.cls)
+        items = []
+        for k, note in enumerate(notes[tone], 1):
+            wait = '<span class="ac-wait">%s</span>' % escape(note['wait']) if note.get('wait') else ''
+            items.append('<li class="ac-note" data-at="%s"><span class="ac-n" aria-hidden="true">%d</span><span class="ac-t"><b>%s</b><span>%s</span>%s</span></li>'
+                         % (escape(note['at']), k, escape(note['title']), escape(note['text']), wait))
+        out.append('<section class="cs-side ac-side" data-mode="%s" data-tone="%s">' % (mode, tone)
+                   + '<div class="ac-head"><span class="ac-chip"><svg class="icon" aria-hidden="true"><use href="#i-%s"/></svg>%s</span>'
+                   % ('x' if tone == 'bad' else 'check', escape(label.get(mode, '')))
+                   + '<p class="ac-cap">%s</p><button class="cs-reset" type="button">Reset</button></div>' % inner(cap)
+                   + '<div class="ac-body"><div class="ac-stage">%s<div class="ac-layer" aria-hidden="true"></div></div>' % book.raw(demo)
+                   + '<ol class="ac-notes" aria-label="%s">%s</ol></div></section>'
+                   % ('What goes wrong' if tone == 'bad' else 'Why it works', ''.join(items)))
+    if tri:
+        out.append('<p class="fig-cap ac-try">%s</p>' % inner(tri))
+    return ''.join(out) + '</div>'
+
+
 def attr_str(n):
     """The id and non-prose classes a markdown block has to keep."""
     cls = ' '.join(c for c in n.get('class').split() if c != 'prose')
@@ -285,6 +329,18 @@ class Page:
         self.cid = ch.get('id')
         self.frags = []
         self.lines = []
+
+    def raw(self, n):
+        """The book's markup for n, with each comparison that has notes rebuilt as an annotated canvas."""
+        src, pos, out = self.b.src, n.start, []
+        for c in [x for x in [n] + list(n.iter()) if 'cs-case' in x.cls]:
+            notes = self.b.notes.get(case_key(c))
+            if not notes or not notes.get('bad') or not notes.get('good'):
+                continue
+            out += [src[pos:c.start], annotated(self.b, c, notes)]
+            pos = c.end
+            self.b.noted.add(case_key(c))
+        return ''.join(out) + src[pos:n.end]
 
     def frag(self, html):
         html = re.sub(r'<style\b[^>]*>.*?</style>', '', html, flags=re.S)
@@ -320,7 +376,7 @@ class Page:
             elif c.tag in ('h4', 'h3'):
                 self.heading(2 if self.cid == 'ch-preface' else 3, c, c.get('id') or None)
             else:
-                self.frag(self.b.raw(c))
+                self.frag(self.raw(c))
         if attrs:
             self.lines += ['</div>', '']
 
@@ -337,7 +393,7 @@ class Page:
             if c.tag == 'p' and 'prose' in c.cls:
                 self.para(c)
             else:
-                self.frag(self.b.raw(c))
+                self.frag(self.raw(c))
         self.lines += ['</section>', '']
 
     def essay(self, ess):
@@ -355,10 +411,10 @@ class Page:
                     elif r.tag == 'p' and 'prose' in r.cls:
                         self.para(r)
                     else:
-                        self.frag(self.b.raw(r))
+                        self.frag(self.raw(r))
                 self.lines += ['</div>', '']
             else:
-                self.frag(self.b.raw(c))
+                self.frag(self.raw(c))
 
     def entry(self, art):
         eid = art.get('id')
@@ -417,7 +473,7 @@ class Page:
                 entries.append(c)
                 self.entry(c)
             else:
-                self.frag(self.b.raw(c))
+                self.frag(self.raw(c))
         self.in_short(entries)
         self.lines += ['</section>', '', '<Runtime chapter="%s" />' % self.cid, '']
         first = next((x for x in self.ch.iter() if x.tag == 'p' and 'eyebrow' not in x.cls and x.text()), None)
@@ -542,6 +598,9 @@ def main():
     print('wrote book.css, runtime, sidebar, %d anchors' % len(anchors))
     for old in set(SITE_WORDING) - book.reworded:
         print('warning: SITE_WORDING %r no longer matches the book' % old)
+    print('annotated %d of the book\'s comparisons' % len(book.noted))
+    for key in sorted(set(book.notes) - book.noted):
+        print('warning: notes for %r match no comparison with both sides' % key)
 
     for name in SITE_FILES:
         src, dst = os.path.join(ROOT, name), os.path.join(SITE, 'public', name)

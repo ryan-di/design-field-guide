@@ -4,10 +4,11 @@
 // part holds the shared helpers and this chapter's demo code, which need the demos to exist.
 import head from '../fragments/runtime-head.html?raw';
 import runtime from '../fragments/runtime.html?raw';
+import annotated from '../scripts/annotated.js?raw';
 
 const demos = import.meta.glob('../fragments/*/demos.html', { query: '?raw', import: 'default', eager: true });
 const { chapter, at } = Astro.props;
 const own = demos[`../fragments/${chapter}/demos.html`] ?? '';
 ---
 
-{at === 'start' ? <Fragment set:html={head} /> : <Fragment set:html={runtime + own} />}
+{at === 'start' ? <Fragment set:html={head + '<script>' + annotated + '</script>'} /> : <Fragment set:html={runtime + own} />}
