@@ -51,6 +51,19 @@ class Book:
         self.s = self.s[:i] + span + self.s[j:]
 
 
+def rule(eid, n, title, prose, cap_b, cap_f, broken_label='Common mistake', try_shared=None, extra=''):
+    """A rule with a break/fix demo, in the same markup as the book's rules. The demos are filled by D('<eid>-<n>b'|'f', …)."""
+    bar_try = '<p class="fig-cap cs-try"><b>Try:</b> %s</p>' % try_shared if try_shared else ''
+    side = lambda m, k, cap: ('<section class="cs-side" data-mode="%s"><div class="cs-demo" data-d="%s-%d%s"></div><div class="cs-foot">'
+                              '<p class="fig-cap">%s</p><button class="cs-reset" type="button">Reset</button></div></section>') % (m, eid, n, k, cap)
+    t = strip(title)
+    return ('<section class="rule" id="%s-rule-%d"><h5><span class="n">%d</span>%s</h5><p class="prose">%s</p>\n%s'
+            '<div class="cs-case" aria-label="%s"><div class="cs-panel"><div class="cs-bar"><div class="cs-switch" role="radiogroup" aria-label="Show">'
+            '<button type="button" role="radio" class="b" data-mode="broken"><span class="dot"></span>%s</button>'
+            '<button type="button" role="radio" class="f" data-mode="fixed"><span class="dot"></span>Do this instead</button></div>%s</div>%s%s</div></div></section>\n'
+            ) % (eid, n, n, title, prose, extra, html.escape(t, quote=True), broken_label, bar_try, side('broken', 'b', cap_b), side('fixed', 'f', cap_f))
+
+
 def strip(h):
     return html.unescape(re.sub(r'<[^>]+>', '', h))
 

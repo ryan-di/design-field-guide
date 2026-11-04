@@ -591,6 +591,7 @@ eff-loop-rule-1
 eff-loop-rule-2
 eff-loop-rule-3
 eff-loop-rule-4
+eff-loop-rule-5
 eff-loop-rules
 eff-loop-stages
 eff-measure
@@ -917,6 +918,7 @@ good-critique-products
 good-critique-rule-1
 good-critique-rule-2
 good-critique-rule-3
+good-critique-rule-4
 good-critique-rules
 good-design-rationale
 good-design-rationale-products
@@ -948,10 +950,12 @@ good-error-copy-rule-4
 good-error-copy-rules
 good-heuristic-review
 good-heuristic-review-a11y
+good-heuristic-review-fidelity
 good-heuristic-review-products
 good-heuristic-review-rule-1
 good-heuristic-review-rule-2
 good-heuristic-review-rule-3
+good-heuristic-review-rule-4
 good-heuristic-review-rules
 good-heuristic-review-severity
 good-heuristic-review-ten
@@ -997,6 +1001,7 @@ good-problem-framing-rule-1
 good-problem-framing-rule-2
 good-problem-framing-rule-3
 good-problem-framing-rule-4
+good-problem-framing-rule-5
 good-problem-framing-rules
 good-proximity
 good-proximity-products
