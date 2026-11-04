@@ -1,0 +1,622 @@
+{
+ "book": "Design Field Guide",
+ "version": "v35",
+ "date": "2026-11",
+ "site": "https://ryan-di.github.io/design-field-guide/",
+ "cite": "Design Field Guide v35, #<anchor>",
+ "note": "Generated from the reference tables in the book; each rubric links to its table.",
+ "rubrics": [
+  {
+   "name": "vague-words",
+   "id": "good-success-criteria-words",
+   "url": "https://ryan-di.github.io/design-field-guide/#good-success-criteria-words",
+   "entry": "good-success-criteria",
+   "columns": [
+    "Vague word",
+    "Write instead, for example"
+   ],
+   "rows": [
+    {
+     "cells": [
+      "easy, easier, simple, simpler, intuitive, user-friendly",
+      "People find X without help, in under N clicks."
+     ],
+     "words": [
+      "easy",
+      "easier",
+      "simple",
+      "simpler",
+      "intuitive",
+      "user-friendly"
+     ]
+    },
+    {
+     "cells": [
+      "good, better, improve, improved, improves, improvement, nice, nicer",
+      "Fewer support questions about Y, or fewer retries when people do it."
+     ],
+     "words": [
+      "good",
+      "better",
+      "improve",
+      "improved",
+      "improves",
+      "improvement",
+      "nice",
+      "nicer"
+     ]
+    },
+    {
+     "cells": [
+      "clean, cleaner, clearer, modern",
+      "People spot the main action in a five-second look at X."
+     ],
+     "words": [
+      "clean",
+      "cleaner",
+      "clearer",
+      "modern"
+     ]
+    },
+    {
+     "cells": [
+      "seamless, smooth, smoother",
+      "Nobody gets stuck or asks for help between X and Y."
+     ],
+     "words": [
+      "seamless",
+      "smooth",
+      "smoother"
+     ]
+    },
+    {
+     "cells": [
+      "somehow, etc",
+      "List what you mean: X, Y and Z."
+     ],
+     "words": [
+      "somehow",
+      "etc"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "critique-kinds",
+   "id": "good-critique-kinds-table",
+   "url": "https://ryan-di.github.io/design-field-guide/#good-critique-kinds-table",
+   "entry": "good-critique",
+   "columns": [
+    "Kind",
+    "When",
+    "Look at"
+   ],
+   "rows": [
+    {
+     "cells": [
+      "Direction",
+      "Early sketches, while the idea can still change",
+      "Whether it solves the right problem"
+     ]
+    },
+    {
+     "cells": [
+      "Flow",
+      "The steps exist as rough screens",
+      "Whether people can get from start to finish without getting stuck"
+     ]
+    },
+    {
+     "cells": [
+      "Polish",
+      "The flow is settled and the screens are close to done",
+      "Contrast, alignment and wording"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "heuristics",
+   "id": "good-heuristic-review-ten",
+   "url": "https://ryan-di.github.io/design-field-guide/#good-heuristic-review-ten",
+   "entry": "good-heuristic-review",
+   "columns": [
+    "Heuristic",
+    "Ask",
+    "In this book"
+   ],
+   "rows": [
+    {
+     "cells": [
+      "1 · Visibility of system status",
+      "Does the screen always show what’s happening, and how long it will take?",
+      "Instant feedback, Progress bar"
+     ]
+    },
+    {
+     "cells": [
+      "2 · Match between the system and the real world",
+      "Does it use the words people use, in the order they think of things?",
+      "Labels in people’s words, Plain words, one term per concept"
+     ]
+    },
+    {
+     "cells": [
+      "3 · User control and freedom",
+      "Can people back out of every step, even halfway through?",
+      "Undo instead of “Are you sure?”, Dialog"
+     ]
+    },
+    {
+     "cells": [
+      "4 · Consistency and standards",
+      "Does the same thing look and work the same here and in the apps people already use?",
+      "Internal and external consistency, Jakob’s law"
+     ]
+    },
+    {
+     "cells": [
+      "5 · Error prevention",
+      "Does the design stop the mistake before it happens?",
+      "Constraints that prevent errors, Forgiving input"
+     ]
+    },
+    {
+     "cells": [
+      "6 · Recognition rather than recall",
+      "Can people see their options instead of remembering them?",
+      "Labels that say what happens, Search with filters and recents, Command palette"
+     ]
+    },
+    {
+     "cells": [
+      "7 · Flexibility and efficiency of use",
+      "Do frequent users get faster paths that newcomers never have to learn?",
+      "Keyboard shortcuts and accelerators, Layered interface"
+     ]
+    },
+    {
+     "cells": [
+      "8 · Aesthetic and minimalist design",
+      "Does anything on the screen compete with what matters?",
+      "Visual hierarchy, Rams’ ten principles"
+     ]
+    },
+    {
+     "cells": [
+      "9 · Help users recognize, diagnose, and recover from errors",
+      "Does each error say what went wrong and what to do next, in plain words?",
+      "Error messages that help, Error state"
+     ]
+    },
+    {
+     "cells": [
+      "10 · Help and documentation",
+      "Is the help right where the question comes up?",
+      "Contextual hints over tours"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "a11y-pass",
+   "id": "good-heuristic-review-a11y",
+   "url": "https://ryan-di.github.io/design-field-guide/#good-heuristic-review-a11y",
+   "entry": "good-heuristic-review",
+   "columns": [
+    "Check",
+    "Passes when",
+    "Shows in a mock?",
+    "In this book"
+   ],
+   "rows": [
+    {
+     "cells": [
+      "Keyboard",
+      "You can finish the whole task with the keyboard alone, in reading order.",
+      "No, it needs a running build",
+      "Keyboard paths are craft"
+     ]
+    },
+    {
+     "cells": [
+      "Focus",
+      "Focus is always visible, moves into a dialog when it opens and back when it closes.",
+      "No",
+      "Move focus with what opens and closes"
+     ]
+    },
+    {
+     "cells": [
+      "Contrast",
+      "Body text is at least 4.5 : 1 against its background; large text, edges and icons people need are at least 3 : 1.",
+      "Yes",
+      "Contrast, and never color alone"
+     ]
+    },
+    {
+     "cells": [
+      "Color",
+      "No meaning is carried by color alone.",
+      "Yes",
+      "Don’t carry meaning with color alone"
+     ]
+    },
+    {
+     "cells": [
+      "Names",
+      "Every control says what it does, and is a real button or link that a screen reader can name.",
+      "Partly: the words show, the roles only in code",
+      "Labels that say what happens, Use real buttons and links"
+     ]
+    },
+    {
+     "cells": [
+      "Announcements",
+      "Errors, toasts and finished work appear in text that screen readers announce.",
+      "No",
+      "Instant feedback"
+     ]
+    },
+    {
+     "cells": [
+      "Motion",
+      "With reduce motion on, slides and zooms become an instant change or a short fade.",
+      "No",
+      "Respect reduced motion"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "severity",
+   "id": "good-heuristic-review-severity",
+   "url": "https://ryan-di.github.io/design-field-guide/#good-heuristic-review-severity",
+   "entry": "good-heuristic-review",
+   "columns": [
+    "Severity",
+    "Means",
+    "Example"
+   ],
+   "rows": [
+    {
+     "cells": [
+      "0 · Not a problem",
+      "Not a usability problem after all. Drop it and write down why.",
+      "“I’d make it blue”, with no problem behind it"
+     ]
+    },
+    {
+     "cells": [
+      "1 · Cosmetic",
+      "Fix it if there’s time left.",
+      "A typo: “Delivey fee”"
+     ]
+    },
+    {
+     "cells": [
+      "2 · Minor",
+      "Low priority: people notice it but get past it.",
+      "Prices are low contrast"
+     ]
+    },
+    {
+     "cells": [
+      "3 · Major",
+      "High priority: people struggle or lose work.",
+      "The basket empties when you switch restaurant"
+     ]
+    },
+    {
+     "cells": [
+      "4 · Catastrophe",
+      "Fix it before release: people can’t finish the task.",
+      "Card payment fails if the address has an accent"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "fidelity",
+   "id": "good-heuristic-review-fidelity",
+   "url": "https://ryan-di.github.io/design-field-guide/#good-heuristic-review-fidelity",
+   "entry": "good-heuristic-review",
+   "columns": [
+    "What you check",
+    "Sketch",
+    "Static mock",
+    "Clickable page",
+    "Branch in the app"
+   ],
+   "rows": [
+    {
+     "cells": [
+      "Whether it solves the problem",
+      "Yes",
+      "Yes",
+      "Yes",
+      "Yes"
+     ]
+    },
+    {
+     "cells": [
+      "Hierarchy and layout",
+      "Roughly",
+      "Yes",
+      "Yes",
+      "Yes"
+     ]
+    },
+    {
+     "cells": [
+      "Words and labels",
+      "If written",
+      "Yes",
+      "Yes",
+      "Yes"
+     ]
+    },
+    {
+     "cells": [
+      "Contrast and color",
+      "No",
+      "Yes",
+      "Yes",
+      "Yes"
+     ]
+    },
+    {
+     "cells": [
+      "States: loading, empty, error",
+      "Only if drawn",
+      "Only if drawn",
+      "Only if built",
+      "Yes"
+     ]
+    },
+    {
+     "cells": [
+      "Real data: long names, empty lists",
+      "No",
+      "Only if drawn",
+      "Sample data only",
+      "Yes"
+     ]
+    },
+    {
+     "cells": [
+      "Timing and motion",
+      "No",
+      "No",
+      "Yes",
+      "Yes"
+     ]
+    },
+    {
+     "cells": [
+      "Keyboard, focus and screen readers",
+      "No",
+      "No",
+      "With real controls",
+      "Yes"
+     ]
+    },
+    {
+     "cells": [
+      "Speed with real data",
+      "No",
+      "No",
+      "No",
+      "Yes"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "loop-stages",
+   "id": "eff-loop-stages",
+   "url": "https://ryan-di.github.io/design-field-guide/#eff-loop-stages",
+   "entry": "eff-loop",
+   "columns": [
+    "Stage",
+    "Takes in",
+    "Hands on",
+    "Who owns it"
+   ],
+   "rows": [
+    {
+     "cells": [
+      "Problem",
+      "A signal: a support thread, a ticket, something you hit yourself.",
+      "One sentence: who has the problem, and what stops them.",
+      "You"
+     ]
+    },
+    {
+     "cells": [
+      "Brief",
+      "The problem statement and what you know about it.",
+      "A short brief: the goal, limits, what’s out of scope and how you’ll know it worked.",
+      "You (agents can draft)"
+     ]
+    },
+    {
+     "cells": [
+      "Explore",
+      "The brief.",
+      "Several real options, each with its trade-offs.",
+      "Agents, you steer"
+     ]
+    },
+    {
+     "cells": [
+      "Decide",
+      "The options, checked against the brief.",
+      "One direction, and why, written down.",
+      "You"
+     ]
+    },
+    {
+     "cells": [
+      "Build",
+      "The decision and the brief.",
+      "A pull request with tests.",
+      "Agents, you review"
+     ]
+    },
+    {
+     "cells": [
+      "Check",
+      "The PR and the brief’s “how you’ll know”.",
+      "Pass or fail against the brief, plus the gaps.",
+      "Both"
+     ]
+    },
+    {
+     "cells": [
+      "Learn",
+      "What the check found, and feedback after release.",
+      "A note, and the next problem or a sharper brief.",
+      "You"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "ownership",
+   "id": "eff-ownership-split",
+   "url": "https://ryan-di.github.io/design-field-guide/#eff-ownership-split",
+   "entry": "eff-ownership",
+   "columns": [
+    "Stage",
+    "Small fix",
+    "New feature",
+    "Open exploration"
+   ],
+   "rows": [
+    {
+     "cells": [
+      "Problem",
+      "Reproduce it yourself. Is it really one line?",
+      "You confirm people really lose work, and when.",
+      "A hunch to test, not a spec."
+     ]
+    },
+    {
+     "cells": [
+      "Brief",
+      "Expected and actual, in one sentence.",
+      "An agent can draft from the ticket; you cut and sharpen.",
+      "What question should the prototypes answer?"
+     ]
+    },
+    {
+     "cells": [
+      "Explore",
+      "An agent finds the cause. Usually one obvious option.",
+      "Subagents sketch three options in parallel.",
+      "Many quick prototypes as artifacts."
+     ]
+    },
+    {
+     "cells": [
+      "Decide",
+      "You approve the fix, or notice it isn’t small after all.",
+      "You pick one and write why.",
+      "You choose what to learn more about, or stop."
+     ]
+    },
+    {
+     "cells": [
+      "Build",
+      "The agent writes the fix and a test that failed before.",
+      "Claude Code builds in a worktree, plan first.",
+      "Throwaway build; speed over code quality."
+     ]
+    },
+    {
+     "cells": [
+      "Check",
+      "Tests run; you check the real app once.",
+      "Agents run tests; you close real tabs.",
+      "You watch people try it. That part is yours."
+     ]
+    },
+    {
+     "cells": [
+      "Learn",
+      "Is it a pattern? Note it, or close it.",
+      "You decide what becomes the next problem.",
+      "Write down what you now believe."
+     ]
+    }
+   ]
+  },
+  {
+   "name": "brief-check",
+   "id": "eff-brief-check",
+   "url": "https://ryan-di.github.io/design-field-guide/#eff-brief-check",
+   "entry": "eff-brief",
+   "columns": [
+    "Flag",
+    "Shows when",
+    "Fix"
+   ],
+   "rows": [
+    {
+     "cells": [
+      "Missing",
+      "A field is empty: who, problem, goal, constraints, non-goals or success criteria.",
+      "Fill it in. Without non-goals, an agent may widen the scope, and without success criteria, nobody can say when it’s done."
+     ]
+    },
+    {
+     "cells": [
+      "Vague",
+      "A field uses a word from the vague-word table, such as “better” or “intuitive”.",
+      "Say what you’d see happen."
+     ]
+    },
+    {
+     "cells": [
+      "Too broad",
+      "Who is only “users”, “user”, “everyone”, “everybody”, “people”, “all users” or “anyone”.",
+      "Name the people and the moment, like “people editing in several tabs”."
+     ],
+     "lists": {
+      "broad": [
+       "users",
+       "user",
+       "everyone",
+       "everybody",
+       "people",
+       "all users",
+       "anyone"
+      ]
+     }
+    },
+    {
+     "cells": [
+      "Solution",
+      "The problem names a control: dialog, modal, popup, pop-up, button, toggle, banner, toast, checkbox or menu.",
+      "Describe what goes wrong instead."
+     ],
+     "lists": {
+      "solution": [
+       "dialog",
+       "modal",
+       "popup",
+       "pop-up",
+       "button",
+       "toggle",
+       "banner",
+       "toast",
+       "checkbox",
+       "menu"
+      ]
+     }
+    }
+   ]
+  }
+ ]
+}

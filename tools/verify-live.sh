@@ -17,3 +17,6 @@ while :; do
   sleep 5
 done
 node tools/check.cjs --url "$SITE?v=$(git rev-parse --short HEAD)"
+for f in llms.txt CHANGELOG.md references/index.json references/rubrics.json references/entries/good-problem-framing.md; do
+  if curl -fsS "$SITE$f?v=$(git rev-parse --short HEAD)" | cmp -s - "$f"; then echo "served: $f"; else echo "Pages serves a different $f"; exit 1; fi
+done

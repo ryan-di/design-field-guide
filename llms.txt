@@ -1,0 +1,184 @@
+# Design Field Guide
+
+> An interactive book about design: how to tell good design, the patterns and components it is built from, and how to work with agents on it. Version v35 (2026-11). The book is one page with live demos at https://ryan-di.github.io/design-field-guide/
+
+Every entry is also exported as markdown, generated from the same page, so you don’t need to load the 4 MB HTML:
+
+- One file per entry: https://ryan-di.github.io/design-field-guide/references/entries/<id>.md, with links to each section and rule
+- Index of parts, chapters, entries, rules and anchors: https://ryan-di.github.io/design-field-guide/references/index.json
+- Rubrics (word lists, severity scale, heuristics, accessibility pass, loop stages and more): https://ryan-di.github.io/design-field-guide/references/rubrics.json
+- What changed between versions: https://ryan-di.github.io/design-field-guide/CHANGELOG.md
+
+Cite as “Design Field Guide v35, #<anchor>” with the link https://ryan-di.github.io/design-field-guide/#<anchor>. An entry is #<id>, its rules are #<id>-rules, and rule N is #<id>-rule-N. Anchors stay valid across versions.
+
+Evidence boundary: this is a learning guide. Its demos and product examples are illustrations written for the book, not verified product documentation, so check a product’s own docs before citing how it behaves. Tools named in it are 2026 examples, not endorsements.
+
+## Start here
+
+Two short definitions before the rest of the book: what design is, and what a design engineer does.
+
+- [Two definitions](https://ryan-di.github.io/design-field-guide/references/chapters/ch-intro.md)
+  - [What design is](https://ryan-di.github.io/design-field-guide/references/entries/design-what.md): Design is deciding how something should work for the people who use it.
+  - [What design engineering is](https://ryan-di.github.io/design-field-guide/references/entries/design-engineering.md): A design engineer designs in the material the product is made of: code.
+
+## Part 1 · Good design
+
+What makes a design good, how to tell, and how to train your eye. The patterns and components later in the book are tools, and this part is about knowing when and how to use them.
+
+- [Good design is mostly invisible](https://ryan-di.github.io/design-field-guide/references/chapters/ch-good-start.md): When design is good, people get what they came for and don’t think about the interface at all.
+- [Chapter 1 · Get the problem right first](https://ryan-di.github.io/design-field-guide/references/chapters/ch-problem.md): Most bad design is a good answer to the wrong question: the layout is tidy and the button works, yet it solves something nobody had, or skips what people needed first.
+  - [Hierarchy of needs](https://ryan-di.github.io/design-field-guide/references/entries/good-needs-hierarchy.md): The hierarchy of needs is an order for building a feature.
+  - [Problem framing](https://ryan-di.github.io/design-field-guide/references/entries/good-problem-framing.md): Framing the problem means writing down who has it, what they’re trying to do and what stops them, before anyone draws a screen.
+  - [Success criteria](https://ryan-di.github.io/design-field-guide/references/entries/good-success-criteria.md): Success criteria say what you would see or count if a change worked.
+- [Chapter 2 · Make the important thing obvious](https://ryan-di.github.io/design-field-guide/references/chapters/ch-clarity.md): People scan a screen before they read it: in the first moment they see a few shapes, guess what the screen is for, and look for the thing they came to do.
+  - [Visual hierarchy](https://ryan-di.github.io/design-field-guide/references/entries/good-visual-hierarchy.md): Visual hierarchy is the order in which people notice things on a screen.
+  - [Proximity](https://ryan-di.github.io/design-field-guide/references/entries/good-proximity.md): Proximity means that things close together look like they belong together.
+  - [Spacing rhythm](https://ryan-di.github.io/design-field-guide/references/entries/good-spacing-rhythm.md): Spacing rhythm means every gap on a screen comes from a short scale of sizes, such as 4, 8, 16, 24 and 32 pixels, and the edges of things line up.
+  - [Contrast](https://ryan-di.github.io/design-field-guide/references/entries/good-contrast.md): Contrast is how clearly text and controls stand apart from what’s behind them.
+- [Chapter 3 · Same thing, same look, same place](https://ryan-di.github.io/design-field-guide/references/chapters/ch-consistency.md): People learn a product one screen at a time, and they bring habits from every other product they use.
+  - [Internal & external](https://ryan-di.github.io/design-field-guide/references/entries/good-consistency.md): Consistency means one action has one look, one concept has one name, and the same buttons sit in the same order everywhere.
+  - [Design tokens](https://ryan-di.github.io/design-field-guide/references/entries/good-design-tokens.md): A design token is a shared value with a name, such as a corner radius, a spacing step, a color or a text size.
+  - [Break it on purpose](https://ryan-di.github.io/design-field-guide/references/entries/good-break-on-purpose.md): Consistency doesn’t mean everything looks the same.
+- [Chapter 4 · Treat the words as the interface](https://ryan-di.github.io/design-field-guide/references/chapters/ch-words.md): Most of an interface is words.
+  - [Labels](https://ryan-di.github.io/design-field-guide/references/entries/good-labels.md): A button label should say what happens when people press it: a verb, and the thing it acts on.
+  - [Error messages](https://ryan-di.github.io/design-field-guide/references/entries/good-error-copy.md): A good error message says what happened, why if you know, and what to do next, in plain words that don’t blame anyone.
+  - [Plain language](https://ryan-di.github.io/design-field-guide/references/entries/good-plain-language.md): Plain language means the words people already use, in short sentences, with the main point first and one name for each concept.
+- [Chapter 5 · Sweat the states and the edges](https://ryan-di.github.io/design-field-guide/references/chapters/ch-craft.md): Craft is what happens in the last 10% of a design: the timing, the messy data and the keyboard path.
+  - [Motion](https://ryan-di.github.io/design-field-guide/references/entries/good-motion.md): Motion should explain a change, like where a panel came from or where a deleted item went, and then get out of the way fast.
+  - [Edge cases](https://ryan-di.github.io/design-field-guide/references/entries/good-edge-cases.md): Real data is long, missing, huge and empty.
+  - [Keyboard and focus](https://ryan-di.github.io/design-field-guide/references/entries/good-keyboard-focus.md): Every control should work from the keyboard alone, focus should move in the order people read, and a visible ring should always show where it is.
+- [Chapter 6 · Judge work against its goal](https://ryan-di.github.io/design-field-guide/references/chapters/ch-critique.md): Taste grows by judging work out loud.
+  - [Critique against the goal](https://ryan-di.github.io/design-field-guide/references/entries/good-critique.md): A critique judges work against what it is for.
+  - [Heuristic review](https://ryan-di.github.io/design-field-guide/references/entries/good-heuristic-review.md): A heuristic review checks a design against a short list of rules of thumb.
+  - [Rams’ principles](https://ryan-di.github.io/design-field-guide/references/entries/good-rams-principles.md): Dieter Rams designed radios, record players and shelves for Braun and Vitsœ.
+- [Chapter 7 · Train your eye, design in the real material](https://ryan-di.github.io/design-field-guide/references/chapters/ch-practice.md): Taste is a skill you train.
+  - [Train your eye](https://ryan-di.github.io/design-field-guide/references/entries/good-train-your-eye.md): You train taste by looking closely at good work.
+  - [Real material](https://ryan-di.github.io/design-field-guide/references/entries/good-real-material.md): Prototyping in the real material means building the risky parts of a design in code, early.
+  - [Design rationale](https://ryan-di.github.io/design-field-guide/references/entries/good-design-rationale.md): Design rationale is the reasoning behind a design decision, written down.
+- [Before you ship, ask these](https://ryan-di.github.io/design-field-guide/references/chapters/ch-good-checklist.md): A review checklist built from this part.
+
+## Part 2 · Patterns
+
+Named solutions to problems that keep coming back. Each one is built from the components in Part 3.
+
+- [Name the problem before the fix](https://ryan-di.github.io/design-field-guide/references/chapters/ch-patterns-start.md): Interface problems repeat across products, and so do their solutions.
+- [Chapter 8 · Too much at once](https://ryan-di.github.io/design-field-guide/references/chapters/ch-overload.md): A panel with twenty settings asks people to judge all twenty before they can do anything, so they freeze, skim, or miss the one setting that mattered.
+  - [Progressive disclosure](https://ryan-di.github.io/design-field-guide/references/entries/pat-progressive-disclosure.md): Progressive disclosure shows the settings most people need first and keeps the rest one step away, so people can start without judging every option on the screen.
+  - [Smart defaults](https://ryan-di.github.io/design-field-guide/references/entries/pat-smart-defaults.md): A smart default is a value filled in for people because it fits most of them, so they can accept it and move on, or change it.
+  - [Presets](https://ryan-di.github.io/design-field-guide/references/entries/pat-presets.md): A preset sets several linked values at once, under a name that says what you get, like “Fast” or “Best quality”.
+- [Chapter 9 · Scared to click](https://ryan-di.github.io/design-field-guide/references/chapters/ch-safety.md): When an action feels risky, people hesitate: they try fewer settings, explore less and learn the tool more slowly, because any click might cost them work.
+  - [Undo](https://ryan-di.github.io/design-field-guide/references/entries/pat-undo.md): Undo lets people act at once and take the action back afterwards.
+  - [Preview](https://ryan-di.github.io/design-field-guide/references/entries/pat-preview.md): A preview shows what a change will do before it’s applied.
+  - [Version history](https://ryan-di.github.io/design-field-guide/references/entries/pat-version-history.md): Version history keeps earlier versions of a document so people can go back to one.
+- [Chapter 10 · Did it work?](https://ryan-di.github.io/design-field-guide/references/chapters/ch-status.md): You press a button and nothing seems to happen, so you press it again, or you decide it’s broken and give up.
+  - [Instant feedback](https://ryan-di.github.io/design-field-guide/references/entries/pat-instant-feedback.md): Instant feedback means the screen answers an action right away: a pressed button changes, a ticked box shows a tick, a save says “Saving…”.
+  - [Optimistic UI](https://ryan-di.github.io/design-field-guide/references/entries/pat-optimistic-ui.md): Optimistic UI shows the result of an action before the server confirms it.
+  - [Background work](https://ryan-di.github.io/design-field-guide/references/entries/pat-background-work.md): Some work takes longer than people want to wait, such as an upload, an export or a backup.
+- [Chapter 11 · Can’t find it](https://ryan-di.github.io/design-field-guide/references/chapters/ch-find.md): A small product can be learned by browsing: open a menu, scan it, click.
+  - [Command palette](https://ryan-di.github.io/design-field-guide/references/entries/pat-command-palette.md): A command palette is a search box for actions.
+  - [Search with filters](https://ryan-di.github.io/design-field-guide/references/entries/pat-search-filters.md): Search with filters helps people narrow a long list fast, such as products, emails or files.
+  - [Labels in people’s words](https://ryan-di.github.io/design-field-guide/references/entries/pat-information-scent.md): People scan menus and links for the word already in their head.
+- [Chapter 12 · Blank screen](https://ryan-di.github.io/design-field-guide/references/chapters/ch-blank.md): The first minutes decide whether people stay.
+  - [Templates](https://ryan-di.github.io/design-field-guide/references/entries/pat-templates.md): Templates and starter content give people a working example to start from, instead of an empty page.
+  - [Contextual hints](https://ryan-di.github.io/design-field-guide/references/entries/pat-contextual-hints.md): A contextual hint teaches one thing at the moment people need it, next to the thing it explains.
+- [Chapter 13 · Prevent, explain, recover](https://ryan-di.github.io/design-field-guide/references/chapters/ch-errors.md): An error is most frustrating when the product could have prevented it.
+  - [Constraints](https://ryan-di.github.io/design-field-guide/references/entries/pat-constraints.md): A constraint makes a wrong value impossible to enter.
+  - [Forgiving input](https://ryan-di.github.io/design-field-guide/references/entries/pat-forgiving-input.md): Forgiving input accepts a value in the ways people actually write it.
+  - [Autosave](https://ryan-di.github.io/design-field-guide/references/entries/pat-autosave.md): Autosave keeps people’s work without them asking.
+- [Chapter 14 · Newcomers & experts](https://ryan-di.github.io/design-field-guide/references/chapters/ch-layers.md): The same product serves someone on day one and someone on day five hundred.
+  - [Layered interface](https://ryan-di.github.io/design-field-guide/references/entries/pat-layered-ui.md): A layered interface shows a simple set of controls first and keeps the full set one step away.
+  - [Keyboard shortcuts](https://ryan-di.github.io/design-field-guide/references/entries/pat-shortcuts.md): A keyboard shortcut runs a command from the keyboard, without the mouse.
+  - [Customization](https://ryan-di.github.io/design-field-guide/references/entries/pat-customization.md): Customization lets people shape a product around the few things they use most, such as starring a contact, pinning a chat or adding a button to a toolbar.
+- [Chapter 15 · Lean on how people already behave](https://ryan-di.github.io/design-field-guide/references/chapters/ch-laws.md): Some designs feel right before anyone can say why.
+  - [Jakob’s law](https://ryan-di.github.io/design-field-guide/references/entries/pat-jakobs-law.md): Jakob’s law says that people spend most of their time in other products, so they expect yours to work the same way.
+  - [Fitts’s law](https://ryan-di.github.io/design-field-guide/references/entries/pat-fitts-law.md): Fitts’s law says that the time it takes to hit a target depends on its size and its distance.
+  - [Hick’s law](https://ryan-di.github.io/design-field-guide/references/entries/pat-hicks-law.md): Hick’s law says that the more choices people see, the longer it takes them to pick one, because each extra option is one more thing to read and compare.
+  - [Tesler’s law](https://ryan-di.github.io/design-field-guide/references/entries/pat-teslers-law.md): Tesler’s law says every task holds some complexity that can’t be removed, only moved.
+- [When you hear this, try that](https://ryan-di.github.io/design-field-guide/references/chapters/ch-patterns-cheat.md): Start from what people say or do, pick the pattern, then check its trade-off before you build.
+
+## Part 3 · Components
+
+The building blocks: what each one is for, where it breaks, and what to use instead.
+
+- [Read every component as a promise](https://ryan-di.github.io/design-field-guide/references/chapters/ch-start.md): Every component makes a promise to the person using it, about three things.
+- [Chapter 16 · Feedback & status](https://ryan-di.github.io/design-field-guide/references/chapters/ch-feedback.md): Feedback tells people whether an action worked.
+  - [Inline message](https://ryan-di.github.io/design-field-guide/references/entries/inline-message.md): An inline message is a short line of text right next to the thing it’s about.
+  - [Toast](https://ryan-di.github.io/design-field-guide/references/entries/toast.md): A toast is a short message that appears near the edge of the screen after people do something.
+  - [Banner](https://ryan-di.github.io/design-field-guide/references/entries/banner.md): A banner is a strip across the top of an app or page.
+  - [Badge](https://ryan-di.github.io/design-field-guide/references/entries/badge.md): A badge is a small mark on another item: a dot or a number on an icon, a tab or a button.
+- [Chapter 17 · Loading & progress](https://ryan-di.github.io/design-field-guide/references/chapters/ch-progress.md): Pick the indicator by how long the wait is: under 400 ms, show nothing; up to about ten seconds, a spinner; longer, real progress.
+  - [Spinner](https://ryan-di.github.io/design-field-guide/references/entries/spinner.md): A spinner is a small turning circle that says “working on it”.
+  - [Progress bar](https://ryan-di.github.io/design-field-guide/references/entries/progress-bar.md): A progress bar is a line that fills as long work gets done: an upload, a download, an export, a backup.
+  - [Skeleton](https://ryan-di.github.io/design-field-guide/references/entries/skeleton.md): A skeleton is a gray outline of content that is still loading, with the same boxes and lines as the content that will replace it: a box for each photo, a bar for each line of text.
+- [Chapter 18 · Overlays](https://ryan-di.github.io/design-field-guide/references/chapters/ch-overlays.md): Overlays sit on top of the page and close when you click away, so keep them small and never let them hold work people could lose.
+  - [Tooltip](https://ryan-di.github.io/design-field-guide/references/entries/tooltip.md): A tooltip is a small label that appears when people point at something or move to it with the keyboard.
+  - [Popover](https://ryan-di.github.io/design-field-guide/references/entries/popover.md): A popover is a small box that opens next to the button people pressed.
+  - [Menu](https://ryan-di.github.io/design-field-guide/references/entries/menu.md): A menu is a short list of commands that opens from a button.
+- [Chapter 19 · Dialogs & panels](https://ryan-di.github.io/design-field-guide/references/chapters/ch-dialogs.md): A dialog blocks the page until people answer.
+  - [Dialog](https://ryan-di.github.io/design-field-guide/references/entries/dialog.md): A dialog is a box that opens over the page and asks the person something.
+  - [Side panel](https://ryan-di.github.io/design-field-guide/references/entries/side-panel.md): A side panel opens along the left or right edge of the screen.
+- [Chapter 20 · Inputs](https://ryan-di.github.io/design-field-guide/references/chapters/ch-inputs.md): Pick an input by the decision: does it apply right away or on Save, how many options are there, and does the exact value matter?
+  - [Switch](https://ryan-di.github.io/design-field-guide/references/entries/switch.md): A switch turns one setting on or off.
+  - [Checkbox](https://ryan-di.github.io/design-field-guide/references/entries/checkbox.md): A checkbox marks a yes or no choice.
+  - [Radio group](https://ryan-di.github.io/design-field-guide/references/entries/radio.md): A radio group is a short list of options where people pick exactly one.
+  - [Segmented control](https://ryan-di.github.io/design-field-guide/references/entries/segmented.md): A segmented control is a row of two to five buttons joined into one.
+  - [Select & combobox](https://ryan-di.github.io/design-field-guide/references/entries/combobox.md): A select shows the current choice in a closed field, and people open it to see the list and pick one option.
+  - [Slider + number](https://ryan-di.github.io/design-field-guide/references/entries/slider.md): A slider sets a value by dragging a handle along a track.
+  - [Text field](https://ryan-di.github.io/design-field-guide/references/entries/text-field.md): A text field is a box where people type their own words: a name, an address, a message, a search.
+  - [Structured picker](https://ryan-di.github.io/design-field-guide/references/entries/picker.md): A structured picker lets people enter a value with a set format by pointing at it: a day on a calendar, a time from a list, a color from a row of swatches.
+- [Chapter 21 · Actions](https://ryan-di.github.io/design-field-guide/references/chapters/ch-actions.md): The most prominent button should be the main thing to do on that screen, and there should be only one.
+  - [Button hierarchy](https://ryan-di.github.io/design-field-guide/references/entries/buttons.md): A button starts an action: save, send, pay, delete.
+  - [Icon button](https://ryan-di.github.io/design-field-guide/references/entries/icon-button.md): An icon button is a button that shows a small picture instead of a word: a magnifier for search, an × to close, a heart to like.
+  - [Link vs button](https://ryan-di.github.io/design-field-guide/references/entries/link-vs-button.md): Links and buttons are both things people click, but they do different jobs.
+- [Chapter 22 · Containers](https://ryan-di.github.io/design-field-guide/references/chapters/ch-containers.md): Tabs, accordions and cards save space by hiding some content until people open it.
+  - [Tabs](https://ryan-di.github.io/design-field-guide/references/entries/tabs.md): Tabs split one thing into a few parts and show one part at a time.
+  - [Accordion](https://ryan-di.github.io/design-field-guide/references/entries/accordion.md): An accordion is a stack of headers.
+  - [Card](https://ryan-di.github.io/design-field-guide/references/entries/card.md): A card is a box that holds one item: a photo album, a home to rent, a product.
+- [Chapter 23 · Navigation](https://ryan-di.github.io/design-field-guide/references/chapters/ch-navigation.md): Navigation shows where you are and where you can go.
+  - [Side navigation](https://ryan-di.github.io/design-field-guide/references/entries/side-nav.md): A side navigation is a list of an app’s main places, down the left edge: Home, Documents, Shared, Settings.
+  - [Breadcrumbs](https://ryan-di.github.io/design-field-guide/references/entries/breadcrumbs.md): Breadcrumbs are a short line of links above a page title, like My drive / Family / Holidays.
+  - [Stepper](https://ryan-di.github.io/design-field-guide/references/entries/stepper.md): A stepper, also called a wizard, splits a long task into a few steps in a fixed order, such as Delivery, Payment and Review.
+- [Chapter 24 · States](https://ryan-di.github.io/design-field-guide/references/chapters/ch-states.md): Every component spends time in states other than the default: loading, empty, error, disabled.
+  - [Interaction states](https://ryan-di.github.io/design-field-guide/references/entries/interaction-states.md): Interaction states are the different looks one control takes as people use it: hover, focus, pressed, selected, disabled, loading, and the result after.
+  - [Empty state](https://ryan-di.github.io/design-field-guide/references/entries/empty-state.md): An empty state is what a screen shows when there’s nothing in it: no albums yet, no search results, no tasks left.
+  - [Error state](https://ryan-di.github.io/design-field-guide/references/entries/error-state.md): An error state is what a screen, or part of one, shows when something failed: a page didn’t load, a save didn’t go through, a link is broken.
+- [Before you pick one, ask three questions](https://ryan-di.github.io/design-field-guide/references/chapters/ch-choose.md): Start from what the person needs, then read across.
+
+## Part 4 · Effective design
+
+Taking a problem to a shipped solution with agents and tools. You frame, decide and check; agents explore and build.
+
+- [One problem runs through this part](https://ryan-di.github.io/design-field-guide/references/chapters/ch-eff-start.md): Most chapters use one problem in their Try-it demos: **people lose unsaved work when they close a workflow tab**.
+- [Chapter 25 · Work in a loop: frame, explore, decide, build, check](https://ryan-di.github.io/design-field-guide/references/chapters/ch-loop.md): Good work runs in a loop: frame the problem, explore options, decide, build, check, and learn for the next round.
+  - [The loop](https://ryan-di.github.io/design-field-guide/references/entries/eff-loop.md): Every change goes through the same loop.
+  - [Ownership](https://ryan-di.github.io/design-field-guide/references/entries/eff-ownership.md): Agents are good at wide, repeatable work: searching a codebase, writing test scaffolds, making many variations.
+- [Chapter 26 · Write the brief agents build from](https://ryan-di.github.io/design-field-guide/references/chapters/ch-brief.md): An agent builds what you write down, not what you meant.
+  - [Problem brief](https://ryan-di.github.io/design-field-guide/references/entries/eff-brief.md): A problem brief is a short note written before anyone builds.
+  - [Context pack](https://ryan-di.github.io/design-field-guide/references/entries/eff-context-pack.md): A context pack is what a new teammate would need on their first day: design tokens, components to reuse, copy rules, examples of good screens, repo conventions and the design frames.
+  - [Definition of done](https://ryan-di.github.io/design-field-guide/references/entries/eff-definition-of-done.md): A definition of done is the list of checks a change must pass before you call it finished.
+- [Chapter 27 · Explore wide before you narrow](https://ryan-di.github.io/design-field-guide/references/chapters/ch-explore.md): Look at several different solutions before you pick one.
+  - [Explore wide](https://ryan-di.github.io/design-field-guide/references/entries/eff-explore-wide.md): Before you build one answer, ask for several different ones.
+  - [Named axes](https://ryan-di.github.io/design-field-guide/references/entries/eff-axes.md): When you ask for options, name what should change between them.
+  - [Prototype in code](https://ryan-di.github.io/design-field-guide/references/entries/eff-prototype-in-code.md): A prototype answers a question about a design.
+- [Chapter 28 · Decide with judgment, not by polish](https://ryan-di.github.io/design-field-guide/references/chapters/ch-decide.md): Agents can make every direction look finished, so polish no longer tells you which one is right.
+  - [Decision matrix](https://ryan-di.github.io/design-field-guide/references/entries/eff-decision-matrix.md): A decision matrix scores each direction from 1 to 5 against each criterion in the brief.
+  - [Spot the plausible](https://ryan-di.github.io/design-field-guide/references/entries/eff-spot-plausible.md): Agent-made screens often look finished and still have problems: vague copy, a broken keyboard path, a missing state, or a color a little off the design tokens.
+  - [Cut and combine](https://ryan-di.github.io/design-field-guide/references/entries/eff-cut-combine.md): When you have several design directions, the best answer is often none of them whole: it takes the strongest part of each and cuts the rest.
+- [Chapter 29 · Build in small, reviewable steps](https://ryan-di.github.io/design-field-guide/references/chapters/ch-build.md): Plan before any code, then build in small steps that each end with a check.
+  - [Small steps](https://ryan-di.github.io/design-field-guide/references/entries/eff-small-steps.md): Before an agent writes code, agree on a plan with it, for example in Claude Code’s plan mode.
+  - [Agent checks](https://ryan-di.github.io/design-field-guide/references/entries/eff-agent-verification.md): When an agent says it’s done, ask it to show the proof: which unit tests ran, the end-to-end specs for the screens it changed, screenshots before and after, and a clean type check.
+  - [UX calls](https://ryan-di.github.io/design-field-guide/references/entries/eff-ux-calls.md): Every change people will see is a design decision: the wording, the spacing, which kind of dialog appears.
+- [Chapter 30 · Check it with evidence](https://ryan-di.github.io/design-field-guide/references/chapters/ch-evaluate.md): A change is done when you can show it solves the problem, [not when it merges](https://ryan-di.github.io/design-field-guide/#eff-loop).
+  - [Watch people](https://ryan-di.github.io/design-field-guide/references/entries/eff-quick-sessions.md): Watching people use a design is the quickest way to see where it fails.
+  - [Measure](https://ryan-di.github.io/design-field-guide/references/entries/eff-measure.md): Measuring against the brief means choosing, before you build, the numbers that will show whether the brief’s goal was met.
+  - [Design QA](https://ryan-di.github.io/design-field-guide/references/entries/eff-design-qa.md): Design QA means checking a change everywhere people will see it before it ships: in light and dark, on narrow and wide screens, and in every state it can be in.
+- [Chapter 31 · One problem, start to finish](https://ryan-di.github.io/design-field-guide/references/chapters/ch-example.md): Here the running example goes through every stage, with the small artifact each stage leaves behind.
+  - [Worked example](https://ryan-di.github.io/design-field-guide/references/entries/eff-worked-example.md): This entry follows one problem from brief to release: people lose unsaved work when they close a workflow tab.
+  - [Toolkit](https://ryan-di.github.io/design-field-guide/references/entries/eff-toolkit.md): Design work has separate jobs: frame the problem, gather context, explore, decide, build, check and share.
+- [Effective design, step by step](https://ryan-di.github.io/design-field-guide/references/chapters/ch-eff-checklist.md)
+
+## Optional
+
+- [Rubrics](https://ryan-di.github.io/design-field-guide/references/rubrics.json): the book’s reference tables as data
+- [Index](https://ryan-di.github.io/design-field-guide/references/index.json): every entry with its rules, tables, related entries and search tags
+- [Changelog](https://ryan-di.github.io/design-field-guide/CHANGELOG.md)

@@ -2,6 +2,7 @@
 // Loads the book in light/dark at 1280px and 390px and fails on: page errors, console errors, contents links
 // that don't open, missing ids from tools/ids-baseline.txt, empty demos, rule switches that don't switch,
 // horizontal overflow, deep links that don't land. With --shots it saves screenshots of fixed spots per theme/width.
+// Checking a local file also runs tools/export.py --check, so exports that lag behind index.html fail too.
 const path = require('path');
 const fs = require('fs');
 let chromium;
@@ -123,5 +124,10 @@ const CONFIGS = [[1280, 'light'], [1280, 'dark'], [390, 'light'], [390, 'dark']]
     await ctx.close();
   }
   await b.close();
+  if (!arg('--url')) {
+    const ex = require('child_process').spawnSync('python3', [path.join(__dirname, 'export.py'), '--check'], { encoding: 'utf8' });
+    process.stdout.write('exports: ' + (ex.stdout || '') + (ex.stderr || ''));
+    if (ex.status !== 0) failed++;
+  }
   process.exit(failed ? 1 : 0);
 })();
