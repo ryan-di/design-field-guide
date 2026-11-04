@@ -1,7 +1,7 @@
 # Starlight pilot
 
-The preface and Chapter 1 of the book on [Starlight](https://starlight.astro.build/). Everything under `src/content/docs/`
-(except `index.mdx`), `src/fragments/`, `src/styles/book.css`, `src/sidebar.json` and `src/anchors.json` is generated
+The book on [Starlight](https://starlight.astro.build/), one page per chapter. Everything under `src/content/docs/`
+(except `index.mdx`), `src/fragments/`, `src/styles/book.css`, `src/sidebar.json` and `public/anchors.json` is generated
 from `../index.html`; edit the book and regenerate.
 
 ```sh
