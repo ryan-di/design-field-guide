@@ -181,6 +181,15 @@ Taking a problem to a shipped solution with agents and tools. You frame, decide 
   - [Toolkit](https://ryan-di.github.io/design-field-guide/references/entries/eff-toolkit.md): Design work has separate jobs: frame the problem, gather context, explore, decide, build, check and share.
 - [Effective design, step by step](https://ryan-di.github.io/design-field-guide/references/chapters/ch-eff-checklist.md)
 
+## Back matter
+
+How the parts fit together, the terms this book uses, and where its principles come from.
+
+- [Where to go from here](https://ryan-di.github.io/design-field-guide/references/chapters/ch-afterword.md): The four parts meet in [the loop](https://ryan-di.github.io/design-field-guide/#eff-loop).
+- [Glossary](https://ryan-di.github.io/design-field-guide/references/chapters/ch-glossary.md): Terms this book uses in a specific sense, each with the entry that explains it.
+- [Sources](https://ryan-di.github.io/design-field-guide/references/chapters/ch-sources.md): The work behind the principles, laws, standards and methods this book names, each with where the book uses it.
+- [About this edition](https://ryan-di.github.io/design-field-guide/references/chapters/ch-colophon.md): Design Field Guide is Book 1 of the design engineer primer.
+
 ## Optional
 
 - [Rubrics](https://ryan-di.github.io/design-field-guide/references/rubrics.json): the book’s reference tables as data

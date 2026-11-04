@@ -2421,7 +2421,7 @@ mark.p21-flag{background:transparent;color:inherit;text-decoration:underline wav
           '<path d="M30 96 L30 68 L108 68 L108 38 L176 38" fill="none" stroke="var(--ui-sel)" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>' +
           '<rect x="20" y="88" width="20" height="13" rx="4" fill="var(--ui-text)"/>' +
           '<circle cx="182" cy="34" r="9" fill="var(--ui-sel)"/><circle cx="182" cy="34" r="3.5" fill="var(--ui-surface)"/></svg></div>' +
-          '<div class="cw-gpf-sheet"><b>Arriving in 4 min</b><span><i class="av"></i>Grey sedan · ABC 123</span></div></div>'),
+          '<div class="cw-gpf-sheet"><b>Arriving in 4 min</b><span><i class="av"></i>Gray sedan · ABC 123</span></div></div>'),
         alt: 'Problem frame: a rider waiting for a pickup wants to step outside at the right time, but doesn’t know where the car is. Answer: a map with the car on a route to the pickup pin, and a card saying Arriving in 4 min, with the car and plate.',
         cap: 'Uber: shows the car moving on the map, the minutes until pickup, and the car and its plate. Waiting becomes something riders can plan around.' },
       spotify: { html: frame('A listener tired of their own library', 'New songs they’ll like', 'Not knowing what to search for',
@@ -2952,18 +2952,18 @@ mark.p21-flag{background:transparent;color:inherit;text-decoration:underline wav
         cap: 'iOS Weather: the current temperature is by far the largest thing on screen. The place, the conditions and the forecast step down below it, so one glance tells you how warm it is.' },
       bnb: { html: '<div class="cw-gvh-win"><div class="cw-gvh-split"><div class="cw-gvh-bnb-main"><span class="cw-gvh-photo"></span><b>Cabin by the lake</b><small>4 guests · 2 bedrooms</small>' + line(90) + line(70) + '</div>' +
           '<div class="cw-gvh-book"><span><b>$120</b> night</span><div class="cw-gvh-dates"><span>Check-in<br>12 May</span><span>Checkout<br>15 May</span></div><span class="btn btn-primary cw-gvh-lead">Reserve</span><span>Total before taxes $410</span></div></div></div>',
-        alt: 'A listing page. On the right, a booking card with the nightly price in bold, two date fields, and one filled Reserve button, outlined. Fine print below it is small and grey.',
+        alt: 'A listing page. On the right, a booking card with the nightly price in bold, two date fields, and one filled Reserve button, outlined. Fine print below it is small and gray.',
         cap: 'Airbnb: on a listing, the booking card has one filled button, Reserve, with the nightly price in bold above it. Dates, guests and fine print stay quieter.' },
       linear: { html: '<div class="cw-gvh-win cw-gvh-lin"><div class="cw-gvh-lin-main"><small>Team › ABC-42</small><span class="cw-gvh-lin-title cw-gvh-lead">Export fails on large files</span>' + line(95) + line(88) + line(60) + '</div>' +
           '<dl class="cw-gvh-lin-side"><dt>Status</dt><dd>In progress</dd><dt>Priority</dt><dd>High</dd><dt>Assignee</dt><dd>Ana</dd><dt>Labels</dt><dd>Bug</dd></dl></div>',
-        alt: 'An issue page. The title, Export fails on large files, is large and bold, and outlined. The description is plain lines. A side panel lists status, priority, assignee and labels in small grey text.',
+        alt: 'An issue page. The title, Export fails on large files, is large and bold, and outlined. The description is plain lines. A side panel lists status, priority, assignee and labels in small gray text.',
         cap: 'Linear: an issue’s title is the largest, darkest text on the page. Status, priority and assignee sit in a side panel in smaller, lighter text.' },
       gmail: { html: '<div class="cw-gvh-win"><div class="cw-gvh-gm-head"><span>New message</span><span>— ✕</span></div><div class="cw-gvh-gm-row">To</div><div class="cw-gvh-gm-row">Subject</div>' +
           '<div class="cw-gvh-gm-body">' + line(90) + line(78) + line(40) + '</div>' +
           '<div class="cw-gvh-gm-foot"><span class="btn btn-primary cw-gvh-lead">Send</span>' + sv('<path d="M7 19h10M12 5l-5 12M12 5l5 12M9 13h6"/>') +
           sv('<path d="M16 8l-6.5 6.5a2 2 0 0 0 2.8 2.8L19 10.6a4 4 0 0 0-5.7-5.7L6.6 11.6a6 6 0 0 0 8.5 8.5L19 16"/>') + sv('<path d="M10 14a4 4 0 0 0 5.7 0l3-3a4 4 0 0 0-5.7-5.7l-1 1M14 10a4 4 0 0 0-5.7 0l-3 3a4 4 0 0 0 5.7 5.7l1-1"/>') +
           ic('image') + '<span class="end">' + ic('trash') + '</span></div></div>',
-        alt: 'A compose window. Send is the only filled button, outlined. Formatting, attach, link, image and delete are small grey icons beside it.',
+        alt: 'A compose window. Send is the only filled button, outlined. Formatting, attach, link, image and delete are small gray icons beside it.',
         cap: 'Gmail: in the compose window, Send is the only filled button. Formatting, attachments and delete are small gray icons, so the next step is never in doubt.' }
     };
     const render = k => { view.innerHTML = S[k].html; view.setAttribute('aria-label', 'Sketch: ' + S[k].alt); cap.textContent = S[k].cap; };
@@ -3780,17 +3780,17 @@ mark.p21-flag{background:transparent;color:inherit;text-decoration:underline wav
     const dm = (on, name) => '<div class="cw-gct-row"><i class="cw-gct-pres' + (on ? ' on' : '') + '"></i><span>' + name + '</span></div>';
     const S = {
       linear: { html: pair('<div class="cw-gct-card">' + lin('backlog', 'ABC-51', 'Old prototype ideas') + lin('todo', 'ABC-48', 'Add dark mode') + lin('prog', 'ABC-42', 'Export fails on large files') + lin('done', 'ABC-39', 'Fix login redirect') + lin('cancel', 'ABC-33', 'Drop old browsers') + '</div>'),
-        alt: 'An issue list shown twice, in color and in grey. Each status has its own icon: a dashed circle, an empty circle, a half-filled circle, a filled circle with a check, and a filled circle with a cross. In grey they are still easy to tell apart.',
+        alt: 'An issue list shown twice, in color and in gray. Each status has its own icon: a dashed circle, an empty circle, a half-filled circle, a filled circle with a check, and a filled circle with a cross. In gray they are still easy to tell apart.',
         cap: 'Linear: each issue status has its own icon shape, from a dashed circle for backlog to a half-filled one in progress and a check for done. Without color, the shapes still tell them apart.' },
       gh: { html: pair('<div class="cw-gct-card">' + pr('open', 'Open', 'Add export presets') + pr('merged', 'Merged', 'Faster thumbnails') + pr('closed', 'Closed', 'Old settings page') + pr('draft', 'Draft', 'New sidebar') + '</div>'),
-        alt: 'Pull requests shown twice, in color and in grey. Each has a label with an icon and a word: Open, Merged, Closed, Draft. In grey the colors are gone, but the words and icons still say it.',
+        alt: 'Pull requests shown twice, in color and in gray. Each has a label with an icon and a word: Open, Merged, Closed, Draft. In gray the colors are gone, but the words and icons still say it.',
         cap: 'GitHub: a pull request’s state is a colored label with an icon and a word: Open, Merged, Closed or Draft. Without color, the word and the icon still say it.' },
       slack: { html: pair('<div class="cw-gct-card cw-gct-dm"><b>Direct messages</b>' + dm(true, 'Ana') + dm(false, 'Ben') + dm(true, 'Cy') + dm(false, 'Dee') + '</div>'),
-        alt: 'A list of people shown twice, in color and in grey. Active people have a filled dot, away people an empty ring. In grey, filled and empty still differ.',
+        alt: 'A list of people shown twice, in color and in gray. Active people have a filled dot, away people an empty ring. In gray, filled and empty still differ.',
         cap: 'Slack: an active person gets a filled dot and an away person an empty ring. Filled versus hollow carries the meaning, not just green versus gray.' },
       duo: { html: pair('<div class="cw-gct-card"><div class="cw-gct-ans ok"><span><i class="cw-gct-badge">' + sv('<path d="M5 12.5l4.5 4.5L19 7.5"/>') + '</i>Nicely done!</span></div>' +
           '<div class="cw-gct-ans bad"><span><i class="cw-gct-badge">' + sv('<path d="M6 6l12 12M18 6L6 18"/>') + '</i>Correct answer:</span><small>The cat is sleeping.</small></div></div>'),
-        alt: 'Two answer panels shown twice, in color and in grey. The right answer has a check and praise. The wrong answer has a cross and the correct answer written out. In grey, the icons and words still tell them apart.',
+        alt: 'Two answer panels shown twice, in color and in gray. The right answer has a check and praise. The wrong answer has a cross and the correct answer written out. In gray, the icons and words still tell them apart.',
         cap: 'Duolingo: after you check an answer, the panel turns green with a check and praise, or red with a cross and the right answer written out. The icon, the words and a sound carry the meaning too, so color is never alone.' }
     };
     const render = k => { view.innerHTML = S[k].html; view.setAttribute('aria-label', 'Sketch: ' + S[k].alt); cap.textContent = S[k].cap; };
@@ -5227,7 +5227,7 @@ mark.p21-flag{background:transparent;color:inherit;text-decoration:underline wav
       gmail: { html: '<div class="cw-gerr-mid"><div class="cw-gerr-mail"><span class="cw-gerr-from"><i></i>Mail delivery</span><b>Address not found</b>' +
           '<span>Your message wasn’t delivered to sam@example.org because the address couldn’t be found.</span>' +
           '<span class="cw-gerr-small"><span>The response was:</span><code>550 5.1.1 …</code></span></div></div>',
-        alt: 'A bounce email. The heading says Address not found, then one plain sentence names the address. A server code sits last, in small grey text.',
+        alt: 'A bounce email. The heading says Address not found, then one plain sentence names the address. A server code sits last, in small gray text.',
         cap: 'Gmail: a bounced email leads with “Address not found” and one plain sentence about which address failed. The server’s code comes last, in small print, for whoever needs it.' },
       google: { html: '<div class="cw-gerr-mid"><div class="cw-gerr-sign"><b>Sign in</b><span class="cw-gerr-lab">Password</span><span class="cw-gerr-in">••••••••</span>' +
           '<span class="cw-gerr-fm">' + ic('warn') + '<span>Wrong password. Try again, or reset it.</span></span>' +
@@ -5477,7 +5477,7 @@ mark.p21-flag{background:transparent;color:inherit;text-decoration:underline wav
         cap: 'Uber: the main field asks “Where to?”, the way a driver would, instead of “Enter destination address”. Saved places use people’s own names, like Home and Work.' },
       ios: { html: '<div class="cw-gpl-mid"><div class="cw-gpl-set"><div class="cw-gpl-group"><span class="cw-gpl-item">Battery Percentage<i class="cw-gpl-sw on"></i></span></div><div class="cw-gpl-group"><span class="cw-gpl-item">Low Power Mode<i class="cw-gpl-sw"></i></span></div>' +
           '<p class="cw-gpl-foot">Cuts background activity, like downloads and mail fetch, until you can fully charge.</p></div></div>',
-        alt: 'Two settings with switches: Battery Percentage and Low Power Mode. A short grey line under Low Power Mode explains in plain words what Low Power Mode cuts back and for how long.',
+        alt: 'Two settings with switches: Battery Percentage and Low Power Mode. A short gray line under Low Power Mode explains in plain words what Low Power Mode cuts back and for how long.',
         cap: 'iOS: a setting has a plain name, and the line under it says what it does with everyday examples. Low Power Mode names what it cuts back, like downloads and mail, and for how long.' }
     };
     const render = k => { view.innerHTML = S[k].html; view.setAttribute('aria-label', 'Sketch: ' + S[k].alt); cap.textContent = S[k].cap; };
@@ -6538,7 +6538,7 @@ mark.p21-flag{background:transparent;color:inherit;text-decoration:underline wav
             <dl class="p23-dl">
               <div class="p23-d-goal"><dt>Goal</dt><dd>We want a traveller to book a room in under a minute.</dd></div>
               <div class="p23-d-works"><dt>What works</dt><dd>The photo shows the real room, so people can judge it before they open anything.</dd></div>
-              <div class="p23-d-not"><dt>What doesn’t serve the goal</dt><dd>“book →” is a small grey link in the corner. The one action this card exists for is the hardest part to see.</dd></div>
+              <div class="p23-d-not"><dt>What doesn’t serve the goal</dt><dd>“book →” is a small gray link in the corner. The one action this card exists for is the hardest part to see.</dd></div>
               <div class="p23-d-sugg"><dt>Suggestion</dt><dd>Could “Book” be the card’s main button, right under the title?</dd></div>
             </dl>
           </div>
@@ -6637,7 +6637,7 @@ mark.p21-flag{background:transparent;color:inherit;text-decoration:underline wav
         html: '<div class="fc-wrap"><div class="fc-box" style="flex:none"><b>Shopping list</b>' +
           '<div class="fc-item"><span>Spaghetti</span><span>500 g</span></div><div class="fc-item fc-spot" data-s="2"><span>Tomatoes</span><span style="margin-right:14px">6</span></div>' +
           '<div class="fc-item"><span>Garlic</span><span>1 bulb</span></div><div class="fc-item done fc-spot" data-s="1"><span>Olive oil</span><span>1 bottle</span></div></div>' +
-          cmts(['Ticked items are light grey on white. They’re hard to read in a bright shop.', 'One quantity is out of line with the rest, so the column is slower to scan.']) + '</div>',
+          cmts(['Ticked items are light gray on white. They’re hard to read in a bright shop.', 'One quantity is out of line with the rest, so the column is slower to scan.']) + '</div>',
         use: 'A shopping list that’s close to done.'
       }
     };
@@ -6879,7 +6879,7 @@ mark.p21-flag{background:transparent;color:inherit;text-decoration:underline wav
               <button type="button" class="p23-spot p23-help" data-spot="help" aria-label="Small question mark icon">?</button>
               <span class="p23-grow"></span>
               <button type="button" class="p23-spot p23-bspot" data-spot="ok"><span class="p23-fbtn p23-fbtn-primary">OK</span></button>
-              <button type="button" class="p23-spot p23-bspot" data-spot="cancel"><span class="p23-fbtn p23-fbtn-off">Cancel</span><span class="p23-sr"> (greyed out)</span></button>
+              <button type="button" class="p23-spot p23-bspot" data-spot="cancel"><span class="p23-fbtn p23-fbtn-off">Cancel</span><span class="p23-sr"> (grayed out)</span></button>
             </div>
           </div>
           <p class="p23-hint" id="p23-hr-help">Every part of this mock dialog is a button. Some parts are fine.</p>
@@ -6905,7 +6905,7 @@ mark.p21-flag{background:transparent;color:inherit;text-decoration:underline wav
             </li>
             <li id="p23-hr-f-cancel" data-h="3" data-sev="3" hidden>
               <p class="p23-fh"><b>3 · User control and freedom</b><span class="p23-sev">Severity 3 · major</span></p>
-              <p>Cancel is greyed out while it prepares, and there’s no close button. Once the dialog opens, people can’t back out.</p>
+              <p>Cancel is grayed out while it prepares, and there’s no close button. Once the dialog opens, people can’t back out.</p>
               <p class="p23-fix"><b>Fix:</b> keep Cancel and a close button working at every moment, and let Escape close it. See <a href="#dialog">Dialog</a>.</p>
             </li>
             <li id="p23-hr-f-ok" data-h="4" data-sev="2" hidden>
@@ -7640,8 +7640,8 @@ mark.p21-flag{background:transparent;color:inherit;text-decoration:underline wav
   /* 2. No note */
   const ROWS = [['Morning yoga', 'Mon 7:00 · 60 min'], ['Spin class', 'Wed 18:30 · 45 min'], ['Pilates', 'Sat 10:00 · 50 min']];
   const noteHtml = fixed => '<div class="te-col"><div class="te-box"><span class="te-h">Saved: gym class list</span><div data-rows></div></div>' +
-    '<div class="te-note">' + (fixed ? '<b>Why it works:</b> only the title is dark. Everything else is grey, so the eye finds titles fast.' : '<b>Note:</b> nice list, copy this.') + '</div>' +
-    '<div class="te-acts"><span>New price column:</span><button class="btn btn-secondary cs-sm" type="button" data-c="dark">Dark</button><button class="btn btn-secondary cs-sm" type="button" data-c="grey">Grey</button></div>' +
+    '<div class="te-note">' + (fixed ? '<b>Why it works:</b> only the title is dark. Everything else is gray, so the eye finds titles fast.' : '<b>Note:</b> nice list, copy this.') + '</div>' +
+    '<div class="te-acts"><span>New price column:</span><button class="btn btn-secondary cs-sm" type="button" data-c="dark">Dark</button><button class="btn btn-secondary cs-sm" type="button" data-c="grey">Gray</button></div>' +
     '<p class="te-out" data-out></p></div>';
   const noteWire = fixed => d => {
     const rows = d.querySelector('[data-rows]'), o = d.querySelector('[data-out]');
@@ -17437,7 +17437,7 @@ mark.p21-flag{background:transparent;color:inherit;text-decoration:underline wav
           '<span class="cw-hick-step done" style="margin-left:-36px">' + ic('check') + '</span><span class="cw-hick-step done" style="margin-left:-6px">' + ic('check') + '</span>' +
           '<span style="position:relative;display:flex;align-items:center;justify-content:center;width:100%"><span class="cw-hick-step now" style="margin-left:40px"></span><span class="cw-hick-start">Start</span></span>' +
           '<span class="cw-hick-step" style="margin-left:6px"></span><span class="cw-hick-step" style="margin-left:-34px"></span></div></div>',
-        alt: 'A phone showing a winding path of lesson circles. Two are done. The next one is larger, ringed, and labeled Start. The rest are greyed out.',
+        alt: 'A phone showing a winding path of lesson circles. Two are done. The next one is larger, ringed, and labeled Start. The rest are grayed out.',
         cap: 'Duolingo: the home screen is a path with one lesson marked as next. Opening the app leads to one obvious tap, not a menu of lessons.' }
     };
     const render = k => { view.innerHTML = S[k].html; view.setAttribute('aria-label', 'Sketch: ' + S[k].alt); cap.textContent = S[k].cap; };
@@ -20318,16 +20318,16 @@ mark.p21-flag{background:transparent;color:inherit;text-decoration:underline wav
         const tile = (ratio, cls) => '<i class="cw-skelw-tile' + (cls ? ' on ' + cls : '') + '" style="flex:' + ratio + ' 1 0"></i>';
         const S = {
           youtube: { html: '<div class="cw-skelw-win"><div class="cw-skelw-grid">' + vid() + vid() + vid() + vid() + vid() + vid() + '</div></div>',
-            alt: 'A grid of video placeholders: a grey box for each thumbnail, a grey circle for the channel picture, and two grey bars for the title.',
+            alt: 'A grid of video placeholders: a gray box for each thumbnail, a gray circle for the channel picture, and two gray bars for the title.',
             cap: 'YouTube: the home page first shows gray boxes where thumbnails go and bars where titles go, so the videos drop in without moving anything.' },
           facebook: { html: '<div class="cw-skelw-post"><div class="cw-skelw-head">' + sk() + sk(45) + sk(25) + '</div>' + sk(95) + sk(85) + sk(60) + sk(0, 'img') + '</div>',
-            alt: 'A placeholder post: a grey circle for the profile photo, two short bars for name and time, three bars for text, and a grey box for a photo.',
+            alt: 'A placeholder post: a gray circle for the profile photo, two short bars for name and time, three bars for text, and a gray box for a photo.',
             cap: 'Facebook: the feed shows gray posts before the real ones arrive, with a circle for the profile photo and bars for the name and text.' },
           photos: { html: '<div class="cw-skelw-win"><div class="cw-skelw-rows"><span class="cw-skelw-date">Saturday</span>' +
               '<div class="cw-skelw-row">' + tile(1.5, 'a') + tile(0.75) + tile(1.33, 'b') + tile(1) + '</div>' +
               '<div class="cw-skelw-row">' + tile(1) + tile(1.78, 'c') + tile(0.75) + tile(1.5) + '</div>' +
               '<div class="cw-skelw-row">' + tile(0.75, 'b') + tile(1.33) + tile(1.5) + tile(1, 'a') + '</div></div></div>',
-            alt: 'A photo grid where each row holds tiles of different widths. Some tiles already show photos, the rest are plain grey tiles of the same size.',
+            alt: 'A photo grid where each row holds tiles of different widths. Some tiles already show photos, the rest are plain gray tiles of the same size.',
             cap: 'Google Photos: when you scroll fast, each photo’s spot is held by a plain tile of the right size and shape. Photos fill in where they belong, so the grid doesn’t reflow.' }
         };
         const render = k => { view.innerHTML = S[k].html; view.setAttribute('aria-label', 'Sketch: ' + S[k].alt); cap.textContent = S[k].cap; };
@@ -30288,7 +30288,7 @@ mark.p21-flag{background:transparent;color:inherit;text-decoration:underline wav
             alt: 'The same shape three times. At rest it has no outline. On hover it gets a thin blue outline. Selected, it gets the outline, four corner handles and a size label.',
             cap: 'Figma: hovering a layer draws a thin outline; selecting it adds handles and its size. “I’m pointing at it” and “I’ve picked it” never look the same.' },
           youtube: { html: '<div class="cw-isw-set stack"><span class="cw-isw-sp">' + k('Before') + ch('<span class="cw-isw-pill sub">Subscribe</span>') + '</span><span class="cw-isw-sp">' + k('After') + ch('<span class="cw-isw-pill subd">Subscribed</span>') + '</span></div>',
-            alt: 'A channel row twice. Before: a dark, filled Subscribe button. After: a quieter grey Subscribed button with a small arrow for options.',
+            alt: 'A channel row twice. Before: a dark, filled Subscribe button. After: a quieter gray Subscribed button with a small arrow for options.',
             cap: 'YouTube: Subscribe is a strong filled button; once pressed it becomes a quieter Subscribed button. The color and the label both say which state you’re in.' },
           spotify: { html: '<div class="cw-isw-list">' + row('1', 'Morning light', '', k('Rest')) + row(ic('play'), 'Paper boats', 'hov', k('Hover')) + row(eq, 'Long way home', 'play', k('Playing')) + '<div class="cw-isw-player"><span class="cw-isw-pause"></span><span class="cw-isw-bar"></span></div></div>',
             alt: 'A track list. The first track shows its number. The hovered track shows a play icon instead of its number. The playing track has a highlighted title and small bars. Below, the main button shows pause.',
@@ -32355,7 +32355,7 @@ mark.p21-flag{background:transparent;color:inherit;text-decoration:underline wav
   const trip = off => '<div class="cp-trip' + (off ? ' off' : '') + '"><span class="thumb b"></span><span><b>Lisbon</b><small>12–16 Nov</small></span></div>';
   const lookHtml = fixed => '<div class="cp-card"><span class="cp-k">Request</span><div class="cp-me">' +
     (fixed ? '<span>Build the trip card from this frame.</span><span class="cp-chip">' + ic('image') + 'Figma frame: Trips / Card</span>'
-      : '<span>A card with a small image on the left, the title in bold, a grey date under it and a soft shadow.</span>') + '</div>' +
+      : '<span>A card with a small image on the left, the title in bold, a gray date under it and a soft shadow.</span>') + '</div>' +
     '<div class="cp-two"><div><span class="cp-k">The design</span>' + trip(false) + '</div><div><span class="cp-k">Agent made</span>' + trip(!fixed) + '</div></div>' +
     '<span class="' + (fixed ? 'cp-good' : 'cp-bad') + '">' + (fixed ? 'Same as the design. The agent read sizes and colors from the frame.' : 'Image on top, title not bold, date in blue, heavy shadow. Each is one reading of the words.') + '</span></div>';
   D('eff-context-pack-3b', lookHtml(false), () => {});
@@ -33350,7 +33350,7 @@ mark.p21-flag{background:transparent;color:inherit;text-decoration:underline wav
           '<i class="cw-xw-dot" style="' + pos(45, 140) + '"></i><i class="cw-xw-dot end" style="' + pos(260, 30) + '"></i>' +
           t(125, 100, '18 min', true) + t(45, 82, '24 min') + t(196, 140, '21 min') + '</div>' +
           '<div class="cw-xw-routes"><span class="on"><b>18 min</b><small>via Hill Rd · fastest</small></span><span><b>21 min</b><small>via River Rd · no tolls</small></span><span><b>24 min</b><small>via Park Ave</small></span></div></div>',
-        alt: 'A street map with three routes from a start point to a destination. The fastest, 18 min, is highlighted; two others, 21 min and 24 min, are greyed out. A list below repeats the three routes.',
+        alt: 'A street map with three routes from a start point to a destination. The fastest, 18 min, is highlighted; two others, 21 min and 24 min, are grayed out. A list below repeats the three routes.',
         cap: 'Google Maps: directions show a few different routes at once, each with its time on the map. You see the trade-offs side by side and tap the one you want, instead of taking the first answer.' }
     };
     const render = k => { view.innerHTML = S[k].html; view.setAttribute('aria-label', 'Sketch: ' + S[k].alt); cap.textContent = S[k].cap; };
@@ -33646,7 +33646,7 @@ mark.p21-flag{background:transparent;color:inherit;text-decoration:underline wav
 </article>
 
   <article class="entry" id="eff-prototype-in-code" data-entry data-name="Prototype in code">
-    <div class="entry-head"><h3>Prototype in the real material</h3><label class="learned"><input type="checkbox" data-learned="eff-prototype-in-code"> Learned</label></div>
+    <div class="entry-head"><h3>Prototype at the fidelity the question needs</h3><label class="learned"><input type="checkbox" data-learned="eff-prototype-in-code"> Learned</label></div>
 <div class="essay">
 <p class="prose">A prototype answers a question about a design. Build it in code, at the fidelity the question needs and no higher. A clickable artifact page answers questions about feel and timing, and a branch in the app answers questions about real storage, real data and real speed.</p>
 <p class="prose">Code also lets you try the prototype with a keyboard and a screen reader, which a static mock can’t. Do that before you pick a direction, not after it ships.</p>
@@ -35953,7 +35953,7 @@ mark.p21-flag{background:transparent;color:inherit;text-decoration:underline wav
                 '<span class="cw-ess-node done">' + ic('check') + '</span><span class="cw-ess-node done l1">' + ic('check') + '</span>' +
                 '<span class="cw-ess-node now">' + ic('play') + '<span class="cw-ess-go">Next</span></span>' +
                 '<span class="cw-ess-node r1"></span><span class="cw-ess-node"></span></div></div>',
-              alt: 'A phone showing a learning path for Unit 2. Two lessons are done with checks, the next one is highlighted, and two more below are grey until you get there.',
+              alt: 'A phone showing a learning path for Unit 2. Two lessons are done with checks, the next one is highlighted, and two more below are gray until you get there.',
               cap: 'Duolingo: a course is a path of short lessons. Each takes a few minutes and opens the next one when you finish, so you always know where you are and never face a whole unit at once.' }
           };
           const render = k => { view.innerHTML = S[k].html; view.setAttribute('aria-label', 'Sketch: ' + S[k].alt); cap.textContent = S[k].cap; };
@@ -36271,7 +36271,7 @@ mark.p21-flag{background:transparent;color:inherit;text-decoration:underline wav
             github: { html: '<div class="cw-eav-box"><div class="cw-eav-head"><span class="cw-eav-ic bad">' + ic('x') + '</span><div><b>Some checks failed</b><small>1 failing, 3 passing</small></div></div>' +
                 row('End-to-end: tab close', false, true) + row('Unit tests', true, true) + row('Type check', true, true) + row('Lint', true, false) +
                 '<div class="cw-eav-merge"><span class="btn btn-primary" aria-disabled="true">Merge</span><small>Required checks must pass first</small></div></div>',
-              alt: 'A pull request’s checks box: 1 failing, 3 passing. The end-to-end tab close check failed and is marked Required. Unit tests and type check passed and are required; lint passed. The Merge button is greyed out until required checks pass.',
+              alt: 'A pull request’s checks box: 1 failing, 3 passing. The end-to-end tab close check failed and is marked Required. Unit tests and type check passed and are required; lint passed. The Merge button is grayed out until required checks pass.',
               cap: 'GitHub: each pull request lists its checks, like tests and a type check, with a pass or fail and a link to the output, so anyone can see what ran.' },
             vercel: { html: '<div class="cw-eav-stack"><div class="cw-eav-cmt"><div class="cw-eav-who"><i></i><b>deploy bot</b>commented</div>' +
                 '<div class="cw-eav-tbl"><span>Preview</span><span class="cw-eav-ready">Ready</span><u>Visit preview</u></div></div>' +
@@ -36540,7 +36540,7 @@ mark.p21-flag{background:transparent;color:inherit;text-decoration:underline wav
                 '<em>Before and after</em><div class="cw-eux-shots"><span class="cw-eux-shot"><i><b></b></i>Before</span><span class="cw-eux-shot after"><i><b></b></i>After</span></div>' +
                 '<em>Code notes</em><div class="cw-eux-under">' + line(80) + line(60) + '</div></div>' +
                 '<span class="cw-eux-src">Sections from the repo’s PR template</span></div>',
-              alt: 'A pull request description built from a template. First: What changes for people, with two plain bullets. Then Before and after screenshots side by side. Then Code notes as grey lines. A footer says the sections come from the repo’s PR template.',
+              alt: 'A pull request description built from a template. First: What changes for people, with two plain bullets. Then Before and after screenshots side by side. Then Code notes as gray lines. A footer says the sections come from the repo’s PR template.',
               cap: 'GitHub: a repo can add a pull request template, so every description starts from the same sections. Teams use it to put what people will see, with before and after screenshots, above the code notes.' },
             appstore: { html: '<div class="cw-eux-phone"><div class="cw-eux-app"><i></i><span>' + line(70) + '<small>Version 4.2</small></span><span class="btn btn-primary">Update</span></div>' +
                 '<b>What’s New</b><div class="cw-eux-notes"><span>Closing a drawing with unsaved changes now asks first.</span><span>Undo still works after you reopen the app.</span><span>Bigger buttons in the toolbar.</span></div></div>',
@@ -39214,6 +39214,110 @@ mark.p21-flag{background:transparent;color:inherit;text-decoration:underline wav
   </div>
 </section>
 
+<div class="part-divider" id="back" data-part="Back matter">
+  <p class="eyebrow">Back matter</p>
+  <p class="part-title">Afterword and reference</p>
+  <p class="part-sub">How the parts fit together, the terms this book uses, and where its principles come from.</p>
+</div>
+
+<section class="chapter" id="ch-afterword" data-chapter data-short="Afterword">
+  <div class="chapter-head">
+    <p class="eyebrow">Afterword</p>
+    <h2>Where to go from here</h2>
+  </div>
+  <div class="prose">
+    <p>The four parts meet in <a href="#eff-loop">the loop</a>. You frame the problem and set success criteria with Part 1, explore and build with the patterns and components in Parts 2 and 3, and check the result with the critique and review from Part 1 again. What you learn then starts the next round.</p>
+    <p>To start, take a ticket you already have. Before you open a design tool or an editor, <a href="#good-problem-framing">frame the problem</a>: who has it, what they’re trying to do, what stops them, and how you’ll know it’s better. Then, before it ships, go through <a href="#ch-good-checklist">Before you ship, ask these</a>.</p>
+  </div>
+</section>
+
+<section class="chapter" id="ch-glossary" data-chapter data-short="Glossary">
+  <div class="chapter-head">
+    <p class="eyebrow">Reference</p>
+    <h2>Glossary</h2>
+  </div>
+  <div class="prose">
+    <p>Terms this book uses in a specific sense, each with the entry that explains it.</p>
+    <dl class="glossary">
+      <dt id="gl-ab-test">A/B test</dt><dd>A test where each group of people gets a different version, so you can compare what they do. It’s judged on one main number agreed before the test, plus a <a href="#gl-guardrail">guardrail</a>. <a href="#eff-measure">Measure against the brief</a></dd>
+      <dt id="gl-artifact">Artifact</dt><dd>Something small a stage of the work leaves for others to read or try, such as a brief, a decision or a plan. In Part 4 it is often an artifact page: one shared web page an agent made. <a href="#eff-worked-example">Follow one problem through</a></dd>
+      <dt id="gl-attention-lifetime-and-control">Attention, lifetime and control</dt><dd>The three things every component promises: how much it interrupts, how long it stays, and what people can do with it. <a href="#ch-start">Read every component as a promise</a></dd>
+      <dt id="gl-axis">Axis</dt><dd>One dimension with two ends that options vary along, such as how loud a message is, from silent to blocking. Two axes make a grid, and each cell is a <a href="#gl-direction">direction</a>. <a href="#eff-axes">Vary along named axes</a></dd>
+      <dt id="gl-bet">Bet</dt><dd>The guess about what people need that a direction is built around, such as “never interrupt” or “make it fixable in one step”. <a href="#eff-explore-wide">Get many directions cheaply</a></dd>
+      <dt id="gl-brief">Brief</dt><dd>A short note written before anyone builds: who has the problem, what should change, what’s off limits and how you’ll know it worked. <a href="#eff-brief">Write the problem brief</a></dd>
+      <dt id="gl-context-pack">Context pack</dt><dd>What a new teammate would need on their first day: design tokens, components to reuse, copy rules, examples of good screens, repo conventions and the design frames. <a href="#eff-context-pack">Pack the context</a></dd>
+      <dt id="gl-critique">Critique</dt><dd>Judging work against what it is for: start from the goal, say what serves it and what doesn’t, then suggest a fix. It comes in three kinds: direction for early sketches, flow once the steps exist as rough screens, and polish when the screens are close to done. <a href="#good-critique">Critique against the goal</a></dd>
+      <dt id="gl-decision-matrix">Decision matrix</dt><dd>A table that scores each direction from 1 to 5 against each criterion in the brief. Each criterion has a <a href="#gl-weight">weight</a>, so what the problem is about counts more. <a href="#eff-decision-matrix">Score directions against the brief</a></dd>
+      <dt id="gl-definition-of-done">Definition of done</dt><dd>The list of checks a change must pass before you call it finished. Each is something you could see or run, and says who checks it. <a href="#eff-definition-of-done">Define done so both of you can check it</a></dd>
+      <dt id="gl-design-rationale">Design rationale</dt><dd>The reasoning behind a design decision, written down: the problem, the options you considered, the one you chose and why. <a href="#good-design-rationale">Write down the reasoning</a></dd>
+      <dt id="gl-design-token">Design token</dt><dd>A shared value with a name, such as a corner radius, a spacing step, a color or a text size. <a href="#good-design-tokens">Design tokens</a></dd>
+      <dt id="gl-diff">Diff</dt><dd>The lines a change adds and removes, as a pull request shows them. Skim it for new strings, styles and components. <a href="#eff-ux-calls">Call out what people will see</a></dd>
+      <dt id="gl-direction">Direction</dt><dd>One clearly different answer to the brief, explored on its own, so you can lay several side by side and choose. <a href="#eff-explore-wide">Get many directions cheaply</a></dd>
+      <dt id="gl-end-to-end-spec">End-to-end spec</dt><dd>A test that uses the app the way people do, through its screens, such as a Playwright spec. Unit tests check the logic underneath. <a href="#eff-agent-verification">Let agents prove their work</a></dd>
+      <dt id="gl-feature-flag">Feature flag</dt><dd>A switch that keeps new code turned off for people, so a step can merge before the step that completes it lands. <a href="#eff-small-steps">Plan, then take small steps</a></dd>
+      <dt id="gl-fidelity">Fidelity</dt><dd>How close a sketch, mock or prototype is to the real thing, from a sketch to a branch in the app. Each level shows some things and hides others. <a href="#good-heuristic-review-fidelity">See what each fidelity can show</a></dd>
+      <dt id="gl-guardrail">Guardrail</dt><dd>One number that must not get worse, with a limit you set before looking. <a href="#eff-measure">Measure against the brief</a></dd>
+      <dt id="gl-heuristic-review">Heuristic review</dt><dd>A check of a design against a short list of rules of thumb, such as Jakob Nielsen’s ten usability heuristics. It finds likely problems, not proven ones. <a href="#good-heuristic-review">Heuristic review</a></dd>
+      <dt id="gl-interruption-ladder">Interruption ladder</dt><dd>The ways to tell people something, from quietest to loudest: inline message, badge, toast, banner, dialog. Use the lowest step that still does the job. <a href="#ch-start">Read every component as a promise</a></dd>
+      <dt id="gl-loop">Loop</dt><dd>The stages every change goes through: Problem, Brief, Explore, Decide, Build, Check and Learn. What Learn finds starts the next round. <a href="#eff-loop">The loop</a></dd>
+      <dt id="gl-mcp">MCP</dt><dd>A standard way to plug tools into an agent, such as a connector that lets it read Figma frames. <a href="#eff-context-pack">Pack the context</a></dd>
+      <dt id="gl-pattern">Pattern</dt><dd>A solution shape that has worked many times before, such as undo instead of a confirm. Every pattern has a <a href="#gl-trade-off">trade-off</a>. <a href="#ch-patterns-start">Name the problem before the fix</a></dd>
+      <dt id="gl-plan-mode">Plan mode</dt><dd>A way of working where the agent proposes a plan and changes nothing until you agree to it, such as Claude Code’s plan mode. <a href="#eff-small-steps">Plan, then take small steps</a></dd>
+      <dt id="gl-problem-frame">Problem frame</dt><dd>Who has the problem, what they’re trying to do and what stops them, written down before anyone draws a screen. <a href="#good-problem-framing">Frame the problem</a></dd>
+      <dt id="gl-severity">Severity</dt><dd>How bad a usability problem is, from 0 to 4: 0 isn’t a problem after all, 1 is cosmetic, 2 minor, 3 major, where people struggle or lose work, and 4 a catastrophe, where they can’t finish the task. <a href="#good-heuristic-review-severity">See the severity scale</a></dd>
+      <dt id="gl-subagent">Subagent</dt><dd>A helper agent that works alongside the others, such as one for each direction. <a href="#eff-explore-wide">Get many directions cheaply</a></dd>
+      <dt id="gl-success-criteria">Success criteria</dt><dd>What you would see or count if a change worked. <a href="#good-success-criteria">Define “good” before building</a></dd>
+      <dt id="gl-trade-off">Trade-off</dt><dd>What a pattern costs. Hidden things get forgotten, for example, and experts pay an extra click. <a href="#ch-patterns-start">Name the problem before the fix</a></dd>
+      <dt id="gl-usability-test">Usability test</dt><dd>Watching real people use a design to do a task, and noting where they stall. It finds problems that a review can only guess at. <a href="#eff-quick-sessions">Watch a few people use it</a></dd>
+      <dt id="gl-ux-call">UX call</dt><dd>A choice people will see in a change, such as the wording, the spacing or which kind of dialog appears. Decide each one and name it in the pull request. <a href="#eff-ux-calls">Call out what people will see</a></dd>
+      <dt id="gl-weight">Weight</dt><dd>How much a criterion counts in a <a href="#gl-decision-matrix">decision matrix</a>. <a href="#eff-decision-matrix">Score directions against the brief</a></dd>
+      <dt id="gl-worktree">Worktree</dt><dd>A separate working copy of the code, made with git, so several agents can work at once without clashing. <a href="#eff-explore-wide">Get many directions cheaply</a></dd>
+    </dl>
+  </div>
+</section>
+
+<section class="chapter" id="ch-sources" data-chapter data-short="Sources">
+  <div class="chapter-head">
+    <p class="eyebrow">Reference</p>
+    <h2>Sources</h2>
+  </div>
+  <div class="prose">
+    <p>The work behind the principles, laws, standards and methods this book names, each with where the book uses it. The product examples aren’t listed: they’re this book’s own summaries, as <a href="#ch-preface">the preface</a> says.</p>
+    <h4>Part 1 · Good design</h4>
+    <ul class="sources">
+      <li><a href="https://www.nngroup.com/articles/ten-usability-heuristics/">10 Usability Heuristics for User Interface Design</a> <span class="src-meta">· Jakob Nielsen, Nielsen Norman Group, 1994, updated since · article</span><br>In this book: <a href="#good-heuristic-review">Heuristic review</a>.</li>
+      <li><a href="https://www.nngroup.com/articles/how-to-rate-the-severity-of-usability-problems/">Severity Ratings for Usability Problems</a> <span class="src-meta">· Jakob Nielsen, Nielsen Norman Group, 1994 · article</span><br>In this book: <a href="#good-heuristic-review-severity">the severity scale</a>.</li>
+      <li><a href="https://www.vitsoe.com/us/about/good-design">Good design</a> <span class="src-meta">· Dieter Rams’ ten principles, Vitsœ · web page</span><br>In this book: <a href="#good-rams-principles">Rams’ ten principles</a>.</li>
+      <li><a href="https://www.w3.org/TR/WCAG22/">Web Content Accessibility Guidelines (WCAG) 2.2</a> <span class="src-meta">· W3C, 2023 · standard. Explained in Understanding <a href="https://www.w3.org/WAI/WCAG22/Understanding/contrast-minimum.html">Contrast (Minimum)</a>, <a href="https://www.w3.org/WAI/WCAG22/Understanding/use-of-color.html">Use of Color</a> and <a href="https://www.w3.org/WAI/WCAG22/Understanding/target-size-minimum.html">Target Size (Minimum)</a></span><br>In this book: <a href="#good-contrast">Contrast, and never color alone</a> and <a href="#icon-button">Icon button</a>.</li>
+      <li><a href="https://developer.mozilla.org/en-US/docs/Web/CSS/@media/prefers-reduced-motion">prefers-reduced-motion</a> <span class="src-meta">· MDN Web Docs · reference</span><br>In this book: <a href="#good-motion">Motion with a purpose</a>.</li>
+    </ul>
+    <h4>Part 2 · Patterns</h4>
+    <ul class="sources">
+      <li><a href="https://lawsofux.com/">Laws of UX</a> <span class="src-meta">· Jon Yablonski · website, with pages on <a href="https://lawsofux.com/jakobs-law/">Jakob’s law</a>, <a href="https://lawsofux.com/fittss-law/">Fitts’s law</a>, <a href="https://lawsofux.com/hicks-law/">Hick’s law</a> and <a href="https://lawsofux.com/teslers-law/">Tesler’s law</a></span><br>In this book: <a href="#ch-laws">Lean on how people already behave</a>.</li>
+      <li><a href="https://doi.org/10.1037/h0055392">The information capacity of the human motor system in controlling the amplitude of movement</a> <span class="src-meta">· Paul M. Fitts, Journal of Experimental Psychology, 1954 · paper</span><br>In this book: <a href="#pat-fitts-law">Fitts’s law</a>.</li>
+      <li><a href="https://doi.org/10.1080/17470215208416600">On the rate of gain of information</a> <span class="src-meta">· W. E. Hick, Quarterly Journal of Experimental Psychology, 1952 · paper</span><br>In this book: <a href="#pat-hicks-law">Hick’s law</a>.</li>
+    </ul>
+    <h4>Part 4 · Effective design</h4>
+    <ul class="sources">
+      <li><a href="https://basecamp.com/shapeup">Shape Up</a> <span class="src-meta">· Ryan Singer, Basecamp, 2019 · book, free online</span><br>In this book: <a href="#eff-loop">The loop</a> and <a href="#eff-worked-example">Follow one problem through</a>.</li>
+      <li><a href="https://www.gv.com/sprint/">The Design Sprint</a> <span class="src-meta">· GV · web page; also the book <i>Sprint</i> by Jake Knapp, John Zeratsky and Braden Kowitz, 2016</span><br>In this book: <a href="#eff-loop">The loop</a> and <a href="#eff-worked-example">Follow one problem through</a>.</li>
+      <li><a href="https://www.allthingsdistributed.com/2006/11/working_backwards.html">Working Backwards</a> <span class="src-meta">· Werner Vogels, All Things Distributed, 2006 · article</span><br>In this book: <a href="#eff-brief">Write the problem brief</a> and <a href="#eff-worked-example">Follow one problem through</a>.</li>
+    </ul>
+  </div>
+</section>
+
+<section class="chapter" id="ch-colophon" data-chapter data-short="Colophon">
+  <div class="chapter-head">
+    <p class="eyebrow">Colophon</p>
+    <h2>About this edition</h2>
+  </div>
+  <div class="prose">
+    <p>Design Field Guide is Book 1 of the design engineer primer. This is version <span id="colophon-version">v35</span>, from November 2026. The <a href="CHANGELOG.md">changelog</a> lists what changed in each version, and the source is on <a href="https://github.com/ryan-di/design-field-guide">GitHub</a>.</p>
+    <p>The book is one HTML file, with every demo built in. Agents can read the same text, generated from this page, starting from <a href="llms.txt">llms.txt</a>.</p>
+    <p>Companion decks in this primer: <a href="https://claude.ai/artifact/DpPreyaUdpLCEz7gdXhByh" target="_blank" rel="noopener">UX Components</a>, <a href="https://claude.ai/artifact/VryzywoXc2cPqBgTPJafzF" target="_blank" rel="noopener">UX Patterns</a> and <a href="https://claude.ai/artifact/WiCu9DfPgWgwByp7tLRU15" target="_blank" rel="noopener">Good Design</a> (slide versions of Parts 1 to 3), and <a href="https://claude.ai/artifact/Mh7sqnKdPPaf1j1wbgfV9v" target="_blank" rel="noopener">The Future of Design</a>.</p>
+  </div>
+</section>
+
 
 <style>/* shared sketch-switcher styles */
         .cw-wrap{display:flex;flex-direction:column;gap:10px;grid-column:1/-1}
@@ -39320,7 +39424,6 @@ mark.p21-flag{background:transparent;color:inherit;text-decoration:underline wav
 })();
 </script>
 
-<p class="endnote">Companion decks in this primer: <a href="https://claude.ai/artifact/DpPreyaUdpLCEz7gdXhByh" target="_blank" rel="noopener">UX Components</a>, <a href="https://claude.ai/artifact/VryzywoXc2cPqBgTPJafzF" target="_blank" rel="noopener">UX Patterns</a> and <a href="https://claude.ai/artifact/WiCu9DfPgWgwByp7tLRU15" target="_blank" rel="noopener">Good Design</a> (slide versions of Parts 1 to 3), and <a href="https://claude.ai/artifact/Mh7sqnKdPPaf1j1wbgfV9v" target="_blank" rel="noopener">The Future of Design</a>. Sources named under “Go deeper” are starting points to look up; they’re named from memory, so search by title.</p>
 
 <style>
 .in-short{margin-top:44px;padding:20px 22px;border:1px solid var(--line);border-radius:12px;background:var(--paper-2)}
@@ -39334,6 +39437,16 @@ mark.p21-flag{background:transparent;color:inherit;text-decoration:underline wav
 .part-bridge{margin-top:40px;padding-top:20px;border-top:1px solid var(--line)}
 .part-bridge .eyebrow{margin-bottom:6px}
 @media (max-width:520px){.in-short{padding:16px}}
+</style>
+<style>
+.glossary{display:grid;grid-template-columns:minmax(140px,210px) minmax(0,1fr);gap:12px 24px;margin:6px 0 0}
+.glossary dt{font:600 16px/1.5 var(--font-body);color:var(--ink);scroll-margin-top:24px}
+.glossary dd{margin:0;font-size:16px;line-height:1.55;color:var(--body)}
+.sources{list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:14px}
+.sources li{font-size:16px;line-height:1.55;color:var(--body)}
+.sources .src-meta{color:var(--muted)}
+#ch-colophon .prose{font-size:16px;color:var(--muted)}
+@media (max-width:640px){.glossary{grid-template-columns:minmax(0,1fr);gap:2px}.glossary dd{margin-bottom:12px}}
 </style>
 <script>
 (() => {
@@ -41939,7 +42052,7 @@ demo('pat-customization', st => {
     };
     $('[data-act="fix"]', st).addEventListener('click', () => {
       const L = Number(light.value), b = bg();
-      if (ratioAt(L, b) >= 4.5) { toast(st, 'This grey already passes 4.5 : 1'); return; }
+      if (ratioAt(L, b) >= 4.5) { toast(st, 'This gray already passes 4.5 : 1'); return; }
       for (let d = 1; d <= 100; d++) {
         const hit = [L - d, L + d].find(x => x >= 0 && x <= 100 && ratioAt(x, b) >= 4.5);
         if (hit !== undefined) { light.value = String(hit); break; }
@@ -41947,7 +42060,7 @@ demo('pat-customization', st => {
       render();
     });
     light.addEventListener('input', render);
-    // Start on a grey that fails in the current theme: pale on light, dim on dark.
+    // Start on a gray that fails in the current theme: pale on light, dim on dark.
     light.value = lum(bg()) > 0.5 ? '68' : '40';
     try { window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', render); } catch (e) { /* older browsers */ }
     try { new MutationObserver(render).observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] }); } catch (e) { /* ignore */ }

@@ -584,6 +584,9 @@ def main():
     changelog = os.path.join(ROOT, 'CHANGELOG.md')
     if not os.path.exists(changelog) or ('## ' + version) not in open(changelog, encoding='utf-8').read():
         problems.append('CHANGELOG.md has no "## %s" section' % version)
+    colophon = re.search(r'id="colophon-version">([^<]*)<', open(os.path.join(ROOT, 'index.html'), encoding='utf-8').read())
+    if colophon and colophon.group(1) != version:
+        problems.append('the colophon says %s but <meta name="dfg-version"> says %s' % (colophon.group(1), version))
     existing = {os.path.relpath(os.path.join(d, f), ROOT) for sub in ('references/entries', 'references/chapters')
                 for d, _, fs in os.walk(os.path.join(ROOT, sub)) for f in fs}
     if '--check' in sys.argv:
