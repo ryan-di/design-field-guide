@@ -588,7 +588,7 @@ window.csToast = (demo, t, text, opts = {}) => {
 <header class="hero">
   <p class="eyebrow">Design engineer primer · Book 1</p>
   <h1>Design Field Guide</h1>
-  <p class="lede">How to design interfaces, and why the good ones work, live on the page. <a href="#start">Start here</a> defines design and design engineering. <a href="#part-1">Part 1</a> is about judgment: what makes a design good and how to train your eye. <a href="#part-2">Part 2</a> covers the patterns that solve problems people keep running into. <a href="#part-3">Part 3</a> covers the building blocks: what each component is for, how it breaks, and what to use instead. <a href="#part-4">Part 4</a> is about taking a problem to a shipped solution with agents and tools. Play with the demos as you read, and tick “Learned” when something clicks.</p>
+  <p class="lede">How to design interfaces, and why the good ones work, with a live demo for every idea.</p>
   <p class="hero-meta"><span id="meta-chapters"></span><span id="meta-entries"></span><span>Your progress stays in this browser</span></p>
 </header>
 
@@ -2065,7 +2065,7 @@ mark.p21-flag{background:transparent;color:inherit;text-decoration:underline wav
     .cw-gnh-sync.ok{background:var(--ui-ok);color:var(--ui-surface)}
     .cw-gnh-sync.run{background:var(--ui-sel);color:var(--ui-surface)}
     .cw-gnh-key{display:flex;flex-wrap:wrap;justify-content:center;gap:6px 14px;font-size:12px;color:var(--ink)}
-    .cw-gnh-key span{display:inline-flex;align-items:center;gap:5px}
+    .cw-gnh-key > span{display:inline-flex;align-items:center;gap:5px}
     .cw-gnh-chat{display:flex;flex-direction:column;gap:6px;padding:10px}
     .cw-gnh-msg{align-self:flex-start;max-width:85%;background:var(--ui-surface);border:1px solid var(--ui-border);border-radius:10px;padding:5px 8px;display:inline-flex;align-items:flex-end;gap:6px;line-height:1.3}
     .cw-gnh-msg.out{align-self:flex-end;background:var(--ui-sel-soft);border-color:transparent}
@@ -2387,7 +2387,7 @@ mark.p21-flag{background:transparent;color:inherit;text-decoration:underline wav
     .cw-gpf-pl{padding:10px;display:flex;flex-direction:column;gap:8px}
     .cw-gpf-pl-head{display:flex;gap:9px;align-items:center}
     .cw-gpf-cover{width:52px;height:52px;border-radius:6px;background:var(--thumb-a);flex:none;display:grid;place-items:center;color:var(--ui-text)}
-    .cw-gpf-pl-head span{display:flex;flex-direction:column;gap:2px}
+    .cw-gpf-pl-head > span:not(.cw-gpf-cover){display:flex;flex-direction:column;gap:2px}
     .cw-gpf-pl-head b{font:700 14px var(--font-body)}
     .cw-gpf-pl-head small{font-size:11.5px;color:var(--ui-muted)}
     .cw-gpf-track{display:flex;gap:8px;align-items:center}
@@ -2627,7 +2627,7 @@ mark.p21-flag{background:transparent;color:inherit;text-decoration:underline wav
     .cw-gsc-view{min-height:216px;align-items:center;justify-content:center}
     .cw-gsc-box{width:min(360px,100%);background:var(--ui-surface);border:1px solid var(--ui-border);border-radius:9px;overflow:hidden;box-shadow:var(--ui-shadow);color:var(--ui-text);font-size:12.5px}
     .cw-gsc-head{display:flex;gap:8px;align-items:flex-start;padding:9px 11px;border-bottom:1px solid var(--ui-border)}
-    .cw-gsc-head > span{display:flex;flex-direction:column;gap:1px}
+    .cw-gsc-head > span:not(.cw-gsc-x){display:flex;flex-direction:column;gap:1px}
     .cw-gsc-head b{font:600 13px var(--font-body)}
     .cw-gsc-head small{font-size:12px;color:var(--ui-muted)}
     .cw-gsc-x{display:inline-grid;place-items:center;width:20px;height:20px;border-radius:50%;flex:none;background:var(--ui-danger);color:var(--ui-on-danger)}
@@ -43288,8 +43288,9 @@ demo('pat-customization', st => {
 
 <style>
 /* Continuous book layout (slides removed). Keep searchable contents rail. */
-.toc-search{position:sticky;top:0;z-index:1;background:var(--card);padding:4px 0 10px;margin-bottom:4px}
-.toc-search input{width:100%;font:400 15px var(--font-body);color:var(--ink);background:var(--paper);border:1.5px solid var(--line);border-radius:9px;padding:9px 12px;box-sizing:border-box}
+.toc-search{position:sticky;top:0;z-index:1;background:var(--paper);padding:4px 0 10px;margin-bottom:4px}
+.toc-search input{width:100%;font:400 15px var(--font-body);color:var(--ink);background:var(--card);border:1.5px solid var(--line);border-radius:9px;padding:9px 12px;box-sizing:border-box}
+.hero .lede{text-wrap:balance}
 .toc-search input:focus{outline:none;border-color:var(--blue)}
 .toc-empty{font-size:14px;color:var(--muted);padding:10px 2px 0}
 .rail .entries a[hidden]{display:none}
@@ -43362,7 +43363,7 @@ body.slides .main [data-pg]:not([data-pg-on]){display:revert!important}
   if (rail) { rail.id = 'toc-panel'; /* keep nav role for continuous book */ }
   if (toc) toc.open = true;
   const sbox = document.createElement('div'); sbox.className = 'toc-search';
-  sbox.innerHTML = '<input type="search" id="toc-q" placeholder="Search components, patterns…" aria-label="Search contents" autocomplete="off"><p class="toc-empty" hidden>No matches</p>';
+  sbox.innerHTML = '<input type="search" id="toc-q" placeholder="Search the book" aria-label="Search contents" autocomplete="off"><p class="toc-empty" hidden>No matches</p>';
   rail.prepend(sbox);
   const q = sbox.querySelector('input'), empty = sbox.querySelector('.toc-empty');
   const list = document.getElementById('toc-list');

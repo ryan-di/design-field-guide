@@ -38,6 +38,18 @@ const CONFIGS = [[1280, 'light'], [1280, 'dark'], [390, 'light'], [390, 'dark']]
       fs.writeFileSync(writeIds, ids.join('\n') + '\n');
       console.log('wrote', ids.length, 'ids to', writeIds);
     }
+    // An icon alone in a filled badge or tile should sit in its middle. Run before any demo is clicked.
+    const iconBad = await p.evaluate(() => {
+      const iconBad = [];
+      for (const svg of document.querySelectorAll('main svg.icon')) {
+        const par = svg.parentElement, pr = par.getBoundingClientRect(), sr = svg.getBoundingClientRect(), pc = getComputedStyle(par);
+        if (!sr.width || !pr.width || pr.width > 64 || pr.height > 64 || par.children.length !== 1 || par.textContent.trim()) continue;
+        if (pc.backgroundColor === 'rgba(0, 0, 0, 0)' && !parseFloat(pc.borderTopWidth)) continue;
+        const dx = sr.x + sr.width / 2 - (pr.x + pr.width / 2), dy = sr.y + sr.height / 2 - (pr.y + pr.height / 2);
+        if (Math.abs(dx) > 1.5 || Math.abs(dy) > 1.5) iconBad.push('icon off center in .' + par.className.split(' ')[0] + ' (' + (par.closest('.entry,.chapter') || {}).id + ')');
+      }
+      return iconBad;
+    });
     const r = await p.evaluate(async (baseline) => {
       const out = { bad: [] };
       const toc = [...document.querySelectorAll('#toc-list a[href^="#"]')];
@@ -117,7 +129,7 @@ const CONFIGS = [[1280, 'light'], [1280, 'dark'], [390, 'light'], [390, 'dark']]
       if (shorts.length && (shorts.length !== 31 || shortRules !== rules)) bad.push('in short: ' + shorts.length + ' boxes, ' + shortRules + ' of ' + rules + ' rules');
       return { bad, rubrics: rubrics.length };
     });
-    r.bad.push(...probe.bad);
+    r.bad.push(...probe.bad, ...iconBad);
     r.rubrics = probe.rubrics;
     const overflow = r.sw > r.vw + 1;
     const bad = r.bad.length + r.missingIds.length + errs.length + deep.length + (overflow ? 1 : 0) + r.dupIds.length;
