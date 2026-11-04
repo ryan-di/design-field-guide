@@ -1,0 +1,38 @@
+<div class="note comfy cw-wrap">
+      <div class="seg cw-seg" role="radiogroup" aria-label="Example">
+        <input type="radio" name="cw-radio-w" id="cw-radio-w-1" value="calendar" checked><label for="cw-radio-w-1">Google Calendar</label>
+        <input type="radio" name="cw-radio-w" id="cw-radio-w-2" value="duolingo"><label for="cw-radio-w-2">Duolingo</label>
+        <input type="radio" name="cw-radio-w" id="cw-radio-w-3" value="uber"><label for="cw-radio-w-3">Uber</label>
+      </div>
+      <div class="cw" data-cw-view role="img" aria-label=""></div>
+      <p class="cw-cap" data-cw-cap aria-live="polite"></p>
+      
+      <script>
+      (() => {
+        const wrap = document.currentScript.closest('.cw-wrap');
+        const view = wrap.querySelector('[data-cw-view]'), cap = wrap.querySelector('[data-cw-cap]');
+        const ic = id => '<svg class="icon sm"><use href="#i-' + id + '"/></svg>';
+        const rd = (on, label) => '<span class="cw-radw-opt"><i class="cw-radw-rd' + (on ? ' on' : '') + '"></i>' + label + '</span>';
+        const card = (on, a, b) => '<span class="cw-radw-card' + (on ? ' on' : '') + '">' + a + '<em>' + b + '</em></span>';
+        const car = big => '<svg viewBox="0 0 30 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"><path d="' + (big ? 'M2 14V7l3-4h18l5 6v5z' : 'M3 14v-3l4-5h12l5 5v3z') + '"/><circle cx="8" cy="15" r="2.4" fill="var(--ui-surface)"/><circle cx="22" cy="15" r="2.4" fill="var(--ui-surface)"/></svg>';
+        const ride = (on, name, seats, eta, price, big) => '<div class="cw-radw-ride' + (on ? ' on' : '') + '">' + car(big) + '<b>' + name + ' <i>· ' + seats + '</i></b><span>' + price + '</span><em>' + eta + '</em></div>';
+        const S = {
+          calendar: { html: '<div class="cw-radw-cal"><i></i><i></i><i></i><i></i><i></i><span class="cw-radw-ev"></span><div class="cw-radw-scrim"></div>' +
+              '<div class="cw-radw-dlg"><b>Edit recurring event</b>' + rd(true, 'This event') + rd(false, 'This and following events') + rd(false, 'All events') + '<span class="cw-radw-acts"><span class="cw-radw-tb">Cancel</span><span class="cw-radw-tb">OK</span></span></div></div>',
+            alt: 'A dimmed calendar behind a small dialog: Edit recurring event, with three radio buttons. This event is selected; the others are This and following events, and All events. Cancel and OK.',
+            cap: 'Google Calendar: changing a repeating event asks how far the change should reach. This event, the safest choice, is preselected, so a quick OK can’t rewrite the whole series.' },
+          duolingo: { html: '<div class="cw-radw-phone cw-radw-duo"><span class="cw-radw-prog">' + ic('x') + '<i></i></span><b>Daily goal</b>' +
+              card(false, '5 min', 'a day') + card(true, '10 min', 'a day') + card(false, '15 min', 'a day') + card(false, '20 min', 'a day') + '<span class="cw-radw-go">Continue</span></div>',
+            alt: 'A phone screen titled Daily goal with four stacked options: 5, 10, 15 and 20 minutes a day. The 10 minute option is highlighted. A Continue button sits below.',
+            cap: 'Duolingo: the daily goal options are listed together, each with its minutes per day, so people can compare the effort.' },
+          uber: { html: '<div class="cw-radw-phone"><div class="cw-radw-map"><svg viewBox="0 0 210 92" preserveAspectRatio="none"><path d="M30 70 C 70 70, 80 30, 120 34 S 170 20, 180 18" fill="none" stroke="var(--ui-text)" stroke-width="3"/><circle cx="30" cy="70" r="5" fill="var(--ui-text)"/><rect x="175" y="13" width="10" height="10" fill="var(--ui-text)"/></svg></div>' +
+              '<div class="cw-radw-sheet">' + ride(true, 'Standard', '4', '3 min away', '$14') + ride(false, 'Comfort', '4', '5 min away', '$19') + ride(false, 'Larger', '6', '7 min away', '$26', true) + '<span class="cw-radw-go">Confirm</span></div></div>',
+            alt: 'A phone with a route on a map and three ride options below it, each with a car picture, seats, arrival time and price. Standard is outlined as the chosen one. A Confirm button sits below.',
+            cap: 'Uber: ride options are large rows with a car picture, seats, arrival time and price, and picking one deselects the others.' }
+        };
+        const render = k => { view.innerHTML = S[k].html; view.setAttribute('aria-label', 'Sketch: ' + S[k].alt); cap.textContent = S[k].cap; };
+        wrap.querySelectorAll('input[name="cw-radio-w"]').forEach(r => r.addEventListener('change', () => render(r.value)));
+        render('calendar');
+      })();
+      </script>
+    </div>

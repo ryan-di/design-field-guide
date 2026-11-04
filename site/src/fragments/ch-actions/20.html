@@ -1,0 +1,127 @@
+<script>
+(() => {
+  const cs = document.currentScript.closest('.cs');
+  const D = (k, html, wire) => csDemo(cs.querySelector('[data-d="' + k + '"]'), html, wire);
+  const icon = n => '<svg class="icon sm"><use href="#i-' + n + '"/></svg>';
+  /* Demo links point back at this entry, so a real "open in new tab" stays harmless. */
+  const link = (go, label, url, cls) => '<a class="' + (cls || 'lb-a') + '" href="#link-vs-button" data-go="' + go + '" data-url="' + url + '">' + label + '</a>';
+  const frame = '<div class="app-frame lb-br"><div class="lb-tabs" data-tabs></div><div class="lb-bar2"><button class="icon-btn lb-back" type="button" aria-label="Back" data-back>←</button><div class="lb-url" data-url></div></div><div class="app-body lb-page" data-page></div><div class="lb-status" data-status></div></div>';
+
+  /* A tiny browser: tabs, a Back button, an address line, and a status bar that shows a link's address on hover or focus.
+     Plain click opens a page in the current tab; Ctrl/⌘/Shift-click or middle-click opens it in a new background tab.
+     swap() is what a navigating button does here: it changes the view without a new address or a history entry. */
+  const browser = (d, t, pages, start) => {
+    const tabsEl = d.querySelector('[data-tabs]'), urlEl = d.querySelector('[data-url]'), page = d.querySelector('[data-page]'), st = d.querySelector('[data-status]'), backBtn = d.querySelector('[data-back]');
+    const tab = k => ({ k, title: pages[k].title, url: pages[k].url, hist: [] });
+    const tabs = [tab(start)]; let cur = 0, fresh = -1;
+    const draw = keep => {
+      tabsEl.innerHTML = '';
+      tabs.forEach((tb, i) => {
+        const b = document.createElement('button'); b.type = 'button';
+        b.className = 'cs-tab' + (i === cur ? ' on' : '') + (i === fresh ? ' new' : '');
+        b.textContent = tb.title; b.title = tb.title;
+        b.addEventListener('click', () => { cur = i; draw(); });
+        tabsEl.appendChild(b);
+      });
+      const tb = tabs[cur], p = pages[tb.k];
+      urlEl.textContent = tb.url; backBtn.disabled = !tb.hist.length; page.innerHTML = p.html(); st.textContent = '';
+      page.querySelectorAll('a[data-go]').forEach(a => {
+        const show = () => { st.textContent = a.dataset.url; }, hide = () => { st.textContent = ''; };
+        a.addEventListener('mouseenter', show); a.addEventListener('focus', show);
+        a.addEventListener('mouseleave', hide); a.addEventListener('blur', hide);
+        a.addEventListener('click', e => { e.preventDefault(); const kb = e.detail === 0; if (e.ctrlKey || e.metaKey || e.shiftKey) open(a.dataset.go, kb && a.dataset.go); else go(a.dataset.go, kb); });
+        a.addEventListener('mousedown', e => { if (e.button === 1) e.preventDefault(); });
+        a.addEventListener('auxclick', e => { if (e.button === 1) { e.preventDefault(); open(a.dataset.go); } });
+      });
+      if (p.wire) p.wire(page, api);
+      /* After a keyboard action the old element is gone, so put focus back on the same link or the page's first control. */
+      if (keep) {
+        const el = (typeof keep === 'string' && page.querySelector('[data-go="' + keep + '"]')) || page.querySelector('a, button, input');
+        if (el) el.focus();
+      }
+    };
+    const visit = k => { if (pages[k].onOpen) pages[k].onOpen(); };
+    const go = (k, kb) => { visit(k); const tb = tabs[cur]; tb.hist.push([tb.k, tb.title, tb.url]); Object.assign(tb, { k, title: pages[k].title, url: pages[k].url }); fresh = -1; draw(kb); };
+    const swap = (k, kb) => { visit(k); tabs[cur].k = k; fresh = -1; draw(kb); };
+    const open = (k, keep) => {
+      visit(k); tabs.push(tab(k)); fresh = tabs.length - 1; draw(keep);
+      t.after(() => { fresh = -1; const n = tabsEl.children[tabs.length - 1]; if (n) n.classList.remove('new'); }, 1400);
+    };
+    backBtn.addEventListener('click', e => { const tb = tabs[cur], h = tb.hist.pop(); if (!h) return; Object.assign(tb, { k: h[0], title: h[1], url: h[2] }); draw(e.detail === 0 && 'x'); if (e.detail === 0 && tb.hist.length) backBtn.focus(); });
+    const api = { go, swap, open, draw };
+    draw();
+    return api;
+  };
+
+  /* 1. Action link */
+  const ADDR = [['home', 'Home', '12 Elm Street'], ['work', 'Work', '80 Dock Road']];
+  const addrWire = fixed => (d, t) => {
+    const list = ADDR.slice();
+    const base = 'shop.example.com/account/addresses';
+    const find = id => list.find(x => x[0] === id) || ADDR.find(x => x[0] === id);
+    const back = link('list', '← Back to addresses', base);
+    const pages = {
+      list: { title: 'Addresses', url: base,
+        html: () => '<b>Saved addresses</b>' + (list.length ? list.map(([id, name, line]) =>
+          '<div class="cs-row"><span class="grow"><b>' + name + '</b><br><span class="lb-sub">' + line + '</span></span><span class="lb-acts">' +
+          link('edit:' + id, 'Edit', base + '/' + id + '/edit') +
+          (fixed ? '<button class="btn btn-secondary cs-sm" type="button" data-del="' + id + '"><span class="lb-ic">' + icon('trash') + '</span>Delete</button>'
+                 : link('del:' + id, 'Delete', base + '/' + id + '/delete')) +
+          '</span></div>').join('') : '<p class="cs-meta">No saved addresses.</p>'),
+        wire: (pg, api) => pg.querySelectorAll('[data-del]').forEach(b => b.addEventListener('click', e => {
+          const id = b.dataset.del, idx = list.findIndex(x => x[0] === id), item = list[idx];
+          list.splice(idx, 1); api.draw(e.detail === 0);
+          csToast(d, t, item[1] + ' address deleted', { ms: 5000, replace: true, action: { label: 'Undo', run: () => { list.splice(Math.min(idx, list.length), 0, item); api.draw(); } } });
+        })) }
+    };
+    ADDR.forEach(([id, name]) => {
+      pages['edit:' + id] = { title: 'Edit ' + name, url: base + '/' + id + '/edit',
+        html: () => '<b>Edit ' + name + '</b><label class="cs-f">Street<input class="input" value="' + find(id)[2] + '"></label>' + back };
+      pages['del:' + id] = { title: name + ' deleted', url: base + '/' + id + '/delete',
+        onOpen: () => { const i = list.findIndex(x => x[0] === id); if (i >= 0) list.splice(i, 1); },
+        html: () => '<p class="lb-done">' + icon('check') + '<span>' + name + ' address deleted.</span></p>' + back };
+    });
+    browser(d, t, pages, 'list');
+  };
+  D('link-vs-button-1b', frame, addrWire(false));
+  D('link-vs-button-1f', frame, addrWire(true));
+
+  /* 2. Navigating button */
+  const calWire = fixed => (d, t) => {
+    const cal = 'calendar.example.com/week', ag = 'calendar.example.com/team-sync/agenda';
+    const ev = (time, name, extra) => '<div class="cs-row lb-ev"><span class="cs-meta lb-time">' + time + '</span><span class="grow">' + name + '</span></div>' + (extra || '');
+    const open = fixed ? link('agenda', icon('book') + 'Open agenda', ag, 'lb-a lb-ia')
+                       : '<button class="btn btn-secondary cs-sm" type="button" data-nav>' + icon('book') + 'Open agenda</button>';
+    browser(d, t, {
+      cal: { title: 'Calendar', url: cal,
+        html: () => '<b>This week</b><div>' + ev('Mon 10:00', 'Design review') +
+          '<div class="lb-hi">' + ev('Thu 15:00', 'Team sync') + '<div class="lb-evact">' + open + '</div></div>' +
+          ev('Fri 12:30', 'Lunch with Lena') + '</div>',
+        wire: (pg, api) => { const b = pg.querySelector('[data-nav]'); if (b) b.addEventListener('click', e => api.swap('agenda', e.detail === 0)); } },
+      agenda: { title: 'Agenda', url: ag,
+        html: () => '<b>Team sync · agenda</b><ol class="lb-ol"><li>Launch dates</li><li>Hiring update</li><li>Open questions</li></ol>' + link('cal', '← Back to calendar', cal) }
+    }, 'cal');
+  };
+  D('link-vs-button-2b', frame, calWire(false));
+  D('link-vs-button-2f', frame, calWire(true));
+
+  /* 3. Hidden link */
+  const stHtml = fixed => {
+    const a = text => '<a class="' + (fixed ? 'lb-a lb-in' : 'lb-c') + '" href="#link-vs-button" data-l="' + text + '">' + text + '</a>';
+    return '<div class="surface lb-store" data-box><b>Storage</b><div class="lb-bar"><i></i></div><span class="cs-meta">14.6 GB of 15 GB used</span>' +
+      '<p class="lb-p">Your storage is almost full, so new photos won’t back up. See the ' + a('cleanup guide') + ' to free up space, or ' + a('compare plans') + ' to get more room.</p>' +
+      '<p class="cs-meta" data-out></p></div>' +
+      '<label class="switch lb-sw"><span class="grow">Grayscale</span><input type="checkbox" data-gray></label>';
+  };
+  const stWire = (d) => {
+    const box = d.querySelector('[data-box]'), out = d.querySelector('[data-out]');
+    d.querySelector('[data-gray]').addEventListener('change', e => box.classList.toggle('lb-gray', e.target.checked));
+    box.querySelectorAll('[data-l]').forEach(a => a.addEventListener('click', e => { e.preventDefault(); out.textContent = 'Opened: ' + a.dataset.l; }));
+  };
+  D('link-vs-button-3b', stHtml(false), stWire);
+  D('link-vs-button-3f', stHtml(true), stWire);
+
+  csInit(cs);
+})();
+
+  </script>

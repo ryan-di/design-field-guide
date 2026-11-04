@@ -1,0 +1,92 @@
+<div class="fm" data-fm>
+  <div class="seg fm-seg" role="radiogroup" aria-label="Form">
+    <input type="radio" name="fm-pat-preview" id="fm-pat-preview-1" value="live" checked><label for="fm-pat-preview-1">In place</label>
+    <input type="radio" name="fm-pat-preview" id="fm-pat-preview-2" value="tab"><label for="fm-pat-preview-2">Preview view</label>
+    <input type="radio" name="fm-pat-preview" id="fm-pat-preview-3" value="sum"><label for="fm-pat-preview-3">Summary</label>
+  </div>
+  <div class="fm-stage" data-fm-stage></div>
+  <p class="fig-cap" data-fm-when aria-live="polite"></p>
+  
+  <script>
+  (() => {
+    const fm = document.currentScript.closest('[data-fm]'), stage = fm.querySelector('[data-fm-stage]'), when = fm.querySelector('[data-fm-when]');
+    const esc = s => s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+    const F = {
+      live: {
+        html: '<div class="app-frame fp-app"><div class="app-bar"><span>Club newsletter</span></div><div class="fp-styles" role="group" aria-label="Style for the selected line">' +
+          ['Normal', 'Heading', 'Title'].map(n => '<button class="fp-sty" type="button" aria-pressed="' + (n === 'Normal') + '" data-s="' + n.toLowerCase() + '">' + n + '</button>').join('') + '</div>' +
+          '<div class="app-body"><p class="fp-h normal" data-h>Spring picnic</p><div class="line" style="width:92%"></div><div class="line" style="width:80%"></div><div class="line" style="width:60%"></div><p class="fp-out" data-out aria-live="polite">Rest the pointer on a style, or tab to it.</p></div></div>',
+        use: 'Use it when trying an option is quick, such as styles or fonts. The real content changes while the pointer or focus rests on an option, goes back when it leaves, and only a click applies it.',
+        wire: s => {
+          const h = s.querySelector('[data-h]'), out = s.querySelector('[data-out]'), btns = Array.from(s.querySelectorAll('[data-s]'));
+          let applied = 'normal';
+          const look = k => { h.className = 'fp-h ' + k + (k !== applied ? ' peek' : ''); };
+          btns.forEach(b => {
+            const k = b.dataset.s, name = b.textContent;
+            const peek = () => { look(k); out.textContent = k === applied ? name + ' is applied.' : 'Showing ' + name + '. Click to apply.'; };
+            const back = () => { look(applied); out.textContent = 'Back to ' + btns.find(x => x.dataset.s === applied).textContent + '.'; };
+            b.addEventListener('mouseenter', peek); b.addEventListener('focus', peek);
+            b.addEventListener('mouseleave', back); b.addEventListener('blur', back);
+            b.addEventListener('click', () => { applied = k; btns.forEach(x => x.setAttribute('aria-pressed', String(x === b))); look(k); out.textContent = name + ' applied.'; });
+          });
+        }
+      },
+      tab: {
+        html: '<div class="app-frame fp-app"><div class="app-bar"><span>Reply to the club</span></div><div class="fp-tabs" role="tablist"><button class="cs-tab on" type="button" role="tab" aria-selected="true" data-tab="w">Write</button><button class="cs-tab" type="button" role="tab" aria-selected="false" data-tab="p">Preview</button></div>' +
+          '<div class="app-body"><textarea class="input fp-area" aria-label="Message" data-src>**Picnic** on Saturday at noon.\n- bring a blanket\n- bring fruit</textarea><div class="fp-md" data-md hidden></div><div class="fp-acts"><button class="btn btn-primary cs-sm" type="button" data-post>Post</button></div><p class="fp-out" data-out></p></div></div>',
+        use: 'Use it when the result looks different from what people edit, such as formatted text. A separate view shows the result before anyone else sees it.',
+        wire: s => {
+          const src = s.querySelector('[data-src]'), md = s.querySelector('[data-md]'), tabs = Array.from(s.querySelectorAll('[data-tab]')), out = s.querySelector('[data-out]');
+          const render = t => {
+            const lines = esc(t).split('\n'), items = lines.filter(l => /^- /.test(l)), rest = lines.filter(l => !/^- /.test(l) && l.trim());
+            const bold = l => l.replace(/\*\*(.+?)\*\*/g, '<b>$1</b>');
+            return rest.map(l => '<p>' + bold(l) + '</p>').join('') + (items.length ? '<ul>' + items.map(l => '<li>' + bold(l.slice(2)) + '</li>').join('') + '</ul>' : '');
+          };
+          const set = k => {
+            tabs.forEach(b => { const on = b.dataset.tab === k; b.classList.toggle('on', on); b.setAttribute('aria-selected', String(on)); });
+            src.hidden = k !== 'w'; md.hidden = k !== 'p';
+            if (k === 'p') md.innerHTML = render(src.value);
+          };
+          tabs.forEach(b => b.addEventListener('click', () => set(b.dataset.tab)));
+          s.querySelector('[data-post]').addEventListener('click', () => { out.textContent = 'Posted to the club.'; });
+        }
+      },
+      sum: {
+        html: '<div class="app-frame fp-app"><div class="app-bar"><span>Storage plan</span><span class="cs-meta">82 GB used</span></div><div class="app-body"><div class="fp-plan" role="radiogroup" aria-label="Plan">' +
+          [['basic', 'Basic · 100 GB · $1.99 a month (current)'], ['plus', 'Plus · 2 TB · $9.99 a month'], ['mini', 'Mini · 50 GB · $0.99 a month']].map((p, i) => '<label class="check"><input type="radio" name="fp-plan" value="' + p[0] + '"' + (i ? '' : ' checked') + '><span>' + p[1] + '</span></label>').join('') +
+          '</div><div class="fp-sum" data-sum aria-live="polite"></div><div class="fp-acts"><button class="btn btn-primary cs-sm" type="button" data-go disabled>Switch plan</button></div><p class="fp-out" data-out></p></div></div>',
+        use: 'Use it when the result is something people can’t see yet, such as a price or what happens to their files. Say in words what will change before people confirm.',
+        wire: s => {
+          const sum = s.querySelector('[data-sum]'), go = s.querySelector('[data-go]'), out = s.querySelector('[data-out]');
+          let current = 'basic';
+          const T = {
+            basic: ['Basic', ['$1.99 a month.', 'Storage: 100 GB. Your 82 GB fit.']],
+            plus: ['Plus', ['Today you pay $5.33 for the rest of October.', 'Then $9.99 a month instead of $1.99.', 'Storage goes from 100 GB to 2 TB.']],
+            mini: ['Mini', ['$0.99 a month instead of $1.99, from 1 November.', 'Storage drops to 50 GB. Your 82 GB won’t fit, and new photos stop backing up.']]
+          };
+          const draw = () => {
+            const k = s.querySelector('input[name="fp-plan"]:checked').value;
+            go.disabled = k === current;
+            go.textContent = k === current ? 'Switch plan' : 'Switch to ' + T[k][0];
+            sum.innerHTML = (k === current ? '<b>Your current plan.</b>' : '<b>If you switch to ' + T[k][0] + ':</b>') + '<ul>' + T[k][1].map(x => '<li>' + x + '</li>').join('') + '</ul>';
+          };
+          s.querySelectorAll('input[name="fp-plan"]').forEach(r => r.addEventListener('change', () => { out.textContent = ''; draw(); }));
+          go.addEventListener('click', () => {
+            const k = s.querySelector('input[name="fp-plan"]:checked').value;
+            current = k;
+            s.querySelectorAll('.fp-plan .check span').forEach((sp, i) => { sp.textContent = sp.textContent.replace(' (current)', '') + (['basic', 'plus', 'mini'][i] === k ? ' (current)' : ''); });
+            out.textContent = 'Switched to ' + T[k][0] + '.'; draw();
+          });
+          draw();
+        }
+      }
+    };
+    const show = k => {
+      stage.innerHTML = F[k].html; F[k].wire(stage);
+      when.innerHTML = '<b>' + fm.querySelector('.fm-seg input:checked + label').textContent + '.</b> ' + F[k].use;
+    };
+    fm.querySelectorAll('.fm-seg input').forEach(i => i.addEventListener('change', () => show(i.value)));
+    show('live');
+  })();
+  </script>
+</div>

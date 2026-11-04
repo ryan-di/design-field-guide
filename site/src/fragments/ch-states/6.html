@@ -1,0 +1,108 @@
+<script>
+(() => {
+  const cs = document.currentScript.closest('.cs');
+  const D = (k, html, wire) => csDemo(cs.querySelector('[data-d="' + k + '"]'), html, wire);
+  const icon = n => '<svg class="icon sm"><use href="#i-' + n + '"/></svg>';
+
+  /* 1. Only default: a chat Send button */
+  const sendHtml = fixed => '<div class="app-frame" style="width:min(340px,100%)"><div class="app-bar"><span>Lena</span></div>' +
+    '<div class="app-body is-thread" data-thread><span class="is-bub in">Dinner at 7 tonight?</span></div>' +
+    '<div class="is-comp"><input class="input" data-msg value="See you at 7!" aria-label="Message">' +
+    '<button class="btn btn-primary ' + (fixed ? 'is-live' : 'is-flat') + '" type="button" data-send>Send</button></div></div>' +
+    '<label class="switch is-wifi"><span>Wi‑Fi</span><input type="checkbox" data-wifi checked></label>' +
+    '<p class="cs-meta" data-meta aria-live="polite">Behind the scenes: waiting</p>';
+  const sendWire = fixed => (d, t) => {
+    const msg = d.querySelector('[data-msg]'), btn = d.querySelector('[data-send]'), wifi = d.querySelector('[data-wifi]'), meta = d.querySelector('[data-meta]'), thread = d.querySelector('[data-thread]');
+    let busy = false, failed = false;
+    const label = (html, cls) => { btn.innerHTML = html; btn.classList.remove('is-error', 'is-success', 'busy'); if (cls) btn.classList.add(cls); };
+    const idle = () => {
+      if (!fixed) return;
+      btn.removeAttribute('aria-disabled');
+      if (failed) { label(icon('warn') + 'Retry', 'is-error'); btn.disabled = false; return; }
+      label('Send'); btn.disabled = !msg.value.trim();
+    };
+    msg.addEventListener('input', () => { if (!busy) { failed = false; idle(); } });
+    btn.addEventListener('click', () => {
+      if (busy) return;
+      const text = msg.value.trim();
+      if (!text) { meta.textContent = 'Behind the scenes: nothing to send'; return; }
+      busy = true; meta.textContent = 'Behind the scenes: sending…';
+      if (fixed) { btn.setAttribute('aria-disabled', 'true'); label('<span class="spinner"></span>Sending…', 'busy'); }
+      t.after(() => {
+        busy = false;
+        if (!wifi.checked) { failed = true; meta.textContent = 'Behind the scenes: not sent, no connection'; idle(); return; }
+        failed = false;
+        const b = document.createElement('span'); b.className = 'is-bub out'; b.textContent = text; thread.appendChild(b);
+        msg.value = ''; meta.textContent = 'Behind the scenes: sent';
+        if (fixed) { btn.removeAttribute('aria-disabled'); label(icon('check') + 'Sent', 'is-success'); t.after(idle, 1400); }
+      }, 1300);
+    });
+    idle();
+  };
+  D('interaction-states-1b', sendHtml(false), sendWire(false));
+  D('interaction-states-1f', sendHtml(true), sendWire(true));
+
+  /* 2. No reason: a disabled Publish button */
+  const pubHtml = fixed => '<div class="cs-form">' +
+    '<label class="cs-f">Title<input class="input" value="A weekend in Porto"></label>' +
+    '<label class="cs-f">Story<textarea class="input" rows="3">We took the slow train up the river and ate far too many custard tarts.</textarea></label>' +
+    '<label class="cs-f">Topic<select class="select" data-topic><option value="">None</option><option>Travel</option><option>Food</option><option>Photos</option></select></label>' +
+    '<div class="is-pubrow"><button class="btn btn-primary" type="button" data-pub disabled>Publish</button>' +
+    (fixed ? '<span class="is-why" data-why>' + icon('info') + '<span>Pick a topic to publish.</span></span>' : '') + '</div>' +
+    '<p class="cs-ok" data-ok></p></div>';
+  const pubWire = fixed => d => {
+    const topic = d.querySelector('[data-topic]'), pub = d.querySelector('[data-pub]'), why = d.querySelector('[data-why]'), ok = d.querySelector('[data-ok]');
+    topic.addEventListener('change', () => { pub.disabled = !topic.value; if (why) why.hidden = !!topic.value; ok.textContent = ''; });
+    pub.addEventListener('click', () => { ok.textContent = 'Published in ' + topic.value + '.'; });
+  };
+  D('interaction-states-2b', pubHtml(false), pubWire(false));
+  D('interaction-states-2f', pubHtml(true), pubWire(true));
+
+  /* 3. No focus ring: calendar invite replies */
+  const rsvpHtml = fixed => '<div class="app-frame" style="width:min(340px,100%)"><div class="app-bar"><span>Invitation</span></div><div class="app-body">' +
+    '<b class="is-ev">Team lunch</b><span class="cs-meta">Friday 12:30 · Café Lisboa</span>' +
+    '<div class="is-rsvp ' + (fixed ? 'is-ring' : 'is-noring') + '" role="group" aria-label="Your reply">' +
+    ['Accept', 'Maybe', 'Decline'].map(x => '<button class="btn btn-secondary cs-sm" type="button" aria-pressed="false">' + x + '</button>').join('') + '</div>' +
+    '<p class="cs-meta" data-reply aria-live="polite">Your reply: none yet</p></div></div>';
+  const rsvpWire = d => {
+    const btns = d.querySelectorAll('.is-rsvp .btn'), reply = d.querySelector('[data-reply]');
+    btns.forEach(b => b.addEventListener('click', () => {
+      btns.forEach(x => x.setAttribute('aria-pressed', String(x === b)));
+      reply.textContent = 'Your reply: ' + b.textContent;
+    }));
+  };
+  D('interaction-states-3b', rsvpHtml(false), rsvpWire);
+  D('interaction-states-3f', rsvpHtml(true), rsvpWire);
+
+  /* 4. Double clicks: Place order */
+  const buyHtml = fixed => '<div class="cs-form">' +
+    '<div class="cs-row"><span class="grow">Running shoes</span><span>$89.00</span></div>' +
+    '<div class="cs-row"><span class="grow">Socks, 3 pairs</span><span>$12.00</span></div>' +
+    '<div class="cs-row"><b class="grow">Total</b><b>$101.00</b></div>' +
+    '<div class="is-buy"><button class="btn btn-primary' + (fixed ? ' is-steady' : '') + '" type="button" data-place>Place order</button>' +
+    '<button class="btn btn-ghost cs-sm" type="button" data-edit>Edit cart</button></div>' +
+    '<p class="cs-meta" data-count aria-live="polite">Orders placed: 0</p></div>';
+  const buyWire = fixed => (d, t) => {
+    const btn = d.querySelector('[data-place]'), out = d.querySelector('[data-count]');
+    let n = 0, dup = 0, busy = false;
+    d.querySelector('[data-edit]').addEventListener('click', () => { out.textContent = 'Opened the cart. Orders placed: ' + n; });
+    btn.addEventListener('click', () => {
+      if (fixed && busy) return;
+      if (busy) dup++;
+      n++; out.textContent = 'Orders placed: ' + n + (dup ? ' (' + dup + ' by accident) · charged $' + (101 * n) + '.00' : '');
+      busy = true;
+      if (fixed) { btn.style.width = btn.offsetWidth + 'px'; btn.setAttribute('aria-disabled', 'true'); btn.classList.add('busy'); btn.innerHTML = '<span class="spinner"></span>Placing…'; }
+      else btn.innerHTML = '<span class="spinner"></span>Placing your order…';
+      t.after(() => {
+        busy = false; btn.removeAttribute('aria-disabled'); btn.classList.remove('busy'); btn.style.width = '';
+        btn.textContent = 'Place order';
+      }, 2000);
+    });
+  };
+  D('interaction-states-4b', buyHtml(false), buyWire(false));
+  D('interaction-states-4f', buyHtml(true), buyWire(true));
+
+  csInit(cs);
+})();
+
+  </script>

@@ -1,0 +1,66 @@
+<div class="fm" data-fm>
+  <div class="seg fm-seg" role="radiogroup" aria-label="Way">
+    <input type="radio" name="fm-pat-templates" id="fm-pat-templates-1" value="gallery" checked><label for="fm-pat-templates-1">Gallery</label>
+    <input type="radio" name="fm-pat-templates" id="fm-pat-templates-2" value="sample"><label for="fm-pat-templates-2">Sample content</label>
+    <input type="radio" name="fm-pat-templates" id="fm-pat-templates-3" value="copy"><label for="fm-pat-templates-3">Copy your own</label>
+    <input type="radio" name="fm-pat-templates" id="fm-pat-templates-4" value="inline"><label for="fm-pat-templates-4">Starters on the page</label>
+  </div>
+  <div class="fm-stage" data-fm-stage></div>
+  <p class="fig-cap" data-fm-when aria-live="polite"></p>
+  
+  <script>
+  (() => {
+    const fm = document.currentScript.closest('[data-fm]'), stage = fm.querySelector('[data-fm-stage]'), when = fm.querySelector('[data-fm-when]');
+    const frame = (title, body) => '<div class="app-frame tpf-frame"><div class="app-bar"><span>' + title + '</span></div><div class="app-body">' + body + '</div></div>';
+    const INV = [['Birthday party', ''], ['Dinner at ours', ' b'], ['Wedding', ' c']];
+    const F = {
+      gallery: {
+        html: frame('New invitation', '<b style="font-size:13.5px">Start from a template</b><div class="tpf-tiles">' + INV.map((v, i) => '<button type="button" class="tpf-tile" data-i="' + i + '"><span class="thumb' + v[1] + '"></span>' + v[0] + '</button>').join('') + '</div><div data-out></div>'),
+        use: 'Several templates, shown before people start.',
+        close: 'Use it when people make many kinds of things, and each kind starts differently.',
+        wire: s => s.querySelectorAll('[data-i]').forEach(b => b.addEventListener('click', () => {
+          const v = INV[+b.dataset.i];
+          s.querySelector('[data-out]').innerHTML = '<div class="tpf-inv" role="status"><b>' + v[0] + '</b><span>at <span class="tpf-ed">your place</span> on <span class="tpf-ed">the date</span></span><span class="cs-meta">Change the marked parts.</span></div>';
+        }))
+      },
+      sample: {
+        html: frame('To-do · Welcome', '<span class="cs-meta">This list came with your new account.</span><div class="tpf-todo">' +
+          ['Tick this task off', 'Rename this list', 'Add your first task below'].map(t => '<label class="check"><input type="checkbox"><span>' + t + '</span></label>').join('') +
+          '</div><button class="btn btn-ghost cs-sm" type="button" data-del>Delete the sample list</button><p class="cs-ok" data-out></p>'),
+        use: 'A new account comes with a filled-in example that teaches by doing.',
+        close: 'Make it easy to delete once people have their own.',
+        wire: s => {
+          s.querySelector('[data-del]').addEventListener('click', e => { s.querySelector('.tpf-todo').innerHTML = '<span class="cs-meta">No tasks yet.</span>'; e.target.remove(); s.querySelector('[data-out]').textContent = 'Sample list deleted.'; });
+        }
+      },
+      copy: {
+        html: frame('Trip budgets', '<div data-list><div class="cs-row"><span class="grow"><b>Lisbon 2025</b><br><span class="cs-meta">Flights, hotel, food, transport</span></span><button class="btn btn-secondary cs-sm" type="button" data-copy>Make a copy</button></div></div>'),
+        use: 'People start from something they made before.',
+        close: 'Use it for work that repeats, like a monthly report or a yearly trip. Clear the parts that change each time.',
+        wire: s => s.querySelector('[data-copy]').addEventListener('click', e => {
+          s.querySelector('[data-list]').insertAdjacentHTML('afterbegin', '<div class="cs-row" role="status"><span class="grow"><b>Copy of Lisbon 2025</b><span class="tpf-tag">New</span><br><span class="cs-meta">Same categories, amounts cleared</span></span></div>');
+          e.target.disabled = true;
+        })
+      },
+      inline: {
+        html: frame('Docs', '<div class="tpf-doc" data-doc><h6>Untitled</h6><span class="tpf-ghost">Start typing, or start with:</span><div class="tpf-starts">' +
+          ['Meeting notes', 'To-do list', 'Weekly plan'].map(n => '<button class="btn btn-secondary cs-sm" type="button" data-s>' + n + '</button>').join('') + '</div></div>'),
+        use: 'A blank page with a few one-click starts on it.',
+        close: 'People who want a blank page just start typing.',
+        wire: s => s.querySelectorAll('[data-s]').forEach(b => b.addEventListener('click', () => {
+          const n = b.textContent;
+          const body = { 'Meeting notes': ['Date and people', 'Decisions', 'Next steps'], 'To-do list': ['☐ First task', '☐ Second task'], 'Weekly plan': ['Monday', 'Tuesday', 'Wednesday'] }[n];
+          s.querySelector('[data-doc]').innerHTML = '<h6 tabindex="-1">' + n + '</h6>' + body.map(t => '<span class="tpf-ghost">' + t + '</span>').join('');
+          s.querySelector('[data-doc] h6').focus({ preventScroll: true });
+        }))
+      }
+    };
+    const show = k => {
+      stage.innerHTML = F[k].html; F[k].wire(stage);
+      when.innerHTML = '<b>' + fm.querySelector('.fm-seg input:checked + label').textContent + '.</b> ' + F[k].use + ' ' + F[k].close;
+    };
+    fm.querySelectorAll('.fm-seg input').forEach(i => i.addEventListener('change', () => show(i.value)));
+    show('gallery');
+  })();
+  </script>
+</div>

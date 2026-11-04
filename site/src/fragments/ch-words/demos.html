@@ -1,0 +1,319 @@
+<script>
+(() => {
+  const { $, $$, store, demo, toast } = window.dfg;
+
+  /* js-44-words.js */
+  demo('good-labels', st => {
+    const ROUNDS = [
+      {
+        vague: 'OK', kind: 'dialog', title: 'Name this playlist', field: 'Road trip', others: ['Cancel'],
+        opts: [
+          { t: 'Apply', why: '“Apply” usually means a change takes effect while the dialog stays open. It doesn’t say anything gets saved.' },
+          { t: 'Save playlist', best: true, why: 'A verb and an object. People know what happens before they press it.' },
+          { t: 'Confirm', why: 'Still generic. People have to read the title to learn what they’re confirming.' }
+        ]
+      },
+      {
+        vague: 'Submit', kind: 'dialog', title: 'Share recipe', body: 'Lemon pasta · Visible to everyone', others: ['Cancel'],
+        opts: [
+          { t: 'Continue', why: '“Continue” promises another step. People may press it expecting a review screen and publish by accident.' },
+          { t: 'Submit now', why: 'Adds urgency, and still doesn’t say what happens to the recipe.' },
+          { t: 'Publish recipe', best: true, why: 'It says the recipe goes public. For an action like this, the label is the last warning people get.' }
+        ]
+      },
+      {
+        vague: 'Yes', kind: 'dialog', title: 'Delete 3 files?', body: 'They’ll be removed from this folder. This can’t be undone.', others: ['No'],
+        opts: [
+          { t: 'Delete 3 files', best: true, why: 'It repeats the verb and the count from the title, so people who skip to the buttons still know what they’ll lose. Pair it with “Cancel”, not “No”.' },
+          { t: 'Yes, I’m sure', why: 'It answers the question, so it only works for people who read the title. Many skip straight to the buttons.' },
+          { t: 'Proceed', why: 'A system word, and generic. Proceed with what?' }
+        ]
+      },
+      {
+        vague: 'Execute invitation', kind: 'toolbar', others: ['Save event', 'Add guests'],
+        opts: [
+          { t: 'Dispatch attendee request', why: 'It swaps one system word for another. And “attendee” is now a second name for the guests.' },
+          { t: 'Invite Guests', why: 'Right words, wrong case. The rest of the toolbar uses sentence case, so this one looks like it came from another app.' },
+          { t: 'Invite guests', best: true, why: 'People’s words, the same noun as “Add guests”, and the same sentence case as the rest of the toolbar.' }
+        ]
+      }
+    ];
+    const step = $('#p21-q-step', st), score = $('#p21-q-score', st), play = $('#p21-q-play', st), end = $('#p21-q-end', st);
+    const mock = $('#p21-q-mock', st), ask = $('#p21-q-ask', st), opts = $('#p21-q-opts', st), fb = $('#p21-q-fb', st);
+    const next = $('#p21-q-next', st), again = $('#p21-q-again', st), total = $('#p21-q-total', st);
+    let round = 0, best = 0, answered = false, target = null;
+    const el = (tag, cls, text) => { const e = document.createElement(tag); if (cls) e.className = cls; if (text != null) e.textContent = text; return e; };
+    const fake = (text, primary) => el('span', 'btn p21-fake ' + (primary ? 'btn-primary' : 'btn-secondary'), text);
+    const setScore = () => { score.textContent = best + (best === 1 ? ' best pick' : ' best picks'); };
+    const renderMock = r => {
+      mock.textContent = '';
+      target = fake(r.vague, true);
+      target.classList.add('p21-target');
+      if (r.kind === 'toolbar') {
+        const bar = el('div', 'p21-mbar');
+        bar.append(el('span', 'p21-mname', 'Team lunch'));
+        const btns = el('div', 'p21-mbtns');
+        r.others.forEach(o => btns.append(fake(o)));
+        btns.append(target);
+        bar.append(btns);
+        mock.append(bar);
+        return;
+      }
+      mock.append(el('p', 'p21-mtitle', r.title));
+      if (r.field) mock.append(el('span', 'p21-mfield', r.field));
+      if (r.body) mock.append(el('p', 'p21-mbody', r.body));
+      const acts = el('div', 'p21-mact');
+      r.others.forEach(o => acts.append(fake(o)));
+      acts.append(target);
+      mock.append(acts);
+    };
+    const render = () => {
+      const r = ROUNDS[round];
+      answered = false;
+      step.textContent = 'Round ' + (round + 1) + ' of ' + ROUNDS.length;
+      renderMock(r);
+      ask.textContent = 'Which label should replace “' + r.vague + '”?';
+      opts.textContent = '';
+      r.opts.forEach((o, i) => {
+        const b = el('button', 'btn btn-secondary p21-opt');
+        b.type = 'button';
+        b.dataset.i = String(i);
+        b.append(el('span', null, o.t));
+        opts.append(b);
+      });
+      fb.textContent = '';
+      next.hidden = true;
+      next.textContent = round === ROUNDS.length - 1 ? 'See your score' : 'Next round';
+      setScore();
+    };
+    opts.addEventListener('click', e => {
+      const b = e.target.closest('.p21-opt');
+      if (!b || answered) return;
+      answered = true;
+      const r = ROUNDS[round], pick = r.opts[Number(b.dataset.i)], good = r.opts.find(o => o.best);
+      if (pick.best) best += 1;
+      target.textContent = pick.t;
+      target.classList.add(pick.best ? 'p21-best' : 'p21-weak');
+      $$('.p21-opt', opts).forEach(x => {
+        const o = r.opts[Number(x.dataset.i)];
+        x.setAttribute('aria-disabled', 'true');
+        if (o.best) { x.dataset.verdict = 'best'; x.append(el('span', 'p21-chip', 'Best')); }
+        else if (x === b) { x.dataset.verdict = 'miss'; x.append(el('span', 'p21-chip', 'Your pick')); }
+      });
+      fb.textContent = '';
+      fb.append(el('b', null, pick.best ? 'Good pick. ' : 'Not the best one. '), pick.why);
+      if (!pick.best) { fb.append(' '); fb.append(el('b', null, 'Best: “' + good.t + '”. ')); fb.append(good.why); }
+      next.hidden = false;
+      setScore();
+    });
+    next.addEventListener('click', () => {
+      if (round < ROUNDS.length - 1) { round += 1; render(); step.focus(); return; }
+      play.hidden = true;
+      end.hidden = false;
+      step.textContent = 'Your score';
+      total.textContent = 'You picked the best label in ' + best + ' of ' + ROUNDS.length + ' rounds.' + (best === ROUNDS.length ? ' Every button now says what it does.' : ' The three rules behind the best picks:');
+      again.focus();
+    });
+    again.addEventListener('click', () => {
+      round = 0; best = 0;
+      end.hidden = true;
+      play.hidden = false;
+      render();
+      step.focus();
+    });
+    render();
+  });
+
+  demo('good-error-copy', st => {
+    const EX = {
+      bad: { what: 'Error 0x80070002: fatal error. Upload failed.', why: 'Invalid file detected in item 14.', next: 'You must correct the wrong file in the list before you try to upload the album again or the system will not be able to process your request.', btn: 'OK', code: '' },
+      good: { what: '13 of 20 photos uploaded. The upload stopped at “IMG_2041.heic”.', why: 'This album can’t show HEIC files yet.', next: 'Skip this photo and upload the rest, or convert it to JPEG first.', btn: 'Skip this photo', code: 'UNSUPPORTED_FORMAT' }
+    };
+    const FLAG = /\b(invalid|illegal|fail(?:ed|s|ure)?|errors?|fatal|you\s+must|wrong)\b/gi;
+    const GENERIC = ['ok', 'okay', 'yes', 'submit', 'continue', 'done', 'close', 'dismiss', 'got it', 'cancel'];
+    const MAX = 25;
+    const inputs = $$('[data-part]', st);
+    const val = k => $('[data-part="' + k + '"]', st).value.trim();
+    const out = k => $('[data-out="' + k + '"]', st);
+    const action = $('#p21-e-action', st), list = $('#p21-e-checks', st), count = $('#p21-e-count', st);
+    const words = s => (s.match(/[\p{L}\p{N}’'-]+/gu) || []).filter(w => /[\p{L}\p{N}]/u.test(w));
+    const sentences = s => s.split(/(?<=[.!?])\s+/).map(x => x.trim()).filter(x => words(x).length);
+    const flagged = s => Array.from(s.matchAll(FLAG), m => m[0].toLowerCase().replace(/\s+/g, ' '));
+    const paint = (node, text, empty) => {
+      node.textContent = '';
+      node.classList.toggle('p21-empty', !text);
+      if (!text) { node.textContent = empty || ''; return; }
+      let last = 0;
+      text.replace(FLAG, (m, _g, at) => {
+        if (at > last) node.append(text.slice(last, at));
+        const mk = document.createElement('mark');
+        mk.className = 'p21-flag';
+        mk.textContent = m;
+        node.append(mk);
+        last = at + m.length;
+        return m;
+      });
+      if (last < text.length) node.append(text.slice(last));
+    };
+    const check = (ok, text) => {
+      const li = document.createElement('li');
+      li.className = ok ? 'p21-pass' : 'p21-fail';
+      li.innerHTML = '<svg class="icon" aria-hidden="true"><use href="#i-' + (ok ? 'check' : 'warn') + '"/></svg>';
+      const s = document.createElement('span');
+      s.textContent = (ok ? 'Pass: ' : 'Fix: ') + text;
+      li.append(s);
+      return li;
+    };
+    const render = () => {
+      const v = { what: val('what'), why: val('why'), next: val('next'), btn: val('btn'), code: val('code') };
+      paint(out('what'), v.what, 'Say what happened.');
+      paint(out('why'), v.why);
+      paint(out('next'), v.next);
+      out('why').hidden = !v.why;
+      out('next').hidden = !v.next;
+      out('code').textContent = v.code ? 'Code: ' + v.code : '';
+      out('code').hidden = !v.code;
+      action.textContent = v.btn;
+      action.hidden = !v.btn;
+      const text = [v.what, v.why, v.next].filter(Boolean).join(' ');
+      const found = Array.from(new Set(flagged(text + ' ' + v.btn)));
+      const longest = sentences(text).reduce((n, s) => Math.max(n, words(s).length), 0);
+      const codeFirst = /^(error\s*)?(0x[0-9a-f]+|[A-Z0-9]+_[A-Z0-9_]+|E?-?\d{3,})\b/i.test(v.what);
+      const generic = GENERIC.includes(v.btn.toLowerCase().replace(/[.!]+$/, ''));
+      const items = [
+        found.length
+          ? check(false, 'blame or alarm words: ' + found.map(w => '“' + w + '”').join(', ') + '. Describe the thing, in neutral words.')
+          : check(true, 'no blame or alarm words.'),
+        !v.what
+          ? check(false, 'say what happened, in plain words.')
+          : codeFirst
+            ? check(false, 'it opens with a code. Lead with plain words, and move the code to the Code field.')
+            : check(true, 'plain words come first' + (v.code ? ', the code stays small.' : '.')),
+        longest > MAX
+          ? check(false, 'one sentence has ' + longest + ' words. This demo flags over ' + MAX + '. Keep one idea per sentence.')
+          : check(true, 'sentences are short' + (longest ? ' (longest: ' + longest + ' words).' : '.')),
+        !v.next || !v.btn
+          ? check(false, 'no next step. Say what people can do, and offer it as a button.')
+          : generic
+            ? check(false, '“' + v.btn + '” only closes the message. Name the action the button takes.')
+            : check(true, 'offers a next step, on a button that names it.')
+      ];
+      list.textContent = '';
+      items.forEach(li => list.append(li));
+      const pass = items.filter(li => li.className === 'p21-pass').length;
+      count.textContent = '· ' + pass + ' of ' + items.length + ' pass';
+    };
+    const load = key => { inputs.forEach(i => { i.value = EX[key][i.dataset.part]; }); render(); };
+    inputs.forEach(i => i.addEventListener('input', render));
+    $('#p21-e-bad', st).addEventListener('click', () => load('bad'));
+    $('#p21-e-good', st).addEventListener('click', () => load('good'));
+    action.addEventListener('click', () => toast(st, '“' + action.textContent + '” pressed. In the app, this would take that step.'));
+    load('bad');
+  });
+
+  demo('good-plain-language', st => {
+    const START = 'In order to leverage this functionality, utilize the Manage panel to modify your reservation prior to departure. The booking will then be reissued via email, and any invalid passenger detail will automatically be replaced by the details saved in your profile when the system processes your itinerary.';
+    const PLAIN = 'Change your booking before you fly, in Manage booking. We’ll email you the updated booking. If a passenger detail is missing, we use the one saved in your profile.';
+    const J = {
+      'in order to': 'to', 'prior to': 'before',
+      utilize: 'use', utilizes: 'uses', utilized: 'used', utilizing: 'using',
+      leverage: 'use', leverages: 'uses', leveraged: 'used', leveraging: 'using',
+      modify: 'change', modifies: 'changes', modified: 'changed', modifying: 'changing',
+      reissue: 'resend', reissues: 'resends', reissued: 'resent',
+      functionality: 'feature', via: 'through', invalid: null
+    };
+    const NOTE = { invalid: 'say what’s wrong, like “missing” or “misspelled”', via: 'or “with”, “from”', functionality: 'or name the feature' };
+    const TERMS = ['booking', 'reservation', 'itinerary'];
+    const esc = s => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&').replace(/ /g, '\\s+');
+    const keys = Object.keys(J).sort((a, b) => b.length - a.length);
+    const RX = new RegExp('\\b(' + keys.map(esc).join('|') + ')\\b|\\b(' + TERMS.join('|') + ')s?\\b', 'gi');
+    const ta = $('#p21-pl-text', st), hl = $('#p21-pl-hl', st), stats = $('#p21-pl-stats', st);
+    const swaps = $('#p21-pl-swaps', st), terms = $('#p21-pl-terms', st);
+    const norm = s => s.toLowerCase().replace(/\s+/g, ' ');
+    const cap = (orig, rep) => /^[A-Z]/.test(orig) ? rep.charAt(0).toUpperCase() + rep.slice(1) : rep;
+    const words = s => (s.match(/[\p{L}\p{N}’'-]+/gu) || []).filter(w => /[\p{L}\p{N}]/u.test(w));
+    const sentences = s => s.split(/(?<=[.!?])\s+/).map(x => x.trim()).filter(x => words(x).length);
+    const el = (tag, cls, text) => { const e = document.createElement(tag); if (cls) e.className = cls; if (text != null) e.textContent = text; return e; };
+    const fit = () => { ta.style.height = 'auto'; ta.style.height = (ta.scrollHeight + ta.offsetHeight - ta.clientHeight) + 'px'; };
+    const replaceAll = (re, fn) => {
+      ta.value = ta.value.replace(re, fn);
+      render();
+    };
+    const render = () => {
+      const text = ta.value;
+      const foundJ = new Map(), foundT = new Map();
+      hl.textContent = '';
+      let last = 0;
+      text.replace(RX, (m, j, t, at) => {
+        if (at > last) hl.append(text.slice(last, at));
+        hl.append(el('mark', j ? 'p21-j' : 'p21-t', m));
+        if (j) foundJ.set(norm(j), (foundJ.get(norm(j)) || 0) + 1);
+        else foundT.set(t.toLowerCase(), (foundT.get(t.toLowerCase()) || 0) + 1);
+        last = at + m.length;
+        return m;
+      });
+      hl.append(text.slice(last) + '\n');
+      const multi = foundT.size > 1;
+      $$('mark.p21-t', hl).forEach(mk => { mk.classList.toggle('p21-off', !multi); });
+      fit();
+
+      const w = words(text).length, s = sentences(text);
+      const longest = s.reduce((n, x) => Math.max(n, words(x).length), 0);
+      const avg = s.length ? Math.round((w / s.length) * 10) / 10 : 0;
+      stats.textContent = '';
+      [w + (w === 1 ? ' word' : ' words'), s.length + (s.length === 1 ? ' sentence' : ' sentences'), avg + ' words per sentence on average']
+        .forEach(x => stats.append(el('span', 'p21-stat', x)));
+      const long = longest > 25;
+      stats.append(el('span', 'p21-stat ' + (long ? 'p21-bad' : 'p21-good'), long ? 'Longest: ' + longest + ' words. Split it.' : 'Short sentences'));
+
+      swaps.textContent = '';
+      if (!foundJ.size) swaps.append(el('li', 'p21-none', 'No jargon from the list. Nice.'));
+      foundJ.forEach((n, k) => {
+        const li = el('li');
+        const label = el('span');
+        label.append(el('b', null, k));
+        label.append(J[k] ? ' → ' + J[k] : ': ' + NOTE[k]);
+        if (J[k] && NOTE[k]) label.append(el('small', null, ' ' + NOTE[k]));
+        li.append(label);
+        if (J[k]) {
+          const b = el('button', 'btn btn-ghost p21-swap', 'Replace');
+          b.type = 'button';
+          b.setAttribute('aria-label', 'Replace “' + k + '” with “' + J[k] + '”');
+          b.addEventListener('click', () => {
+            replaceAll(new RegExp('\\b' + esc(k) + '\\b', 'gi'), m => cap(m, J[k]));
+            const first = $('.p21-swap', swaps);
+            (first || ta).focus();
+          });
+          li.append(b);
+        }
+        swaps.append(li);
+      });
+
+      terms.textContent = '';
+      if (multi) {
+        const names = Array.from(foundT.keys());
+        const p = el('p', 'p21-tline p21-bad');
+        p.append(el('b', null, names.length + ' names for one thing: '), names.join(', ') + '. People will wonder if they’re different.');
+        const b = el('button', 'btn btn-secondary p21-unify', 'Use “booking” for all');
+        b.type = 'button';
+        b.addEventListener('click', () => {
+          replaceAll(/\b(reservation|itinerary)(s?)\b/gi, (m, t, pl) => cap(m, 'booking' + pl));
+          ta.focus();
+        });
+        terms.append(p, b);
+      } else {
+        terms.append(el('p', 'p21-tline p21-good', foundT.size ? 'One name for the thing: “' + Array.from(foundT.keys())[0] + '”.' : 'No mixed names.'));
+      }
+    };
+    ta.value = START;
+    ta.addEventListener('input', render);
+    $('#p21-pl-plain', st).addEventListener('click', () => { ta.value = PLAIN; render(); });
+    $('#p21-pl-reset', st).addEventListener('click', () => { ta.value = START; render(); });
+    let lastW = 0;
+    if ('ResizeObserver' in window) new ResizeObserver(() => { const wNow = ta.clientWidth; if (wNow !== lastW) { lastW = wNow; fit(); } }).observe(ta.parentElement);
+    render();
+  });
+
+
+})();
+</script>

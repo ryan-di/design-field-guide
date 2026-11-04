@@ -1,0 +1,185 @@
+<script>
+(() => {
+  const cs = document.currentScript.closest('.cs');
+  const D = (k, html, wire) => csDemo(cs.querySelector('[data-d="' + k + '"]'), html, wire);
+  const st = document.createElement('style');
+  st.textContent = [
+    '#eff-spot-plausible p.cs-meta{font:500 13.5px/1.45 var(--font-body)}',
+    '#eff-spot-plausible .sp-col{width:min(340px,100%);display:flex;flex-direction:column;gap:10px;text-align:left}',
+    '#eff-spot-plausible .sp-dlg{padding:16px;display:flex;flex-direction:column;gap:10px;width:100%}',
+    '#eff-spot-plausible .sp-dt{font-size:16px}',
+    '#eff-spot-plausible .sp-acts{display:flex;justify-content:flex-end;gap:8px}',
+    '#eff-spot-plausible .sp-shot{position:relative;border:2px dashed var(--ui-border);border-radius:14px;padding:22px 10px 10px}',
+    '#eff-spot-plausible .sp-shot-l{position:absolute;top:4px;left:10px;font:600 11px var(--font-mono);letter-spacing:.06em;text-transform:uppercase;color:var(--ui-muted)}',
+    '#eff-spot-plausible .sp-list{margin:0;padding-left:20px;display:flex;flex-direction:column;gap:4px;font-size:14px;color:var(--ui-text)}',
+    '#eff-spot-plausible .sp-list:empty{display:none}',
+    '#eff-spot-plausible .sp-list li.sp-again{color:var(--ui-danger);font-weight:600}',
+    '#eff-spot-plausible .sp-out{display:flex;flex-direction:column;gap:6px}',
+    '#eff-spot-plausible .sp-out:empty{display:none}',
+    '#eff-spot-plausible .sp-bad{color:var(--ui-danger);font-weight:600;font-size:14px}',
+    '#eff-spot-plausible .sp-good{color:var(--ui-ok);font-weight:600;font-size:14px}',
+    '#eff-spot-plausible .sp-states{display:flex;flex-wrap:wrap;gap:6px}',
+    '#eff-spot-plausible .sp-states button[aria-pressed="true"]{background:var(--ui-primary);color:var(--ui-on-primary)}',
+    '#eff-spot-plausible .sp-pbody{min-height:150px}',
+    '#eff-spot-plausible .sp-center{flex:1;display:grid;place-items:center;min-height:120px;color:var(--ui-muted)}',
+    '#eff-spot-plausible .sp-cmp{display:flex;flex-wrap:wrap;gap:16px;justify-content:center}',
+    '#eff-spot-plausible .sp-cmp figure{margin:0;display:flex;flex-direction:column;align-items:center;gap:6px}',
+    '#eff-spot-plausible .sp-cmp figcaption{font:500 12px var(--font-mono);color:var(--ui-muted)}',
+    '#eff-spot-plausible .sp-b{cursor:default;font-size:14px;padding:7px 16px;border-radius:8px}',
+    '#eff-spot-plausible .sp-b.sp-agent{padding:6px 15px;border-radius:7px;background:color-mix(in srgb,var(--ui-primary) 84%,var(--ui-sel))}',
+    '#eff-spot-plausible .sp-b.sp-agent.sp-tok{padding:7px 16px;border-radius:8px;background:var(--ui-primary)}',
+    '#eff-spot-plausible .sp-row{display:flex;flex-wrap:wrap;gap:8px;justify-content:center}',
+    '#eff-spot-plausible .sp-tbl{display:flex;flex-direction:column;gap:2px}',
+    '#eff-spot-plausible .sp-tbl .cs-row{font-size:13.5px}',
+    '#eff-spot-plausible .sp-tbl .cs-row .grow{white-space:normal}',
+    '#eff-spot-plausible .sp-x{color:var(--ui-danger);font-weight:700}',
+    '#eff-spot-plausible .sp-v{color:var(--ui-ok);font-weight:700}',
+    '#eff-spot-plausible .sp-box{padding:12px;display:flex;flex-direction:column;gap:6px;width:100%}',
+    '#eff-spot-plausible .sp-box b{font-size:13.5px}',
+    '#eff-spot-plausible .sp-chat{display:flex;flex-direction:column;gap:6px;max-height:170px;overflow:auto}',
+    '#eff-spot-plausible .sp-chat:empty{display:none}',
+    '#eff-spot-plausible .sp-msg{font-size:13.5px;line-height:1.4;padding:6px 10px;border-radius:10px;background:var(--ui-hover);color:var(--ui-text);align-self:flex-start;max-width:90%}',
+    '#eff-spot-plausible .sp-msg.me{align-self:flex-end;background:var(--ui-sel-soft)}'
+  ].join('\n');
+  cs.appendChild(st);
+  const btnRow = (attr, label, cls) => '<button class="btn ' + (cls || 'btn-primary') + ' cs-sm" type="button" ' + attr + '>' + label + '</button>';
+
+  /* 1. Screenshot vs using it */
+  const dlg = live => '<div class="sp-dlg surface"' + (live ? ' role="group" aria-label="Rename dialog made by the agent"' : ' inert aria-hidden="true"') + '><b class="sp-dt">Rename</b>' +
+    '<label class="cs-f">Name<input class="input" value="Product shots" data-name></label>' +
+    '<div class="sp-acts"><button class="btn btn-secondary cs-sm" type="button" data-cancel>Cancel</button><button class="btn btn-primary cs-sm" type="button" tabindex="-1" data-save>Save</button></div></div>';
+  D('eff-spot-plausible-1b', '<div class="sp-col"><div class="sp-shot"><span class="sp-shot-l">Screenshot from the agent</span>' + dlg(false) + '</div>' +
+    '<div>' + btnRow('data-approve', 'Approve') + '</div><div class="sp-out" data-out></div></div>', d => {
+    d.querySelector('[data-approve]').addEventListener('click', e => {
+      e.target.disabled = true;
+      d.querySelector('[data-out]').innerHTML = '<p class="cs-meta">Approved from the screenshot. After release, people report:</p><ul class="sp-list"><li>Tab never reaches Save.</li><li>An empty name gets saved.</li></ul>';
+    });
+  });
+  D('eff-spot-plausible-1f', '<div class="sp-col">' + dlg(true) +
+    '<div class="sp-out"><p class="cs-meta" data-said role="status"></p><p class="cs-meta" data-count>Problems found: 0 of 2</p><ul class="sp-list" data-found></ul></div></div>', d => {
+    const found = new Set(), list = d.querySelector('[data-found]'), count = d.querySelector('[data-count]'), said = d.querySelector('[data-said]'), name = d.querySelector('[data-name]');
+    const add = (k, text) => {
+      if (found.has(k)) return;
+      found.add(k);
+      list.insertAdjacentHTML('beforeend', '<li>' + text + '</li>');
+      count.textContent = 'Problems found: ' + found.size + ' of 2' + (found.size === 2 ? '. Both were invisible in a screenshot.' : '');
+    };
+    d.querySelector('[data-cancel]').addEventListener('keydown', e => { if (e.key === 'Tab' && !e.shiftKey) add('tab', 'Tab goes from Cancel straight out of the dialog. Save is skipped.'); });
+    d.querySelector('[data-cancel]').addEventListener('click', () => { said.textContent = 'Cancelled.'; });
+    d.querySelector('[data-save]').addEventListener('click', () => {
+      if (!name.value.trim()) { said.textContent = 'Saved with no name.'; add('empty', 'An empty name gets saved. There’s no error.'); }
+      else said.textContent = 'Saved as “' + name.value.trim() + '”.';
+    });
+  });
+
+  /* 2. Every state */
+  const ROWS = [['Product photo', 'Updated today'], ['Social post', 'Updated Monday'], ['Poster', 'Updated 2 Oct']];
+  const BODY = {
+    data: ROWS.map(r => '<div class="cs-row"><span class="grow"><b>' + r[0] + '</b></span><span class="cs-meta">' + r[1] + '</span></div>').join(''),
+    empty: '',
+    loading: '<div class="skel t"></div><div class="skel t2"></div><div class="skel t"></div><div class="skel t2"></div>',
+    error: '<div class="sp-center"><span class="spinner" aria-label="Loading"></span></div>'
+  };
+  const panel = k => '<div class="app-frame" style="width:100%"><div class="app-bar"><span>Templates</span></div><div class="app-body sp-pbody">' + BODY[k] + '</div></div>';
+  D('eff-spot-plausible-2b', '<div class="sp-col"><p class="cs-meta">The agent showed: With data</p>' + panel('data') +
+    '<div>' + btnRow('data-approve', 'Approve') + '</div><div class="sp-out" data-out></div></div>', d => {
+    d.querySelector('[data-approve]').addEventListener('click', e => {
+      e.target.disabled = true;
+      d.querySelector('[data-out]').innerHTML = '<p class="cs-meta">Approved. After release:</p><ul class="sp-list"><li>On a first visit, the panel is blank.</li><li>When the network fails, it spins forever.</li></ul>';
+    });
+  });
+  const STATES = [['data', 'With data', 'Fine.', 0], ['empty', 'Empty', 'Problem: the panel is blank. People think it’s broken.', 1], ['loading', 'Loading', 'Fine: placeholders show where rows will appear.', 0], ['error', 'Error', 'Problem: it spins forever, with no message and no way to retry.', 1]];
+  D('eff-spot-plausible-2f', '<div class="sp-col"><div class="sp-states" role="group" aria-label="State">' +
+    STATES.map(s => '<button class="btn btn-secondary cs-sm" type="button" aria-pressed="false" data-st="' + s[0] + '">' + s[1] + '</button>').join('') + '</div>' +
+    '<div data-panel></div><p data-verdict role="status"></p><p class="cs-meta" data-count></p></div>', d => {
+    const seen = new Set(), holder = d.querySelector('[data-panel]'), verdict = d.querySelector('[data-verdict]'), count = d.querySelector('[data-count]');
+    const show = k => {
+      const s = STATES.find(x => x[0] === k);
+      seen.add(k);
+      holder.innerHTML = panel(k);
+      verdict.className = s[3] ? 'sp-bad' : 'sp-good';
+      verdict.textContent = s[2];
+      d.querySelectorAll('[data-st]').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.st === k)));
+      const bad = STATES.filter(x => x[3] && seen.has(x[0])).length;
+      count.textContent = 'States seen: ' + seen.size + ' of 4 · Problems: ' + bad;
+    };
+    d.querySelectorAll('[data-st]').forEach(b => b.addEventListener('click', () => show(b.dataset.st)));
+    show('data');
+  });
+
+  /* 3. Tokens */
+  const cmp = '<div class="sp-cmp"><figure><span class="btn btn-primary sp-b">Save</span><figcaption>Existing button</figcaption></figure>' +
+    '<figure><span class="btn btn-primary sp-b sp-agent" data-agent>Save</span><figcaption>Agent’s button</figcaption></figure></div>';
+  D('eff-spot-plausible-3b', '<div class="sp-col">' + cmp + '<div>' + btnRow('data-approve', 'Approve') + '</div><div class="sp-out" data-out></div></div>', d => {
+    d.querySelector('[data-approve]').addEventListener('click', e => {
+      e.target.disabled = true;
+      d.querySelector('[data-out]').innerHTML = '<p class="cs-meta">Approved. A month later, new screens copied the agent’s button:</p>' +
+        '<div class="sp-row"><span class="btn btn-primary sp-b">Save</span><span class="btn btn-primary sp-b sp-agent">Export</span><span class="btn btn-primary sp-b sp-agent">Share</span><span class="btn btn-primary sp-b">Print</span></div>' +
+        '<p class="cs-meta">Two button styles now almost match, and nobody knows which one is right.</p>';
+    });
+  });
+  const VALS = [['Side padding 15px', 'token space-4 is 16px', 0], ['Corners 7px', 'token radius-md is 8px', 0], ['Fill: a custom color', 'token color-primary', 0], ['Text 14px', 'token text-sm is 14px', 1]];
+  D('eff-spot-plausible-3f', '<div class="sp-col">' + cmp + '<div class="sp-row" style="justify-content:flex-start">' + btnRow('data-check', 'Check against tokens', 'btn-secondary') + btnRow('data-use', 'Use the tokens') + '</div>' +
+    '<div class="sp-tbl" data-tbl></div><p class="cs-meta" data-out role="status"></p></div>', d => {
+    const tbl = d.querySelector('[data-tbl]'), out = d.querySelector('[data-out]'), use = d.querySelector('[data-use]');
+    let fixed = false;
+    use.disabled = true;
+    const render = () => {
+      tbl.innerHTML = VALS.map(v => {
+        const ok = v[2] || fixed;
+        return '<div class="cs-row"><span class="grow">' + (fixed && !v[2] ? v[1].replace(/^token (\S+).*/, 'Uses $1') : v[0] + ' · ' + v[1]) + '</span><span class="' + (ok ? 'sp-v' : 'sp-x') + '">' + (ok ? '✓' : '✗') + '</span></div>';
+      }).join('');
+    };
+    d.querySelector('[data-check]').addEventListener('click', e => {
+      e.target.disabled = true; use.disabled = false; render();
+      out.textContent = '3 values are near misses. By eye they pass.';
+    });
+    use.addEventListener('click', () => {
+      fixed = true; use.disabled = true; render();
+      d.querySelector('[data-agent]').classList.add('sp-tok');
+      out.textContent = 'Both buttons now use the same tokens.';
+    });
+  });
+
+  /* 4. One list */
+  const PROBS = ['Escape doesn’t close the share box.', 'Copy link gives no feedback.', 'The hint text is too faint in dark mode.', 'The email field has no label.'];
+  const probList = '<div class="sp-box surface"><b>Problems you found in the share box</b><ul class="sp-list" data-probs>' + PROBS.map(p => '<li>' + p + '</li>').join('') + '</ul></div>';
+  const say = (chat, text, me) => { const p = document.createElement('p'); p.className = 'sp-msg' + (me ? ' me' : ''); p.textContent = text; chat.appendChild(p); chat.scrollTop = chat.scrollHeight; };
+  D('eff-spot-plausible-4b', '<div class="sp-col">' + probList + '<div class="sp-chat" data-chat aria-live="polite"></div>' +
+    '<div>' + btnRow('data-send', 'Send next problem') + '</div><p class="cs-meta" data-out></p></div>', (d, t) => {
+    const chat = d.querySelector('[data-chat]'), out = d.querySelector('[data-out]'), btn = d.querySelector('[data-send]'), items = d.querySelectorAll('[data-probs] li');
+    let i = 0;
+    btn.addEventListener('click', () => {
+      if (i >= PROBS.length) return;
+      const n = i++;
+      say(chat, PROBS[n], true);
+      items[n].style.textDecoration = 'line-through';
+      btn.disabled = true;
+      t.after(() => {
+        if (n === 2) {
+          say(chat, 'Fixed the faint text. I also rewrote the key handling.');
+          items[0].style.textDecoration = 'none'; items[0].classList.add('sp-again'); items[0].textContent = PROBS[0] + ' Broken again.';
+        } else say(chat, 'Fixed.');
+        out.textContent = 'Rounds: ' + i + (i === PROBS.length ? '. Escape is broken again, so a fifth round is next.' : '');
+        btn.disabled = i >= PROBS.length;
+        if (!btn.disabled) btn.focus();
+      }, 450);
+    });
+  });
+  D('eff-spot-plausible-4f', '<div class="sp-col">' + probList +
+    '<div class="sp-box surface"><b>Checks to run</b><ul class="sp-list"><li>Playwright test: open the share box, press Escape, Tab to Copy link.</li><li>Screenshots in light and dark.</li></ul></div>' +
+    '<div class="sp-chat" data-chat aria-live="polite"></div><div>' + btnRow('data-send', 'Send the list') + '</div><p class="cs-meta" data-out></p></div>', (d, t) => {
+    const chat = d.querySelector('[data-chat]'), out = d.querySelector('[data-out]'), btn = d.querySelector('[data-send]');
+    btn.addEventListener('click', () => {
+      btn.disabled = true;
+      say(chat, 'Four problems and two checks to run.', true);
+      t.after(() => {
+        say(chat, 'Fixed all four. The keyboard test passes. Screenshots attached: light, dark.');
+        out.textContent = 'Rounds: 1. If Escape breaks again, the test catches it.';
+      }, 450);
+    });
+  });
+  csInit(cs);
+})();
+
+</script>

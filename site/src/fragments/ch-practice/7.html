@@ -1,0 +1,30 @@
+<div class="stage tall" data-demo="good-real-material">
+      <div class="p24-rm">
+        <div class="surface form-card p24-panel" role="group" aria-labelledby="p24-rm-ttl">
+          <h5 id="p24-rm-ttl">Tweak</h5>
+          <div class="p24-sl"><label for="p24-rm-pad">Padding</label><output id="p24-rm-pad-o" for="p24-rm-pad"></output><input type="range" id="p24-rm-pad" data-k="pad" min="4" max="18" step="1" value="10"></div>
+          <div class="p24-sl"><label for="p24-rm-rad">Radius</label><output id="p24-rm-rad-o" for="p24-rm-rad"></output><input type="range" id="p24-rm-rad" data-k="rad" min="0" max="24" step="1" value="10"></div>
+          <div class="p24-sl"><label for="p24-rm-wt">Font weight</label><output id="p24-rm-wt-o" for="p24-rm-wt"></output><input type="range" id="p24-rm-wt" data-k="wt" min="400" max="700" step="100" value="600"></div>
+          <div class="p24-sl"><label for="p24-rm-dur">Toast duration</label><output id="p24-rm-dur-o" for="p24-rm-dur"></output><input type="range" id="p24-rm-dur" data-k="dur" min="1" max="10" step="0.5" value="4.5"></div>
+          <div class="p24-sl"><label for="p24-rm-spd">Animation speed</label><output id="p24-rm-spd-o" for="p24-rm-spd"></output><input type="range" id="p24-rm-spd" data-k="spd" min="0" max="600" step="20" value="180"></div>
+          <label class="check"><input type="checkbox" id="p24-rm-long"><span>Use a real, long message<small>The kind of text the toast will get in real use.</small></span></label>
+        </div>
+        <div class="p24-right">
+          <div class="surface p24-preview" id="p24-rm-preview" role="group" aria-label="Preview">
+            <p class="p24-cap">Preview</p>
+            <button class="p24-live" type="button" id="p24-rm-live"><svg class="icon sm" aria-hidden="true"><use href="#i-check"/></svg>Save album</button>
+            <div class="p24-tslot" id="p24-rm-slot" role="status" aria-live="polite"></div>
+          </div>
+          <div class="row">
+            <button class="btn btn-secondary" type="button" id="p24-rm-show">Show toast</button>
+            <button class="btn btn-ghost" type="button" id="p24-rm-reset">Reset</button>
+          </div>
+        </div>
+      </div>
+      <div class="p24-codebox">
+        <div class="p24-codehead"><span id="p24-rm-code-cap">Generated CSS</span><button class="btn btn-secondary p24-copybtn" type="button" id="p24-rm-copy">Copy</button></div>
+        <pre class="p24-code p24-nowrap" id="p24-rm-code" tabindex="0" aria-labelledby="p24-rm-code-cap"></pre>
+        <p class="p24-copymsg" id="p24-rm-msg" role="status"></p>
+      </div>
+      <p class="try"><b>Try it:</b> drag the sliders and press Save album. Turn on the long message and set the duration to 2 s: can you read it before it goes? Point at the toast to pause it. When it feels right, copy the CSS.</p>
+    </div>

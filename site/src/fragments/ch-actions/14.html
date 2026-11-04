@@ -1,0 +1,63 @@
+<div class="note comfy cw-wrap"><p>Notice which icons stand alone and which get help: a label, a tooltip with the shortcut, or a menu with words.</p>
+  <div class="seg cw-seg" role="radiogroup" aria-label="Example">
+    <input type="radio" name="cw-icon-button-w" id="cw-icon-button-w-1" value="ig" checked><label for="cw-icon-button-w-1">Instagram</label>
+    <input type="radio" name="cw-icon-button-w" id="cw-icon-button-w-2" value="spotify"><label for="cw-icon-button-w-2">Spotify</label>
+    <input type="radio" name="cw-icon-button-w" id="cw-icon-button-w-3" value="vscode"><label for="cw-icon-button-w-3">VS Code</label>
+    <input type="radio" name="cw-icon-button-w" id="cw-icon-button-w-4" value="gmail"><label for="cw-icon-button-w-4">Gmail</label>
+  </div>
+  <div class="cw" data-cw-view role="img" aria-label=""></div>
+  <p class="cw-cap" data-cw-cap aria-live="polite"></p>
+  
+  <script>
+  (() => {
+    const wrap = document.currentScript.closest('.cw-wrap');
+    const view = wrap.querySelector('[data-cw-view]'), cap = wrap.querySelector('[data-cw-cap]');
+    const ic = id => '<svg class="icon sm"><use href="#i-' + id + '"/></svg>';
+    const svg = inner => '<svg class="icon sm" viewBox="0 0 24 24">' + inner + '</svg>';
+    const I = {
+      heart: svg('<path d="M12 20s-7.5-4.6-7.5-10.2A4.2 4.2 0 0 1 12 7.3a4.2 4.2 0 0 1 7.5 2.5C19.5 15.4 12 20 12 20z"/>'),
+      bubble: svg('<path d="M20 11.5a7.8 7.8 0 0 1-11.3 7L4 20l1.5-4.5A7.8 7.8 0 1 1 20 11.5z"/>'),
+      plane: svg('<path d="M21 3L10.5 13.5M21 3l-6.5 18-4-7.5L3 9.5z"/>'),
+      mark: svg('<path d="M6 3.5h12V21l-6-4.5L6 21z"/>'),
+      lib: svg('<path d="M5 4v16M10 4v16M14.5 4.5l4.5 15.5"/>'),
+      files: svg('<path d="M13 3H6v18h12V8zM13 3v5h5"/>'),
+      branch: svg('<circle cx="6" cy="18" r="2.5"/><circle cx="18" cy="6" r="2.5"/><circle cx="6" cy="6" r="2.5"/><path d="M6 8.5v7M18 8.5c0 5-12 2.5-12 7"/>'),
+      ext: svg('<rect x="4" y="4" width="7" height="7"/><rect x="4" y="13" width="7" height="7"/><rect x="13" y="13" width="7" height="7"/><rect x="14" y="3" width="6" height="6" transform="rotate(15 17 6)"/>'),
+      archive: svg('<rect x="3" y="4" width="18" height="5" rx="1"/><path d="M5 9v10h14V9M10 13h4"/>'),
+      spam: svg('<path d="M8 3h8l5 5v8l-5 5H8l-5-5V8z"/><path d="M12 8v5M12 16v.5"/>'),
+      mail: svg('<rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 7l9 6 9-6"/>'),
+      clock: svg('<circle cx="12" cy="12" r="8"/><path d="M12 8v4l3 2"/>'),
+      more: svg('<circle cx="12" cy="5.5" r="1"/><circle cx="12" cy="12" r="1"/><circle cx="12" cy="18.5" r="1"/>')
+    };
+    const hit = (icon, on) => '<span class="cw-wib-hit' + (on ? ' on' : '') + '">' + icon + '</span>';
+    const tab = (icon, label, on) => '<span class="cw-wib-tab' + (on ? ' on' : '') + '">' + icon + label + '</span>';
+    const tile = w => '<span><i></i><i class="cw-line" style="max-width:' + w + '%"></i></span>';
+    const sep = '<i class="cw-wib-sep"></i>';
+    const b = (icon, on) => '<span' + (on ? ' class="on"' : '') + '>' + icon + '</span>';
+    const S = {
+      ig: { html: '<div class="cw-wib-pane"><div class="cw-wib-head"><i class="cw-wib-av"></i><i class="cw-line"></i><span class="grow"></span>' + ic('dots') + '</div><i class="cw-wib-pic"></i>'
+          + '<div class="cw-wib-acts">' + hit(I.heart) + hit(I.bubble) + hit(I.plane) + '<span class="grow"></span>' + hit(I.mark) + '</div><i class="cw-line" style="width:55%"></i></div>',
+        alt: 'A photo post. Under the photo, a row of bare icons: like, comment and share on the left, and save on the right. No text labels.',
+        cap: 'Instagram: like, comment, share and save sit under every post as bare icons. People see them on every post, so they learn them fast and labels would only add clutter.' },
+      spotify: { html: '<div class="cw-wib-pane"><div class="cw-wib-tiles">' + tile(70) + tile(55) + tile(80) + tile(60) + tile(65) + tile(50) + '</div>'
+          + '<div class="cw-wib-tabs">' + tab(ic('home'), 'Home', true) + tab(ic('search'), 'Search') + tab(I.lib, 'Your Library') + '</div></div>',
+        alt: 'A phone home screen with a grid of tiles. The tab bar at the bottom shows three icons, each with a short label under it: Home, Search and Your Library.',
+        cap: 'Spotify: each tab at the bottom of the app has a short label under its icon, because a library icon alone could mean many things.' },
+      vscode: { html: '<div class="cw-wib-win"><div class="cw-wib-act"><span class="cur">' + I.files + '</span><span class="hov">' + ic('search') + '</span><span>' + I.branch + '</span><span>' + I.ext + '</span></div>'
+          + '<span class="cw-wib-tip">Search (⇧⌘F)</span>'
+          + '<div class="cw-wib-side"><b>Files</b><i class="cw-line"></i><i class="cw-line" style="width:70%"></i><i class="cw-line" style="width:85%"></i></div>'
+          + '<div class="cw-wib-code"><i class="cw-line" style="width:60%"></i><i class="cw-line" style="width:85%"></i><i class="cw-line" style="width:40%"></i><i class="cw-line" style="width:75%"></i><i class="cw-line" style="width:55%"></i></div></div>',
+        alt: 'An editor window with a column of icons down the left side. The pointer rests on the magnifier icon, and a tooltip next to it says Search, with its keyboard shortcut.',
+        cap: 'VS Code: the activity bar down the side is icons only, but hovering one shows its name and keyboard shortcut. People learn the icon and the faster way at the same time.' },
+      gmail: { html: '<div class="cw-wib-pane" style="width:min(330px,100%);overflow:visible"><div class="cw-wib-bar">' + b(I.archive) + b(I.spam) + b(ic('trash')) + sep + b(I.mail) + b(I.clock) + sep + b(ic('folder')) + b(I.more, true) + '</div>'
+          + '<div class="cw-wib-menu"><span>Mark as important</span><span>Filter messages like these</span><span>Mute</span></div>'
+          + '<i class="cw-line" style="width:70%"></i><i class="cw-line" style="width:90%"></i></div>',
+        alt: 'A message toolbar with icons in three small groups split by thin lines. The More button at the end is open, and its menu lists less common actions in words.',
+        cap: 'Gmail: the message toolbar groups its icons into small clusters, and less common actions sit in a More menu with text labels. The row stays short and easy to scan.' }
+    };
+    const render = k => { view.innerHTML = S[k].html; view.setAttribute('aria-label', 'Sketch: ' + S[k].alt); cap.textContent = S[k].cap; };
+    wrap.querySelectorAll('input[name="cw-icon-button-w"]').forEach(r => r.addEventListener('change', () => render(r.value)));
+    render('ig');
+  })();
+  </script>
+</div>

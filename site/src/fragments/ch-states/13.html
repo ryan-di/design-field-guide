@@ -1,0 +1,97 @@
+<script>
+(() => {
+  const cs = document.currentScript.closest('.cs');
+  const D = (k, html, wire) => csDemo(cs.querySelector('[data-d="' + k + '"]'), html, wire);
+  const icon = n => '<svg class="icon sm"><use href="#i-' + n + '"/></svg>';
+  const big = n => '<svg class="icon"><use href="#i-' + n + '"/></svg>';
+  const none = '<p class="es-none">No items</p>';
+  const helpful = (ic, title, text, acts) => '<div class="empty">' + big(ic) + '<h5>' + title + '</h5><p>' + text + '</p>' + (acts || '') + '</div>';
+  const frame = (bar, body, cls) => '<div class="app-frame" style="width:min(340px,100%)"><div class="app-bar' + (cls ? ' ' + cls : '') + '">' + bar + '</div>' + body + '</div>';
+
+  /* 1. Dead end: an empty Albums screen */
+  const albHtml = frame('<span>Albums</span><button class="icon-btn es-plus" type="button" aria-label="New album">' + icon('plus') + '</button>', '<div class="app-body es-body" data-body></div>');
+  const albWire = fixed => d => {
+    const body = d.querySelector('[data-body]');
+    let n = 0;
+    const add = () => {
+      n++;
+      if (n === 1) { body.classList.add('list'); body.innerHTML = '<div class="es-alb" data-grid></div><p class="cs-ok" data-ok>Album created. Add photos any time.</p>'; }
+      const tile = document.createElement('div'); tile.className = 'es-tile';
+      tile.innerHTML = '<div class="thumb' + (n % 2 ? '' : ' b') + '"></div><b>New album' + (n > 1 ? ' ' + n : '') + '</b><span class="cs-meta">0 photos</span>';
+      body.querySelector('[data-grid]').appendChild(tile);
+    };
+    body.innerHTML = fixed ? helpful('image', 'No albums yet', 'Albums you create will show up here.', '<button class="btn btn-primary" type="button" data-new>New album</button>') : none;
+    const nb = body.querySelector('[data-new]'); if (nb) nb.addEventListener('click', add);
+    d.querySelector('.es-plus').addEventListener('click', add);
+  };
+  D('empty-state-1b', albHtml, albWire(false));
+  D('empty-state-1f', albHtml, albWire(true));
+
+  /* 2. Too many choices: an empty Documents screen */
+  const TPL = ['Meeting notes', 'Weekly plan', 'Letter'];
+  const docsHtml = frame('<span>Documents</span>', '<div class="app-body es-body" data-body></div>');
+  const docsWire = fixed => d => {
+    const body = d.querySelector('[data-body]');
+    const open = name => { body.classList.add('list'); body.innerHTML = '<div class="cs-row"><span class="grow">' + icon('book') + ' ' + name + '</span><span class="cs-meta">Just now</span></div><p class="cs-ok">Your first document is open.</p>'; };
+    const pick = () => {
+      body.classList.add('list');
+      body.innerHTML = '<b>Pick a template</b>' + TPL.map(x => '<div class="cs-row"><span class="grow">' + x + '</span><button class="btn btn-secondary cs-sm" type="button">Use</button></div>').join('');
+      body.querySelectorAll('.cs-row button').forEach((b, i) => b.addEventListener('click', () => open(TPL[i])));
+    };
+    const NOTE = { up: 'Upload: choose a file from your computer.', imp: 'Import: connect Google Drive or Dropbox first.', help: 'Help: opens the help center in a new tab.' };
+    const acts = fixed
+      ? '<div class="es-acts col"><button class="btn btn-primary" type="button" data-a="new">New document</button><button class="btn btn-ghost cs-sm" type="button" data-a="tpl">Browse templates</button></div>'
+      : '<div class="es-acts">' + [['new', 'New'], ['up', 'Upload'], ['tpl', 'Templates'], ['imp', 'Import'], ['help', 'Help']].map(a => '<button class="btn btn-secondary cs-sm" type="button" data-a="' + a[0] + '">' + a[1] + '</button>').join('') + '</div>';
+    body.innerHTML = helpful('folder', 'No documents yet', 'Your documents will show up here.', acts + '<p class="cs-meta" data-note aria-live="polite"></p>');
+    const note = body.querySelector('[data-note]');
+    body.querySelectorAll('[data-a]').forEach(b => b.addEventListener('click', () => {
+      const a = b.dataset.a;
+      if (a === 'new') open('Untitled document'); else if (a === 'tpl') pick(); else note.textContent = NOTE[a];
+    }));
+  };
+  D('empty-state-2b', docsHtml, docsWire(false));
+  D('empty-state-2f', docsHtml, docsWire(true));
+
+  /* 3. No results vs nothing yet: a shop with Search and Wishlist */
+  const CAT = [['Trail runner', '$89'], ['City sneaker', '$75'], ['Court classic', '$68']];
+  const shopHtml = frame('<button class="cs-tab on" type="button" data-tab="s">Search</button><button class="cs-tab" type="button" data-tab="w">Wishlist</button>',
+    '<div data-s><div class="es-q"><span class="es-pill">' + icon('search') + '<span>sneakers</span></span>' +
+    '<button class="es-chip" type="button" data-chip aria-label="Remove filter: size 9">Size 9' + icon('x') + '</button></div>' +
+    '<div class="app-body es-body" data-sb></div></div><div data-w hidden><div class="app-body es-body" data-wb></div></div>', 'es-tabs');
+  const shopWire = fixed => d => {
+    const tabs = d.querySelectorAll('.cs-tab'), s = d.querySelector('[data-s]'), w = d.querySelector('[data-w]'), sb = d.querySelector('[data-sb]'), wb = d.querySelector('[data-wb]'), chip = d.querySelector('[data-chip]');
+    const saved = [];
+    let filter = true;
+    const go = k => { s.hidden = k !== 's'; w.hidden = k !== 'w'; tabs.forEach(b => b.classList.toggle('on', b.dataset.tab === k)); };
+    const row = (name, price, act) => '<div class="cs-row"><span class="grow">' + name + '</span><span>' + price + '</span>' + (act || '') + '</div>';
+    const renderS = () => {
+      chip.hidden = !filter; sb.classList.toggle('list', !filter);
+      if (filter) {
+        sb.innerHTML = fixed ? helpful('search', 'No results for “sneakers” in size 9', 'Try another size, or clear the filter.', '<button class="btn btn-secondary cs-sm" type="button" data-clear>Clear size filter</button>') : none;
+        const c = sb.querySelector('[data-clear]'); if (c) c.addEventListener('click', () => { filter = false; renderS(); });
+        return;
+      }
+      sb.innerHTML = '<span class="cs-meta">3 results for “sneakers”</span>' + CAT.map((r, i) => row(r[0], r[1], '<button class="btn btn-ghost cs-sm" type="button" data-save="' + i + '" aria-pressed="' + saved.includes(i) + '">' + (saved.includes(i) ? 'Saved' : 'Save') + '</button>')).join('');
+      sb.querySelectorAll('[data-save]').forEach(b => b.addEventListener('click', () => {
+        const i = +b.dataset.save, k = saved.indexOf(i);
+        if (k < 0) saved.push(i); else saved.splice(k, 1);
+        b.setAttribute('aria-pressed', String(k < 0)); b.textContent = k < 0 ? 'Saved' : 'Save'; renderW();
+      }));
+    };
+    const renderW = () => {
+      wb.classList.toggle('list', saved.length > 0);
+      if (saved.length) { wb.innerHTML = '<span class="cs-meta">Saved for later</span>' + saved.map(i => row(CAT[i][0], CAT[i][1])).join(''); return; }
+      wb.innerHTML = fixed ? helpful('image', 'Nothing saved yet', 'Press Save on anything you like, and it will wait here.', '<button class="btn btn-secondary cs-sm" type="button" data-browse>Browse sneakers</button>') : none;
+      const b = wb.querySelector('[data-browse]'); if (b) b.addEventListener('click', () => go('s'));
+    };
+    tabs.forEach(b => b.addEventListener('click', () => go(b.dataset.tab)));
+    chip.addEventListener('click', () => { filter = false; renderS(); });
+    renderS(); renderW();
+  };
+  D('empty-state-3b', shopHtml, shopWire(false));
+  D('empty-state-3f', shopHtml, shopWire(true));
+
+  csInit(cs);
+})();
+
+  </script>

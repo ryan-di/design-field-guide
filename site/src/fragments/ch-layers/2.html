@@ -1,0 +1,84 @@
+<div class="fm" data-fm>
+  <div class="seg fm-seg" role="radiogroup" aria-label="Way to do it">
+    <input type="radio" name="fm-pat-layered-ui" id="fm-pat-layered-ui-1" value="more" checked><label for="fm-pat-layered-ui-1">Show more</label>
+    <input type="radio" name="fm-pat-layered-ui" id="fm-pat-layered-ui-2" value="mode"><label for="fm-pat-layered-ui-2">Mode switch</label>
+    <input type="radio" name="fm-pat-layered-ui" id="fm-pat-layered-ui-3" value="page"><label for="fm-pat-layered-ui-3">Separate page</label>
+    <input type="radio" name="fm-pat-layered-ui" id="fm-pat-layered-ui-4" value="quick"><label for="fm-pat-layered-ui-4">Quick, then full</label>
+  </div>
+  <div class="fm-stage" data-fm-stage></div>
+  <p class="fig-cap" data-fm-when aria-live="polite"></p>
+  
+  <script>
+  (() => {
+    const fm = document.currentScript.closest('[data-fm]'), stage = fm.querySelector('[data-fm-stage]'), when = fm.querySelector('[data-fm-when]');
+    const frame = (title, right, body) => '<div class="app-frame fm-frame"><div class="app-bar"><span>' + title + '</span>' + (right || '') + '</div><div class="app-body">' + body + '</div></div>';
+    const F = {
+      more: {
+        html: frame('Mail · Search', '', '<label class="cs-f">Search mail<input class="input" value="invoice"></label><button class="fml-link" type="button" aria-expanded="false" data-more>More options</button><div data-x hidden><div class="fml-grid"><label class="cs-f">From<input class="input" placeholder="Anyone"></label><label class="cs-f">Date<select class="select"><option>Any time</option><option>Last week</option><option>Last month</option></select></label></div><label class="fml-chk"><input type="checkbox"> Has attachment</label></div>'),
+        use: 'Use it when a few extra fields help some people, on the same screen.',
+        more: 'The link opens them in place and says “Fewer options” to close them again.',
+        wire: s => { const b = s.querySelector('[data-more]'), x = s.querySelector('[data-x]'); b.addEventListener('click', () => { x.hidden = !x.hidden; b.setAttribute('aria-expanded', String(!x.hidden)); b.textContent = x.hidden ? 'More options' : 'Fewer options'; }); }
+      },
+      mode: {
+        html: frame('Calculator', '<span class="fml-mode" role="group" aria-label="Mode"><button class="cs-tab on" type="button" aria-pressed="true" data-m="b">Basic</button><button class="cs-tab" type="button" aria-pressed="false" data-m="s">Scientific</button></span>',
+          '<div class="fml-disp" aria-live="polite" data-disp>0</div><div class="fml-keys" data-keys></div>'),
+        use: 'Use it when a whole screen has a basic and a full version, and people stay in one for a while.',
+        more: 'The number on the display stays when people switch.',
+        wire: s => {
+          const disp = s.querySelector('[data-disp]'), keys = s.querySelector('[data-keys]');
+          const BASIC = ['7', '8', '9', '÷', '4', '5', '6', '×', '1', '2', '3', '−', 'C', '0', '=', '+'], SCI = ['x²', '√', '1/x', 'π'];
+          let expr = '0', sci = false;
+          const show = () => { disp.textContent = expr; };
+          const lastNum = () => { const m = expr.match(/-?\d*\.?\d+$/); return m ? m[0] : null; };
+          const swapLast = v => { const n = lastNum(); if (n === null) return; expr = expr.slice(0, expr.length - n.length) + String(Math.round(v * 1e6) / 1e6); };
+          const press = k => {
+            if (k === 'C') expr = '0';
+            else if (k === '=') { const js = expr.replace(/×/g, '*').replace(/÷/g, '/').replace(/−/g, '-'); if (/^[\d.+\-*/ ]+$/.test(js)) { try { const v = Function('return (' + js + ')')(); expr = isFinite(v) ? String(Math.round(v * 1e6) / 1e6) : 'Error'; } catch (e) { expr = 'Error'; } } }
+            else if (k === 'x²') { const n = lastNum(); if (n !== null) swapLast(Number(n) ** 2); }
+            else if (k === '√') { const n = lastNum(); if (n !== null && Number(n) >= 0) swapLast(Math.sqrt(Number(n))); }
+            else if (k === '1/x') { const n = lastNum(); if (n !== null && Number(n)) swapLast(1 / Number(n)); }
+            else if (k === 'π') expr = (expr === '0' || expr === 'Error' ? '' : expr.replace(/\d*\.?\d+$/, '')) + '3.141593';
+            else if (/\d/.test(k)) expr = expr === '0' || expr === 'Error' ? k : expr + k;
+            else if (!/[+−×÷]$/.test(expr)) expr += k;
+            show();
+          };
+          const draw = () => { keys.innerHTML = (sci ? SCI.map(k => '<button type="button" class="sci">' + k + '</button>').join('') : '') + BASIC.map(k => '<button type="button">' + k + '</button>').join(''); };
+          keys.addEventListener('click', e => { const b = e.target.closest('button'); if (b) press(b.textContent); });
+          const ms = [...s.querySelectorAll('[data-m]')];
+          ms.forEach(b => b.addEventListener('click', () => { sci = b.dataset.m === 's'; ms.forEach(x => { const on = x === b; x.classList.toggle('on', on); x.setAttribute('aria-pressed', String(on)); }); draw(); }));
+          draw(); show();
+        }
+      },
+      page: {
+        html: frame('Wi-Fi · Home', '', '<div data-p1><div class="fml-set">Status<span>Connected</span></div><label class="fml-set switch">Join automatically<input type="checkbox" role="switch" checked></label><div class="fml-set">Password<span>••••••••</span></div><button class="fml-row" type="button" data-go>Advanced settings<span aria-hidden="true">›</span></button></div>' +
+          '<div data-p2 hidden><button class="fml-link" type="button" data-back>‹ Back to Home</button><div class="fml-set">IP address<span>192.168.1.24</span></div><div class="fml-set">DNS<span>Automatic</span></div><div class="fml-set">Proxy<span>Off</span></div><div class="fml-set">MAC address<span>Private</span></div></div>'),
+        use: 'Use it for settings few people ever need, kept out of the main screen.',
+        more: 'A named row leads there, and a back link returns to the same place.',
+        wire: s => {
+          const p1 = s.querySelector('[data-p1]'), p2 = s.querySelector('[data-p2]');
+          s.querySelector('[data-go]').addEventListener('click', () => { p1.hidden = true; p2.hidden = false; s.querySelector('[data-back]').focus(); });
+          s.querySelector('[data-back]').addEventListener('click', () => { p2.hidden = true; p1.hidden = false; s.querySelector('[data-go]').focus(); });
+        }
+      },
+      quick: {
+        html: '<div data-q class="fml-pop"><label class="cs-f">Title<input class="input" value="Dinner with Ana" data-t></label><span class="cs-meta">Fri 30 Oct · 7:00–8:00 pm</span><div class="fml-acts"><button class="fml-link" type="button" data-full>More options</button><button class="btn btn-primary cs-sm" type="button" data-save>Save</button></div><p class="cs-meta" data-out></p></div>' +
+          '<div data-f hidden style="width:min(420px,100%)">' + frame('New event', '', '<label class="cs-f">Title<input class="input" data-t2></label><div class="fml-grid"><label class="cs-f">Date<input class="input" value="Fri 30 Oct"></label><label class="cs-f">Time<input class="input" value="7:00–8:00 pm"></label></div><label class="cs-f">Location<input class="input" placeholder="Add a place"></label><label class="cs-f">Reminder<select class="select"><option>30 minutes before</option><option>1 hour before</option><option>None</option></select></label><button class="btn btn-primary cs-sm" type="button" style="align-self:flex-start" data-save2>Save</button><p class="cs-meta" data-out2></p>') + '</div>',
+        use: 'Use it when most people need only a title and a time, and some need everything.',
+        more: 'The full form opens with what people already typed.',
+        wire: s => {
+          const q = s.querySelector('[data-q]'), f = s.querySelector('[data-f]');
+          s.querySelector('[data-save]').addEventListener('click', () => { s.querySelector('[data-out]').textContent = 'Saved “' + s.querySelector('[data-t]').value + '”.'; });
+          s.querySelector('[data-full]').addEventListener('click', () => { const t2 = s.querySelector('[data-t2]'); t2.value = s.querySelector('[data-t]').value; q.hidden = true; f.hidden = false; t2.focus(); });
+          s.querySelector('[data-save2]').addEventListener('click', () => { s.querySelector('[data-out2]').textContent = 'Saved “' + s.querySelector('[data-t2]').value + '” with all details.'; });
+        }
+      }
+    };
+    const show = k => {
+      stage.innerHTML = F[k].html; F[k].wire(stage);
+      when.innerHTML = '<b>' + fm.querySelector('.fm-seg input:checked + label').textContent + '.</b> ' + F[k].use + ' ' + F[k].more;
+    };
+    fm.querySelectorAll('.fm-seg input').forEach(i => i.addEventListener('change', () => show(i.value)));
+    show('more');
+  })();
+  </script>
+</div>

@@ -1,0 +1,322 @@
+---
+title: "Overlays"
+description: "Overlays sit on top of the page and close when you click away, so keep them small and never let them hold work people could lose."
+eyebrow: "Chapter 18"
+sidebar:
+  label: "Overlays"
+---
+
+import Raw from '../../../components/Raw.astro';
+import Learned from '../../../components/Learned.astro';
+import Runtime from '../../../components/Runtime.astro';
+import F0 from '../../../fragments/ch-overlays/0.html?raw';
+import F1 from '../../../fragments/ch-overlays/1.html?raw';
+import F2 from '../../../fragments/ch-overlays/2.html?raw';
+import F3 from '../../../fragments/ch-overlays/3.html?raw';
+import F4 from '../../../fragments/ch-overlays/4.html?raw';
+import F5 from '../../../fragments/ch-overlays/5.html?raw';
+import F6 from '../../../fragments/ch-overlays/6.html?raw';
+import F7 from '../../../fragments/ch-overlays/7.html?raw';
+import F8 from '../../../fragments/ch-overlays/8.html?raw';
+import F9 from '../../../fragments/ch-overlays/9.html?raw';
+import F10 from '../../../fragments/ch-overlays/10.html?raw';
+import F11 from '../../../fragments/ch-overlays/11.html?raw';
+import F12 from '../../../fragments/ch-overlays/12.html?raw';
+import F13 from '../../../fragments/ch-overlays/13.html?raw';
+import F14 from '../../../fragments/ch-overlays/14.html?raw';
+import F15 from '../../../fragments/ch-overlays/15.html?raw';
+import F16 from '../../../fragments/ch-overlays/16.html?raw';
+import F17 from '../../../fragments/ch-overlays/17.html?raw';
+import F18 from '../../../fragments/ch-overlays/18.html?raw';
+import F19 from '../../../fragments/ch-overlays/19.html?raw';
+import F20 from '../../../fragments/ch-overlays/20.html?raw';
+import F21 from '../../../fragments/ch-overlays/21.html?raw';
+import F22 from '../../../fragments/ch-overlays/22.html?raw';
+import F23 from '../../../fragments/ch-overlays/23.html?raw';
+
+<Runtime at="start" />
+
+<section class="dfg-chapter" id="ch-overlays">
+
+Overlays sit on top of the page and close when you click away, so keep them small and never let them hold work people could lose.
+
+<article class="entry essay" id="tooltip" data-entry data-name="Tooltip">
+
+<div class="entry-head">
+
+## Tooltip \{#tooltip-h\}
+
+<Learned id="tooltip" />
+
+</div>
+
+A tooltip is a small label that appears when people point at something or move to it with the keyboard. It answers a quick question, like what an icon button does. It goes away as soon as the pointer or focus moves on.
+
+Where a tooltip only adds a name or a short note, with nothing in it to click, a popover opens on a click, stays open and can hold buttons and links.
+
+<Raw html={F0} />
+
+### Forms \{#tooltip-forms\}
+
+Most tooltips name an icon button, and some also show its keyboard shortcut. Others explain a word in one short sentence, or show the full text of a name that is cut off. All of them hold a few words of plain text and nothing else.
+
+<Raw html={F1} />
+
+### Rules \{#tooltip-rules\}
+
+Four rules keep tooltips useful.
+
+<div class="cs essay-cs">
+
+<section class="rule" id="tooltip-rule-1">
+
+#### 1. Don’t rely on hover \{#tooltip-rule-1-h\}
+
+Phones and tablets have no hover, so a tooltip there never appears, and people decide without the information, such as what an extra fee pays for. Put the text on the page where people can see it. If there isn’t room, add an info button that opens a popover when tapped, which works the same with a finger, a mouse or a keyboard.
+
+<Raw html={F2} />
+
+</section>
+
+<section class="rule" id="tooltip-rule-2">
+
+#### 2. Don’t hide what people must know \{#tooltip-rule-2-h\}
+
+Most people never point at a small info icon, so if a warning hides there, they find out what the setting does only when their old messages are already gone. Put anything people need for a decision on the page, as helper text right under the choice.
+
+<Raw html={F3} />
+
+</section>
+
+<section class="rule" id="tooltip-rule-3">
+
+#### 3. Don’t put links or buttons in it \{#tooltip-rule-3-h\}
+
+A tooltip closes as soon as the pointer moves off the icon, and the keyboard can’t move into it, so a link inside can be seen but not used. When the note needs a link, use a popover instead. It stays open until people close it, so they can reach the link with a mouse, a finger or the Tab key.
+
+<Raw html={F4} />
+
+</section>
+
+<section class="rule" id="tooltip-rule-4">
+
+#### 4. Don’t repeat the label \{#tooltip-rule-4-h\}
+
+A tooltip that repeats a visible label tells people nothing new, but it still pops up over nearby content, such as the price next to the button, and screen readers read the same words twice. If the label already says it, leave the tooltip out.
+
+<Raw html={F5} />
+
+</section>
+
+<Raw html={F6} />
+
+</div>
+
+### In real products \{#tooltip-products\}
+
+<Raw html={F7} />
+
+</article>
+
+<article class="entry essay" id="popover" data-entry data-name="Popover">
+
+<div class="entry-head">
+
+## Popover \{#popover-h\}
+
+<Learned id="popover" />
+
+</div>
+
+A popover is a small box that opens next to the button people pressed. It holds a few related controls or details, such as view options, a guest count or a contact card. It stays open until people click outside it, press Esc or press the button again.
+
+Unlike a [tooltip](#tooltip), it opens on a click and can hold buttons, fields and links. Unlike a dialog, it doesn’t block the page behind it.
+
+<Raw html={F8} />
+
+### Forms \{#popover-forms\}
+
+The common forms are options, a picker, a details card and a tip. Options and pickers change something on the page, a details card shows more about a person or a link, and a tip points at something new once.
+
+<Raw html={F9} />
+
+### Rules \{#popover-rules\}
+
+Four rules keep popovers useful.
+
+<div class="cs essay-cs">
+
+<section class="rule" id="popover-rule-1">
+
+#### 1. Keep it to a few controls \{#popover-rule-1-h\}
+
+A popover has room for only a few controls, so with seven fields in it, people scroll inside the box to find a field, then scroll again to find Save. When a task needs more fields than that, use a side panel or a page, where the fields can be grouped and Save stays in view.
+
+<Raw html={F10} />
+
+</section>
+
+<section class="rule" id="popover-rule-2">
+
+#### 2. Don’t lose work when it closes \{#popover-rule-2-h\}
+
+People close popovers by clicking outside them, often without thinking, so if that also throws away what they typed, their work is gone without a word. Save each change the moment it’s made, so nothing is lost however the popover closes. If people need to review changes before they count, use a dialog with Save and Cancel instead.
+
+<Raw html={F11} />
+
+</section>
+
+<section class="rule" id="popover-rule-3">
+
+#### 3. Don’t open popovers from popovers \{#popover-rule-3-h\}
+
+Each popover that opens another adds a layer on top, so people lose track of where they are, and one choice can close every layer at once. The next change then starts again from the first button. Put related choices side by side in one popover or panel, and apply them as people click.
+
+<Raw html={F12} />
+
+</section>
+
+<section class="rule" id="popover-rule-4">
+
+#### 4. Keep the result in view \{#popover-rule-4-h\}
+
+When a popover covers what it changes, people adjust blind: they close it to see the result, then open it again to adjust some more. Place it beside the thing being changed, or, if there isn’t room, use a side panel and leave the thing itself in full view.
+
+<Raw html={F13} />
+
+</section>
+
+<Raw html={F14} />
+
+</div>
+
+### In real products \{#popover-products\}
+
+<Raw html={F15} />
+
+</article>
+
+<article class="entry essay" id="menu" data-entry data-name="Menu">
+
+<div class="entry-head">
+
+## Menu \{#menu-h\}
+
+<Learned id="menu" />
+
+</div>
+
+A menu is a short list of commands that opens from a button. It holds actions people need now and then, like Rename, Duplicate or Delete, so they don’t crowd the screen. Picking an item runs it and closes the menu.
+
+Where a select fills in a value, like a size or a country, and the field keeps showing that value, a menu runs a command, and then it’s gone.
+
+<Raw html={F16} />
+
+### Forms \{#menu-forms\}
+
+Most menus open from a button: a “More” button with three dots, or a button with a name like Sort, which may let people pick one setting. A context menu opens when people right-click or long-press an item, and a menu bar along the top of a window holds all of an app’s commands.
+
+<Raw html={F17} />
+
+### Rules \{#menu-rules\}
+
+Four rules keep menus useful.
+
+<div class="cs essay-cs">
+
+<section class="rule" id="menu-rule-1">
+
+#### 1. Keep it short \{#menu-rule-1-h\}
+
+In a menu of more than about a dozen items, people have to read every item to find the one they want, and if it’s out of view at the bottom, they scroll past it or give up. Split the list into small groups with the common actions on top. Move rare actions out, or let people type a few letters to find them. Very large sets need a [command palette](/part-2/find/#pat-command-palette).
+
+<Raw html={F18} />
+
+</section>
+
+<section class="rule" id="menu-rule-2">
+
+#### 2. Keep the main action in view \{#menu-rule-2-h\}
+
+Every trip into a menu costs a click and a search. That is fine for rare actions, but for the action people take most, like Reply in email, they pay it every time. Give the one or two most used actions their own buttons, and keep the menu for the rest.
+
+<Raw html={F19} />
+
+</section>
+
+<section class="rule" id="menu-rule-3">
+
+#### 3. Put options to compare on the page \{#menu-rule-3-h\}
+
+A menu shows names only, and only while it’s open, so to compare prices or dates, people open it again and again and keep the numbers in their head. When options differ in price, time or size, lay them out on the page with those details, for example as radio buttons or cards, so people can compare them in one look.
+
+<Raw html={F20} />
+
+</section>
+
+<section class="rule" id="menu-rule-4">
+
+#### 4. Don’t nest submenus \{#menu-rule-4-h\}
+
+Each submenu opens on hover and switches when the pointer slips onto a neighbor, so people retrace their steps or pick the wrong item without noticing. Keep a menu to one level, two at most. When a choice needs more steps, open a dialog that shows every option at once and has room to explain them.
+
+<Raw html={F21} />
+
+</section>
+
+<Raw html={F22} />
+
+</div>
+
+### In real products \{#menu-products\}
+
+<Raw html={F23} />
+
+</article>
+
+<aside class="in-short" id="ch-overlays-in-short" aria-labelledby="ch-overlays-in-short-h" data-pagefind-ignore>
+
+## In short \{#ch-overlays-in-short-h\}
+
+<div class="is-grid">
+
+<div>
+
+<a class="is-e" href="#tooltip">Tooltip</a>
+
+1. [Don’t rely on hover](#tooltip-rule-1)
+2. [Don’t hide what people must know](#tooltip-rule-2)
+3. [Don’t put links or buttons in it](#tooltip-rule-3)
+4. [Don’t repeat the label](#tooltip-rule-4)
+
+</div>
+
+<div>
+
+<a class="is-e" href="#popover">Popover</a>
+
+1. [Keep it to a few controls](#popover-rule-1)
+2. [Don’t lose work when it closes](#popover-rule-2)
+3. [Don’t open popovers from popovers](#popover-rule-3)
+4. [Keep the result in view](#popover-rule-4)
+
+</div>
+
+<div>
+
+<a class="is-e" href="#menu">Menu</a>
+
+1. [Keep it short](#menu-rule-1)
+2. [Keep the main action in view](#menu-rule-2)
+3. [Put options to compare on the page](#menu-rule-3)
+4. [Don’t nest submenus](#menu-rule-4)
+
+</div>
+
+</div>
+
+</aside>
+
+</section>
+
+<Runtime chapter="ch-overlays" />

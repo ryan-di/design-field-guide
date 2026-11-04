@@ -1,0 +1,187 @@
+<script>
+(() => {
+  const cs = document.currentScript.closest('.cs');
+  /* This entry sits before the shared case helpers in the book, so start once they exist. */
+  const go = () => {
+  const D = (k, html, wire) => csDemo(cs.querySelector('[data-d="' + k + '"]'), html, wire);
+  const P = '#pat-contextual-hints ';
+  const css = document.createElement('style');
+  css.textContent = [
+    P + '.ch-fr{width:min(340px,100%);position:relative}',
+    P + '.ch-fr .app-body{position:relative;padding:12px}',
+    P + '.ch-photo{height:118px;aspect-ratio:auto;width:100%}',
+    P + '.ch-tools{display:flex;gap:6px;flex-wrap:wrap}',
+    P + '.ch-tools .btn{padding:6px 10px;font-size:13.5px}',
+    P + '.ch-tip{position:absolute;z-index:2;display:flex;flex-direction:column;gap:6px;padding:8px 10px;font-size:13px;line-height:1.35;border-radius:9px;background:var(--ui-surface);border:1px solid var(--ui-border);box-shadow:var(--ui-shadow);color:var(--ui-text);text-align:left}',
+    P + '.ch-tip.ch-in{position:relative;z-index:auto}',
+    P + '.ch-tip:has(> .ch-x){padding-right:24px}',
+    P + '.ch-tip .ch-x{all:unset;cursor:pointer;position:absolute;top:2px;right:4px;width:20px;height:20px;display:grid;place-items:center;color:var(--ui-muted)}',
+    P + '.ch-tip .ch-x:focus-visible,' + P + '.ch-help button:focus-visible{outline:2px solid var(--ui-sel)}',
+    P + '.ch-tip .ch-x .icon{width:13px;height:13px}',
+    P + '.ch-tip .ch-acts{display:flex;gap:6px;align-items:center}',
+    P + '.ch-tip .btn{padding:4px 9px;font-size:12.5px}',
+    P + '.ch-up::before{content:"";position:absolute;top:-6px;width:10px;height:10px;background:var(--ui-surface);border-left:1px solid var(--ui-border);border-top:1px solid var(--ui-border);transform:rotate(45deg)}',
+    P + '.ch-up.ch-l::before{left:18px}',
+    P + '.ch-up.ch-r::before{right:84px}',
+    P + '.ch-root{display:flex;flex-direction:column;align-items:center;gap:12px;width:100%}',
+    P + '.ch-slider{display:flex;gap:8px;align-items:center;font-size:13.5px}',
+    P + '.ch-slider input{flex:1;min-width:0;accent-color:var(--ui-sel)}',
+    P + '.ch-bal{display:flex;flex-direction:column;gap:2px;padding:10px 12px;border-radius:10px;background:var(--ui-surface);border:1px solid var(--ui-border)}',
+    P + '.ch-bal b{font-size:20px}',
+    P + '.ch-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}',
+    P + '.ch-grid > div{display:flex;flex-direction:column;gap:3px;font-size:13px}',
+    P + '.ch-grid .thumb{width:100%;aspect-ratio:auto;height:58px}',
+    P + '.ch-bar-acts{display:flex;gap:6px}',
+    P + '.ch-bar-acts .btn{padding:5px 10px;font-size:13px}',
+    P + '.ch-sizes{display:flex;gap:6px;flex-wrap:wrap;font-size:13px}',
+    P + '.ch-sizes span{border:1px solid var(--ui-border);border-radius:7px;padding:3px 8px;background:var(--ui-surface)}',
+    P + '.ch-day{display:grid;grid-template-columns:40px 1fr;font-size:12.5px;color:var(--ui-muted)}',
+    P + '.ch-day > span{height:34px;border-top:1px solid var(--ui-border);padding-top:2px}',
+    P + '.ch-day > i{border-top:1px solid var(--ui-border);position:relative}',
+    P + '.ch-ev{position:absolute;left:4px;right:4px;top:4px;height:30px;border-radius:6px;background:var(--ui-sel-soft);border-left:3px solid var(--ui-sel);color:var(--ui-text);font:600 12.5px/1.2 var(--font-body);padding:3px 7px;border-bottom:3px double var(--ui-sel)}',
+    P + '.ch-help{display:flex;flex-direction:column;gap:4px;padding:8px 10px;border:1px solid var(--ui-border);border-radius:9px;background:var(--ui-surface);font-size:13px}',
+    P + '.ch-help b{font-size:13.5px}',
+    P + '.ch-help button{all:unset;cursor:pointer;color:var(--ui-sel);text-decoration:underline;text-underline-offset:2px}',
+    P + '.ch-help p{color:var(--ui-muted);font-size:12.5px;line-height:1.4}',
+    P + '.ch-link{all:unset;cursor:pointer;color:var(--ui-sel);font-size:12.5px;font-weight:600;text-decoration:underline;text-underline-offset:2px}',
+    P + '.ch-link:focus-visible{outline:2px solid var(--ui-sel)}'
+  ].join('\n');
+  cs.appendChild(css);
+
+  const icon = n => '<svg class="icon sm"><use href="#i-' + n + '"/></svg>';
+  const xBtn = label => '<button class="ch-x" type="button" aria-label="' + label + '" data-x>' + icon('x') + '</button>';
+  const frame = (title, right, body) => '<div class="app-frame ch-fr"><div class="app-bar"><span>' + title + '</span>' + (right || '') + '</div><div class="app-body">' + body + '</div></div>';
+  const say = (d, t) => { d.querySelector('[data-out]').textContent = t; };
+
+  /* 1. Too many hints at once (photo editor) */
+  const TOOLS = ['Crop', 'Adjust', 'Filters', 'Share'];
+  const editHtml = fixed => frame('Edit photo', '', '<div class="thumb ch-photo"></div><div data-slot></div><div class="ch-tools">' +
+      TOOLS.map(n => '<button class="btn btn-secondary" type="button" data-tool="' + n + '">' + n + '</button>').join('') + '</div>' +
+      (fixed ? '' :
+        '<div class="ch-tip" style="top:10px;left:10px;width:46%">' + xBtn('Close hint') + 'Pinch the photo to zoom in.</div>' +
+        '<div class="ch-tip" style="top:44px;right:10px;width:48%">' + xBtn('Close hint') + 'Swipe left to compare with the original.</div>' +
+        '<div class="ch-tip" style="bottom:8px;left:6px;width:50%">' + xBtn('Close hint') + 'Crop trims the edges of the photo.</div>' +
+        '<div class="ch-tip" style="bottom:8px;right:6px;width:44%">' + xBtn('Close hint') + 'Share sends a copy to friends.</div>')) +
+    '<p class="cs-meta" data-out></p>';
+  const editWire = fixed => d => {
+    const count = () => d.querySelectorAll('.ch-tip').length;
+    const slot = d.querySelector('[data-slot]');
+    let adjusted = false;
+    if (!fixed) say(d, 'Hints open: ' + count());
+    d.querySelector('.ch-fr').addEventListener('click', e => {
+      const x = e.target.closest('[data-x]');
+      if (x) {
+        x.closest('.ch-tip').remove();
+        say(d, fixed ? 'Hint closed.' : 'Hints open: ' + count());
+        return;
+      }
+      if (!fixed && e.target.closest('.ch-tip')) { say(d, 'That’s a hint, not the button. Hints open: ' + count()); return; }
+      const b = e.target.closest('[data-tool]');
+      if (!b) return;
+      const n = b.dataset.tool;
+      if (!fixed) { say(d, n + ' opened. Hints open: ' + count()); return; }
+      if (n === 'Adjust' && !adjusted) {
+        adjusted = true;
+        slot.innerHTML = '<label class="ch-slider">Light <input type="range" min="0" max="100" value="50"></label>' +
+          '<div class="ch-tip ch-in ch-up ch-l" style="margin-top:8px">' + xBtn('Close hint') + '<span style="padding-right:18px">Double-tap the slider to put it back to the middle.</span></div>';
+        say(d, 'Adjust opened. One hint, about the slider you just opened.');
+        return;
+      }
+      if (n === 'Crop') { say(d, 'Crop opened. You’ve used Crop before, so no hint.'); return; }
+      say(d, n + ' opened.' + (n === 'Adjust' ? ' The hint was already shown, so it doesn’t come back.' : ''));
+    });
+  };
+  D('pat-contextual-hints-1b', editHtml(false), editWire(false));
+  D('pat-contextual-hints-1f', editHtml(true), editWire(true));
+
+  /* 2. Hint comes back (banking) */
+  const PAY = [['Pizza Roma', '−$48.00'], ['Train ticket', '−$12.50'], ['Salary', '+$3,100.00']];
+  const bankHtml = fixed => '<div class="ch-root"><div data-app></div><div class="row"><button class="btn btn-secondary cs-sm" type="button" data-again>Open the app again</button>' +
+    (fixed ? '<button class="btn btn-ghost cs-sm" type="button" data-tips>Show tips again</button>' : '') + '</div><p class="cs-meta" data-out></p></div>';
+  const bankWire = fixed => d => {
+    const app = d.querySelector('[data-app]');
+    let opened = 1, shown = 0, closed = false;
+    const render = () => {
+      const tip = !(fixed && closed);
+      if (tip) shown++;
+      app.innerHTML = frame('Bank', '<span class="cs-meta">Today</span>',
+        '<div class="ch-bal"><span class="cs-meta">Everyday account</span><b>$2,340.18</b></div>' +
+        (tip ? '<div class="ch-tip ch-in"><span>Tap a payment to split it with friends.</span><div class="ch-acts"><button class="btn btn-secondary" type="button" data-ok>Got it</button></div></div>' : '') +
+        '<div>' + PAY.map(p => '<div class="cs-row"><span class="grow">' + p[0] + '</span><span>' + p[1] + '</span></div>').join('') + '</div>');
+      say(d, 'Opened ' + opened + (opened === 1 ? ' time' : ' times') + '. Hint shown ' + shown + (shown === 1 ? ' time.' : ' times.'));
+    };
+    d.querySelector('.ch-root').addEventListener('click', e => {
+      if (e.target.closest('[data-ok]')) {
+        closed = true;
+        app.querySelector('.ch-tip').remove();
+        say(d, fixed ? 'Hint closed. Saved with your account, so it stays closed on every device.' : 'Hint closed.');
+        d.querySelector('[data-again]').focus();
+      } else if (e.target.closest('[data-again]')) { opened++; render(); }
+      else if (e.target.closest('[data-tips]')) { closed = false; render(); say(d, 'Tips are back on. The hint shows again.'); }
+    });
+    render();
+  };
+  D('pat-contextual-hints-2b', bankHtml(false), bankWire(false));
+  D('pat-contextual-hints-2f', bankHtml(true), bankWire(true));
+
+  /* 3. Hint covers its target (shopping) */
+  const SHOES = [['Trail runner', '$89', ''], ['Canvas low', '$45', ' b'], ['Leather boot', '$140', ' c'], ['Slip-on', '$39', '']];
+  const shopHtml = fixed => frame('Shoes', '<span class="ch-bar-acts"><button class="btn btn-secondary" type="button" data-filters aria-expanded="false">Filters</button><button class="btn btn-ghost" type="button" data-sort>Sort</button></span>',
+      '<div data-panel hidden><div class="ch-sizes"><b>Size</b><span>38</span><span>39</span><span>40</span><span>41</span><span>42</span></div></div>' +
+      '<div class="ch-grid">' + SHOES.map(s => '<div><span class="thumb' + s[2] + '"></span><b>' + s[0] + '</b><span class="cs-meta">' + s[1] + '</span></div>').join('') + '</div>' +
+      '<div class="ch-tip' + (fixed ? ' ch-up ch-r' : '') + '" style="' + (fixed ? 'top:4px;right:10px;width:62%' : 'top:-44px;right:6px;width:64%') + '">' +
+      '<span>Use Filters to see only your size.</span><div class="ch-acts"><button class="btn btn-secondary" type="button" data-ok>Got it</button></div></div>') +
+    '<p class="cs-meta" data-out></p>';
+  const shopWire = fixed => d => {
+    const tip = d.querySelector('.ch-tip'), panel = d.querySelector('[data-panel]'), btn = d.querySelector('[data-filters]');
+    d.querySelector('.ch-fr').addEventListener('click', e => {
+      if (e.target.closest('[data-ok]')) { tip.remove(); say(d, 'Hint closed.'); btn.focus(); return; }
+      if (e.target.closest('.ch-tip')) { say(d, 'You pressed the hint. Filters is underneath it.'); return; }
+      if (e.target.closest('[data-sort]')) { say(d, 'Sort opened.'); return; }
+      if (!e.target.closest('[data-filters]')) return;
+      panel.hidden = !panel.hidden;
+      btn.setAttribute('aria-expanded', String(!panel.hidden));
+      if (fixed && tip.isConnected) { tip.remove(); say(d, 'Filters opened with the hint still open. The hint then closed, because you used the button.'); return; }
+      say(d, panel.hidden ? 'Filters closed.' : 'Filters opened.');
+    });
+  };
+  D('pat-contextual-hints-3b', shopHtml(false), shopWire(false));
+  D('pat-contextual-hints-3f', shopHtml(true), shopWire(true));
+
+  /* 4. Knowledge only in the hint (calendar) */
+  const TOPICS = ['Create an event', 'Invite people', 'Set a reminder'];
+  const LEN = ['Change an event’s length', 'Drag the bottom edge of the event up or down. On a keyboard, select the event and press Shift and an arrow key.'];
+  const calHtml = fixed => frame('Calendar', '<button class="btn btn-ghost cs-sm" type="button" data-help aria-expanded="false">Help</button>',
+      '<div class="ch-day"><span>9:00</span><i></i><span>10:00</span><i><span class="ch-ev">Dentist · 10:00–10:30</span></i><span>11:00</span><i></i></div>' +
+      '<div class="ch-tip ch-in"><span>Drag the bottom edge of an event to change its length.</span><div class="ch-acts"><button class="btn btn-secondary" type="button" data-ok>Got it</button>' +
+      (fixed ? '<button class="ch-link" type="button" data-more>Learn more</button>' : '') + '</div></div><div data-panel></div>') +
+    '<p class="cs-meta" data-out></p>';
+  const calWire = fixed => d => {
+    const panel = d.querySelector('[data-panel]'), help = d.querySelector('[data-help]');
+    const topics = fixed ? TOPICS.concat([LEN[0]]) : TOPICS;
+    const open = (expand) => {
+      panel.innerHTML = '<div class="ch-help"><b>Help</b>' + topics.map(t => '<button type="button" data-topic>' + t + '</button>' + (expand && t === LEN[0] ? '<p>' + LEN[1] + '</p>' : '')).join('') + '</div>';
+      help.setAttribute('aria-expanded', 'true');
+    };
+    d.querySelector('.ch-fr').addEventListener('click', e => {
+      if (e.target.closest('[data-ok]')) { e.target.closest('.ch-tip').remove(); say(d, 'Hint closed.'); help.focus(); return; }
+      if (e.target.closest('[data-more]')) { open(true); say(d, 'Learn more opened the help page for this.'); return; }
+      if (e.target.closest('[data-help]')) {
+        if (panel.innerHTML) { panel.innerHTML = ''; help.setAttribute('aria-expanded', 'false'); return; }
+        open(false);
+        say(d, fixed ? 'The help lists it too.' : 'Nothing in the help about changing an event’s length.');
+        return;
+      }
+      const t = e.target.closest('[data-topic]');
+      if (t) { if (fixed && t.textContent === LEN[0]) { open(true); say(d, 'Found it in the help.'); } else say(d, '“' + t.textContent + '” opened. It doesn’t mention event length.'); }
+    });
+  };
+  D('pat-contextual-hints-4b', calHtml(false), calWire(false));
+  D('pat-contextual-hints-4f', calHtml(true), calWire(true));
+
+  csInit(cs);
+  };
+  if (window.csDemo) go(); else document.addEventListener('DOMContentLoaded', go);
+})();
+
+</script>

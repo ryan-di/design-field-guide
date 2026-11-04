@@ -1,0 +1,42 @@
+<div class="note comfy cw-wrap">
+      <div class="seg cw-seg" role="radiogroup" aria-label="Example">
+        <input type="radio" name="cw-eff-context-pack-w" id="cw-eff-context-pack-w-1" value="figma" checked><label for="cw-eff-context-pack-w-1">Figma</label>
+        <input type="radio" name="cw-eff-context-pack-w" id="cw-eff-context-pack-w-2" value="storybook"><label for="cw-eff-context-pack-w-2">Storybook</label>
+        <input type="radio" name="cw-eff-context-pack-w" id="cw-eff-context-pack-w-3" value="airbnb"><label for="cw-eff-context-pack-w-3">Airbnb</label>
+      </div>
+      <div class="cw" data-cw-view role="img" aria-label=""></div>
+      <p class="cw-cap" data-cw-cap aria-live="polite"></p>
+      
+      <script>
+      (() => {
+        const wrap = document.currentScript.closest('.cw-wrap');
+        const view = wrap.querySelector('[data-cw-view]'), cap = wrap.querySelector('[data-cw-cap]');
+        const ic = n => '<svg class="icon" aria-hidden="true"><use href="#i-' + n + '"/></svg>';
+        const line = w => '<i class="cw-line" style="width:' + w + '%"></i>';
+        const kv = (k, v) => '<div class="cw-wpack-kv"><span>' + k + '</span><code>' + v + '</code></div>';
+        const row = (icon, t) => '<div class="cw-wpack-row">' + ic(icon) + '<span>' + t + '</span><em>›</em></div>';
+        const S = {
+          figma: { html: '<div class="cw-wpack-win"><div class="cw-wpack-top">Dev Mode</div><div class="cw-wpack-split">' +
+              '<div class="cw-wpack-canvas"><div class="cw-wpack-frame"><div class="thumb"></div>' + line(80) + line(55) +
+              '<span class="cw-wpack-sel"><span class="btn btn-primary">Save</span></span></div></div>' +
+              '<div class="cw-wpack-insp"><b>Selected</b>' + kv('Component', 'Button / primary') + kv('Padding', '6 · 12') + kv('Fill', 'color/action') + kv('Text', 'label/medium') + '</div></div></div>',
+            alt: 'A design frame with its button selected. Beside it, an inspect panel lists the component name, the padding, and the color and text variables the button uses.',
+            cap: 'Figma: Dev Mode shows a frame with its spacing, the variables and the components it uses. Whoever builds it gets the rules behind the pixels, not just a picture.' },
+          storybook: { html: '<div class="cw-wpack-win"><div class="cw-wpack-top">Component library</div><div class="cw-wpack-split">' +
+              '<div class="cw-wpack-side"><b>Components</b><span>Button</span><span class="kid">Primary</span><span class="kid">Secondary</span><span class="kid on">Disabled</span><span class="kid">Loading</span><span>Card</span><span>Dialog</span></div>' +
+              '<div class="cw-wpack-story"><div class="cw-wpack-stage"><span class="btn btn-primary" aria-disabled="true">Save</span></div>' +
+              '<div class="cw-wpack-props"><span class="hd">Prop</span><span class="hd">Values</span><b>label</b><span>text</span><b>variant</b><span>primary, secondary</span><b>disabled</b><span>true, false</span></div></div></div></div>',
+            alt: 'A component library. A sidebar lists Button with four states, Card and Dialog. The Disabled state is open, showing a dimmed button and a table of its props.',
+            cap: 'Storybook: every component has stories for its states and a docs page with its props. A newcomer, or an agent, can see what already exists before building something new.' },
+          airbnb: { html: '<div class="cw-wpack-phone"><div class="thumb"></div><b>Your stay</b>' +
+              row('home', 'Check-in steps') + row('info', 'Wi‑Fi details') + row('check', 'House rules') + row('book', 'House manual') + '</div>' +
+              '<span class="cw-wpack-once">Written once by the host, sent with every booking</span>',
+            alt: 'A phone screen for a booked stay with four sections: check-in steps, Wi‑Fi details, house rules and a house manual. A note says the host wrote them once and every booking gets them.',
+            cap: 'Airbnb: hosts write check-in steps, Wi‑Fi details, house rules and a house manual once, and every guest who books gets them, like the stable part of a context pack.' }
+        };
+        const render = k => { view.innerHTML = S[k].html; view.setAttribute('aria-label', 'Sketch: ' + S[k].alt); cap.textContent = S[k].cap; };
+        wrap.querySelectorAll('input[name="cw-eff-context-pack-w"]').forEach(r => r.addEventListener('change', () => render(r.value)));
+        render('figma');
+      })();
+      </script>
+      </div>

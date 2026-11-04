@@ -1,0 +1,134 @@
+<div class="fm" data-fm>
+  
+  <div class="seg fm-seg" role="radiogroup" aria-label="Form">
+    <input type="radio" name="fm-icon-button" id="fm-icon-button-1" value="plain" checked><label for="fm-icon-button-1">Plain</label>
+    <input type="radio" name="fm-icon-button" id="fm-icon-button-2" value="toggle"><label for="fm-icon-button-2">Toggle</label>
+    <input type="radio" name="fm-icon-button" id="fm-icon-button-3" value="fab"><label for="fm-icon-button-3">Floating</label>
+    <input type="radio" name="fm-icon-button" id="fm-icon-button-4" value="more"><label for="fm-icon-button-4">More</label>
+  </div>
+  <div class="fm-stage" data-fm-stage></div>
+  <p class="fig-cap" data-fm-when aria-live="polite"></p>
+  <script>
+  (() => {
+    const fm = document.currentScript.closest('[data-fm]'), stage = fm.querySelector('[data-fm-stage]'), when = fm.querySelector('[data-fm-when]');
+    const icon = n => '<svg class="icon"><use href="#i-' + n + '"/></svg>';
+    const frame = (title, body, cls) => '<div class="app-frame fm-frame' + (cls ? ' ' + cls : '') + '"><div class="app-bar"><span>' + title + '</span></div><div class="app-body ibm-body">' + body + '</div></div>';
+    const plain = (label, inner, attrs) => '<button class="icon-btn ibm-plain" type="button" aria-label="' + label + '" data-tip="' + label + '" ' + (attrs || '') + '>' + inner + '</button>';
+    const tg = (label, glyph, key) => '<button class="icon-btn ibm-plain ibm-tg" type="button" aria-label="' + label + '" aria-pressed="false" data-tip="' + label + ' (' + key + ')" data-t="' + label + '">' + glyph + '</button>';
+    const mail = n => '<div class="ibm-mail"><i></i><span><span class="line" style="width:' + (40 + (n * 17) % 35) + '%"></span><span class="line" style="width:' + (60 + (n * 23) % 35) + '%"></span></span></div>';
+    const FILES = ['Trip budget', 'Packing list', 'Lisbon photos'];
+    const file = n => '<div class="ibm-row">' + icon('book') + '<span>' + n + '<small>Edited this week</small></span><div class="ibm-anchor"><button class="icon-btn ibm-plain" type="button" data-more aria-label="More actions for ' + n + '" aria-haspopup="menu" aria-expanded="false">' + icon('dots') + '</button></div></div>';
+    const ZOOM = [50, 75, 100, 150, 200];
+    const F = {
+      plain: {
+        html: frame('Photos', '<div class="ibm-view"><div class="thumb c" data-img></div></div><div class="ibm-tools" role="toolbar" aria-label="Zoom">' +
+          plain('Zoom out', icon('minus'), 'data-z="-1"') + '<span class="ibm-pct" data-pct aria-live="polite">100%</span>' + plain('Zoom in', icon('plus'), 'data-z="1"') + '<span class="ibm-sep"></span>' + plain('Fit to screen', icon('fit'), 'data-fit') + '</div>'),
+        use: 'Use it in a toolbar for actions people repeat, like zoom in and out.',
+        more: 'Show its name in a tooltip on hover and on keyboard focus.',
+        wire: s => {
+          let z = 2;
+          const img = s.querySelector('[data-img]'), pct = s.querySelector('[data-pct]');
+          const draw = () => { img.style.transform = 'scale(' + ZOOM[z] / 100 + ')'; pct.textContent = ZOOM[z] + '%'; };
+          s.querySelectorAll('[data-z]').forEach(b => b.addEventListener('click', () => { z = Math.max(0, Math.min(ZOOM.length - 1, z + +b.dataset.z)); draw(); }));
+          s.querySelector('[data-fit]').addEventListener('click', () => { z = 2; draw(); });
+        }
+      },
+      toggle: {
+        html: frame('Notes', '<div class="ibm-tools left" role="toolbar" aria-label="Text style">' + tg('Bold', '<b>B</b>', '⌘B') + tg('Italic', '<i>I</i>', '⌘I') + tg('Underline', '<u>U</u>', '⌘U') + '</div>' +
+          '<p class="ibm-doc">Dinner on Friday at 8. <span class="ibm-selx" data-x>Bring the photos from Lisbon.</span> I’ll book the table.</p><p class="ibm-hint">The highlighted sentence is selected.</p>'),
+        use: 'Use it for something that’s on or off, like bold text.',
+        more: 'Make the pressed look clear at a glance, and keep the same name in both states.',
+        wire: s => {
+          const x = s.querySelector('[data-x]'), css = { Bold: ['fontWeight', '700'], Italic: ['fontStyle', 'italic'], Underline: ['textDecoration', 'underline'] };
+          s.querySelectorAll('[data-t]').forEach(b => b.addEventListener('click', () => {
+            const on = b.getAttribute('aria-pressed') !== 'true', c = css[b.dataset.t];
+            b.setAttribute('aria-pressed', on); x.style[c[0]] = on ? c[1] : '';
+          }));
+        }
+      },
+      fab: {
+        html: '<div class="app-frame ibm-phone"><div class="app-bar"><span>Inbox</span></div><div class="ibm-scroll" tabindex="0" role="region" aria-label="Messages">' + [1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map(mail).join('') + '</div>' +
+          '<button class="ibm-fab" type="button" data-fab aria-label="New message">' + icon('plus') + '</button><div data-sheet></div><div data-snack></div></div>',
+        use: 'Use it for the one main action on a phone screen, like writing a new email.',
+        more: 'It’s bigger than the other buttons and stays in reach of the thumb as the list scrolls.',
+        wire: s => {
+          const fab = s.querySelector('[data-fab]'), sheet = s.querySelector('[data-sheet]'), snack = s.querySelector('[data-snack]');
+          const close = sent => {
+            sheet.innerHTML = ''; fab.hidden = false; fab.focus();
+            if (!sent) return;
+            snack.innerHTML = '<div class="toast ibm-snack" role="status">Message sent.</div>';
+            const g = gen; setTimeout(() => { if (g !== gen) return; snack.innerHTML = ''; }, 2500);
+          };
+          fab.addEventListener('click', () => {
+            snack.innerHTML = ''; fab.hidden = true;
+            sheet.innerHTML = '<div class="ibm-sheet" role="dialog" aria-label="New message"><div class="app-bar"><span>New message</span><button class="icon-btn ibm-plain" type="button" data-x aria-label="Close">' + icon('x') + '</button></div>' +
+              '<div class="app-body"><input class="input" aria-label="To" placeholder="To" value="Ana Ruiz" autocomplete="off"><input class="input" aria-label="Subject" placeholder="Subject" value="Dinner on Friday" autocomplete="off"><div class="line" style="width:90%"></div><div class="line" style="width:70%"></div><button class="btn btn-primary" type="button" data-send>Send</button></div></div>';
+            const sh = sheet.firstElementChild;
+            sh.querySelector('[data-x]').addEventListener('click', () => close(false));
+            sh.querySelector('[data-send]').addEventListener('click', () => close(true));
+            sh.addEventListener('keydown', e => { if (e.key === 'Escape') { e.stopPropagation(); close(false); } });
+            sh.querySelector('input').focus();
+          });
+        }
+      },
+      more: {
+        html: frame('Docs', FILES.map(file).join('') + '<p class="cs-meta" data-out aria-live="polite"></p>', 'ibm-ov'),
+        use: 'Use it to hold actions people need now and then, like Download or Move to trash.',
+        more: 'The list it opens uses words, so the icon only has to say “more”.',
+        wire: s => {
+          const out = s.querySelector('[data-out]');
+          let open = null;
+          const shut = focus => {
+            if (!open) return;
+            const { list, btn } = open; open = null;
+            list.remove(); btn.setAttribute('aria-expanded', 'false');
+            document.removeEventListener('click', onDoc, true);
+            if (focus) btn.focus();
+          };
+          const onDoc = e => { if (open && !open.list.contains(e.target) && !open.btn.contains(e.target)) shut(false); };
+          const act = (name, row, what) => {
+            if (what === 'copy') { row.insertAdjacentHTML('afterend', file('Copy of ' + name)); wireRow(row.nextElementSibling); out.textContent = 'Made a copy of ' + name + '.'; }
+            if (what === 'down') out.textContent = 'Downloading ' + name + '.';
+            if (what === 'trash') { const next = row.nextElementSibling && row.nextElementSibling.querySelector('[data-more]'); row.remove(); out.textContent = name + ' moved to trash.'; if (next) next.focus(); return true; }
+          };
+          const wireRow = row => {
+            const btn = row.querySelector('[data-more]'), name = row.querySelector('span').firstChild.textContent;
+            btn.addEventListener('click', () => {
+              const was = open && open.btn === btn; shut(false); if (was) return;
+              btn.insertAdjacentHTML('afterend', '<div class="ibm-list" role="menu" aria-label="' + name + '">' +
+                '<button type="button" role="menuitem" tabindex="-1" data-a="copy">Make a copy</button><button type="button" role="menuitem" tabindex="-1" data-a="down">Download</button><button type="button" role="menuitem" tabindex="-1" data-a="trash" class="danger">' + icon('trash') + 'Move to trash</button></div>');
+              const list = btn.nextElementSibling, items = [...list.querySelectorAll('[role="menuitem"]')];
+              const sr = stage.getBoundingClientRect(), br = btn.getBoundingClientRect();
+              if (br.bottom + list.offsetHeight + 8 > sr.bottom) list.classList.add('up');
+              open = { list, btn }; btn.setAttribute('aria-expanded', 'true');
+              document.addEventListener('click', onDoc, true);
+              items[0].focus();
+              list.addEventListener('keydown', e => {
+                const i = items.indexOf(document.activeElement);
+                if (e.key === 'ArrowDown') { e.preventDefault(); items[(i + 1) % items.length].focus(); }
+                else if (e.key === 'ArrowUp') { e.preventDefault(); items[(i - 1 + items.length) % items.length].focus(); }
+                else if (e.key === 'Home') { e.preventDefault(); items[0].focus(); }
+                else if (e.key === 'End') { e.preventDefault(); items[items.length - 1].focus(); }
+                else if (e.key === 'Escape') { e.preventDefault(); e.stopPropagation(); shut(true); }
+                else if (e.key === 'Tab') shut(false);
+              });
+              items.forEach(it => it.addEventListener('click', () => { const what = it.dataset.a; shut(what !== 'trash'); act(name, row, what); }));
+            });
+          };
+          s.querySelectorAll('.ibm-row').forEach(wireRow);
+          return () => shut(false);
+        }
+      }
+    };
+    let gen = 0, stop = null;
+    const show = k => {
+      gen++;
+      if (stop) stop();
+      stage.innerHTML = F[k].html; stop = F[k].wire(stage) || null;
+      when.innerHTML = '<b>' + fm.querySelector('.fm-seg input:checked + label').textContent + '.</b> ' + F[k].use + ' ' + F[k].more;
+    };
+    fm.querySelectorAll('.fm-seg input').forEach(i => i.addEventListener('change', () => show(i.value)));
+    show('plain');
+  })();
+  </script>
+</div>

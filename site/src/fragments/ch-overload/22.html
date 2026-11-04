@@ -1,0 +1,167 @@
+<script>
+(() => {
+  const cs = document.currentScript.closest('.cs');
+  const run = () => {
+    const D = (k, html, wire) => csDemo(cs.querySelector('[data-d="' + k + '"]'), html, wire);
+    const st = document.createElement('style');
+    st.textContent = `
+#pat-presets .ps-card{width:min(360px,100%);background:var(--ui-surface);border:1px solid var(--ui-border);border-radius:12px;box-shadow:var(--ui-shadow);padding:12px 14px;display:flex;flex-direction:column;gap:9px;text-align:left;font-size:14px}
+#pat-presets .ps-card > b{font-size:15px}
+#pat-presets .ps-chips{display:flex;flex-wrap:wrap;gap:6px}
+#pat-presets .ps-chips button{all:unset;cursor:pointer;padding:6px 12px;border-radius:999px;border:1px solid var(--ui-border);font:600 13.5px var(--font-body);background:var(--ui-surface)}
+#pat-presets .ps-chips button[aria-checked="true"],#pat-presets .ps-chips button[aria-pressed="true"]{background:var(--ui-sel);color:var(--ui-on-sel);border-color:var(--ui-sel)}
+#pat-presets .ps-chips button:focus-visible{outline:2px solid var(--ui-sel);outline-offset:2px}
+#pat-presets .ps-chips button.mine{border-style:dashed}
+#pat-presets .ps-chips button.mine[aria-checked="true"]{border-style:solid}
+#pat-presets .ps-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:5px}
+#pat-presets .ps-grid button{all:unset;cursor:pointer;text-align:center;padding:6px 2px;border-radius:7px;border:1px solid var(--ui-border);font:500 12px var(--font-mono);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+#pat-presets .ps-grid button[aria-checked="true"]{background:var(--ui-sel);color:var(--ui-on-sel);border-color:var(--ui-sel)}
+#pat-presets .ps-grid button:focus-visible{outline:2px solid var(--ui-sel);outline-offset:2px}
+#pat-presets .ps-opt{all:unset;cursor:pointer;display:flex;flex-direction:column;gap:1px;padding:7px 10px;border:1px solid var(--ui-border);border-radius:9px}
+#pat-presets .ps-opt small{color:var(--ui-muted);font-size:12.5px}
+#pat-presets .ps-opt[aria-checked="true"]{border-color:var(--ui-sel);background:var(--ui-sel-soft)}
+#pat-presets .ps-opt:focus-visible{outline:2px solid var(--ui-sel);outline-offset:2px}
+#pat-presets .ps-list{display:flex;flex-direction:column;gap:5px}
+#pat-presets .ps-tbl{display:grid;grid-template-columns:minmax(0,1fr) 112px;gap:6px 10px;align-items:center;border-top:1px solid var(--ui-border);padding-top:8px}
+#pat-presets .ps-tbl .input,#pat-presets .ps-tbl .select{padding:6px 8px;font-size:13.5px}
+#pat-presets .ps-mark{font:600 11.5px var(--font-mono);color:var(--ui-sel);margin-left:6px}
+#pat-presets .ps-status{display:flex;justify-content:space-between;align-items:center;background:var(--ui-bg);border:1px solid var(--ui-border);border-radius:8px;padding:6px 10px;font-weight:600}
+#pat-presets .ps-status span{font:500 12.5px var(--font-mono);color:var(--ui-muted)}
+#pat-presets .ps-bad{border-left:3px solid var(--ui-danger);padding:4px 10px;line-height:1.45}
+#pat-presets .ps-good{border-left:3px solid var(--ui-ok);padding:4px 10px;line-height:1.45}
+#pat-presets .ps-stat{font:500 12.5px var(--font-mono);color:var(--ui-muted)}
+#pat-presets .ps-acts{display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap}
+#pat-presets .ps-k{font:600 11.5px var(--font-mono);letter-spacing:.06em;text-transform:uppercase;color:var(--ui-muted)}
+`;
+    cs.prepend(st);
+    const radios = (wrap, onPick) => {
+      const bs = [...wrap.querySelectorAll('[role="radio"]')];
+      const pick = (i, quiet) => { bs.forEach((b, k) => { b.setAttribute('aria-checked', String(k === i)); b.tabIndex = k === i || (i < 0 && k === 0) ? 0 : -1; }); if (!quiet && i >= 0) onPick(i); };
+      bs.forEach((b, i) => {
+        b.addEventListener('click', () => pick(i));
+        b.addEventListener('keydown', e => { const d = { ArrowRight: 1, ArrowDown: 1, ArrowLeft: -1, ArrowUp: -1 }[e.key]; if (!d) return; e.preventDefault(); let n = i; do { n = (n + d + bs.length) % bs.length; } while (bs[n].hidden); pick(n); bs[n].focus(); });
+      });
+      pick(-1, true);
+      return pick;
+    };
+
+    /* 1. Show what each preset sets */
+    const MODES = { Eco: ['18', '16', 'off'], Comfort: ['21', '18', '16'], Away: ['off', 'off', 'off'] };
+    const LATER = { Eco: 'An hour later, the living room is 17 °C. Eco turned the heat down more than you expected.', Comfort: 'An hour later, the living room is 21 °C.', Away: 'The heating is off. Nothing said Away does that.' };
+    const heat = fixed => '<div class="ps-card"><b>Heating</b><div class="ps-chips" role="radiogroup" aria-label="Mode" data-r>' + Object.keys(MODES).map(m => '<button type="button" role="radio">' + m + '</button>').join('') + '</div>' +
+      (fixed ? '<div class="ps-tbl" data-tbl><span>Day</span><input class="input" aria-label="Day temperature" data-v><span>Night</span><input class="input" aria-label="Night temperature" data-v><span>When nobody is home</span><input class="input" aria-label="Temperature when nobody is home" data-v></div>' : '') +
+      '<div data-out></div></div>';
+    D('pat-presets-1b', heat(false), (d, t) => {
+      const out = d.querySelector('[data-out]'), keys = Object.keys(MODES);
+      radios(d.querySelector('[data-r]'), i => {
+        out.innerHTML = '<span class="ps-stat">Mode: ' + keys[i] + '</span>';
+        t.clear();
+        t.after(() => { out.innerHTML = '<p class="ps-bad">' + LATER[keys[i]] + '</p>'; }, 900);
+      });
+    });
+    D('pat-presets-1f', heat(true), d => {
+      const vs = d.querySelectorAll('[data-v]'), keys = Object.keys(MODES), out = d.querySelector('[data-out]');
+      const fmt = v => v === 'off' ? 'Off' : v + ' °C';
+      radios(d.querySelector('[data-r]'), i => {
+        MODES[keys[i]].forEach((v, k) => { vs[k].value = fmt(v); });
+        out.innerHTML = '<span class="ps-stat">' + keys[i] + ' sets these three. Edit any of them.</span>';
+      })(0);
+    });
+
+    /* 2. Switch to Custom after an edit */
+    const F = { Sleep: ['fav', 'off', 'dim'], Work: ['all', 'work', 'normal'], Driving: ['fav', 'off', 'normal'] };
+    const FIELDS = [['Calls from', [['fav', 'Favorites'], ['all', 'Everyone'], ['none', 'Nobody']]], ['Notifications', [['off', 'Silenced'], ['work', 'Work apps only'], ['on', 'Allowed']]], ['Screen', [['dim', 'Dimmed'], ['normal', 'Normal']]]];
+    const focus = fixed => '<div class="ps-card"><div class="ps-status">Phone<span data-hd>Focus: Sleep</span></div><b>Focus</b>' +
+      '<div class="ps-chips" role="radiogroup" aria-label="Focus" data-r>' + Object.keys(F).map(k => '<button type="button" role="radio">' + k + '</button>').join('') + (fixed ? '<button type="button" role="radio" data-cu hidden>Custom</button>' : '') + '</div>' +
+      '<div class="ps-tbl">' + FIELDS.map((f, i) => '<span>' + f[0] + '<span class="ps-mark" data-mk></span></span><select class="select" aria-label="' + f[0] + '" data-f="' + i + '">' + f[1].map(o => '<option value="' + o[0] + '">' + o[1] + '</option>').join('') + '</select>').join('') + '</div></div>';
+    const focusWire = fixed => d => {
+      const keys = Object.keys(F), sels = [...d.querySelectorAll('[data-f]')], hd = d.querySelector('[data-hd]'), mks = d.querySelectorAll('[data-mk]'), cu = d.querySelector('[data-cu]');
+      let base = 'Sleep';
+      const pick = radios(d.querySelector('[data-r]'), i => {
+        if (fixed && i === keys.length) return;
+        base = keys[i];
+        sels.forEach((s, k) => { s.value = F[base][k]; });
+        if (cu) cu.hidden = true;
+        mks.forEach(m => { m.textContent = ''; });
+        hd.textContent = 'Focus: ' + base;
+      });
+      pick(0);
+      sels.forEach((s, k) => s.addEventListener('change', () => {
+        if (!fixed) return;
+        const edited = sels.map((x, j) => x.value !== F[base][j]);
+        mks.forEach((m, j) => { m.textContent = edited[j] ? 'Edited' : ''; });
+        const custom = edited.some(Boolean);
+        cu.hidden = !custom;
+        pick(custom ? keys.length : keys.indexOf(base), true);
+        hd.textContent = custom ? 'Focus: Custom, based on ' + base : 'Focus: ' + base;
+      }));
+    };
+    D('pat-presets-2b', focus(false), focusWire(false));
+    D('pat-presets-2f', focus(true), focusWire(true));
+
+    /* 3. A few, named by outcome */
+    const MANY = [['JPG-80-2048', 4.1], ['JPG-92-FULL', 27], ['WEBP-Q70', 2.6], ['PNG-24', 61], ['HEIC-HI', 9.8], ['JPG-60-1024', 1.1], ['TIFF-16', 142], ['WEBP-Q90', 6.9], ['PNG-8', 18], ['JPG-70-1600', 2.4], ['AVIF-Q50', 1.4], ['HEIC-LO', 3.2]];
+    D('pat-presets-3b',
+      '<div class="ps-card"><b>Export 3 photos</b><span class="ps-k">Preset</span><div class="ps-grid" role="radiogroup" aria-label="Preset" data-r>' + MANY.map(m => '<button type="button" role="radio">' + m[0] + '</button>').join('') + '</div><div data-out></div></div>',
+      d => {
+        const out = d.querySelector('[data-out]');
+        radios(d.querySelector('[data-r]'), i => {
+          out.innerHTML = '<span class="ps-stat">3 photos · ' + MANY[i][1] + ' MB</span><p class="ps-bad">The name doesn’t say whether it fits in an email, or whether Grandma’s tablet can open it.</p>';
+        });
+      });
+    const FEW = [['Email', 'Small, fits in any email', '1.8 MB, fits in an email. Grandma can open it on any device.'], ['Web', 'Sharp on screens', '4.5 MB, sharp on screens.'], ['Print', 'Full detail for paper', '21 MB, too big for most email.'], ['Original', 'Exactly as taken', '36 MB, too big for most email.']];
+    D('pat-presets-3f',
+      '<div class="ps-card"><b>Export 3 photos</b><span class="ps-k">Preset</span><div class="ps-list" role="radiogroup" aria-label="Preset" data-r>' + FEW.map(f => '<button class="ps-opt" type="button" role="radio"><b>' + f[0] + '</b><small>' + f[1] + '</small></button>').join('') + '</div><div data-out></div></div>',
+      d => {
+        const out = d.querySelector('[data-out]');
+        radios(d.querySelector('[data-r]'), i => { out.innerHTML = '<p class="' + (i === 0 ? 'ps-good' : 'ps-stat') + '">3 photos · ' + FEW[i][2] + '</p>'; });
+      });
+
+    /* 4. Save your own */
+    const ROUTES = ['Lisbon → Porto', 'London → Porto', 'Paris → Porto', 'Madrid → Porto'];
+    const FILTERS = ['Nonstop', 'Under €150', 'Morning', 'Bag included'];
+    const BUILT = { Cheapest: [1], Fastest: [0] };
+    const flights = fixed => '<div class="ps-card"><b data-route>Flights: ' + ROUTES[0] + '</b>' +
+      '<span class="ps-k">Presets</span><div class="ps-chips" data-pre>' + Object.keys(BUILT).map(k => '<button type="button" data-p="' + k + '">' + k + '</button>').join('') + '</div>' +
+      '<span class="ps-k">Filters</span><div class="ps-chips" role="group" aria-label="Filters" data-fl>' + FILTERS.map((f, i) => '<button type="button" aria-pressed="false" data-i="' + i + '">' + f + '</button>').join('') + '</div>' +
+      '<div class="ps-acts"><span class="ps-stat" data-n>Filters set by hand: 0</span><span style="display:flex;gap:6px;flex-wrap:wrap">' + (fixed ? '<button class="btn btn-ghost cs-sm" type="button" data-save disabled>Save as preset</button>' : '') + '<button class="btn btn-secondary cs-sm" type="button" data-new>New search</button></span></div><p class="cs-meta" data-out></p></div>';
+    const flightsWire = fixed => d => {
+      const fl = [...d.querySelectorAll('[data-i]')], n = d.querySelector('[data-n]'), out = d.querySelector('[data-out]'), save = d.querySelector('[data-save]'), pre = d.querySelector('[data-pre]');
+      let hand = 0, route = 0, mine = null;
+      const on = () => fl.filter(b => b.getAttribute('aria-pressed') === 'true').map(b => Number(b.dataset.i));
+      const apply = list => { fl.forEach((b, i) => b.setAttribute('aria-pressed', String(list.includes(i)))); if (save) save.disabled = !list.length || !!mine; };
+      fl.forEach(b => b.addEventListener('click', () => {
+        b.setAttribute('aria-pressed', String(b.getAttribute('aria-pressed') !== 'true'));
+        hand++; n.textContent = 'Filters set by hand: ' + hand;
+        if (save) save.disabled = !on().length || !!mine;
+      }));
+      const wirePre = b => b.addEventListener('click', () => {
+        const list = b.dataset.p === 'mine' ? mine : BUILT[b.dataset.p];
+        apply(list);
+        out.textContent = b.textContent + ' applied: ' + list.map(i => FILTERS[i]).join(', ') + '.';
+      });
+      pre.querySelectorAll('button').forEach(wirePre);
+      d.querySelector('[data-new]').addEventListener('click', () => {
+        route = (route + 1) % ROUTES.length;
+        d.querySelector('[data-route]').textContent = 'Flights: ' + ROUTES[route];
+        apply([]);
+        out.textContent = 'New search. Filters cleared.';
+      });
+      if (save) save.addEventListener('click', () => {
+        mine = on();
+        pre.insertAdjacentHTML('beforeend', '<button type="button" class="mine" data-p="mine">My usual</button>');
+        wirePre(pre.lastElementChild);
+        save.disabled = true;
+        out.textContent = 'Saved as “My usual”: ' + mine.map(i => FILTERS[i]).join(', ') + '.';
+      });
+    };
+    D('pat-presets-4b', flights(false), flightsWire(false));
+    D('pat-presets-4f', flights(true), flightsWire(true));
+
+    csInit(cs);
+  };
+  /* csDemo and csInit are defined further down the book, so wait for them */
+  if (window.csDemo) run(); else document.addEventListener('DOMContentLoaded', run);
+})();
+
+</script>

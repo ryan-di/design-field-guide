@@ -1,0 +1,159 @@
+<script>
+(() => {
+  const cs = document.currentScript.closest('.cs');
+  const D = (k, html, wire) => csDemo(cs.querySelector('[data-d="' + k + '"]'), html, wire);
+  const P = '#eff-ownership ';
+  const st = document.createElement('style');
+  st.textContent = [
+    '.ow-card{width:min(400px,100%);display:flex;flex-direction:column;gap:10px;text-align:left;background:var(--ui-surface);border:1px solid var(--ui-border);border-radius:12px;padding:14px;box-shadow:var(--ui-shadow);color:var(--ui-text);font-size:14px;line-height:1.45}',
+    '.ow-k{font:600 11px var(--font-mono);letter-spacing:.08em;text-transform:uppercase;color:var(--ui-muted)}',
+    '.ow-me{align-self:flex-end;max-width:90%;background:var(--ui-sel-soft);border-radius:12px 12px 4px 12px;padding:8px 11px}',
+    '.ow-ag{display:flex;flex-direction:column;gap:6px;border-left:3px solid var(--ui-sel);padding:2px 0 2px 10px}',
+    '.ow-ag:empty,.ow-res:empty{display:none}',
+    '.ow-acts{display:flex;gap:8px;flex-wrap:wrap;align-items:center}',
+    '.ow-res{display:flex;flex-direction:column;gap:4px}',
+    '.ow-bad{color:var(--ui-danger)}',
+    '.ow-good{color:var(--ui-ok)}',
+    '.ow-opts{display:flex;flex-direction:column;gap:6px}',
+    '.ow-opts .check{font-size:13.5px;border:1px solid var(--ui-border);border-radius:9px;padding:7px 9px;align-items:center}',
+    '.ow-opts .check:has(input:checked){border-color:var(--ui-sel);background:var(--ui-sel-soft)}',
+    '.ow-opts .thumb{width:46px;flex:none}',
+    '.ow-bars{display:flex;flex-direction:column;gap:7px}',
+    '.ow-bar{display:grid;grid-template-columns:64px minmax(0,1fr) 52px;gap:8px;align-items:center;font:500 12.5px var(--font-mono);color:var(--ui-muted)}',
+    '.ow-bar i{height:8px;border-radius:4px;background:var(--ui-skel);overflow:hidden;display:block}',
+    '.ow-bar i b{display:block;height:100%;width:0;background:var(--ui-sel);transition:width .15s}',
+    '.ow-file{font:500 13px var(--font-mono);background:var(--ui-bg);border:1px solid var(--ui-border);border-radius:8px;padding:8px 10px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}',
+    '.ow-steps{display:flex;flex-direction:column;gap:6px}',
+    '.ow-step{display:flex;flex-direction:column;gap:2px;border:1px solid var(--ui-border);border-radius:9px;padding:7px 10px;background:var(--ui-bg);opacity:.45}',
+    '.ow-step.on{opacity:1}',
+    '.ow-step.cur{border-color:var(--ui-sel);box-shadow:0 0 0 2px var(--ui-sel-soft)}',
+    '.ow-step b{font:600 11px var(--font-mono);letter-spacing:.08em;text-transform:uppercase;color:var(--ui-muted)}',
+    '.ow-step span:empty{display:none}',
+    '.ow-plan{margin:0;padding:0 0 0 20px;display:flex;flex-direction:column;gap:4px}',
+    '.ow-plan li.hl{background:var(--ui-danger-soft);border-radius:6px;padding:0 4px}',
+    '.ow-note{font-size:13.5px;border:1px solid var(--ui-border);border-radius:9px;padding:7px 10px;background:var(--ui-hover)}',
+    '.ow-diff{display:flex;justify-content:space-between;gap:10px;font:500 13px var(--font-mono)}',
+    '.ow-diff .add{color:var(--ui-ok)}',
+    '.ow-diff .del{color:var(--ui-danger)}'
+  ].map(r => r.replace(/^[^{]+/, s => s.split(',').map(x => P + x.trim()).join(','))).join('\n');
+  cs.appendChild(st);
+
+  /* 1. Delegating judgment */
+  const OPTS = [['A', 'One long page', 'Easy to scan. Long on phones.', ''], ['B', 'Tabs by topic', 'Short pages. Some settings hide in tabs.', ' b'], ['C', 'Search first', 'Fast for people who know the name. Hard to browse.', ' c']];
+  const judgeHtml = fixed => '<div class="ow-card"><span class="ow-k">Chat with the agent</span>' +
+    '<span class="ow-me">' + (fixed ? 'Make three options for the new settings page. For each, say what it’s good at and what it costs.' : 'Pick the best design for the new settings page.') + '</span>' +
+    '<div class="ow-ag">' + (fixed
+      ? '<span>Here are three options:</span><div class="ow-opts" role="radiogroup" aria-label="Options">' + OPTS.map(o => '<label class="check"><input type="radio" name="ow-opt" value="' + o[0] + '"><span class="thumb' + o[3] + '"></span><span><b>' + o[0] + '. ' + o[1] + '</b><small>' + o[2] + '</small></span></label>').join('') + '</div>'
+      : '<span>Option B is the best. It’s cleaner and more modern.</span><div class="ow-acts"><button class="btn btn-primary cs-sm" type="button" data-use>Use B</button></div>') + '</div>' +
+    '<div class="ow-res" data-res aria-live="polite"></div></div>';
+  const judgeWire = fixed => d => {
+    const res = d.querySelector('[data-res]');
+    if (!fixed) { d.querySelector('[data-use]').addEventListener('click', e => { e.target.disabled = true; res.innerHTML = '<span class="ow-bad">B is in. You can’t say why it beat the others, because you never saw them.</span>'; }); return; }
+    d.querySelectorAll('input[name="ow-opt"]').forEach(r => r.addEventListener('change', () => {
+      const o = OPTS.find(x => x[0] === r.value);
+      res.innerHTML = '<span class="ow-good">You chose ' + o[0] + ', ' + o[1].toLowerCase() + ', knowing what it costs: ' + o[2].split('. ')[1].toLowerCase() + '</span>';
+    }));
+  };
+  D('eff-ownership-1b', judgeHtml(false), judgeWire(false));
+  D('eff-ownership-1f', judgeHtml(true), judgeWire(true));
+
+  /* 2. Doing wide work by hand */
+  const FILES = ['Header.vue', 'Button.vue', 'Settings.vue', 'Toast.vue', 'Card.vue', 'Tabs.vue', 'Menu.vue', 'Dialog.vue'];
+  const HITS = [2, 1, 0, 1, 0, 3, 0, 1];
+  const wideHtml = fixed => '<div class="ow-card"><span class="ow-k">Task</span><span>Find every use of the old color token <code>--blue-500</code> in 48 files.</span>' +
+    (fixed ? '<div class="ow-bars">' + [1, 2, 3].map(n => '<div class="ow-bar"><span>Agent ' + n + '</span><i><b data-bar></b></i><span data-pct>0 / 16</span></div>').join('') + '</div>' +
+      '<div class="ow-acts"><button class="btn btn-primary cs-sm" type="button" data-go>Send to 3 agents</button></div>'
+      : '<div class="ow-file" data-file>No file open</div><div class="ow-acts"><button class="btn btn-primary cs-sm" type="button" data-next>Open the next file</button></div>') +
+    '<div class="ow-res" data-res aria-live="polite"></div></div>';
+  const wideWire = fixed => (d, t) => {
+    const res = d.querySelector('[data-res]');
+    if (!fixed) {
+      let n = 0, found = 0;
+      d.querySelector('[data-next]').addEventListener('click', () => {
+        found += HITS[n % HITS.length]; n++;
+        d.querySelector('[data-file]').textContent = 'src/components/' + FILES[(n - 1) % FILES.length] + ': ' + HITS[(n - 1) % HITS.length] + ' found';
+        res.innerHTML = '<span>Checked ' + n + ' of 48 files · ' + found + ' found · ' + (n * 2) + ' min so far</span>' +
+          (n >= 3 ? '<span class="ow-bad">At this pace, the search alone takes about an hour and a half.</span>' : '');
+      });
+      return;
+    }
+    d.querySelector('[data-go]').addEventListener('click', e => {
+      e.target.disabled = true;
+      const bars = d.querySelectorAll('[data-bar]'), pcts = d.querySelectorAll('[data-pct]');
+      let k = 0;
+      const id = t.every(() => {
+        k++;
+        bars.forEach((b, i) => { const v = Math.min(16, Math.round(k * (1.6 + i * 0.3))); b.style.width = (v / 16 * 100) + '%'; pcts[i].textContent = v + ' / 16'; });
+        if (k >= 10) {
+          clearInterval(id);
+          bars.forEach((b, i) => { b.style.width = '100%'; pcts[i].textContent = '16 / 16'; });
+          res.innerHTML = '<span class="ow-good">48 files checked in 2 minutes. 23 uses found, listed by file.</span><span>Your part: read the list and decide what each use should become.</span>';
+        }
+      }, 140);
+    });
+  };
+  D('eff-ownership-2b', wideHtml(false), wideWire(false));
+  D('eff-ownership-2f', wideHtml(true), wideWire(true));
+
+  /* 3. No checkpoints */
+  const STEPS = ['Explore', 'Plan', 'Build'];
+  const WRONG = ['Found: export takes 4 seconds. The problem is speed.', 'Cache exported files so export is faster.', 'Changed 14 files.'];
+  const RIGHT = ['', 'Move Export from the File menu into the toolbar.', 'Changed 2 files.'];
+  const chkHtml = '<div class="ow-card"><span class="ow-k">Task</span><span>People can’t find the Export button.</span><div class="ow-steps">' +
+    STEPS.map(s => '<div class="ow-step" data-step><b>' + s + '</b><span data-out></span></div>').join('') + '</div>' +
+    '<div class="ow-acts" data-acts><button class="btn btn-primary cs-sm" type="button" data-start>Start</button></div>' +
+    '<div class="ow-res" data-res aria-live="polite"></div></div>';
+  const chkWire = fixed => (d, t) => {
+    const steps = d.querySelectorAll('[data-step]'), acts = d.querySelector('[data-acts]'), res = d.querySelector('[data-res]');
+    const show = (i, text) => { steps.forEach((s, k) => s.classList.toggle('cur', k === i)); steps[i].classList.add('on'); steps[i].querySelector('[data-out]').textContent = text; };
+    const buttons = list => {
+      acts.innerHTML = list.map((b, i) => '<button class="btn ' + (i ? 'btn-secondary' : 'btn-primary') + ' cs-sm" type="button">' + b[0] + '</button>').join('');
+      acts.querySelectorAll('button').forEach((el, i) => el.addEventListener('click', list[i][1]));
+      acts.firstChild.focus();
+    };
+    const end = good => { acts.innerHTML = ''; steps.forEach(s => s.classList.remove('cur')); res.innerHTML = good ? '<span class="ow-good">People find Export on the first try.</span>' : '<span class="ow-bad">Export is faster, and people still can’t find it.</span>'; };
+    d.querySelector('[data-start]').addEventListener('click', () => {
+      acts.innerHTML = '<span class="cs-meta">Agent is working…</span>';
+      if (!fixed) { WRONG.forEach((w, i) => t.after(() => show(i, w), 500 * (i + 1))); t.after(() => end(false), 1700); return; }
+      t.after(() => {
+        show(0, WRONG[0]);
+        buttons([['Correct it', () => {
+          show(0, WRONG[0] + ' You: it’s not speed. People don’t see the button.');
+          acts.innerHTML = '<span class="cs-meta">Agent is working…</span>';
+          t.after(() => { show(1, RIGHT[1]); buttons([['Approve the plan', () => { show(2, RIGHT[2]); t.after(() => end(true), 300); }]]); }, 500);
+        }], ['Continue', () => {
+          acts.innerHTML = '<span class="cs-meta">Agent is working…</span>';
+          t.after(() => { show(1, WRONG[1]); buttons([['Approve the plan', () => { show(2, WRONG[2]); t.after(() => end(false), 300); }]]); }, 500);
+        }]]);
+      }, 500);
+    });
+  };
+  D('eff-ownership-3b', chkHtml, chkWire(false));
+  D('eff-ownership-3f', chkHtml, chkWire(true));
+
+  /* 4. Only the final diff */
+  const PLAN = ['Add a Share button to the doc header.', 'Create a new ShareModal component.', 'List people with access, with a role menu.', 'Add tests for inviting and removing people.'];
+  const lateHtml = fixed => '<div class="ow-card"><span class="ow-k">' + (fixed ? 'Plan: share a doc with people' : 'PR: share a doc with people') + '</span>' +
+    (fixed ? '<ol class="ow-plan">' + PLAN.map(p => '<li>' + p + '</li>').join('') + '</ol><span class="cs-meta">Nothing built yet.</span>'
+      : '<div class="ow-diff"><span>14 files changed</span><span><span class="add">+612</span> <span class="del">−88</span></span></div><span class="cs-meta">Built and tested by the agent.</span>') +
+    '<div class="ow-acts" data-acts><button class="btn btn-primary cs-sm" type="button" data-rev>' + (fixed ? 'Review the plan' : 'Review the PR') + '</button></div>' +
+    '<div class="ow-res" data-res aria-live="polite"></div></div>';
+  const lateWire = fixed => d => {
+    const res = d.querySelector('[data-res]');
+    d.querySelector('[data-rev]').addEventListener('click', e => {
+      e.target.remove();
+      if (fixed) {
+        d.querySelectorAll('.ow-plan li')[1].classList.add('hl');
+        res.innerHTML = '<span class="ow-note"><b>Your comment on step 2:</b> reuse the existing Dialog instead of a new modal.</span><span class="ow-good">Plan fixed in a minute, before any file changed.</span>';
+      } else {
+        res.innerHTML = '<span class="ow-note"><b>Your comment:</b> this builds a new ShareModal. It should reuse the existing Dialog.</span><span class="ow-bad">The approach runs through all 14 files. Fixing it means building it again.</span>';
+      }
+    });
+  };
+  D('eff-ownership-4b', lateHtml(false), lateWire(false));
+  D('eff-ownership-4f', lateHtml(true), lateWire(true));
+
+  csInit(cs);
+})();
+
+</script>

@@ -14,8 +14,11 @@ const root = path.resolve(__dirname, '../..');
 const base = arg('--base', 'http://localhost:4321');
 const shots = arg('--shots');
 const book = 'file://' + path.join(root, 'index.html');
-const PAGES = [['ch-preface', '/front/preface/'], ['ch-problem', '/part-1/problem/']];
-const CONFIGS = [[1280, 'light'], [1280, 'dark'], [390, 'light']];
+const only = (arg('--only', '') || '').split(',').filter(Boolean);
+const PAGES = JSON.parse(fs.readFileSync(path.join(root, 'site/src/sidebar.json'), 'utf8'))
+  .flatMap(g => g.items).filter(i => i.slug).map(i => ['ch-' + i.slug.split('/').pop(), '/' + i.slug + '/'])
+  .filter(([ch]) => !only.length || only.includes(ch));
+const CONFIGS = arg('--quick') !== undefined || process.argv.includes('--quick') ? [[1280, 'light']] : [[1280, 'light'], [1280, 'dark'], [390, 'light']];
 
 const survey = (scope) => {
   const el = scope ? document.getElementById(scope) : document.querySelector('main');
@@ -112,7 +115,7 @@ const exercise = () => {
   // Old one-page links (/#id) should land on the id in its new page, below the sticky header.
   const ctx = await b.newContext({ viewport: { width: 1280, height: 900 } });
   const p = await ctx.newPage();
-  for (const [id, want] of [['good-problem-framing-rule-2', '/part-1/problem/'], ['ch-problem-in-short', '/part-1/problem/'], ['ch-preface', '/front/preface/'], ['good-visual-hierarchy', 'ryan-di.github.io']]) {
+  for (const [id, want] of [['good-problem-framing-rule-2', '/part-1/problem/'], ['ch-problem-in-short', '/part-1/problem/'], ['ch-preface', '/front/preface/'], ['good-visual-hierarchy', '/part-1/clarity/'], ['part-3', '/part-3/start/']]) {
     await p.goto(base + '/#' + id, { waitUntil: 'load' }).catch(() => {});
     await p.waitForTimeout(1200);
     const at = p.url();

@@ -1,0 +1,49 @@
+<div class="note comfy cw-wrap"><p>Notice that the most common actions stay in view, the rest wait in a short grouped list, and very large sets get a search.</p>
+      <div class="seg cw-seg" role="radiogroup" aria-label="Example">
+        <input type="radio" name="cw-menu-w" id="cw-menu-w-1" value="slack" checked><label for="cw-menu-w-1">Slack</label>
+        <input type="radio" name="cw-menu-w" id="cw-menu-w-2" value="vscode"><label for="cw-menu-w-2">VS Code</label>
+        <input type="radio" name="cw-menu-w" id="cw-menu-w-3" value="macos"><label for="cw-menu-w-3">macOS</label>
+        <input type="radio" name="cw-menu-w" id="cw-menu-w-4" value="photos"><label for="cw-menu-w-4">iOS Photos</label>
+      </div>
+      <div class="cw" data-cw-view role="img" aria-label=""></div>
+      <p class="cw-cap" data-cw-cap aria-live="polite"></p>
+      
+      <script>
+      (() => {
+        const wrap = document.currentScript.closest('.cw-wrap');
+        const view = wrap.querySelector('[data-cw-view]'), cap = wrap.querySelector('[data-cw-cap]');
+        const ic = id => '<svg class="icon sm"><use href="#i-' + id + '"/></svg>';
+        const svg = d => '<svg class="icon sm" viewBox="0 0 24 24">' + d + '</svg>';
+        const smile = svg('<circle cx="12" cy="12" r="8.5"/><path d="M8.5 14a4.5 4.5 0 0 0 7 0M9.5 9.5v.2M14.5 9.5v.2"/>');
+        const bubble = svg('<path d="M5 5h14v10h-8l-4 4v-4H5z"/>');
+        const ln = w => '<i class="cw-menw-ln"' + (w ? ' style="width:' + w + '"' : '') + '></i>';
+        const mi = (t, k, cls) => '<span class="cw-menw-mi' + (cls ? ' ' + cls : '') + '">' + t + (k ? '<em>' + k + '</em>' : '') + '</span>';
+        const hr = '<i class="cw-menw-hr"></i>';
+        const msg = (hov, tools) => '<div class="cw-menw-msg' + (hov ? ' hov' : '') + '"><span class="cw-menw-av"></span><span class="cw-menw-body">' + ln('34%') + ln('88%') + ln('60%') + '</span>' + (tools || '') + '</div>';
+        const code = [['0', '40%'], ['14px', '62%'], ['28px', '48%'], ['28px', '70%'], ['14px', '30%'], ['14px', '56%'], ['28px', '44%'], ['0', '12%'], ['0', '52%'], ['14px', '66%'], ['14px', '38%'], ['0', '10%']]
+          .map(([pad, w], i) => '<i class="cw-menw-ln' + (i === 2 ? ' cw-menw-sel' : '') + '" style="margin-left:' + pad + ';width:' + w + '"></i>').join('');
+        const S = {
+          slack: { html: '<div class="cw-menw-win cw-menw-slack">' + msg(false) + msg(true, '<span class="cw-menw-tools"><span class="cw-menw-tb">' + smile + '</span><span class="cw-menw-tb">' + bubble + '</span><span class="cw-menw-tb on">' + ic('dots') + '</span></span>') + msg(false) +
+              '<div class="cw-menw-pop">' + mi('Copy link') + mi('Mark unread') + mi('Remind me') + mi('Pin') + hr + mi('Edit') + mi('Delete') + '</div></div>',
+            alt: 'A chat message under the pointer shows a small bar of buttons: react, reply in thread, and More. More is open as a short menu: Copy link, Mark unread, Remind me, Pin, then Edit and Delete.',
+            cap: 'Slack: pointing at a message shows a few buttons for what people do most, like reacting or replying in a thread. Everything else waits in a More menu.' },
+          vscode: { html: '<div class="cw-menw-win cw-menw-code">' + code +
+              '<div class="cw-menw-pop">' + mi('Go to Definition', 'F12', 'hi') + mi('Go to References', 'Shift+F12') + hr + mi('Rename Symbol', 'F2') + hr + mi('Cut', 'Ctrl+X') + mi('Copy', 'Ctrl+C') + mi('Paste', 'Ctrl+V') + hr + mi('Command Palette…', 'Ctrl+Shift+P') + '</div></div>',
+            alt: 'A right-click menu over code. Commands are grouped with dividers: navigation, rename, clipboard, and Command Palette at the end. Each shortcut sits on the right.',
+            cap: 'VS Code: the editor’s right-click menu groups commands with dividers and shows each shortcut on the right, so the menu also teaches the faster way. The full set of commands lives in the Command Palette.' },
+          macos: { html: '<div class="cw-menw-win cw-menw-mac"><div class="cw-menw-mbar"><span class="on">File</span><span>Edit</span><span>View</span><span>Help</span></div>' +
+              '<div class="cw-menw-pop cw-menw-file">' + mi('New') + mi('Open…') + hr + mi('Export…<b class="cw-menw-ptr">←</b>', '', 'hi') + mi('Print…') + '</div>' +
+              '<div class="cw-menw-pop cw-menw-help"><span class="cw-menw-find">' + ic('search') + 'export</span><b class="cw-menw-hd">Menu Items</b>' + mi('Export…', '', 'hi') + mi('Export as PDF…') + '<b class="cw-menw-hd">Help Topics</b>' + mi(ln('90px')) + '</div></div>',
+            alt: 'The Help menu is open with “export” typed in its search field. Pointing at the Export result opens the File menu and marks Export there with an arrow.',
+            cap: 'macOS: the Help menu has a search field that finds commands across every menu. Pointing at a result opens its menu and points to the command, so people learn where it lives.' },
+          photos: { html: '<div class="cw-menw-phone"><div class="cw-menw-grid">' + '<i></i>'.repeat(12) + '</div><div class="cw-menw-lift"></div>' +
+              '<div class="cw-menw-pop">' + mi('Copy') + mi('Share') + mi('Favorite') + '<i class="cw-menw-gap"></i>' + mi('Delete' + ic('trash'), '', 'danger') + '</div></div>',
+            alt: 'A phone photo grid, blurred. One photo is lifted as a preview, with a menu under it: Copy, Share, Favorite, and Delete in red at the end.',
+            cap: 'iOS Photos: pressing and holding a photo lifts a preview with a menu of actions under it. Delete comes last, in red.' }
+        };
+        const render = k => { view.innerHTML = S[k].html; view.setAttribute('aria-label', 'Sketch: ' + S[k].alt); cap.textContent = S[k].cap; };
+        wrap.querySelectorAll('input[name="cw-menu-w"]').forEach(r => r.addEventListener('change', () => render(r.value)));
+        render('slack');
+      })();
+      </script>
+    </div>

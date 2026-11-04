@@ -1,0 +1,37 @@
+<div class="note comfy cw-wrap"><p>Notice where each way back lives: on screen, on the keyboard or in a menu.</p>
+      <div class="seg cw-seg" role="radiogroup" aria-label="Example">
+        <input type="radio" name="cw-pat-undo-w" id="cw-pat-undo-w-1" value="gmail" checked><label for="cw-pat-undo-w-1">Gmail</label>
+        <input type="radio" name="cw-pat-undo-w" id="cw-pat-undo-w-2" value="finder"><label for="cw-pat-undo-w-2">macOS Finder</label>
+        <input type="radio" name="cw-pat-undo-w" id="cw-pat-undo-w-3" value="youtube"><label for="cw-pat-undo-w-3">YouTube</label>
+      </div>
+      <div class="cw" data-cw-view role="img" aria-label=""></div>
+      <p class="cw-cap" data-cw-cap aria-live="polite"></p>
+      
+      <script>
+      (() => {
+        const wrap = document.currentScript.closest('.cw-wrap');
+        const view = wrap.querySelector('[data-cw-view]'), cap = wrap.querySelector('[data-cw-cap]');
+        const line = w => '<i class="cw-line" style="width:' + w + '%"></i>';
+        const row = (who, w, when) => '<div class="cw-undo-row"><b>' + who + '</b>' + line(w) + '<small>' + when + '</small></div>';
+        const file = (name, gone) => '<span class="cw-undo-file' + (gone ? ' gone' : '') + '"><i></i>' + name + '</span>';
+        const vid = w => '<div class="cw-undo-vid"><div class="thumb b"></div>' + line(w) + '</div>';
+        const S = {
+          gmail: { html: '<div class="cw-undo-win"><div class="cw-undo-mail">' + row('Sam Ortiz', 90, '9:41') + row('Design team', 70, '9:12') + row('Lena', 82, 'Mon') + '</div>' +
+              '<div class="cw-undo-spot"><div class="toast">Message sent<span class="toast-action">Undo</span><span class="toast-action">View</span></div></div></div>',
+            alt: 'An inbox list. In the corner, a dark message bar says Message sent, with Undo and View.',
+            cap: 'Gmail: after Send, the message waits a few seconds with Undo on screen. Even sending, which is normally final, gets a way back.' },
+          finder: { html: '<div class="cw-undo-win"><div class="cw-undo-mbar"><span>File</span><span class="on">Edit</span><span>View</span><span>Go</span></div>' +
+              '<div class="cw-undo-fd"><div class="cw-undo-files">' + file('Budget') + file('Notes', true) + file('Photos') + '</div>' +
+              '<div class="cw-undo-menu"><span class="on">Undo Move of “Notes”<kbd>⌘Z</kbd></span><span class="off">Redo<kbd>⇧⌘Z</kbd></span><hr><span>Cut<kbd>⌘X</kbd></span><span>Copy<kbd>⌘C</kbd></span><span>Paste<kbd>⌘V</kbd></span></div></div></div>',
+            alt: 'A file window with an empty dashed spot where the file Notes was. The Edit menu is open, and its first item reads Undo Move of Notes, Command Z.',
+            cap: 'macOS Finder: Move to Trash happens without a question. ⌘Z puts the file back, and the Edit menu names exactly what will be undone.' },
+          youtube: { html: '<div class="cw-undo-phone">' + vid(80) + '<div class="cw-undo-vid"><div class="cw-undo-gone">Video removed<span class="cw-undo-acts"><span>Undo</span><span>Tell us why</span></span></div></div>' + vid(64) + '</div>',
+            alt: 'A phone feed of videos. The middle video is replaced by a dashed box that says Video removed, with Undo and Tell us why.',
+            cap: 'YouTube: choosing “Not interested” removes a video from the feed at once. The empty spot offers Undo, right where the tap happened.' }
+        };
+        const render = k => { view.innerHTML = S[k].html; view.setAttribute('aria-label', 'Sketch: ' + S[k].alt); cap.textContent = S[k].cap; };
+        wrap.querySelectorAll('input[name="cw-pat-undo-w"]').forEach(r => r.addEventListener('change', () => render(r.value)));
+        render('gmail');
+      })();
+      </script>
+    </div>

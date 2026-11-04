@@ -1,0 +1,93 @@
+<div class="fm" data-fm>
+  
+  <div class="seg fm-seg" role="radiogroup" aria-label="Form">
+    <input type="radio" name="fm-side-nav" id="fm-side-nav-1" value="full" checked><label for="fm-side-nav-1">Full</label>
+    <input type="radio" name="fm-side-nav" id="fm-side-nav-2" value="nested"><label for="fm-side-nav-2">Nested</label>
+    <input type="radio" name="fm-side-nav" id="fm-side-nav-3" value="rail"><label for="fm-side-nav-3">Rail</label>
+    <input type="radio" name="fm-side-nav" id="fm-side-nav-4" value="drawer"><label for="fm-side-nav-4">Drawer</label>
+  </div>
+  <div class="fm-stage" data-fm-stage></div>
+  <p class="fig-cap" data-fm-when aria-live="polite"></p>
+  <script>
+  (() => {
+    const fm = document.currentScript.closest('[data-fm]'), stage = fm.querySelector('[data-fm-stage]'), when = fm.querySelector('[data-fm-when]');
+    const icon = n => '<svg class="icon sm"><use href="#i-' + n + '"/></svg>';
+    const lines = '<div class="line" style="width:86%"></div><div class="line" style="width:64%"></div><div class="line" style="width:74%"></div>';
+    const item = (k, label, ic, cls) => '<button type="button" class="sn-i' + (cls ? ' ' + cls : '') + '" data-k="' + k + '">' + (ic ? icon(ic) : '') + '<span>' + label + '</span></button>';
+    const app = (nav, navCls) => '<div class="sn-app"><nav class="sn-nav' + (navCls ? ' ' + navCls : '') + '" aria-label="Main">' + nav + '</nav><div class="sn-page" data-page></div></div>';
+    const mark = (s, k) => s.querySelectorAll('.sn-i[data-k]').forEach(b => { if (b.dataset.k === k) b.setAttribute('aria-current', 'page'); else b.removeAttribute('aria-current'); });
+    const title = t => '<h5 class="sn-title" tabindex="-1">' + t + '</h5>';
+    // Clicking an item marks it and redraws the page beside it. Focus stays on the item.
+    const nav = (s, page) => {
+      const go = k => { mark(s, k); s.querySelector('[data-page]').innerHTML = page(k); };
+      s.querySelectorAll('.sn-i[data-k]').forEach(b => b.addEventListener('click', () => go(b.dataset.k)));
+      return go;
+    };
+
+    const DOCS = { home: 'Home', docs: 'Documents', shared: 'Shared with me', trash: 'Trash', settings: 'Settings' };
+    const HELP = [['start', 'Getting started', [['install', 'Install the app'], ['signin', 'Sign in']]],
+                  ['billing', 'Billing', [['plans', 'Plans'], ['invoices', 'Invoices'], ['refunds', 'Refunds']]],
+                  ['account', 'Account', [['password', 'Change password'], ['delete', 'Delete account']]]];
+    const PH = { photos: ['Photos', 9], albums: ['Albums', 4], search: ['Search', 0], trash: ['Trash', 2] };
+    const SHOP = { home: 'Home', search: 'Search', orders: 'Your orders', settings: 'Settings' };
+
+    const F = {
+      full: {
+        html: app(item('home', 'Home', 'home') + item('docs', 'Documents', 'book') + item('shared', 'Shared', 'layers') + item('trash', 'Trash', 'trash') + '<span class="sn-sep"></span>' + item('settings', 'Settings', 'gear')),
+        use: 'Use it when the app has a handful of main areas and the screen has room.',
+        more: 'Icons and labels stay visible, so people find a place without hovering or guessing.',
+        wire: s => nav(s, k => title(DOCS[k]) + lines)('docs')
+      },
+      nested: {
+        html: app(HELP.map(([g, label, kids]) => '<button type="button" class="sn-i snf-grp" aria-expanded="false" data-g="' + g + '"><span>' + label + '</span><span class="snf-chev" aria-hidden="true"></span></button>' +
+          '<div class="sn-sub snf-sub" data-sub="' + g + '" hidden>' + kids.map(([k, l]) => item(k, l)).join('') + '</div>').join('')),
+        use: 'Use it when areas have their own pages, like a help center or a big settings page.',
+        more: 'Open the branch people are in and mark its parent, so they can see where they are.',
+        wire: s => {
+          const groupOf = k => HELP.find(g => g[2].some(c => c[0] === k));
+          const go = nav(s, k => { const g = groupOf(k); return '<p class="snf-up">' + g[1] + '</p>' + title(g[2].find(c => c[0] === k)[1]) + lines; });
+          const open = (g, on) => { s.querySelector('[data-g="' + g + '"]').setAttribute('aria-expanded', String(on)); s.querySelector('[data-sub="' + g + '"]').hidden = !on; };
+          s.querySelectorAll('[data-g]').forEach(b => b.addEventListener('click', () => open(b.dataset.g, b.getAttribute('aria-expanded') !== 'true')));
+          const markGroup = () => { const cur = s.querySelector('.sn-i[aria-current]'), g = cur && groupOf(cur.dataset.k)[0]; s.querySelectorAll('[data-g]').forEach(b => b.classList.toggle('snf-on', b.dataset.g === g)); };
+          s.querySelectorAll('.sn-i[data-k]').forEach(b => b.addEventListener('click', markGroup));
+          open('billing', true); go('invoices'); markGroup();
+        }
+      },
+      rail: {
+        html: app(item('photos', 'Photos', 'image', 'sn-lab') + item('albums', 'Albums', 'layers', 'sn-lab') + item('search', 'Search', 'search', 'sn-lab') + item('trash', 'Trash', 'trash', 'sn-lab'), 'sn-rail'),
+        use: 'Use it when the page needs most of the width, like a photo grid or a map.',
+        more: 'The labels sit under the icons, so each one has to be a single short word.',
+        wire: s => nav(s, k => title(PH[k][0]) + (PH[k][1] ? '<div class="snf-grid">' + '<span class="snf-ph"></span>'.repeat(PH[k][1]) + '</div>' : '<div class="sn-search">' + icon('search') + 'People, places, things</div>' + lines))('photos')
+      },
+      drawer: {
+        html: '<div class="snf-phone"><div class="snf-bar"><button type="button" class="icon-btn" aria-label="Menu" aria-expanded="false" data-open><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg></button><span data-title class="sn-title"></span></div>' +
+          '<div class="sn-page" data-page></div>' +
+          '<div class="snf-scrim" data-scrim hidden></div>' +
+          '<nav class="sn-nav snf-drawer" aria-label="Main" data-drawer hidden><p class="sn-h">Shop</p>' + item('home', 'Home', 'home') + item('search', 'Search', 'search') + item('orders', 'Your orders', 'cube') + '<span class="sn-sep"></span>' + item('settings', 'Settings', 'gear') + '</nav></div>',
+        use: 'Use it on phones, where there’s no room to keep the list open.',
+        more: 'It opens over the page and closes once people pick a place, so the page title has to say where they are.',
+        wire: s => {
+          const btn = s.querySelector('[data-open]'), drawer = s.querySelector('[data-drawer]'), scrim = s.querySelector('[data-scrim]'), page = s.querySelector('[data-page]');
+          const set = (on, back) => {
+            btn.setAttribute('aria-expanded', String(on)); drawer.hidden = scrim.hidden = !on; page.inert = on;
+            if (on) (drawer.querySelector('[aria-current]') || drawer.querySelector('.sn-i')).focus();
+            else if (back) btn.focus();
+          };
+          const go = k => { mark(s, k); s.querySelector('[data-title]').textContent = SHOP[k]; page.innerHTML = lines + '<div class="line" style="width:52%"></div>'; };
+          btn.addEventListener('click', () => set(btn.getAttribute('aria-expanded') !== 'true', false));
+          scrim.addEventListener('click', () => set(false, false));
+          drawer.addEventListener('keydown', e => { if (e.key === 'Escape') { e.stopPropagation(); set(false, true); } });
+          drawer.querySelectorAll('.sn-i').forEach(b => b.addEventListener('click', () => { go(b.dataset.k); set(false, true); }));
+          go('home');
+        }
+      }
+    };
+    const show = k => {
+      stage.innerHTML = F[k].html; F[k].wire(stage);
+      when.innerHTML = '<b>' + fm.querySelector('.fm-seg input:checked + label').textContent + '.</b> ' + F[k].use + ' ' + F[k].more;
+    };
+    fm.querySelectorAll('.fm-seg input').forEach(i => i.addEventListener('change', () => show(i.value)));
+    show('full');
+  })();
+  </script>
+</div>

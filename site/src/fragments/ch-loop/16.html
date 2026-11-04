@@ -1,0 +1,47 @@
+<div class="note comfy cw-wrap"><p>Notice where each tool stops and hands over to a person: before the merge, at the sliders, before Send.</p>
+      <div class="seg cw-seg" role="radiogroup" aria-label="Example">
+        <input type="radio" name="cw-eff-ownership-w" id="cw-eff-ownership-w-1" value="github" checked><label for="cw-eff-ownership-w-1">GitHub</label>
+        <input type="radio" name="cw-eff-ownership-w" id="cw-eff-ownership-w-2" value="lightroom"><label for="cw-eff-ownership-w-2">Lightroom</label>
+        <input type="radio" name="cw-eff-ownership-w" id="cw-eff-ownership-w-3" value="gmail"><label for="cw-eff-ownership-w-3">Gmail</label>
+      </div>
+      <div class="cw" data-cw-view role="img" aria-label=""></div>
+      <p class="cw-cap" data-cw-cap aria-live="polite"></p>
+      
+      <script>
+      (() => {
+        const wrap = document.currentScript.closest('.cw-wrap');
+        const view = wrap.querySelector('[data-cw-view]'), cap = wrap.querySelector('[data-cw-cap]');
+        const tool = '<span class="cw-wown-who">Tool</span>', you = '<span class="cw-wown-who you">You</span>';
+        const ok = '<svg class="icon" aria-hidden="true"><use href="#i-check"/></svg>';
+        const line = w => '<i class="cw-line" style="width:' + w + '%"></i>';
+        const pr = t => '<div class="cw-wown-pr"><span class="cw-wown-bot">bot</span><span>' + t + '</span>' + ok + '</div>';
+        const sl = (name, k, mine) => '<div class="cw-wown-sl' + (mine ? ' you' : '') + '"><span>' + name + '</span><i style="--k:' + k + '%"></i></div>';
+        const S = {
+          github: { html: '<div class="cw-wown-win"><div class="cw-wown-top">Pull requests' + tool + '</div><div class="cw-wown-body"><div>' +
+              pr('Bump lib-a to 2.2') + pr('Bump lib-b to 5.0.1') + pr('Bump lib-c to 1.4') + '</div>' +
+              '<span class="cw-wown-note">Opened by a bot, release notes inside, checks passed</span>' +
+              '<div class="cw-wown-act">' + you + '<span>Read the notes, then merge</span><span class="btn btn-primary">Merge</span></div></div></div>',
+            alt: 'A list of three pull requests opened by a bot, each bumping a library version, each with a passing check. Below, a box marked You: read the notes, then merge.',
+            cap: 'GitHub: Dependabot opens pull requests that update dependencies, with release notes inside, and the repo’s checks run on each one. It does the dull, repeated part in every repo; a person still reads and merges.' },
+          lightroom: { html: '<div class="cw-wown-win"><div class="cw-wown-top">Edit</div><div class="cw-wown-lr"><div class="thumb"></div>' +
+              '<div class="cw-wown-panel"><div class="cw-wown-ph">Light<span class="btn btn-secondary">Auto</span></div>' +
+              sl('Exposure', 58) + sl('Contrast', 62) + sl('Highlights', 34) + sl('Shadows', 74, true) + sl('Whites', 55) + sl('Blacks', 44) +
+              '<div class="cw-wown-tags"><span>' + tool + 'Auto set these</span><span>' + you + 'nudged Shadows</span></div></div></div></div>',
+            alt: 'A photo with an editing panel. An Auto button has set the tone sliders, marked Tool. One slider, Shadows, is highlighted and marked You.',
+            cap: 'Lightroom: Auto sets the basic tone sliders in one click. The sliders stay in view and editable, so the photographer starts from a good guess and keeps the final call.' },
+          gmail: { html: '<div class="cw-wown-win"><div class="cw-wown-top">Message</div><div class="cw-wown-body">' +
+              '<div class="cw-wown-msg"><i class="cw-wown-av"></i><div class="cw-wown-lines">' + line(45) + line(90) + line(70) + '</div></div>' +
+              '<div class="cw-wown-chips">' + tool + '<span class="cw-wown-chip on">Sounds good</span><span class="cw-wown-chip">Thanks!</span><span class="cw-wown-chip">Can’t make it</span></div>' +
+              '<div class="cw-wown-act">' + you + '<span>Sounds good, see you at 3<i class="cw-wown-caret"></i></span><span class="btn btn-primary">Send</span></div></div></div>',
+            alt: 'An email. Below it, three suggested replies marked Tool, one picked. A reply box marked You holds the picked text, edited, with a Send button.',
+            cap: 'Gmail: Smart Reply suggests a few short answers under a message. Picking one only drafts the reply; you can edit it, and nothing goes out until you press Send.' }
+        };
+        const render = k => { view.innerHTML = S[k].html; view.setAttribute('aria-label', 'Sketch: ' + S[k].alt); cap.textContent = S[k].cap; };
+        const current = () => wrap.querySelector('input[name="cw-eff-ownership-w"]:checked').value;
+        wrap.querySelectorAll('input[name="cw-eff-ownership-w"]').forEach(r => r.addEventListener('change', () => render(r.value)));
+        render(current());
+        /* The chapter script that follows may still draw its old switcher into the second .cw-wrap; draw again once parsing is done. */
+        if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', () => render(current()));
+      })();
+      </script>
+      </div>

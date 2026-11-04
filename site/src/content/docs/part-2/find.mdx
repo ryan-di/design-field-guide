@@ -1,0 +1,322 @@
+---
+title: "Can’t find it"
+description: "A small product can be learned by browsing: open a menu, scan it, click."
+eyebrow: "Chapter 11"
+sidebar:
+  label: "Can’t find it"
+---
+
+import Raw from '../../../components/Raw.astro';
+import Learned from '../../../components/Learned.astro';
+import Runtime from '../../../components/Runtime.astro';
+import F0 from '../../../fragments/ch-find/0.html?raw';
+import F1 from '../../../fragments/ch-find/1.html?raw';
+import F2 from '../../../fragments/ch-find/2.html?raw';
+import F3 from '../../../fragments/ch-find/3.html?raw';
+import F4 from '../../../fragments/ch-find/4.html?raw';
+import F5 from '../../../fragments/ch-find/5.html?raw';
+import F6 from '../../../fragments/ch-find/6.html?raw';
+import F7 from '../../../fragments/ch-find/7.html?raw';
+import F8 from '../../../fragments/ch-find/8.html?raw';
+import F9 from '../../../fragments/ch-find/9.html?raw';
+import F10 from '../../../fragments/ch-find/10.html?raw';
+import F11 from '../../../fragments/ch-find/11.html?raw';
+import F12 from '../../../fragments/ch-find/12.html?raw';
+import F13 from '../../../fragments/ch-find/13.html?raw';
+import F14 from '../../../fragments/ch-find/14.html?raw';
+import F15 from '../../../fragments/ch-find/15.html?raw';
+import F16 from '../../../fragments/ch-find/16.html?raw';
+import F17 from '../../../fragments/ch-find/17.html?raw';
+import F18 from '../../../fragments/ch-find/18.html?raw';
+import F19 from '../../../fragments/ch-find/19.html?raw';
+import F20 from '../../../fragments/ch-find/20.html?raw';
+import F21 from '../../../fragments/ch-find/21.html?raw';
+import F22 from '../../../fragments/ch-find/22.html?raw';
+import F23 from '../../../fragments/ch-find/23.html?raw';
+
+<Runtime at="start" />
+
+<section class="dfg-chapter" id="ch-find">
+
+A small product can be learned by browsing: open a menu, scan it, click. As it grows to hundreds of pages, commands and settings, browsing stops working, and people look for things with words instead: they type into a search box, or scan the labels for the word already in their head. The patterns below make sure those words lead somewhere: a palette that runs any command by name, a search that says what it’s hiding, and labels written in the words people actually use.
+
+<article class="entry essay" id="pat-command-palette" data-entry data-name="Command palette">
+
+<div class="entry-head">
+
+## Command palette \{#pat-command-palette-h\}
+
+<Learned id="pat-command-palette" />
+
+</div>
+
+A command palette is a search box for actions. People press a shortcut, usually Ctrl+K (⌘K on Mac), type what they want to do and press Enter. They don’t need to know which menu holds the command, only a word for it.
+
+That is what separates it from [search](#pat-search-filters): search finds things, like a file or an email, and a palette runs commands, like “Export to PDF”. It adds a fast path for people who know what they want, and it doesn’t replace the menus.
+
+<Raw html={F0} />
+
+### Ways to do it \{#pat-command-palette-ways\}
+
+Palettes differ in what they search and when they open.
+
+<Raw html={F1} />
+
+### Rules \{#pat-command-palette-rules\}
+
+Four rules keep a command palette useful.
+
+<div class="cs essay-cs">
+
+<section class="rule" id="pat-command-palette-rule-1">
+
+#### 1. Give it a visible way in \{#pat-command-palette-rule-1-h\}
+
+A palette that opens only with a shortcut is hidden from anyone who doesn’t know the shortcut, so newcomers never find it and keep hunting through menus. Give the palette a button people can see, with the shortcut written on it. Keep the menus too, and show each command’s shortcut there, so people learn the keys over time.
+
+<Raw html={F2} />
+
+</section>
+
+<section class="rule" id="pat-command-palette-rule-2">
+
+#### 2. Match the words people type \{#pat-command-palette-rule-2-h\}
+
+People type the word in their head, not the command’s official name. With strict matching, “dark mode” finds nothing when the command is called “Change theme”, and people decide the app can’t do it. Match loosely: letters in order, plus a few synonyms for each command. Show why a result matched, so people learn the real name.
+
+<Raw html={F3} />
+
+</section>
+
+<section class="rule" id="pat-command-palette-rule-3">
+
+#### 3. Name commands as a verb and an object \{#pat-command-palette-rule-3-h\}
+
+A palette full of one-word entries is hard to scan: “PDF” and “Export” could each mean several things, so people try them one by one. Name every command as a verb and an object, like “Export to PDF”. Group them, and show recent commands first when the box is empty.
+
+<Raw html={F4} />
+
+</section>
+
+<section class="rule" id="pat-command-palette-rule-4">
+
+#### 4. Use one well-known shortcut \{#pat-command-palette-rule-4-h\}
+
+A shortcut that is also a normal key gets in the way of typing: if “/” opens the palette everywhere, people can’t type “and/or” in a note. Use the shortcut most apps share, Ctrl+K (⌘K on Mac), listen for it only where it applies, and never take keys people need for typing.
+
+<Raw html={F5} />
+
+</section>
+
+<Raw html={F6} />
+
+</div>
+
+### In real products \{#pat-command-palette-products\}
+
+<Raw html={F7} />
+
+</article>
+
+<article class="entry essay" id="pat-search-filters" data-entry data-name="Search with filters">
+
+<div class="entry-head">
+
+## Search with filters and recents \{#pat-search-filters-h\}
+
+<Learned id="pat-search-filters" />
+
+</div>
+
+Search with filters helps people narrow a long list fast, such as products, emails or files. The search box takes words, and filters narrow by kind, like size, date or type. Recent items cover the common case of coming back for something used before.
+
+Unlike a [command palette](#pat-command-palette), which runs actions, search finds things. It works only when people can see what the search and the filters leave out. Tell screen readers the result count once typing pauses, not on every key.
+
+<Raw html={F8} />
+
+### Ways to do it \{#pat-search-filters-ways\}
+
+There are four common shapes. Chips and a panel narrow the results, a scope picks where to search, and recents help before anyone types.
+
+<Raw html={F9} />
+
+### Rules \{#pat-search-filters-rules\}
+
+Four rules keep search with filters useful.
+
+<div class="cs essay-cs">
+
+<section class="rule" id="pat-search-filters-rule-1">
+
+#### 1. Show what the filters hide \{#pat-search-filters-rule-1-h\}
+
+Filters often stay on from an earlier visit, and if people can’t see them, they search, find nothing and decide the item doesn’t exist. Keep active filters in view and show the result count. Say how many matches sit outside the filters, and offer one click to see them.
+
+<Raw html={F10} />
+
+</section>
+
+<section class="rule" id="pat-search-filters-rule-2">
+
+#### 2. Don’t stop at “No results” \{#pat-search-filters-rule-2-h\}
+
+An empty page with only “No results” leaves people stuck, because they can’t tell if they misspelled a word, used the wrong term or filtered too much. Repeat what they searched for, offer a close spelling, and offer to clear filters. [Empty state](/part-3/states/#empty-state) covers how “no results” differs from “nothing yet”.
+
+<Raw html={F11} />
+
+</section>
+
+<section class="rule" id="pat-search-filters-rule-3">
+
+#### 3. Start with a few filters \{#pat-search-filters-rule-3-h\}
+
+Each filter is one more thing to read, so with fifteen, the filter panel turns into a form and the results drop out of view. Start with three to five filters that match how people already choose, like price and breakfast for a hotel. Put the rest behind “More filters”, and add new ones when people ask for them.
+
+<Raw html={F12} />
+
+</section>
+
+<section class="rule" id="pat-search-filters-rule-4">
+
+#### 4. Show recent items before anyone types \{#pat-search-filters-rule-4-h\}
+
+People often search for something they used a short while ago, and an empty box makes them type the name again and remember how it’s spelled. Show recent items as soon as the box gets focus. When filters are on, show only the recent items that fit them.
+
+<Raw html={F13} />
+
+</section>
+
+<Raw html={F14} />
+
+</div>
+
+### In real products \{#pat-search-filters-products\}
+
+<Raw html={F15} />
+
+</article>
+
+<article class="entry essay" id="pat-information-scent" data-entry data-name="Labels in people’s words">
+
+<div class="entry-head">
+
+## Labels in people’s words \{#pat-information-scent-h\}
+
+<Learned id="pat-information-scent" />
+
+</div>
+
+People scan menus and links for the word already in their head. When a label matches it, they click with confidence, and when it doesn’t, they guess, go back and try again, or give up. This pull of matching words is called information scent.
+
+Labels in people’s words carry that scent: they name things the way customers do, not the way the team does inside the company. Each label should also make sense on its own, because many people, screen reader users among them, jump from label to label without seeing the layout around it.
+
+<Raw html={F16} />
+
+### Ways to do it \{#pat-information-scent-ways\}
+
+A label can carry more or less scent, and the more alike the options are, the more each label needs to say.
+
+<Raw html={F17} />
+
+### Rules \{#pat-information-scent-rules\}
+
+Four rules keep labels in people’s words.
+
+<div class="cs essay-cs">
+
+<section class="rule" id="pat-information-scent-rule-1">
+
+#### 1. Use people’s words, not the team’s \{#pat-information-scent-rule-1-h\}
+
+Teams name things after how the system works: “entities”, “remittance”, a database field. People don’t know those words, so they read every option and guess. Collect the words people use in support questions, reviews and searches before you name things, and use those.
+
+<Raw html={F18} />
+
+</section>
+
+<section class="rule" id="pat-information-scent-rule-2">
+
+#### 2. Name what’s inside, not the brand \{#pat-information-scent-rule-2-h\}
+
+Clever or branded names are fun to write, but they don’t say what’s behind them, so people open each one to find out and remember none of them. Use plain names that say what each section holds, and keep personality for empty states and onboarding, where it doesn’t cost a click.
+
+<Raw html={F19} />
+
+</section>
+
+<section class="rule" id="pat-information-scent-rule-3">
+
+#### 3. Use one name for one thing \{#pat-information-scent-rule-3-h\}
+
+When one thing has two names, people assume they are two things and wonder whether the cart and the bag hold the same items. As with [consistent naming](/part-1/consistency/#good-consistency) anywhere in a product, pick one term for each concept, use it everywhere and keep a short glossary.
+
+<Raw html={F20} />
+
+</section>
+
+<section class="rule" id="pat-information-scent-rule-4">
+
+#### 4. Test the whole path with a task \{#pat-information-scent-rule-4-h\}
+
+A label can be right and still go unfound, because it sits under a parent nobody opens. People pick a top-level section first, and if that name doesn’t match their goal, they never see what’s inside. Give people a task, like “Where would you add your passport number?”, and watch where they click first, which is called tree testing. Move items to where people look.
+
+<Raw html={F21} />
+
+</section>
+
+<Raw html={F22} />
+
+</div>
+
+### In real products \{#pat-information-scent-products\}
+
+<Raw html={F23} />
+
+</article>
+
+<aside class="in-short" id="ch-find-in-short" aria-labelledby="ch-find-in-short-h" data-pagefind-ignore>
+
+## In short \{#ch-find-in-short-h\}
+
+<div class="is-grid">
+
+<div>
+
+<a class="is-e" href="#pat-command-palette">Command palette</a>
+
+1. [Give it a visible way in](#pat-command-palette-rule-1)
+2. [Match the words people type](#pat-command-palette-rule-2)
+3. [Name commands as a verb and an object](#pat-command-palette-rule-3)
+4. [Use one well-known shortcut](#pat-command-palette-rule-4)
+
+</div>
+
+<div>
+
+<a class="is-e" href="#pat-search-filters">Search with filters and recents</a>
+
+1. [Show what the filters hide](#pat-search-filters-rule-1)
+2. [Don’t stop at “No results”](#pat-search-filters-rule-2)
+3. [Start with a few filters](#pat-search-filters-rule-3)
+4. [Show recent items before anyone types](#pat-search-filters-rule-4)
+
+</div>
+
+<div>
+
+<a class="is-e" href="#pat-information-scent">Labels in people’s words</a>
+
+1. [Use people’s words, not the team’s](#pat-information-scent-rule-1)
+2. [Name what’s inside, not the brand](#pat-information-scent-rule-2)
+3. [Use one name for one thing](#pat-information-scent-rule-3)
+4. [Test the whole path with a task](#pat-information-scent-rule-4)
+
+</div>
+
+</div>
+
+</aside>
+
+</section>
+
+<Runtime chapter="ch-find" />

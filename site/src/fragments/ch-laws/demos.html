@@ -1,0 +1,128 @@
+<script>
+(() => {
+  const { $, $$, store, demo, toast } = window.dfg;
+
+  /* js-27-laws.js */
+  demo('pat-jakobs-law', st => {
+    const frame = $('[data-frame]', st), q = $('#p17-jk-q', st);
+    const set = v => {
+      const after = v === 'after';
+      frame.classList.toggle('p17-conv', after);
+      q.placeholder = after ? 'Search templates' : '';
+    };
+    $$('input[name="p17-jk"]', st).forEach(r => r.addEventListener('change', () => set(r.value)));
+    q.addEventListener('keydown', e => {
+      if (e.key !== 'Enter') return;
+      const v = q.value.trim();
+      toast(st, v ? 'Searching templates for “' + v + '”' : 'Type something to search');
+    });
+    $('[data-blank]', st).addEventListener('click', e => { e.preventDefault(); toast(st, 'Opening a blank document'); });
+    set('before');
+  });
+
+  demo('pat-fitts-law', st => {
+    const arena = $('[data-arena]', st), status = $('[data-status]', st);
+    const targets = $$('.p17-target', arena);
+    const name = { far: 'Tiny, far', near: 'Big, near' };
+    const ROUND = 5;
+    let mode = 'far', on = 0, last = 0, times = [], misses = 0, running = false;
+    const missText = n => n + (n === 1 ? ' miss' : ' misses');
+    const light = i => {
+      on = i;
+      targets.forEach((t, j) => {
+        t.classList.toggle('p17-on', j === i);
+        t.setAttribute('aria-label', j === i ? 'Lit target' : 'Unlit target');
+      });
+    };
+    const reset = () => { running = false; times = []; misses = 0; light(0); status.textContent = 'Click the lit target to start.'; };
+    $$('input[name="p17-fitts"]', st).forEach(r => r.addEventListener('change', () => {
+      mode = r.value; arena.dataset.mode = mode; reset();
+    }));
+    arena.addEventListener('click', e => {
+      const t = e.target.closest('.p17-target');
+      if (!t || Number(t.dataset.t) !== on) {
+        if (running) { misses++; status.textContent = (ROUND - times.length) + ' to go · ' + missText(misses); }
+        return;
+      }
+      const now = performance.now();
+      if (running) times.push(now - last);
+      last = now; running = true;
+      const next = 1 - on;
+      light(next);
+      if (e.detail === 0) targets[next].focus();
+      if (times.length < ROUND) {
+        status.textContent = (ROUND - times.length) + ' to go' + (misses ? ' · ' + missText(misses) : '');
+        return;
+      }
+      const avg = Math.round(times.reduce((a, b) => a + b, 0) / times.length);
+      $('[data-score="' + mode + '"]', st).textContent = avg + ' ms avg';
+      status.textContent = 'Done. ' + name[mode] + ': ' + avg + ' ms per hit, ' + missText(misses) + '. Switch and compare, or go again.';
+      running = false; times = []; misses = 0;
+    });
+    reset();
+  });
+
+  demo('pat-hicks-law', st => {
+    const go = $('[data-go]', st), menu = $('[data-menu]', st), status = $('[data-status]', st);
+    const others = ['Travel', 'Work', 'Family', 'Bills', 'School', 'Friends', 'News', 'Photos', 'Taxes', 'Recipes', 'Health', 'Car', 'Home', 'Clubs', 'Archive'];
+    const picks = { 4: [], 16: [] };
+    let size = 4, t0 = 0, wrong = 0;
+    const shuffle = a => { const b = a.slice(); for (let i = b.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [b[i], b[j]] = [b[j], b[i]]; } return b; };
+    const close = () => { menu.hidden = true; menu.textContent = ''; };
+    $$('input[name="p17-hick"]', st).forEach(r => r.addEventListener('change', () => {
+      size = Number(r.value); close(); go.textContent = 'Show the menu';
+      status.textContent = 'Pick the “Receipts” folder as fast as you can.';
+    }));
+    go.addEventListener('click', e => {
+      const words = shuffle(shuffle(others).slice(0, size - 1).concat('Receipts'));
+      menu.textContent = '';
+      words.forEach(w => {
+        const b = document.createElement('button');
+        b.type = 'button'; b.className = 'p17-opt'; b.textContent = w; b.dataset.word = w;
+        menu.appendChild(b);
+      });
+      menu.hidden = false; wrong = 0;
+      status.textContent = 'Find “Receipts”.';
+      if (e.detail === 0) menu.firstElementChild.focus();
+      requestAnimationFrame(() => { t0 = performance.now(); });
+    });
+    menu.addEventListener('click', e => {
+      const b = e.target.closest('.p17-opt');
+      if (!b) return;
+      if (b.dataset.word !== 'Receipts') { wrong++; status.textContent = 'That’s “' + b.dataset.word + '”. Keep looking.'; return; }
+      const ms = Math.round(performance.now() - t0);
+      const list = picks[size]; list.push(ms);
+      const avg = Math.round(list.reduce((a, c) => a + c, 0) / list.length);
+      $('[data-score="' + size + '"]', st).textContent = avg + ' ms avg (' + list.length + (list.length === 1 ? ' pick)' : ' picks)');
+      status.textContent = 'Picked in ' + ms + ' ms' + (wrong ? ', after ' + wrong + ' wrong ' + (wrong === 1 ? 'pick' : 'picks') : '') + '.';
+      close(); go.textContent = 'Show it again';
+      if (e.detail === 0) go.focus();
+    });
+  });
+
+  demo('pat-teslers-law', st => {
+    const out = $('[data-out]', st), path = $('#p17-tes-path', st), msg = $('#p17-tes-msg', st);
+    const views = $$('[data-view]', st);
+    let saved = '';
+    const showMsg = text => { $('[data-msg]', msg).textContent = text; msg.hidden = !text; path.setAttribute('aria-invalid', text ? 'true' : 'false'); };
+    const folder = () => ($('input[name="p17-tes-folder"]:checked', st) || {}).value;
+    const show = v => {
+      views.forEach(el => { el.hidden = el.dataset.view !== v; });
+      out.textContent = v === 'system' ? 'Saving to ' + folder() : (saved ? 'Saving to ' + saved : '');
+    };
+    $$('input[name="p17-tes"]', st).forEach(r => r.addEventListener('change', () => show(r.value)));
+    $('[data-save]', st).addEventListener('click', () => {
+      const v = path.value.trim();
+      if (!v) { showMsg('Enter a folder path.'); saved = ''; out.textContent = ''; path.focus(); return; }
+      if (!/^(\/|~|[A-Za-z]:[\\/])/.test(v)) { showMsg('Use a full path that starts with / or a drive letter.'); saved = ''; out.textContent = ''; path.focus(); return; }
+      showMsg(''); saved = v; out.textContent = 'Saving to ' + v;
+    });
+    path.addEventListener('input', () => { if (!msg.hidden) showMsg(''); });
+    $$('input[name="p17-tes-folder"]', st).forEach(r => r.addEventListener('change', () => { out.textContent = 'Saving to ' + r.value; }));
+    $('[data-browse]', st).addEventListener('click', () => toast(st, 'A folder picker would open here'));
+    show('person');
+  });
+
+
+})();
+</script>

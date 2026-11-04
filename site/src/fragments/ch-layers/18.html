@@ -1,0 +1,98 @@
+<div class="fm" data-fm>
+  <div class="seg fm-seg" role="radiogroup" aria-label="Kind">
+    <input type="radio" name="fm-pat-customization" id="fm-pat-customization-1" value="star" checked><label for="fm-pat-customization-1">Favorites</label>
+    <input type="radio" name="fm-pat-customization" id="fm-pat-customization-2" value="pin"><label for="fm-pat-customization-2">Pin to top</label>
+    <input type="radio" name="fm-pat-customization" id="fm-pat-customization-3" value="tools"><label for="fm-pat-customization-3">Toolbar</label>
+    <input type="radio" name="fm-pat-customization" id="fm-pat-customization-4" value="home"><label for="fm-pat-customization-4">Home sections</label>
+  </div>
+  <div class="fm-stage" data-fm-stage></div>
+  <p class="fig-cap" data-fm-when aria-live="polite"></p>
+  
+  <script>
+  (() => {
+    const fm = document.currentScript.closest('[data-fm]'), stage = fm.querySelector('[data-fm-stage]'), when = fm.querySelector('[data-fm-when]');
+    const star = '<svg class="icon sm" aria-hidden="true"><use href="#p16-i-star"/></svg>';
+    const frame = (title, body) => '<div class="app-frame fm-frame"><div class="app-bar"><span>' + title + '</span></div><div class="app-body">' + body + '</div></div>';
+    const btn = (label, data, pressed, inner) => '<button class="icon-btn p16-pin" type="button" aria-label="' + label + '" aria-pressed="' + pressed + '" ' + data + '>' + inner + '</button>';
+    const F = {
+      star: {
+        html: frame('Contacts', '<h5 class="fcu-sec">Favorites</h5><div data-fav></div><h5 class="fcu-sec">All contacts</h5><div data-all></div>'),
+        use: 'Use it when people return to a few items in a long list.',
+        note: 'Starring adds a copy at the top. The item also stays in its usual place.',
+        wire: s => {
+          const P = ['Ana Ruiz', 'Ben Cole', 'Dad', 'Mia Chen', 'Sam Park'];
+          const favs = new Set(['Dad']);
+          const draw = () => {
+            s.querySelector('[data-fav]').innerHTML = favs.size ? P.filter(p => favs.has(p)).map(p => '<div class="fcu-row"><span class="grow">' + p + '</span></div>').join('') : '<p class="fcu-empty">Star a contact to keep it here.</p>';
+            s.querySelector('[data-all]').innerHTML = P.map(p => '<div class="fcu-row"><span class="grow">' + p + '</span>' + btn((favs.has(p) ? 'Remove ' : 'Add ') + p + ' to favorites', 'data-p="' + p + '"', favs.has(p), star) + '</div>').join('');
+          };
+          s.addEventListener('click', e => { const b = e.target.closest('[data-p]'); if (!b) return; const p = b.dataset.p; favs.has(p) ? favs.delete(p) : favs.add(p); draw(); s.querySelector('[data-p="' + p + '"]').focus(); });
+          draw();
+        }
+      },
+      pin: {
+        html: frame('Notes', '<div data-list></div><button class="btn btn-secondary cs-sm" type="button" data-new>Write a new note</button>'),
+        use: 'Use it in a list sorted by date, so one item doesn’t sink as new ones arrive.',
+        note: 'Pin a note, then write a new one. The pinned note stays first.',
+        wire: s => {
+          let notes = ['Groceries', 'Gift ideas', 'Wi-Fi password', 'Book list'], pinned = new Set(), n = 0;
+          const NEW = ['Call the plumber', 'Weekend plan', 'Recipe: lentil soup', 'Packing list'];
+          const draw = () => {
+            const order = notes.filter(x => pinned.has(x)).concat(notes.filter(x => !pinned.has(x)));
+            s.querySelector('[data-list]').innerHTML = order.map(x => '<div class="fcu-row"><span class="grow">' + x + '</span>' + (pinned.has(x) ? '<span class="fcu-pinmark">Pinned</span>' : '') + btn((pinned.has(x) ? 'Unpin ' : 'Pin ') + x, 'data-p="' + x + '"', pinned.has(x), star) + '</div>').join('');
+          };
+          s.addEventListener('click', e => {
+            const b = e.target.closest('[data-p]');
+            if (b) { const x = b.dataset.p; pinned.has(x) ? pinned.delete(x) : pinned.add(x); draw(); s.querySelector('[data-p="' + x + '"]').focus(); return; }
+            if (e.target.closest('[data-new]')) { notes.unshift(NEW[n % NEW.length] + (n >= NEW.length ? ' ' + (n + 1) : '')); n++; if (notes.length > 6) notes = notes.filter((x, i) => i < 6 || pinned.has(x)); draw(); }
+          });
+          draw();
+        }
+      },
+      tools: {
+        html: frame('Edit photo', '<div class="fcu-tools" data-tools></div><div class="fcu-photo" role="img" aria-label="Photo"></div><h5 class="fcu-sec">Show in toolbar</h5><div class="fcu-checks" data-checks></div>'),
+        use: 'Use it when different people rely on different tools from a large set.',
+        note: 'Each person keeps the buttons they use and hides the rest. Every tool is still in the menu.',
+        wire: s => {
+          const T = ['Crop', 'Rotate', 'Light', 'Color', 'Filters', 'Text'];
+          const on = new Set(['Crop', 'Light', 'Filters']);
+          s.querySelector('[data-checks]').innerHTML = T.map(t => '<label><input type="checkbox" value="' + t + '"' + (on.has(t) ? ' checked' : '') + '>' + t + '</label>').join('');
+          const draw = () => { s.querySelector('[data-tools]').innerHTML = T.filter(t => on.has(t)).map(t => '<button class="btn btn-secondary" type="button">' + t + '</button>').join('') || '<span class="fcu-empty">No buttons. Every tool is still in the menu.</span>'; };
+          s.querySelector('[data-checks]').addEventListener('change', e => { e.target.checked ? on.add(e.target.value) : on.delete(e.target.value); draw(); });
+          draw();
+        }
+      },
+      home: {
+        html: frame('News: arrange home', '<div data-list></div><p class="cs-meta" data-out></p>'),
+        use: 'Use it for a home screen made of sections that matter more to some people than others.',
+        note: 'People move the sections they read up, and hide the ones they don’t.',
+        wire: s => {
+          const S = [['Top stories', true], ['Sport', true], ['Local', true], ['Tech', true], ['Puzzles', true]];
+          const draw = focus => {
+            s.querySelector('[data-list]').innerHTML = S.map((x, i) => '<div class="fcu-row"><label class="grow" style="display:flex;gap:8px;align-items:center"><input type="checkbox" data-show="' + i + '"' + (x[1] ? ' checked' : '') + '>' + x[0] + '</label>' +
+              '<button class="icon-btn" type="button" aria-label="Move ' + x[0] + ' up" data-up="' + i + '"' + (i ? '' : ' disabled') + '>↑</button><button class="icon-btn" type="button" aria-label="Move ' + x[0] + ' down" data-down="' + i + '"' + (i < S.length - 1 ? '' : ' disabled') + '>↓</button></div>').join('');
+            s.querySelector('[data-out]').textContent = 'Your home: ' + (S.filter(x => x[1]).map(x => x[0]).join(' · ') || 'nothing yet');
+            if (focus) { const f = s.querySelector(focus); if (f && !f.disabled) f.focus(); }
+          };
+          s.addEventListener('click', e => {
+            const u = e.target.closest('[data-up]'), d = e.target.closest('[data-down]');
+            if (u) { const i = +u.dataset.up; [S[i - 1], S[i]] = [S[i], S[i - 1]]; draw('[data-up="' + (i - 1) + '"]'); }
+            if (d) { const i = +d.dataset.down; [S[i + 1], S[i]] = [S[i], S[i + 1]]; draw('[data-down="' + (i + 1) + '"]'); }
+          });
+          s.addEventListener('change', e => { const c = e.target.closest('[data-show]'); if (c) { S[+c.dataset.show][1] = c.checked; draw(); } });
+          draw();
+        }
+      }
+    };
+    // Each variant renders into a fresh wrapper, so its listeners go with it.
+    const show = k => {
+      const inner = document.createElement('div');
+      inner.style.cssText = 'display:contents';
+      stage.replaceChildren(inner); inner.innerHTML = F[k].html; F[k].wire(inner);
+      when.innerHTML = '<b>' + fm.querySelector('.fm-seg input:checked + label').textContent + '.</b> ' + F[k].use + ' ' + F[k].note;
+    };
+    fm.querySelectorAll('.fm-seg input').forEach(i => i.addEventListener('change', () => show(i.value)));
+    show('star');
+  })();
+  </script>
+</div>

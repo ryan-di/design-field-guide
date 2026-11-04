@@ -1,0 +1,322 @@
+---
+title: "Too much at once"
+description: "A panel with twenty settings asks people to judge all twenty before they can do anything, so they freeze, skim, or miss the one setting that mattered."
+eyebrow: "Chapter 8"
+sidebar:
+  label: "Too much at once"
+---
+
+import Raw from '../../../components/Raw.astro';
+import Learned from '../../../components/Learned.astro';
+import Runtime from '../../../components/Runtime.astro';
+import F0 from '../../../fragments/ch-overload/0.html?raw';
+import F1 from '../../../fragments/ch-overload/1.html?raw';
+import F2 from '../../../fragments/ch-overload/2.html?raw';
+import F3 from '../../../fragments/ch-overload/3.html?raw';
+import F4 from '../../../fragments/ch-overload/4.html?raw';
+import F5 from '../../../fragments/ch-overload/5.html?raw';
+import F6 from '../../../fragments/ch-overload/6.html?raw';
+import F7 from '../../../fragments/ch-overload/7.html?raw';
+import F8 from '../../../fragments/ch-overload/8.html?raw';
+import F9 from '../../../fragments/ch-overload/9.html?raw';
+import F10 from '../../../fragments/ch-overload/10.html?raw';
+import F11 from '../../../fragments/ch-overload/11.html?raw';
+import F12 from '../../../fragments/ch-overload/12.html?raw';
+import F13 from '../../../fragments/ch-overload/13.html?raw';
+import F14 from '../../../fragments/ch-overload/14.html?raw';
+import F15 from '../../../fragments/ch-overload/15.html?raw';
+import F16 from '../../../fragments/ch-overload/16.html?raw';
+import F17 from '../../../fragments/ch-overload/17.html?raw';
+import F18 from '../../../fragments/ch-overload/18.html?raw';
+import F19 from '../../../fragments/ch-overload/19.html?raw';
+import F20 from '../../../fragments/ch-overload/20.html?raw';
+import F21 from '../../../fragments/ch-overload/21.html?raw';
+import F22 from '../../../fragments/ch-overload/22.html?raw';
+import F23 from '../../../fragments/ch-overload/23.html?raw';
+
+<Runtime at="start" />
+
+<section class="dfg-chapter" id="ch-overload">
+
+A panel with twenty settings asks people to judge all twenty before they can do anything, so they freeze, skim, or miss the one setting that mattered. The patterns in this chapter show the basics first and keep the rest one step away, so the screen starts simple and nothing is out of reach.
+
+<article class="entry essay" id="pat-progressive-disclosure" data-entry data-name="Progressive disclosure">
+
+<div class="entry-head">
+
+## Progressive disclosure \{#pat-progressive-disclosure-h\}
+
+<Learned id="pat-progressive-disclosure" />
+
+</div>
+
+Progressive disclosure shows the settings most people need first and keeps the rest one step away, so people can start without judging every option on the screen. Nothing is removed: the rest is there for the people who look for it.
+
+It works together with [smart defaults](#pat-smart-defaults), but where a default fills in a value for people, progressive disclosure decides what they see at all. Hidden settings should start on good defaults, so most people never need to open them.
+
+<Raw html={F0} />
+
+### Ways to do it \{#pat-progressive-disclosure-ways\}
+
+There are four common ways to keep the rest one step away. They differ in where the hidden part waits.
+
+<Raw html={F1} />
+
+### Rules \{#pat-progressive-disclosure-rules\}
+
+Four rules keep progressive disclosure useful.
+
+<div class="cs essay-cs">
+
+<section class="rule" id="pat-progressive-disclosure-rule-1">
+
+#### 1. Say what’s hidden \{#pat-progressive-disclosure-rule-1-h\}
+
+A button that says only “More options” gives no hint of what’s behind it, so people who need one of those settings don’t know it exists, and they give up or ask someone. Name what’s inside on the button and say how many, so people can tell whether it’s worth opening before they open it.
+
+<Raw html={F2} />
+
+</section>
+
+<section class="rule" id="pat-progressive-disclosure-rule-2">
+
+#### 2. Let experts skip the extra click \{#pat-progressive-disclosure-rule-2-h\}
+
+People who use the hidden settings every time pay for the split every time, and if the section closes again after each use, they open it over and over. Remember whether each person left it open, and give frequent users a keyboard shortcut or a setting to always show everything.
+
+<Raw html={F3} />
+
+</section>
+
+<section class="rule" id="pat-progressive-disclosure-rule-3">
+
+#### 3. Split by what people change \{#pat-progressive-disclosure-rule-3-h\}
+
+The line between basic and advanced is often a guess made before launch. If most people open the hidden part every time, the guess was wrong, and the split only adds a click. Look at what people actually change, and move anything most people need up into the basics.
+
+<Raw html={F4} />
+
+</section>
+
+<section class="rule" id="pat-progressive-disclosure-rule-4">
+
+#### 4. Show what the hidden settings changed \{#pat-progressive-disclosure-rule-4-h\}
+
+A hidden setting can still change the result, and people can’t fix a cause they can’t see. While the section is closed, show a short summary of every value that isn’t the default, and let people clear it from there. The most common case, a filter left on from an earlier visit, is covered in [search with filters](/part-2/find/#pat-search-filters).
+
+<Raw html={F5} />
+
+</section>
+
+<Raw html={F6} />
+
+</div>
+
+### In real products \{#pat-progressive-disclosure-products\}
+
+<Raw html={F7} />
+
+</article>
+
+<article class="entry essay" id="pat-smart-defaults" data-entry data-name="Smart defaults">
+
+<div class="entry-head">
+
+## Smart defaults \{#pat-smart-defaults-h\}
+
+<Learned id="pat-smart-defaults" />
+
+</div>
+
+A smart default is a value filled in for people because it fits most of them, so they can accept it and move on, or change it. Each good default removes one decision, and on a long form that adds up.
+
+A default is a real value that will be used, shown in a field people can change. That separates it from a placeholder, which disappears when people type and is never used, and from a [preset](#pat-presets), which sets several linked values at once.
+
+<Raw html={F8} />
+
+### Ways to do it \{#pat-smart-defaults-ways\}
+
+Defaults differ in where the value comes from.
+
+<Raw html={F9} />
+
+### Rules \{#pat-smart-defaults-rules\}
+
+Four rules keep smart defaults useful.
+
+<div class="cs essay-cs">
+
+<section class="rule" id="pat-smart-defaults-rule-1">
+
+#### 1. Base defaults on what people pick \{#pat-smart-defaults-rule-1-h\}
+
+A default that’s wrong for many people is worse than none, because they have to notice it and change it on every visit. Look at what people actually choose and start there, then remember what each person used last, so someone with a different habit stops fixing it too.
+
+<Raw html={F10} />
+
+</section>
+
+<section class="rule" id="pat-smart-defaults-rule-2">
+
+#### 2. Keep defaults in view \{#pat-smart-defaults-rule-2-h\}
+
+Some defaults are applied where people can’t see them, so the result surprises people and they have no idea which setting caused it. Show every default in the form, in a field people can change. Mark values that differ from the default in words, not only with color, so people see what will happen before they press the button.
+
+<Raw html={F11} />
+
+</section>
+
+<section class="rule" id="pat-smart-defaults-rule-3">
+
+#### 3. Start risky options off \{#pat-smart-defaults-rule-3-h\}
+
+A default can quietly serve the business instead of the person, like a pre-ticked “public” box, and because most people never change defaults, they end up sharing what they meant to keep. Pick the safe, reversible option: anything that publishes, deletes, costs money or overwrites files should start off.
+
+<Raw html={F12} />
+
+</section>
+
+<section class="rule" id="pat-smart-defaults-rule-4">
+
+#### 4. Use real values, not placeholders \{#pat-smart-defaults-rule-4-h\}
+
+Gray text in an empty field looks like an answer, so people skip the field, and the form fails because it was empty all along. The gray text also vanishes as soon as they type. Put a real value in the field, or write the hint as a label or help text.
+
+<Raw html={F13} />
+
+</section>
+
+<Raw html={F14} />
+
+</div>
+
+### In real products \{#pat-smart-defaults-products\}
+
+<Raw html={F15} />
+
+</article>
+
+<article class="entry essay" id="pat-presets" data-entry data-name="Presets">
+
+<div class="entry-head">
+
+## Presets \{#pat-presets-h\}
+
+<Learned id="pat-presets" />
+
+</div>
+
+A preset sets several linked values at once, under a name that says what you get, like “Fast” or “Best quality”. People pick the outcome they want instead of tuning each value, and the values stay in view, so people can still adjust one.
+
+Unlike a [smart default](#pat-smart-defaults), which fills in one field, a preset fills in a group of fields that only make sense together. Build the picker as a radio group, so arrow keys move between presets.
+
+<Raw html={F16} />
+
+### Ways to do it \{#pat-presets-ways\}
+
+Presets come in four common forms. They differ in how people choose one, and in whether it stays linked after it’s picked.
+
+<Raw html={F17} />
+
+### Rules \{#pat-presets-rules\}
+
+Four rules keep presets useful.
+
+<div class="cs essay-cs">
+
+<section class="rule" id="pat-presets-rule-1">
+
+#### 1. Show what each preset sets \{#pat-presets-rule-1-h\}
+
+A preset name alone doesn’t say what will change, so people pick one and find out what it did only when the result arrives, and careful people avoid presets. Show the values each preset sets next to the picker, and let people edit them.
+
+<Raw html={F18} />
+
+</section>
+
+<section class="rule" id="pat-presets-rule-2">
+
+#### 2. Switch to “Custom” after an edit \{#pat-presets-rule-2-h\}
+
+Once someone changes a value, the settings no longer match the preset, so a label that still shows the preset’s name is wrong, and people trust it. Switch the label to “Custom” as soon as a value changes, and mark what was edited. Picking the preset again brings its values back.
+
+<Raw html={F19} />
+
+</section>
+
+<section class="rule" id="pat-presets-rule-3">
+
+#### 3. Offer a few, named by outcome \{#pat-presets-rule-3-h\}
+
+A long list of presets is a new decision on top of the old one, and internal names make it worse, because people can’t tell what “JPG-80-2048” is for. Keep three to five presets, and name each one by what people want to do, like “Email” or “Print”.
+
+<Raw html={F20} />
+
+</section>
+
+<section class="rule" id="pat-presets-rule-4">
+
+#### 4. Let people save their own \{#pat-presets-rule-4-h\}
+
+Some people need the same mix of settings every time, and no built-in preset matches it, so without a way to save it they set each value again on every visit. Let them save their mix as a preset with their own name, next to the built-in ones.
+
+<Raw html={F21} />
+
+</section>
+
+<Raw html={F22} />
+
+</div>
+
+### In real products \{#pat-presets-products\}
+
+<Raw html={F23} />
+
+</article>
+
+<aside class="in-short" id="ch-overload-in-short" aria-labelledby="ch-overload-in-short-h" data-pagefind-ignore>
+
+## In short \{#ch-overload-in-short-h\}
+
+<div class="is-grid">
+
+<div>
+
+<a class="is-e" href="#pat-progressive-disclosure">Progressive disclosure</a>
+
+1. [Say what’s hidden](#pat-progressive-disclosure-rule-1)
+2. [Let experts skip the extra click](#pat-progressive-disclosure-rule-2)
+3. [Split by what people change](#pat-progressive-disclosure-rule-3)
+4. [Show what the hidden settings changed](#pat-progressive-disclosure-rule-4)
+
+</div>
+
+<div>
+
+<a class="is-e" href="#pat-smart-defaults">Smart defaults</a>
+
+1. [Base defaults on what people pick](#pat-smart-defaults-rule-1)
+2. [Keep defaults in view](#pat-smart-defaults-rule-2)
+3. [Start risky options off](#pat-smart-defaults-rule-3)
+4. [Use real values, not placeholders](#pat-smart-defaults-rule-4)
+
+</div>
+
+<div>
+
+<a class="is-e" href="#pat-presets">Presets</a>
+
+1. [Show what each preset sets](#pat-presets-rule-1)
+2. [Switch to “Custom” after an edit](#pat-presets-rule-2)
+3. [Offer a few, named by outcome](#pat-presets-rule-3)
+4. [Let people save their own](#pat-presets-rule-4)
+
+</div>
+
+</div>
+
+</aside>
+
+</section>
+
+<Runtime chapter="ch-overload" />

@@ -1,0 +1,41 @@
+<div class="note comfy cw-wrap">
+      <div class="seg cw-seg" role="radiogroup" aria-label="Example">
+        <input type="radio" name="cw-banner-w" id="cw-banner-w-1" value="gmail" checked><label for="cw-banner-w-1">Gmail</label>
+        <input type="radio" name="cw-banner-w" id="cw-banner-w-2" value="notion"><label for="cw-banner-w-2">Notion</label>
+        <input type="radio" name="cw-banner-w" id="cw-banner-w-3" value="github"><label for="cw-banner-w-3">GitHub</label>
+      </div>
+      <div class="cw" data-cw-view role="img" aria-label=""></div>
+      <p class="cw-cap" data-cw-cap aria-live="polite"></p>
+      
+      <script>
+      (() => {
+        const wrap = document.currentScript.closest('.cw-wrap');
+        const view = wrap.querySelector('[data-cw-view]'), cap = wrap.querySelector('[data-cw-cap]');
+        const ic = id => '<svg class="icon sm"><use href="#i-' + id + '"/></svg>';
+        const line = w => '<i class="cw-line" style="width:' + w + '%"></i>';
+        const banner = (icon, text, acts, bad) => '<div class="banner' + (bad ? ' bad' : '') + '">' + ic(icon) + '<span class="grow">' + text + '</span><span class="cw-bannerw-acts">' + acts + '</span></div>';
+        const row = (a, b) => '<div class="cw-bannerw-row">' + line(a) + line(b) + '</div>';
+        const file = (icon, w) => '<div class="cw-bannerw-file">' + ic(icon) + '<span class="cw-line" style="max-width:' + w + '%"></span></div>';
+        const S = {
+          gmail: { html: '<div class="cw-bannerw-win"><div class="cw-bannerw-top">Inbox</div>' +
+              banner('info', 'Your auto-reply is on.', '<span class="cw-bannerw-link">End now</span><span class="cw-bannerw-link">Settings</span>') +
+              '<div class="cw-bannerw-body">' + row(85, 75) + row(65, 90) + row(80, 60) + '</div></div>',
+            alt: 'A mail inbox. A bar above the list says Your auto-reply is on, with End now and Settings.',
+            cap: 'Gmail: while the vacation auto-reply is on, a bar above the inbox says so and offers End now. It’s a mode people forget they switched on.' },
+          notion: { html: '<div class="cw-bannerw-win"><div class="cw-bannerw-top"><i>Team space /</i> Trip notes</div>' +
+              banner('trash', 'This page is in the trash.', '<span class="cw-bannerw-btn">Restore</span><span class="cw-bannerw-btn">Delete forever</span>', true) +
+              '<div class="cw-bannerw-page"><b>Trip notes</b>' + line(90) + line(80) + line(55) + '</div></div>',
+            alt: 'A document page with a red bar across the top: This page is in the trash, with Restore and Delete forever buttons.',
+            cap: 'Notion: a page opened from the trash gets a red bar across the top, with buttons to restore it or delete it for good.' },
+          github: { html: '<div class="cw-bannerw-win"><div class="cw-bannerw-top"><i>mia /</i> photo-tools</div><div class="cw-bannerw-tabs"><span>Code</span><span>Issues</span><span>Pull requests</span></div>' +
+              banner('info', 'Archived by the owner. It’s read-only now.', '') +
+              '<div class="cw-bannerw-body">' + file('folder', 40) + file('folder', 30) + file('book', 50) + '</div></div>',
+            alt: 'A code repository page with tabs Code, Issues and Pull requests. A notice under the tabs says Archived by the owner. It’s read-only now. A file list below.',
+            cap: 'GitHub: an archived repository shows a notice at the top saying it’s read-only, which explains why you can’t push or open issues.' }
+        };
+        const render = k => { view.innerHTML = S[k].html; view.setAttribute('aria-label', 'Sketch: ' + S[k].alt); cap.textContent = S[k].cap; };
+        wrap.querySelectorAll('input[name="cw-banner-w"]').forEach(r => r.addEventListener('change', () => render(r.value)));
+        render('gmail');
+      })();
+      </script>
+    </div>

@@ -1,0 +1,43 @@
+<div class="note comfy cw-wrap"><p>Notice how little each card shows, and that none has more than one extra action.</p>
+      <div class="seg cw-seg" role="radiogroup" aria-label="Example">
+        <input type="radio" name="cw-card-w" id="cw-card-w-1" value="youtube" checked><label for="cw-card-w-1">YouTube</label>
+        <input type="radio" name="cw-card-w" id="cw-card-w-2" value="airbnb"><label for="cw-card-w-2">Airbnb</label>
+        <input type="radio" name="cw-card-w" id="cw-card-w-3" value="trello"><label for="cw-card-w-3">Trello</label>
+        <input type="radio" name="cw-card-w" id="cw-card-w-4" value="spotify"><label for="cw-card-w-4">Spotify</label>
+      </div>
+      <div class="cw" data-cw-view role="img" aria-label=""></div>
+      <p class="cw-cap" data-cw-cap aria-live="polite"></p>
+      
+      <script>
+      (() => {
+        const wrap = document.currentScript.closest('.cw-wrap');
+        const view = wrap.querySelector('[data-cw-view]'), cap = wrap.querySelector('[data-cw-cap]');
+        const ic = id => '<svg class="icon sm"><use href="#i-' + id + '"/></svg>';
+        const heart = '<span class="cw-cardw-heart"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 20s-7.5-4.6-9.2-9.3C1.7 7.6 3.8 4.5 7 4.5c2 0 3.6 1.1 5 3 1.4-1.9 3-3 5-3 3.2 0 5.3 3.1 4.2 6.2C19.5 15.4 12 20 12 20z"/></svg></span>';
+        const yt = (thumb, dur, title, chan, age) => '<div class="cw-cardw-c"><span class="thumb w ' + thumb + '"><span class="cw-cardw-dur">' + dur + '</span></span><div class="cw-cardw-meta"><span class="cw-cardw-av"></span><div><span class="cw-cardw-t">' + title + '</span><span class="cw-cardw-m">' + chan + '</span><span class="cw-cardw-m">' + age + '</span></div><span class="cw-cardw-dots">' + ic('dots') + '</span></div></div>';
+        const bnb = (thumb, place, dates, price) => '<div class="cw-cardw-c"><span class="thumb ' + thumb + '">' + heart + '</span><span class="cw-cardw-one">' + place + '</span><span class="cw-cardw-m">' + dates + '</span><span><b>' + price + '</b> night</span></div>';
+        const tc = (labels, title, badges) => '<div class="cw-cardw-tc">' + (labels ? '<span class="cw-cardw-lb">' + labels.map(c => '<i class="' + c + '"></i>').join('') + '</span>' : '') + '<span>' + title + '</span>' + (badges ? '<span class="cw-cardw-bd">' + badges + '</span>' : '') + '</div>';
+        const sp = (thumb, title, by, hov) => '<div class="cw-cardw-c' + (hov ? ' hov' : '') + '"><span class="thumb sq ' + thumb + '">' + (hov ? '<span class="cw-cardw-play">' + ic('play') + '</span>' : '') + '</span><span class="cw-cardw-one">' + title + '</span><span class="cw-cardw-m">' + by + '</span></div>';
+        const S = {
+          youtube: { html: '<div class="cw-cardw-page"><div class="cw-cardw-grid">' + yt('', '12:04', 'Ten-minute bread with no kneading', 'Bake Lab', '3 days ago') + yt('b', '8:31', 'Fixing a slow laptop at home', 'Tech Bench', '1 week ago') + '</div></div>',
+            alt: 'Two video cards. Each has a thumbnail with its length in the corner, a channel picture, a two-line title, the channel, its age, and a three-dot menu.',
+            cap: 'YouTube: each video card is a thumbnail, a title, the channel and how old it is. The whole card opens the video, and other actions wait in one ⋮ menu.' },
+          airbnb: { html: '<div class="cw-cardw-page"><div class="cw-cardw-grid">' + bnb('', 'Lisbon, Portugal', 'Oct 12–17', '$120') + bnb('c', 'Porto, Portugal', 'Nov 2–7', '$95') + '</div></div>',
+            alt: 'Two listing cards. Each has a photo with a heart button in the corner, then the place, the dates and the price per night, in the same order.',
+            cap: 'Airbnb: every listing card puts the same facts in the same order, photo, place, dates, price, so they’re easy to compare. Saving is the one extra action, a heart on the photo.' },
+          trello: { html: '<div class="cw-cardw-list"><b>To do</b>' +
+              tc(['', 'g'], 'Draft the launch email', '<span class="cw-cardw-due">Oct 3</span><span>' + ic('check') + '2/5</span><span class="cw-cardw-av"></span>') +
+              tc(['r'], 'Fix the sign-in bug', '<span>' + ic('check') + '0/3</span><span class="cw-cardw-av"></span>') +
+              tc(null, 'Book a venue') + '<span class="cw-cardw-add">+ Add a card</span></div>',
+            alt: 'A To do list with three cards. Cards show colored labels, a title, and small badges for a due date, checklist progress and who is assigned.',
+            cap: 'Trello: a card shows only its title, labels and small badges for things like due date and checklist progress. Open it to see everything else.' },
+          spotify: { html: '<div class="cw-cardw-page"><b>Recently played</b><div class="cw-cardw-grid g3">' + sp('', 'Night drive', 'Playlist') + sp('b', 'Slow days', 'Album', true) + sp('c', 'Focus', 'Playlist') + '</div></div>',
+            alt: 'Three album and playlist cards that are mostly cover art. The middle one is hovered: its background lightens and a round play button sits on the cover.',
+            cap: 'Spotify: album and playlist cards are mostly cover art. A play button appears on hover, so you can play without opening, and the card stays clean the rest of the time.' }
+        };
+        const render = k => { view.innerHTML = S[k].html; view.setAttribute('aria-label', 'Sketch: ' + S[k].alt); cap.textContent = S[k].cap; };
+        wrap.querySelectorAll('input[name="cw-card-w"]').forEach(r => r.addEventListener('change', () => render(r.value)));
+        render('youtube');
+      })();
+      </script>
+    </div>

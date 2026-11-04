@@ -1,0 +1,101 @@
+<div class="fm" data-fm>
+  <div class="seg fm-seg" role="radiogroup" aria-label="Form">
+    <input type="radio" name="fm-badge" id="fm-badge-1" value="dot" checked><label for="fm-badge-1">Dot</label>
+    <input type="radio" name="fm-badge" id="fm-badge-2" value="count"><label for="fm-badge-2">Count</label>
+    <input type="radio" name="fm-badge" id="fm-badge-3" value="label"><label for="fm-badge-3">Label</label>
+    <input type="radio" name="fm-badge" id="fm-badge-4" value="status"><label for="fm-badge-4">Status</label>
+  </div>
+  <div class="fm-stage" data-fm-stage></div>
+  <p class="fig-cap" data-fm-when aria-live="polite"></p>
+  
+  <script>
+  (() => {
+    const fm = document.currentScript.closest('[data-fm]'), stage = fm.querySelector('[data-fm-stage]'), when = fm.querySelector('[data-fm-when]');
+    const icon = n => '<svg class="icon"><use href="#i-' + n + '"/></svg>';
+    const frame = (title, body, tabs) => '<div class="app-frame fm-frame"><div class="app-bar"><span>' + title + '</span></div><div class="app-body fb-body" data-body>' + body + '</div>' + (tabs || '') + '</div>';
+    const tabbar = (label, items) => '<nav class="fb-tabs" aria-label="' + label + '">' + items.map((t, i) => '<button type="button" data-tab="' + t[0] + '"' + (i ? '' : ' aria-current="page"') + (t[2] ? ' aria-label="' + t[2] + '"' : '') + '><span class="fb-ic">' + icon(t[1]) + (t[3] || '') + '</span>' + t[0] + '</button>').join('') + '</nav>';
+    const row = (lead, title, sub, attrs, tag) => '<' + (tag || 'div') + ' class="fb-row"' + (attrs || '') + '>' + lead + '<span class="grow"><span>' + title + '</span>' + (sub ? '<small>' + sub + '</small>' : '') + '</span></' + (tag || 'div') + '>';
+    const thumbs = '<div class="fb-grid">' + ['', ' b', ' c', ' b', ' c', ''].map(c => '<div class="thumb' + c + '"></div>').join('') + '</div>';
+    const tabs = (s, views, onOpen) => {
+      const body = s.querySelector('[data-body]');
+      s.querySelectorAll('[data-tab]').forEach(b => b.addEventListener('click', () => {
+        s.querySelectorAll('[data-tab]').forEach(x => x.removeAttribute('aria-current'));
+        b.setAttribute('aria-current', 'page');
+        body.innerHTML = views[b.dataset.tab];
+        if (onOpen) onOpen(b);
+      }));
+    };
+    const musicViews = {
+      Home: thumbs,
+      Search: '<div class="line" style="width:100%;height:36px;border-radius:9px"></div><div class="line" style="width:60%"></div><div class="line" style="width:44%"></div>',
+      Library: '<div class="fb-rows">' + row('<div class="thumb"></div>', 'Morning News', 'New episode') + row('<div class="thumb b"></div>', 'Kitchen Radio', 'New episode') + row('<div class="thumb c"></div>', 'Liked songs', '212 songs') + '</div>'
+    };
+    const chats = [['MI', 'Mia', 'Are we still on for Friday?', 1], ['DA', 'Dad', 'Sent a photo', 1], ['BC', 'Book club', 'Sam: Chapter 5 by Sunday', 1], ['LE', 'Leo', 'Thanks!', 0]];
+    const F = {
+      dot: {
+        html: frame('Music', thumbs, tabbar('Music', [['Home', 'home'], ['Search', 'search'], ['Library', 'book', 'Library, new', '<span class="fb-dot" data-dot></span>']])),
+        use: 'Use it when “something new is here” is all people need to know.',
+        more: 'It clears as soon as they open the tab.',
+        wire: s => tabs(s, musicViews, b => { if (b.dataset.tab === 'Library') { const d = s.querySelector('[data-dot]'); if (d) d.remove(); b.removeAttribute('aria-label'); } })
+      },
+      count: {
+        html: frame('Messages', '<div class="fb-rows">' + chats.map((c, i) => row('<span class="fb-av" aria-hidden="true">' + c[0] + '</span>', c[1], c[2], ' type="button" data-chat="' + i + '"', 'button')).join('') + '</div>',
+          tabbar('Messages', [['Chats', 'dots', 'Chats, 3 unread', '<span class="badge" aria-hidden="true" data-n>3</span>'], ['Search', 'search'], ['Settings', 'gear']])),
+        use: 'Use it when the number changes what people do, like unread messages.',
+        more: 'It goes down as they read and disappears at zero.',
+        wire: s => {
+          const body = s.querySelector('[data-body]'), chatsHtml = body.innerHTML, tab = s.querySelector('[data-tab="Chats"]');
+          const read = new Set();
+          const paint = () => {
+            body.querySelectorAll('[data-chat]').forEach(b => { const u = chats[b.dataset.chat][3] && !read.has(b.dataset.chat); b.classList.toggle('fb-unread', !!u); b.setAttribute('aria-label', chats[b.dataset.chat][1] + (u ? ', unread' : '')); });
+            const n = chats.filter((c, i) => c[3] && !read.has(String(i))).length, el = s.querySelector('[data-n]');
+            if (n) { el.textContent = n; tab.setAttribute('aria-label', 'Chats, ' + n + ' unread'); } else { if (el) el.remove(); tab.removeAttribute('aria-label'); }
+          };
+          body.addEventListener('click', e => { const b = e.target.closest('[data-chat]'); if (b) { read.add(b.dataset.chat); paint(); } });
+          tabs(s, { Chats: chatsHtml, Search: '<div class="line" style="width:100%;height:36px;border-radius:9px"></div><div class="line" style="width:60%"></div>', Settings: '<div class="line" style="width:70%"></div><div class="line" style="width:50%"></div><div class="line" style="width:64%"></div>' }, b => { if (b.dataset.tab === 'Chats') paint(); });
+          paint();
+        }
+      },
+      label: {
+        html: frame('Settings', '<div class="fb-rows">' +
+          row(icon('gear'), 'Passkeys', 'Sign in without a password', ' type="button" data-row="new"', 'button').replace('</button>', '<span class="fb-pill" data-new>New</span></button>') +
+          row(icon('sliders'), 'Smart replies', 'Suggested answers in email', ' type="button" data-row="beta"', 'button').replace('</button>', '<span class="fb-pill fb-beta">Beta</span></button>') +
+          row(icon('info'), 'Notifications', '', ' type="button" data-row', 'button') +
+          row(icon('home'), 'Privacy', '', ' type="button" data-row', 'button') +
+          '<p class="cs-meta" data-out></p></div>'),
+        use: 'Use a short word, like “New” or “Beta”, when the kind of thing matters more than how many.',
+        more: 'Take “New” away once people have seen it.',
+        wire: s => {
+          const out = s.querySelector('[data-out]');
+          s.querySelectorAll('[data-row]').forEach(b => b.addEventListener('click', () => {
+            const name = b.querySelector('.grow span').textContent;
+            if (b.dataset.row === 'new') { const p = b.querySelector('[data-new]'); if (p) p.remove(); out.textContent = 'Opened Passkeys. “New” is gone now that you’ve seen it.'; }
+            else if (b.dataset.row === 'beta') out.textContent = 'Opened Smart replies. “Beta” stays while the feature is being tested.';
+            else out.textContent = 'Opened ' + name + '.';
+          }));
+        }
+      },
+      status: {
+        html: frame('Team chat', '<div class="fb-rows">' +
+          '<div class="fb-me">' + row('<span class="fb-av" aria-hidden="true">YO<span class="fb-st fb-on" data-me></span></span>', 'You', '<span data-me-t>Online</span>') + '</div>' +
+          [['MI', 'Mia', 'on', 'Online'], ['SR', 'Sam Rivera', 'away', 'Away'], ['JK', 'Jo Kim', 'dnd', 'Do not disturb'], ['LE', 'Leo', 'off', 'Offline']].map(p => row('<span class="fb-av" aria-hidden="true">' + p[0] + '<span class="fb-st fb-' + p[2] + '"></span></span>', p[1], p[3])).join('') +
+          '<label class="switch fm-row"><span class="grow">Show me as away</span><input type="checkbox" role="switch"></label></div>'),
+        use: 'Use it for a live state, like who is online.',
+        more: 'Give each state its own shape as well as a color, so it doesn’t rely on color alone.',
+        wire: s => s.querySelector('input[type="checkbox"]').addEventListener('change', e => {
+          s.querySelector('[data-me]').className = 'fb-st ' + (e.target.checked ? 'fb-away' : 'fb-on');
+          s.querySelector('[data-me-t]').textContent = e.target.checked ? 'Away' : 'Online';
+        })
+      }
+    };
+    let gen = 0;
+    const show = k => {
+      gen++;
+      stage.innerHTML = F[k].html; F[k].wire(stage);
+      when.innerHTML = '<b>' + fm.querySelector('.fm-seg input:checked + label').textContent + '.</b> ' + F[k].use + ' ' + F[k].more;
+    };
+    fm.querySelectorAll('.fm-seg input').forEach(i => i.addEventListener('change', () => show(i.value)));
+    show('dot');
+  })();
+  </script>
+</div>

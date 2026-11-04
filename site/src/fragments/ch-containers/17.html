@@ -1,0 +1,80 @@
+<div class="fm" data-fm>
+  
+  <div class="seg fm-seg" role="radiogroup" aria-label="Form">
+    <input type="radio" name="fm-card" id="fm-card-1" value="media" checked><label for="fm-card-1">Media</label>
+    <input type="radio" name="fm-card" id="fm-card-2" value="horizontal"><label for="fm-card-2">Horizontal</label>
+    <input type="radio" name="fm-card" id="fm-card-3" value="summary"><label for="fm-card-3">Summary</label>
+    <input type="radio" name="fm-card" id="fm-card-4" value="choice"><label for="fm-card-4">Choice</label>
+  </div>
+  <div class="fm-stage" data-fm-stage></div>
+  <p class="fig-cap" data-fm-when aria-live="polite"></p>
+  <script>
+  (() => {
+    const fm = document.currentScript.closest('[data-fm]'), stage = fm.querySelector('[data-fm-stage]'), when = fm.querySelector('[data-fm-when]');
+    /* The name is the card's one link; its ::after stretches over the whole card, so a click anywhere opens the item.
+       Links point at "#" and cancel the click, so the book never scrolls or leaves the page. */
+    const open = name => '<a class="cdf-open" href="#" data-open="' + name + '">' + name + '</a>';
+    const meta = t => '<span class="cdf-meta">' + t + '</span>';
+    const wrap = inner => '<div class="cdf-wrap">' + inner + '<p class="cs-meta" data-out></p></div>';
+    const wireOpen = () => {
+      const out = stage.querySelector('[data-out]');
+      stage.querySelectorAll('[data-open]').forEach(a => a.addEventListener('click', e => { e.preventDefault(); out.textContent = 'Opened ' + a.dataset.open + '.'; }));
+      stage.querySelectorAll('[data-save]').forEach(b => b.addEventListener('click', () => {
+        const on = b.getAttribute('aria-pressed') !== 'true';
+        b.setAttribute('aria-pressed', String(on)); b.textContent = on ? '♥' : '♡';
+        out.textContent = on ? 'Saved ' + b.dataset.save + '.' : 'Removed ' + b.dataset.save + ' from saved.';
+      }));
+    };
+    const F = {
+      media: {
+        use: 'Use it when people know items by their picture, like photos, videos or homes to rent.',
+        more: 'A click anywhere opens the item, and one small action can sit apart in a corner.',
+        show: () => {
+          const HOMES = [['Lisbon flat', '2 guests · $95 a night', ''], ['Lake cabin', '4 guests · $140 a night', ' b'], ['City loft', '2 guests · $120 a night', ' c']];
+          stage.innerHTML = wrap('<div class="cdf-grid cdf-media">' + HOMES.map(([n, m, t]) => '<div class="surface cdf-card"><div class="thumb' + t + '"></div>' + open(n) + meta(m) +
+            '<button class="icon-btn cdf-save" type="button" aria-pressed="false" aria-label="Save ' + n + '" data-save="' + n + '">♡</button></div>').join('') + '</div>');
+          wireOpen();
+        }
+      },
+      horizontal: {
+        use: 'Use it when the text matters as much as the picture, like hotels in search results.',
+        more: 'It stacks in one column, so it reads well on a narrow screen.',
+        show: () => {
+          const HOTELS = [['Seaview Hotel', '4.6 · 300 m from the beach', '$120 a night', ''], ['Old Town Inn', '4.3 · In the old town', '$95 a night', ' b'], ['Harbour Rooms', '4.8 · By the harbour', '$140 a night', ' c']];
+          stage.innerHTML = wrap('<div class="cdf-list">' + HOTELS.map(([n, m, p, t]) => '<div class="surface cdf-card cdf-h"><div class="thumb' + t + '"></div><div class="cdf-hb">' + open(n) + meta(m) + '<span class="cdf-price">' + p + '</span></div></div>').join('') + '</div>');
+          wireOpen();
+        }
+      },
+      summary: {
+        use: 'Use it on a home screen to show a few key figures, like an account balance.',
+        more: 'Show only what people check most often, and let the card open the full view.',
+        show: () => {
+          stage.innerHTML = wrap('<div class="cdf-grid cdf-two">' +
+            '<div class="surface cdf-card cdf-sum">' + open('Checking') + meta('···· 4821') + '<span class="cdf-bal">$2,340.18</span>' + meta('Coffee shop −$4.50 today') + '</div>' +
+            '<div class="surface cdf-card cdf-sum">' + open('Savings') + meta('···· 9033') + '<span class="cdf-bal">$8,120.00</span>' + meta('+$50.00 this week') + '</div></div>');
+          wireOpen();
+        }
+      },
+      choice: {
+        use: 'Use it when people pick one option that needs a few details to compare, like a plan.',
+        more: 'A click selects the card instead of opening it, and only one can be selected.',
+        show: () => {
+          const PLANS = [['Basic', '100 GB', '$2 a month'], ['Family', '2 TB for up to 5 people', '$10 a month'], ['Pro', '5 TB', '$15 a month']];
+          stage.innerHTML = wrap('<div class="cdf-grid cdf-plans" role="radiogroup" aria-label="Storage plan">' + PLANS.map(([n, m, p]) =>
+            '<label class="cdf-choice"><input type="radio" name="fm-card-plan" value="' + n + '"' + (n === 'Family' ? ' checked' : '') + '><span class="cdf-ck"><svg class="icon"><use href="#i-check"/></svg></span><b>' + n + '</b>' + meta(m) + '<span class="cdf-price">' + p + '</span></label>').join('') + '</div>' +
+            '<button class="btn btn-primary" type="button" data-go>Continue</button>');
+          const out = stage.querySelector('[data-out]'), plan = () => stage.querySelector('[name="fm-card-plan"]:checked').value;
+          stage.querySelectorAll('[name="fm-card-plan"]').forEach(r => r.addEventListener('change', () => { out.textContent = plan() + ' selected.'; }));
+          stage.querySelector('[data-go]').addEventListener('click', () => { out.textContent = 'Continuing with the ' + plan() + ' plan.'; });
+        }
+      }
+    };
+    const show = k => {
+      F[k].show();
+      when.innerHTML = '<b>' + fm.querySelector('.fm-seg input:checked + label').textContent + '.</b> ' + F[k].use + ' ' + F[k].more;
+    };
+    fm.querySelectorAll('.fm-seg input').forEach(i => i.addEventListener('change', () => show(i.value)));
+    show('media');
+  })();
+  </script>
+</div>

@@ -1,0 +1,165 @@
+<script>
+(() => {
+  const { $, $$, store, demo, toast } = window.dfg;
+
+  /* js-26-layers.js */
+demo('pat-layered-ui', st => {
+  const D = { sampler: 'Matte', steps: '1', cfg: '3', seed: '' };
+  const label = { sampler: 'paper', steps: 'copies', cfg: 'border', seed: 'gift note' };
+  const f = { sampler: $('#p16-sampler', st), steps: $('#p16-steps', st), cfg: $('#p16-cfg', st), seed: $('#p16-seed', st) };
+  const adv = $('#p16-adv', st), note = $('#p16-adv-note', st), noteText = $('[data-note-text]', st), hot = $('[data-hot]', st);
+  const modeS = $('#p16-mode-s', st), modeA = $('#p16-mode-a', st);
+  const val = k => {
+    const raw = f[k].value.trim();
+    return (k === 'steps' || k === 'cfg') && raw !== '' ? String(Number(raw)) : raw;
+  };
+  const changed = () => Object.keys(D).filter(k => val(k) !== D[k]);
+  const render = () => {
+    const isAdv = modeA.checked, c = changed();
+    adv.hidden = !isAdv;
+    note.hidden = isAdv || c.length === 0;
+    noteText.textContent = c.length + ' advanced setting' + (c.length === 1 ? '' : 's') + ' changed: ' + c.map(k => label[k]).join(', ');
+    hot.classList.toggle('p16-hot', c.length > 0);
+  };
+  const clamp = (el, lo, hi, d) => {
+    const n = Number(el.value);
+    el.value = el.value.trim() === '' || !Number.isFinite(n) ? d : String(Math.min(hi, Math.max(lo, n)));
+  };
+  [modeS, modeA].forEach(r => r.addEventListener('change', render));
+  Object.values(f).forEach(el => { el.addEventListener('input', render); el.addEventListener('change', render); });
+  f.steps.addEventListener('change', () => { clamp(f.steps, 1, 100, D.steps); render(); });
+  f.cfg.addEventListener('change', () => { clamp(f.cfg, 0, 10, D.cfg); render(); });
+  $('[data-act="show"]', st).addEventListener('click', () => {
+    const first = changed()[0];
+    modeA.checked = true; render();
+    (first ? f[first] : modeA).focus();
+  });
+  $('[data-act="reset"]', st).addEventListener('click', () => {
+    Object.keys(D).forEach(k => { f[k].value = D[k]; });
+    render(); modeS.focus();
+    toast(st, 'Advanced settings back to defaults');
+  });
+  $('[data-act="run"]', st).addEventListener('click', () => {
+    const seed = val('seed') ? 'gift note “' + val('seed') + '”' : 'no gift note';
+    toast(st, 'Added to cart · ' + $('#p16-size', st).value + ' · ' + val('sampler') + ' · ' + val('steps') + (val('steps') === '1' ? ' copy' : ' copies') + ' · ' + val('cfg') + ' mm border · ' + seed);
+  });
+  render();
+});
+
+demo('pat-shortcuts', st => {
+  const dlg = $('#p16-keys', st), count = $('#p16-sc-count', st), canvas = $('#p16-canvas', st);
+  const cmds = {
+    run: { key: 'r', label: 'R', say: 'Photo rotated', verb: 'rotate' },
+    save: { key: 's', label: 'S', say: 'Album saved', verb: 'save' },
+    fit: { key: 'f', label: 'F', say: 'View fitted to 4 photos', verb: 'fit the view', act: () => canvas.classList.add('p16-fitted') }
+  };
+  const clicks = {};
+  let used = 0;
+  const bump = () => { used++; count.textContent = 'You used ' + used + ' shortcut' + (used === 1 ? '' : 's'); };
+  const openKeys = () => { if (!dlg.open) dlg.showModal(); };
+  const exec = (name, viaKey) => {
+    const c = cmds[name];
+    if (c.act) c.act();
+    if (viaKey) { bump(); toast(st, c.say); return; }
+    clicks[name] = (clicks[name] || 0) + 1;
+    toast(st, clicks[name] === 2 ? c.say + '. Next time, press ' + c.label + ' to ' + c.verb + '.' : c.say);
+  };
+  $$('[data-cmd]', st).forEach(b => b.addEventListener('click', () => {
+    if (b.dataset.cmd === 'keys') openKeys(); else exec(b.dataset.cmd, false);
+  }));
+  // Scoped to this stage: keys only count while focus is inside the demo.
+  st.addEventListener('keydown', e => {
+    if (dlg.open || e.ctrlKey || e.metaKey || e.altKey || e.repeat) return;
+    const t = e.target;
+    if (t.closest('input, textarea, select') || t.isContentEditable) return;
+    if (e.key === '?') { e.preventDefault(); bump(); openKeys(); return; }
+    if (e.shiftKey) return;
+    const name = Object.keys(cmds).find(n => cmds[n].key === e.key.toLowerCase());
+    if (!name) return;
+    e.preventDefault();
+    exec(name, true);
+  });
+});
+
+demo('pat-customization', st => {
+  const KEY = 'cfg-p16-pins';
+  const NODES = [
+    ['load-image', 'Heading', 'Text'],
+    ['load-model', 'Bulleted list', 'Lists'],
+    ['prompt', 'Image', 'Media'],
+    ['sampler', 'Table', 'Layout'],
+    ['upscale', 'Checklist', 'Lists'],
+    ['save', 'Divider', 'Layout']
+  ];
+  const byId = {};
+  NODES.forEach(n => { byId[n[0]] = n; });
+  let pins = store.get(KEY, []);
+  if (!Array.isArray(pins)) pins = [];
+  pins = pins.filter((id, i) => byId[id] && pins.indexOf(id) === i);
+  const uses = {}, offered = new Set();
+  const pinList = $('[data-pinned]', st), allList = $('[data-all]', st), empty = $('[data-empty]', st), reset = $('[data-act="reset"]', st);
+
+  const row = n => {
+    const li = document.createElement('li');
+    const add = document.createElement('button');
+    add.type = 'button'; add.className = 'p16-add'; add.dataset.add = n[0];
+    const name = document.createElement('span'); name.textContent = n[1];
+    const cat = document.createElement('small'); cat.textContent = n[2];
+    add.append(name, cat);
+    const pin = document.createElement('button');
+    pin.type = 'button'; pin.className = 'icon-btn p16-pin'; pin.dataset.pin = n[0];
+    pin.setAttribute('aria-label', 'Pin ' + n[1]);
+    pin.innerHTML = '<svg class="icon sm" aria-hidden="true"><use href="#p16-i-star"/></svg>';
+    li.append(add, pin);
+    return li;
+  };
+  NODES.forEach(n => allList.appendChild(row(n)));
+
+  const render = () => {
+    pinList.replaceChildren(...pins.map(id => row(byId[id])));
+    pinList.hidden = pins.length === 0;
+    empty.hidden = pins.length > 0;
+    $$('[data-pin]', st).forEach(b => b.setAttribute('aria-pressed', String(pins.includes(b.dataset.pin))));
+    reset.disabled = pins.length === 0;
+    store.set(KEY, pins);
+  };
+  const focusPinnedAt = i => {
+    const btns = $$('[data-pin]', pinList);
+    if (btns.length) btns[Math.min(i, btns.length - 1)].focus(); else empty.focus();
+  };
+
+  st.addEventListener('click', e => {
+    const p = e.target.closest('[data-pin]');
+    if (p) {
+      const id = p.dataset.pin, fromPinned = pinList.contains(p), i = pins.indexOf(id);
+      pins = i >= 0 ? pins.filter(x => x !== id) : pins.concat(id);
+      render();
+      if (fromPinned) focusPinnedAt(i);
+      return;
+    }
+    const a = e.target.closest('[data-add]');
+    if (!a) return;
+    const id = a.dataset.add, name = byId[id][1];
+    uses[id] = (uses[id] || 0) + 1;
+    if (uses[id] >= 3 && !pins.includes(id) && !offered.has(id)) {
+      offered.add(id);
+      toast(st, '“' + name + '” added. You use it a lot. Pin it to the top?', {
+        duration: 8000,
+        action: { label: 'Pin', run: () => { if (!pins.includes(id)) { pins = pins.concat(id); render(); } focusPinnedAt(pins.indexOf(id)); } }
+      });
+    } else {
+      toast(st, '“' + name + '” added to the page');
+    }
+  });
+  reset.addEventListener('click', () => {
+    pins = []; offered.clear();
+    Object.keys(uses).forEach(k => { delete uses[k]; });
+    render(); empty.focus();
+    toast(st, 'Back to the default list');
+  });
+  render();
+});
+
+
+})();
+</script>

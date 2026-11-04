@@ -1,0 +1,190 @@
+<script>
+(() => {
+  const cs = document.currentScript.closest('.cs');
+  const D = (k, html, wire) => csDemo(cs.querySelector('[data-d="' + k + '"]'), html, wire);
+  const icon = n => '<svg class="icon"><use href="#i-' + n + '"/></svg>';
+  const card = '<div class="st-card" data-card></div>';
+  let uidN = 0;
+  const uid = () => 'st' + (++uidN);
+  // steps: [{n, state: 'done' | 'cur' | '', link}]
+  const bar = steps => '<ol class="st-steps" aria-label="Steps">' + steps.map((s, i) => {
+    const inner = '<span class="st-n">' + (s.state === 'done' ? icon('check') : i + 1) + '</span><span class="st-l">' + s.n + '</span>';
+    return '<li' + (s.state === 'cur' ? ' aria-current="step"' : '') + '>' + (s.link
+      ? '<button type="button" class="st-step ' + s.state + '" data-step="' + i + '">' + inner + '</button>'
+      : '<span class="st-step ' + s.state + '">' + inner + '</span>') + '</li>';
+  }).join('') + '</ol>';
+  const q = text => '<p class="st-q" tabindex="-1">' + text + '</p>';
+  const radios = (name, key, opts, val) => '<div class="st-opts" role="radiogroup">' + opts.map(o => '<label class="st-radio"><input type="radio" name="' + name + '" data-k="' + key + '" value="' + o[0] + '"' + (o[0] === val ? ' checked' : '') + '><span>' + o[1] + '</span></label>').join('') + '</div>';
+  const label = (list, v) => (list.find(x => x[0] === v) || [, ''])[1];
+  const row = (k, v, extra) => '<div class="cs-row"><span class="k">' + k + '</span><span class="v">' + v + '</span>' + (extra || '') + '</div>';
+  const focusQ = box => { const h = box.querySelector('.st-q'); if (h) h.focus({ preventScroll: true }); };
+
+  /* 1. Can’t jump back */
+  const ADDR = [['home', 'Home · 12 Elm St'], ['work', 'Work · 80 Pier Ave']];
+  const CARDS = [['visa', 'Visa ending 4242'], ['mc', 'Mastercard ending 5100']];
+  const jumpWire = fixed => d => {
+    const box = d.querySelector('[data-card]'), name = uid();
+    const s = { step: 2, addr: 'home', card: 'visa', clicks: 0, edit: false, placed: false };
+    const draw = focus => {
+      const st = ['Address', 'Card', 'Review'].map((n, i) => ({ n, state: s.placed || (i < 2 && i !== s.step) ? 'done' : i === s.step ? 'cur' : '', link: fixed && !s.placed && i !== s.step }));
+      const edit = (k, step) => fixed ? '<button type="button" class="st-edit" data-step="' + step + '" aria-label="Edit ' + k + '">Edit</button>' : '';
+      let body;
+      if (s.placed) body = q('Order placed') + '<p class="cs-ok" role="status">Ships to ' + label(ADDR, s.addr) + '.</p>';
+      else if (s.step === 0) body = q('Where should we ship it?') + radios(name + 'a', 'addr', ADDR, s.addr);
+      else if (s.step === 1) body = q('How do you want to pay?') + radios(name + 'c', 'card', CARDS, s.card);
+      else body = q('Check your order') + '<div class="st-sum">' + row('Ship to', label(ADDR, s.addr), edit('address', 0)) + row('Pay with', label(CARDS, s.card), edit('card', 1)) + row('Total', '$86.00') + '</div>';
+      const nav = s.placed ? '' : '<div class="st-nav">' + (s.step ? '<button type="button" class="btn btn-secondary cs-sm" data-back>Back</button>' : '') +
+        '<button type="button" class="btn btn-primary cs-sm" data-next>' + (s.step === 2 ? 'Place order' : s.edit ? 'Back to review' : 'Next') + '</button></div>';
+      box.innerHTML = bar(st) + '<div class="st-body">' + body + '</div>' + nav + '<p class="st-count" data-clicks>Clicks: ' + s.clicks + '</p>';
+      if (focus) focusQ(box);
+    };
+    box.addEventListener('click', e => {
+      const b = e.target.closest('button'); if (!b) return;
+      s.clicks++;
+      if (b.hasAttribute('data-step')) { s.step = +b.dataset.step; s.edit = s.step < 2; }
+      else if (b.hasAttribute('data-back')) s.step--;
+      else if (b.hasAttribute('data-next')) { if (s.step === 2) s.placed = true; else s.step = s.edit ? 2 : s.step + 1; }
+      draw(true);
+    });
+    box.addEventListener('change', e => { s[e.target.dataset.k] = e.target.value; s.clicks++; box.querySelector('[data-clicks]').textContent = 'Clicks: ' + s.clicks; });
+    draw();
+  };
+  D('stepper-1b', card, jumpWire(false));
+  D('stepper-1f', card, jumpWire(true));
+
+  /* 2. Repeat users */
+  const CLIENTS = [['nw', 'Northwind Traders'], ['bb', 'Bluebird Cafe']];
+  const WORK = [['ret', 'Monthly retainer · $2,400'], ['spr', 'Design sprint · $6,000']];
+  const TPLS = [['nw', 'ret', 'Northwind · Monthly retainer'], ['bb', 'spr', 'Bluebird · Design sprint']];
+  const N2 = ['Welcome', 'Client', 'Work', 'Review'];
+  const repWire = fixed => d => {
+    const box = d.querySelector('[data-card]'), name = uid();
+    const s = { step: 0, client: null, work: null, clicks: 0, sent: false };
+    const draw = focus => {
+      let body;
+      if (s.sent) body = q('Invoice sent') + '<p class="cs-ok" role="status">Sent to ' + label(CLIENTS, s.client) + ': ' + label(WORK, s.work).replace(' · ', ', ') + '.</p>';
+      else if (s.step === 0) body = q('Welcome! Let’s create an invoice.') + '<p class="st-p">We’ll ask who it’s for and what you did. You can check it before it’s sent.</p>' +
+        (fixed ? '<div class="st-tpl"><p class="st-h">Or start from a template</p>' + TPLS.map((t, i) => '<div class="cs-row"><span class="st-grow">' + t[2] + '</span><button type="button" class="btn btn-secondary cs-sm" data-tpl="' + i + '">Use</button></div>').join('') + '</div>' : '');
+      else if (s.step === 1) body = q('Who is it for?') + radios(name + 'c', 'client', CLIENTS, s.client);
+      else if (s.step === 2) body = q('What did you do?') + radios(name + 'w', 'work', WORK, s.work);
+      else body = q('Check and send') + '<div class="st-sum">' + row('To', label(CLIENTS, s.client)) + row('For', label(WORK, s.work).split(' · ')[0]) + row('Total', label(WORK, s.work).split(' · ')[1]) + '</div>';
+      const need = s.step === 1 ? !s.client : s.step === 2 ? !s.work : false;
+      const nav = s.sent ? '' : '<div class="st-nav">' + (s.step ? '<button type="button" class="btn btn-secondary cs-sm" data-back>Back</button>' : '') +
+        '<button type="button" class="btn btn-primary cs-sm" data-next' + (need ? ' disabled' : '') + '>' + (s.step === 3 ? 'Send invoice' : 'Next') + '</button></div>';
+      box.innerHTML = '<p class="st-task">Task: invoice <b>Northwind</b> for the <b>monthly retainer</b>, like every month</p>' +
+        (s.sent ? '' : '<p class="st-count">Step ' + (s.step + 1) + ' of 4 · ' + N2[s.step] + '</p>') + '<div class="st-body">' + body + '</div>' + nav + '<p class="st-count" data-clicks>Clicks: ' + s.clicks + '</p>';
+      if (focus) focusQ(box);
+    };
+    box.addEventListener('click', e => {
+      const b = e.target.closest('button'); if (!b) return;
+      s.clicks++;
+      if (b.hasAttribute('data-tpl')) { const t = TPLS[+b.dataset.tpl]; s.client = t[0]; s.work = t[1]; s.step = 3; }
+      else if (b.hasAttribute('data-back')) s.step--;
+      else if (b.hasAttribute('data-next')) { if (s.step === 3) s.sent = true; else s.step++; }
+      draw(true);
+    });
+    box.addEventListener('change', e => {
+      s[e.target.dataset.k] = e.target.value; s.clicks++;
+      box.querySelector('[data-clicks]').textContent = 'Clicks: ' + s.clicks;
+      box.querySelector('[data-next]').disabled = false;
+    });
+    draw();
+  };
+  D('stepper-2b', card, repWire(false));
+  D('stepper-2f', card, repWire(true));
+
+  /* 3. Back loses answers */
+  const SIZES = ['4×6', '5×7', '8×10'], FINISH = ['Matte', 'Glossy'];
+  const chips = (key, list, val) => '<div class="st-chips">' + list.map(v => '<button type="button" class="st-chip" data-k="' + key + '" data-v="' + v + '" aria-pressed="' + (v === val) + '">' + v + '</button>').join('') + '</div>';
+  const printWire = keep => d => {
+    const box = d.querySelector('[data-card]');
+    const s = { step: 0, size: null, copies: 1, finish: null, done: false };
+    const draw = focus => {
+      const st = [{ n: 'Size', state: s.step === 0 && !s.done ? 'cur' : 'done' }, { n: 'Finish', state: s.done ? 'done' : s.step === 1 ? 'cur' : '' }];
+      let body, nav = '';
+      if (s.done) body = q('Order placed') + '<p class="cs-ok" role="status">' + s.copies + ' × ' + s.size + ' prints, ' + s.finish.toLowerCase() + '.</p>';
+      else if (s.step === 0) {
+        body = q('Pick a print size') + chips('size', SIZES, s.size) + '<label class="st-field">Copies<input class="input" type="number" min="1" max="99" data-copies value="' + s.copies + '"></label>';
+        nav = '<div class="st-nav"><button type="button" class="btn btn-primary cs-sm" data-next' + (s.size ? '' : ' disabled') + '>Next</button></div>';
+      } else {
+        body = q('Pick a finish') + chips('finish', FINISH, s.finish);
+        nav = '<div class="st-nav"><button type="button" class="btn btn-secondary cs-sm" data-back>Back</button><button type="button" class="btn btn-primary cs-sm" data-next' + (s.finish ? '' : ' disabled') + '>Order prints</button></div>';
+      }
+      box.innerHTML = bar(st) + '<div class="st-body">' + body + '</div>' + nav;
+      if (focus) focusQ(box);
+    };
+    box.addEventListener('click', e => {
+      const b = e.target.closest('button'); if (!b) return;
+      if (b.dataset.k) {
+        s[b.dataset.k] = b.dataset.v;
+        box.querySelectorAll('[data-k="' + b.dataset.k + '"]').forEach(c => c.setAttribute('aria-pressed', String(c === b)));
+        box.querySelector('[data-next]').disabled = false;
+        return;
+      }
+      if (b.hasAttribute('data-back')) { s.step = 0; if (!keep) { s.size = null; s.copies = 1; s.finish = null; } }
+      else if (b.hasAttribute('data-next')) { if (s.step === 0) s.step = 1; else s.done = true; }
+      draw(true);
+    });
+    box.addEventListener('input', e => { if (e.target.hasAttribute('data-copies')) s.copies = Math.max(1, parseInt(e.target.value, 10) || 1); });
+    draw();
+  };
+  D('stepper-3b', card, printWire(false));
+  D('stepper-3f', card, printWire(true));
+
+  /* 4. Too many steps */
+  const FL = [['am', 'Fri 08:40 · $129', 129], ['pm', 'Fri 14:15 · $149', 149]];
+  const PAX = [['1', 'Just me', 1], ['2', 'Me and one guest', 2]];
+  const SEAT = [['std', 'Standard seat · free', 0], ['leg', 'Extra legroom · $15', 15]];
+  const BAG = [['cab', '1 cabin bag · included', 0], ['chk', 'Add a checked bag · $30', 30]];
+  const MEAL = [['no', 'No meal', 0], ['hot', 'Hot meal · $12', 12]];
+  const LONG = [['Flight', 'Choose your flight to Amsterdam', 'fl', FL], ['Passengers', 'Who’s flying?', 'pax', PAX],
+    ['Contact', 'Where should we send the tickets?', 'ct', [['mail', 'Email · maya@mail.com', 0], ['sms', 'Text message', 0]]],
+    ['Seat', 'Pick a seat', 'seat', SEAT], ['Bags', 'Add bags', 'bag', BAG], ['Meals', 'Add a meal', 'meal', MEAL],
+    ['Insurance', 'Add travel insurance?', 'ins', [['no', 'No, thanks', 0], ['yes', 'Yes · $9', 9]]],
+    ['Extras', 'Anything else?', 'ext', [['no', 'No extras', 0], ['prio', 'Priority boarding · $8', 8]]], ['Pay', 'Pay', null, null]];
+  const price = (list, v) => list.find(x => x[0] === v)[2];
+  const total = s => price(FL, s.fl) * price(PAX, s.pax) + price(SEAT, s.seat) + price(BAG, s.bag) + price(MEAL, s.meal) + (s.ins === 'yes' ? 9 : 0) + (s.ext === 'prio' ? 8 : 0);
+  const sel = (key, name, list, val) => '<span>' + name + '</span><select class="select" data-k="' + key + '" aria-label="' + name + '">' + list.map(o => '<option value="' + o[0] + '"' + (o[0] === val ? ' selected' : '') + '>' + o[1] + '</option>').join('') + '</select>';
+  const longWire = fixed => d => {
+    const box = d.querySelector('[data-card]'), name = uid();
+    const s = { step: 0, nexts: 0, paid: false, open: false, fl: 'am', pax: '1', ct: 'mail', seat: 'std', bag: 'cab', meal: 'no', ins: 'no', ext: 'no' };
+    const last = fixed ? 2 : LONG.length - 1;
+    const extras = () => [label(SEAT, s.seat), label(BAG, s.bag), label(MEAL, s.meal)].map(x => x.split(' · ')[0]).join(' · ');
+    const draw = focus => {
+      let head, body;
+      if (fixed) head = bar(['Flight', 'Travelers', 'Pay'].map((n, i) => ({ n, state: s.paid || i < s.step ? 'done' : i === s.step ? 'cur' : '' })));
+      else head = '<div class="st-dots" aria-hidden="true">' + LONG.map((x, i) => '<i class="' + (s.paid || i < s.step ? 'd' : i === s.step ? 'c' : '') + '"></i>').join('') + '</div>' +
+        '<p class="st-count">Step ' + (s.step + 1) + ' of ' + LONG.length + ' · ' + LONG[s.step][0] + '</p>';
+      if (s.paid) body = q('Booked') + '<p class="cs-ok" role="status">Tickets sent to maya@mail.com.</p>';
+      else if (s.step === last) body = q('Pay') + '<div class="st-sum">' + row('Flight', 'Amsterdam, ' + label(FL, s.fl).split(' · ')[0]) + row('Extras', extras()) + row('Total', '$' + total(s)) + '</div>';
+      else if (!fixed) { const L = LONG[s.step]; body = q(L[1]) + radios(name + s.step, L[2], L[3], s[L[2]]); }
+      else if (s.step === 0) body = q('Choose your flight to Amsterdam') + radios(name + 'f', 'fl', FL, s.fl);
+      else body = q('Who’s flying?') + radios(name + 'p', 'pax', PAX, s.pax) +
+        '<div class="st-def"><span class="v">' + extras() + '</span><button type="button" class="st-edit" data-change aria-expanded="' + s.open + '">Change</button></div>' +
+        '<div class="st-extra" data-extra' + (s.open ? '' : ' hidden') + '>' + sel('seat', 'Seat', SEAT, s.seat) + sel('bag', 'Bags', BAG, s.bag) + sel('meal', 'Meal', MEAL, s.meal) + '</div>' +
+        '<p class="cs-meta">Tickets go to maya@mail.com.</p>';
+      const nav = s.paid ? '' : '<div class="st-nav">' + (s.step ? '<button type="button" class="btn btn-secondary cs-sm" data-back>Back</button>' : '') +
+        '<button type="button" class="btn btn-primary cs-sm" data-next>' + (s.step === last ? 'Pay $' + total(s) : 'Next') + '</button></div>';
+      box.innerHTML = head + '<div class="st-body">' + body + '</div>' + nav + '<p class="st-count">Next pressed: ' + s.nexts + '</p>';
+      if (focus) focusQ(box);
+    };
+    box.addEventListener('click', e => {
+      const b = e.target.closest('button'); if (!b) return;
+      if (b.hasAttribute('data-change')) { s.open = !s.open; b.setAttribute('aria-expanded', String(s.open)); box.querySelector('[data-extra]').hidden = !s.open; return; }
+      if (b.hasAttribute('data-back')) s.step--;
+      else if (b.hasAttribute('data-next')) { if (s.step === last) s.paid = true; else { s.step++; s.nexts++; } }
+      draw(true);
+    });
+    box.addEventListener('change', e => {
+      s[e.target.dataset.k] = e.target.value;
+      const v = box.querySelector('.st-def .v'); if (v) v.textContent = extras();
+    });
+    draw();
+  };
+  D('stepper-4b', card, longWire(false));
+  D('stepper-4f', card, longWire(true));
+
+  csInit(cs);
+})();
+
+  </script>

@@ -1,0 +1,92 @@
+<script>
+(() => {
+  const cs = document.currentScript.closest('.cs');
+  const D = (k, html, wire) => csDemo(cs.querySelector('[data-d="' + k + '"]'), html, wire);
+  const seg = (name, items, on, aria, cls) => '<div class="sg-seg' + (cls ? ' ' + cls : '') + '" role="radiogroup" aria-label="' + aria + '">' +
+    items.map((v, i) => '<label><input type="radio" name="' + name + '" value="' + i + '"' + (i === on ? ' checked' : '') + '><span>' + v + '</span></label>').join('') + '</div>';
+  const radio = (name, value, label, on) => '<label class="check"><input type="radio" name="' + name + '" value="' + value + '"' + (on ? ' checked' : '') + '><span>' + label + '</span></label>';
+
+  /* 1. Too many */
+  const SECTIONS = [
+    ['Account', [['Name', 'Maya Lee'], ['Email', 'maya@mail.com']]],
+    ['Notifications', [['Email updates', 'On'], ['Push alerts', 'Off']]],
+    ['Privacy &amp; security', [['Two-step sign-in', 'On'], ['Profile visible to', 'Friends']]],
+    ['Billing', [['Plan', 'Family'], ['Next bill', '1 Dec']]],
+    ['Connected apps', [['Calendar', 'Connected'], ['Photos', 'Not connected']]],
+    ['Accessibility', [['Text size', 'Default'], ['Reduce motion', 'Off']]]
+  ];
+  const pane = i => '<b class="sg-ph">' + SECTIONS[i][0] + '</b>' + SECTIONS[i][1].map(r => '<div class="cs-row"><span class="grow">' + r[0] + '</span><span class="cs-meta">' + r[1] + '</span></div>').join('');
+  const manyHtml = (key, fixed) => '<div class="app-frame" style="width:min(340px,100%)"><div class="app-bar"><span>Settings</span></div>' +
+    (fixed
+      ? '<div class="sg-tabs" role="tablist" aria-label="Settings sections">' + SECTIONS.map((s, i) => '<button class="tab" type="button" role="tab" aria-selected="' + (i === 0) + '" tabindex="' + (i === 0 ? 0 : -1) + '">' + s[0] + '</button>').join('') + '</div>'
+      : '<div class="sg-top">' + seg(key, SECTIONS.map(s => s[0]), 0, 'Settings sections', 'wrap') + '</div>') +
+    '<div class="app-body sg-pane" data-pane></div></div>';
+  const manyWire = fixed => d => {
+    const p = d.querySelector('[data-pane]');
+    const show = i => { p.innerHTML = pane(i); };
+    if (fixed) {
+      const strip = d.querySelector('.sg-tabs'), tabs = Array.from(strip.querySelectorAll('.tab'));
+      const sel = (i, focus) => {
+        tabs.forEach((t, k) => { t.setAttribute('aria-selected', String(k === i)); t.tabIndex = k === i ? 0 : -1; });
+        const t = tabs[i];
+        if (t.offsetLeft < strip.scrollLeft) strip.scrollLeft = t.offsetLeft - 12;
+        else if (t.offsetLeft + t.offsetWidth > strip.scrollLeft + strip.clientWidth) strip.scrollLeft = t.offsetLeft + t.offsetWidth - strip.clientWidth + 12;
+        if (focus) t.focus({ preventScroll: true });
+        show(i);
+      };
+      tabs.forEach((t, i) => {
+        t.addEventListener('click', () => sel(i));
+        t.addEventListener('keydown', e => {
+          const n = { ArrowRight: i + 1, ArrowLeft: i - 1, Home: 0, End: tabs.length - 1 }[e.key];
+          if (n === undefined) return;
+          e.preventDefault(); sel((n + tabs.length) % tabs.length, true);
+        });
+      });
+    } else {
+      d.querySelectorAll('input').forEach(r => r.addEventListener('change', () => show(+r.value)));
+    }
+    show(0);
+  };
+  D('segmented-1b', manyHtml('segmented-1b', false), manyWire(false));
+  D('segmented-1f', manyHtml('segmented-1f', true), manyWire(true));
+
+  /* 2. Saved later */
+  const WHO = ['Everyone', 'Friends', 'Only me'];
+  const saveHtml = (key, fixed) => '<div class="app-frame" style="width:min(340px,100%)">' +
+    '<div data-edit><div class="app-bar sg-bar"><button class="btn btn-ghost cs-sm" type="button" data-back>‹ Back</button><span>Privacy</span><span class="sg-sp"></span></div>' +
+    '<div class="app-body">' +
+    (fixed
+      ? '<fieldset class="sg-fs"><legend>Profile visible to</legend>' + WHO.map((w, i) => radio(key, i, w, i === 0)).join('') + '</fieldset>'
+      : '<div class="sg-field"><span class="sg-lab">Profile visible to</span>' + seg(key, WHO, 0, 'Profile visible to') + '</div>') +
+    '<div class="sg-acts"><button class="btn btn-primary" type="button" data-save>Save</button><span class="cs-ok" data-ok></span></div></div></div>' +
+    '<div data-list hidden><div class="app-bar"><span>Settings</span></div><div class="app-body"><div class="cs-row"><span class="grow">Profile visible to<br><b class="sg-val" data-val></b></span><button class="btn btn-secondary cs-sm" type="button" data-change>Change</button></div></div></div>' +
+    '</div>';
+  const saveWire = d => {
+    const edit = d.querySelector('[data-edit]'), list = d.querySelector('[data-list]'), ok = d.querySelector('[data-ok]'), val = d.querySelector('[data-val]');
+    const radios = Array.from(d.querySelectorAll('[data-edit] input[type=radio]'));
+    let saved = 0;
+    radios.forEach(r => r.addEventListener('change', () => { ok.textContent = ''; }));
+    d.querySelector('[data-save]').addEventListener('click', () => { saved = +radios.find(r => r.checked).value; ok.textContent = 'Saved.'; });
+    d.querySelector('[data-back]').addEventListener('click', () => { val.textContent = WHO[saved]; edit.hidden = true; list.hidden = false; d.querySelector('[data-change]').focus(); });
+    d.querySelector('[data-change]').addEventListener('click', () => { radios[saved].checked = true; ok.textContent = ''; list.hidden = true; edit.hidden = false; radios[saved].focus(); });
+  };
+  D('segmented-2b', saveHtml('segmented-2b', false), saveWire);
+  D('segmented-2f', saveHtml('segmented-2f', true), saveWire);
+
+  /* 3. Faint selection */
+  const RANGES = [['Day', '$1,240', [3, 5, 8, 6, 9, 7, 4, 2]], ['Week', '$8,630', [6, 8, 5, 9, 7, 4, 3]], ['Month', '$36,900', [7, 9, 6, 8, 5]]];
+  const faintHtml = (key, fixed) => '<div class="app-frame" style="width:min(360px,100%)"><div class="app-bar sg-bar2"><span>Sales</span>' + seg(key, RANGES.map(r => r[0]), 1, 'Range', fixed ? 'strong' : 'faint') + '</div>' +
+    '<div class="app-body"><div><span class="cs-meta">Total</span><div class="sg-total" data-total></div></div><div class="sg-chart" data-chart aria-hidden="true"></div></div></div>';
+  const faintWire = d => {
+    const total = d.querySelector('[data-total]'), chart = d.querySelector('[data-chart]');
+    const show = i => { total.textContent = RANGES[i][1]; chart.innerHTML = RANGES[i][2].map(h => '<i style="height:' + h * 10 + '%"></i>').join(''); };
+    d.querySelectorAll('input').forEach(r => r.addEventListener('change', () => show(+r.value)));
+    show(1);
+  };
+  D('segmented-3b', faintHtml('segmented-3b', false), faintWire);
+  D('segmented-3f', faintHtml('segmented-3f', true), faintWire);
+
+  csInit(cs);
+})();
+
+  </script>

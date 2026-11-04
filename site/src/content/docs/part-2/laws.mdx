@@ -1,0 +1,343 @@
+---
+title: "Lean on how people already behave"
+description: "Some designs feel right before anyone can say why."
+eyebrow: "Chapter 15"
+sidebar:
+  label: "How people behave"
+---
+
+import Raw from '../../../components/Raw.astro';
+import Learned from '../../../components/Learned.astro';
+import Runtime from '../../../components/Runtime.astro';
+import F0 from '../../../fragments/ch-laws/0.html?raw';
+import F1 from '../../../fragments/ch-laws/1.html?raw';
+import F2 from '../../../fragments/ch-laws/2.html?raw';
+import F3 from '../../../fragments/ch-laws/3.html?raw';
+import F4 from '../../../fragments/ch-laws/4.html?raw';
+import F5 from '../../../fragments/ch-laws/5.html?raw';
+import F6 from '../../../fragments/ch-laws/6.html?raw';
+import F7 from '../../../fragments/ch-laws/7.html?raw';
+import F8 from '../../../fragments/ch-laws/8.html?raw';
+import F9 from '../../../fragments/ch-laws/9.html?raw';
+import F10 from '../../../fragments/ch-laws/10.html?raw';
+import F11 from '../../../fragments/ch-laws/11.html?raw';
+import F12 from '../../../fragments/ch-laws/12.html?raw';
+import F13 from '../../../fragments/ch-laws/13.html?raw';
+import F14 from '../../../fragments/ch-laws/14.html?raw';
+import F15 from '../../../fragments/ch-laws/15.html?raw';
+import F16 from '../../../fragments/ch-laws/16.html?raw';
+import F17 from '../../../fragments/ch-laws/17.html?raw';
+import F18 from '../../../fragments/ch-laws/18.html?raw';
+import F19 from '../../../fragments/ch-laws/19.html?raw';
+import F20 from '../../../fragments/ch-laws/20.html?raw';
+import F21 from '../../../fragments/ch-laws/21.html?raw';
+import F22 from '../../../fragments/ch-laws/22.html?raw';
+import F23 from '../../../fragments/ch-laws/23.html?raw';
+
+<Runtime at="start" />
+
+<section class="dfg-chapter" id="ch-laws">
+
+Some designs feel right before anyone can say why. Often it’s because they lean on a few well-known observations about people: what they expect, how they point, how they choose. Jon Yablonski collected many of them at lawsofux.com. Treat them as rules of thumb: they explain a lot and help you spot problems, but they still need checking with real people.
+
+<article class="entry essay" id="pat-jakobs-law" data-entry data-name="Jakob’s law">
+
+<div class="entry-head">
+
+## Jakob’s law \{#pat-jakobs-law-h\}
+
+<Learned id="pat-jakobs-law" />
+
+</div>
+
+Jakob’s law says that people spend most of their time in other products, so they expect yours to work the same way. A search box has a magnifying glass, a link is underlined, and the cart sits in the top right corner. People use these without thinking and bring those habits to every new product they open.
+
+The law isn’t a ban on new ideas, but it tells you what one costs: every break from a convention is something people have to stop and learn. Sometimes that cost is worth paying, but it should be a choice.
+
+<Raw html={F0} />
+
+### Rules \{#pat-jakobs-law-rules\}
+
+Three rules help you work with people’s habits.
+
+<div class="cs essay-cs">
+
+<section class="rule" id="pat-jakobs-law-rule-1">
+
+#### 1. Use the control people already know \{#pat-jakobs-law-rule-1-h\}
+
+A new kind of control can look fresh in a design review, but in use people try what works everywhere else, and it doesn’t work here. Some never find out how it works. Use the familiar control, which assistive tech understands too, and change it only when testing shows a clear win for a real task.
+
+<Raw html={F1} />
+
+</section>
+
+<section class="rule" id="pat-jakobs-law-rule-2">
+
+#### 2. Adapt a convention to the task \{#pat-jakobs-law-rule-2-h\}
+
+A convention that is right in one kind of product can be wrong in another. In a document, Enter starts a new line, but in a table people expect Enter to save the cell and move down. Find out how people do this work in the tools they already use, and test the result with them.
+
+<Raw html={F2} />
+
+</section>
+
+<section class="rule" id="pat-jakobs-law-rule-3">
+
+#### 3. Teach a break where it happens \{#pat-jakobs-law-rule-3-h\}
+
+Sometimes a product has a good reason to break a convention. If nothing explains the change, people try the usual way, nothing happens, and they don’t know why. Show a short hint at the moment they try the usual way, and keep the familiar path working where you can.
+
+<Raw html={F3} />
+
+</section>
+
+<Raw html={F4} />
+
+</div>
+
+### In real products \{#pat-jakobs-law-products\}
+
+<Raw html={F5} />
+
+</article>
+
+<article class="entry essay" id="pat-fitts-law" data-entry data-name="Fitts’s law">
+
+<div class="entry-head">
+
+## Fitts’s law \{#pat-fitts-law-h\}
+
+<Learned id="pat-fitts-law" />
+
+</div>
+
+Fitts’s law says that the time it takes to hit a target depends on its size and its distance. A big target close to the pointer or the thumb is fast to hit. A small target far away is slow, and people miss it more often.
+
+It applies to every click and tap: buttons, links, menu items, close icons. The screen edges help too, because the pointer stops there and can’t overshoot. People with a tremor, on a touch screen or using zoom feel the difference most.
+
+<Raw html={F6} />
+
+### Rules \{#pat-fitts-law-rules\}
+
+Three rules put Fitts’s law to work.
+
+<div class="cs essay-cs">
+
+<section class="rule" id="pat-fitts-law-rule-1">
+
+#### 1. Make the hit area bigger than the icon \{#pat-fitts-law-rule-1-h\}
+
+Small icons look tidy, but a 12-pixel target is hard to hit, especially with a finger or a shaky hand, so people miss, try again, and sometimes hit the thing next to it. The icon can stay small if the clickable area around it is large, at least 24 by 24 pixels. See [Icon button](/part-3/actions/#icon-button).
+
+<Raw html={F7} />
+
+</section>
+
+<section class="rule" id="pat-fitts-law-rule-2">
+
+#### 2. Put the action near what it acts on \{#pat-fitts-law-rule-2-h\}
+
+When the button sits far from where people are working, every use costs a long move across the screen. On a wide screen that adds up, and on a phone it can mean a stretch of the thumb. Put the action next to the field, at the end of the form, or in a menu that opens at the pointer.
+
+<Raw html={F8} />
+
+</section>
+
+<section class="rule" id="pat-fitts-law-rule-3">
+
+#### 3. Keep risky actions away from common ones \{#pat-fitts-law-rule-3-h\}
+
+If Delete sits right next to Reply and both are the same size, a fast move lands on either one, and a small slip deletes something. Make the common action the big, easy target, move the risky one away or into a menu, and [let people undo it](/part-2/safety/#pat-undo).
+
+<Raw html={F9} />
+
+</section>
+
+<Raw html={F10} />
+
+</div>
+
+### In real products \{#pat-fitts-law-products\}
+
+<Raw html={F11} />
+
+</article>
+
+<article class="entry essay" id="pat-hicks-law" data-entry data-name="Hick’s law">
+
+<div class="entry-head">
+
+## Hick’s law \{#pat-hicks-law-h\}
+
+<Learned id="pat-hicks-law" />
+
+</div>
+
+Hick’s law says that the more choices people see, the longer it takes them to pick one, because each extra option is one more thing to read and compare. The effect is strongest when people don’t know the list yet and have to scan it.
+
+It doesn’t mean a product should offer less, but that it should show the likely choices first and keep the rest easy to reach. When people already know what they want, a search box beats any list. A screen reader reads options one at a time, so a long list costs even more there.
+
+<Raw html={F12} />
+
+### Rules \{#pat-hicks-law-rules\}
+
+Three rules put Hick’s law to work.
+
+<div class="cs essay-cs">
+
+<section class="rule" id="pat-hicks-law-rule-1">
+
+#### 1. Group long lists, or let people search \{#pat-hicks-law-rule-1-h\}
+
+In a long flat list, people read item after item until they find theirs, because nothing tells them where to look. Put recent choices first, group the rest, or add search that narrows the list as they type. See [Combobox](/part-3/inputs/#combobox).
+
+<Raw html={F13} />
+
+</section>
+
+<section class="rule" id="pat-hicks-law-rule-2">
+
+#### 2. Make the likely choice stand out \{#pat-hicks-law-rule-2-h\}
+
+When every option looks the same, people have to read and weigh all of them, even when one is the usual answer, which slows them down and leads to wrong picks. Make the likely choice stand out: a sensible default, one primary button, the most used item at the top.
+
+<Raw html={F14} />
+
+</section>
+
+<section class="rule" id="pat-hicks-law-rule-3">
+
+#### 3. Tuck rare options away, don’t delete them \{#pat-hicks-law-rule-3-h\}
+
+Cutting options makes a menu shorter, but someone needed each one, and those people now can’t do their task at all. Keep the common options in view, and put the rare ones behind “More” or in an advanced section.
+
+<Raw html={F15} />
+
+</section>
+
+<Raw html={F16} />
+
+</div>
+
+### In real products \{#pat-hicks-law-products\}
+
+<Raw html={F17} />
+
+</article>
+
+<article class="entry essay" id="pat-teslers-law" data-entry data-name="Tesler’s law">
+
+<div class="entry-head">
+
+## Tesler’s law \{#pat-teslers-law-h\}
+
+<Learned id="pat-teslers-law" />
+
+</div>
+
+Tesler’s law says every task holds some complexity that can’t be removed, only moved. When a photo app imports pictures, it still has to save them to a folder. Either people type the full folder path, or the app offers the folders they used recently. The design question is who carries that work: the system or the person.
+
+Usually the system should carry it, because the team solves the hard part once instead of every person solving it every time. But moved complexity always lands somewhere, such as an error message, the help pages or the next screen, so when you simplify a step, check where the work went.
+
+<Raw html={F18} />
+
+### Rules \{#pat-teslers-law-rules\}
+
+Three rules help you put complexity in the right place.
+
+<div class="cs essay-cs">
+
+<section class="rule" id="pat-teslers-law-rule-1">
+
+#### 1. Keep control within reach \{#pat-teslers-law-rule-1-h\}
+
+Some complexity exists because people need the choice. One fixed export size works for sharing a photo but not for a print shop that needs the full size, and if the app hides that choice, people can’t finish the task at all. Keep the simple path as the default, and put the full controls in an [advanced layer](/part-2/layers/#pat-layered-ui) one click away.
+
+<Raw html={F19} />
+
+</section>
+
+<section class="rule" id="pat-teslers-law-rule-2">
+
+#### 2. Solve it once in the product \{#pat-teslers-law-rule-2-h\}
+
+Some complexity lands on people only because the team didn’t handle it. A phone field that accepts one exact format makes every person reformat their number, often after an error. [Accept the formats people type](/part-2/errors/#pat-forgiving-input) and tidy them up in the product, so the team does the work once.
+
+<Raw html={F20} />
+
+</section>
+
+<section class="rule" id="pat-teslers-law-rule-3">
+
+#### 3. Test the simple version with real data \{#pat-teslers-law-rule-3-h\}
+
+A simple flow often works only for the sample data it was built with. Real photos have odd names, other file types and huge sizes, and when those fail, the complexity comes back as error messages people can’t act on. Before you call a flow simple, [try the messy cases](/part-1/craft/#good-edge-cases): large files, unusual names, hundreds of items.
+
+<Raw html={F21} />
+
+</section>
+
+<Raw html={F22} />
+
+</div>
+
+### In real products \{#pat-teslers-law-products\}
+
+<Raw html={F23} />
+
+</article>
+
+<aside class="in-short" id="ch-laws-in-short" aria-labelledby="ch-laws-in-short-h" data-pagefind-ignore>
+
+## In short \{#ch-laws-in-short-h\}
+
+<div class="is-grid">
+
+<div>
+
+<a class="is-e" href="#pat-jakobs-law">Jakob’s law</a>
+
+1. [Use the control people already know](#pat-jakobs-law-rule-1)
+2. [Adapt a convention to the task](#pat-jakobs-law-rule-2)
+3. [Teach a break where it happens](#pat-jakobs-law-rule-3)
+
+</div>
+
+<div>
+
+<a class="is-e" href="#pat-fitts-law">Fitts’s law</a>
+
+1. [Make the hit area bigger than the icon](#pat-fitts-law-rule-1)
+2. [Put the action near what it acts on](#pat-fitts-law-rule-2)
+3. [Keep risky actions away from common ones](#pat-fitts-law-rule-3)
+
+</div>
+
+<div>
+
+<a class="is-e" href="#pat-hicks-law">Hick’s law</a>
+
+1. [Group long lists, or let people search](#pat-hicks-law-rule-1)
+2. [Make the likely choice stand out](#pat-hicks-law-rule-2)
+3. [Tuck rare options away, don’t delete them](#pat-hicks-law-rule-3)
+
+</div>
+
+<div>
+
+<a class="is-e" href="#pat-teslers-law">Tesler’s law</a>
+
+1. [Keep control within reach](#pat-teslers-law-rule-1)
+2. [Solve it once in the product](#pat-teslers-law-rule-2)
+3. [Test the simple version with real data](#pat-teslers-law-rule-3)
+
+</div>
+
+</div>
+
+</aside>
+
+</section>
+
+<Runtime chapter="ch-laws" />

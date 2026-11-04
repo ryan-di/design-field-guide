@@ -1,0 +1,47 @@
+<div class="note comfy cw-wrap"><p>Notice that every level above the page is one click away, and that long paths get shortened in the middle.</p>
+      <div class="seg cw-seg" role="radiogroup" aria-label="Example">
+        <input type="radio" name="cw-breadcrumbs-w" id="cw-breadcrumbs-w-1" value="github" checked><label for="cw-breadcrumbs-w-1">GitHub</label>
+        <input type="radio" name="cw-breadcrumbs-w" id="cw-breadcrumbs-w-2" value="notion"><label for="cw-breadcrumbs-w-2">Notion</label>
+        <input type="radio" name="cw-breadcrumbs-w" id="cw-breadcrumbs-w-3" value="windows"><label for="cw-breadcrumbs-w-3">File Explorer</label>
+        <input type="radio" name="cw-breadcrumbs-w" id="cw-breadcrumbs-w-4" value="amazon"><label for="cw-breadcrumbs-w-4">Amazon</label>
+      </div>
+      <div class="cw" data-cw-view role="img" aria-label=""></div>
+      <p class="cw-cap" data-cw-cap aria-live="polite"></p>
+      
+      <script>
+      (() => {
+        const wrap = document.currentScript.closest('.cw-wrap');
+        const view = wrap.querySelector('[data-cw-view]'), cap = wrap.querySelector('[data-cw-cap]');
+        const ic = id => '<svg class="icon sm"><use href="#i-' + id + '"/></svg>';
+        const line = w => '<i class="cw-line" style="width:' + w + '%"></i>';
+        const sep = t => '<span class="cw-bcw-sep">' + t + '</span>';
+        const l = t => '<span class="cw-bcw-l">' + t + '</span>';
+        const chev = (on, drop) => on ? '<span class="cw-bcw-chev on">' + drop + '</span>' : '<span class="cw-bcw-chev"></span>';
+        const S = {
+          github: { html: '<div class="cw-bcw-app"><div class="cw-bcw-head">' + ic('book') + l('ana') + sep('/') + '<b>site</b></div>' +
+              '<div class="cw-bcw-trail">' + l('site') + sep('/') + l('src') + sep('/') + l('components') + sep('/') + '<span class="cw-bcw-cur">Button.vue</span></div>' +
+              '<div class="cw-bcw-code"><span>1</span>' + line(60) + '<span>2</span>' + line(85) + '<span>3</span>' + line(45) + '<span>4</span>' + line(70) + '</div></div>',
+            alt: 'A code page. Above the file, the path reads site / src / components / Button.vue. Every folder is a link; the file name is plain bold text.',
+            cap: 'GitHub: above a file, the path names the repository and each folder down to the file. Every folder is a link and the file name is plain text, so you can jump up any number of levels in one click.' },
+          notion: { html: '<div class="cw-bcw-app"><div class="cw-bcw-trail"><span class="cw-bcw-p">Wiki</span>' + sep('/') + '<span class="cw-bcw-more">…</span>' + sep('/') + '<span class="cw-bcw-p">Q3 plan</span>' + sep('/') + '<span class="cw-bcw-p cw-bcw-cur">Notes</span>' +
+              '<div class="cw-bcw-menu"><span>Projects</span><span>Roadmap</span></div></div>' +
+              '<div class="cw-bcw-doc under"><b>Notes</b>' + line(80) + line(92) + line(60) + line(75) + '</div></div>',
+            alt: 'A page with a path at the top: Wiki / … / Q3 plan / Notes. The … is open and lists the two hidden levels, Projects and Roadmap.',
+            cap: 'Notion: the top bar shows where a page lives. When the path gets deep, the middle levels fold into “…”, which lists them when clicked, so the first and last levels stay readable.' },
+          windows: { html: '<div class="cw-bcw-app"><div class="cw-bcw-addr">' + ic('folder') + chev() + '<span class="cw-bcw-seg">This PC</span>' + chev() + '<span class="cw-bcw-seg">Documents</span>' +
+              chev(true, '<span class="cw-bcw-drop"><span>' + ic('folder') + 'Invoices</span><span>' + ic('folder') + 'Photos</span><span class="cur">' + ic('folder') + 'Projects</span></span>') + '<span class="cw-bcw-seg cw-bcw-cur">Projects</span></div>' +
+              '<div class="cw-bcw-files"><span>' + ic('folder') + line(40) + '</span><span>' + ic('folder') + line(55) + '</span><span>' + ic('image') + line(35) + '</span><span>' + ic('image') + line(48) + '</span></div></div>',
+            alt: 'A file window. The address bar reads This PC, Documents, Projects, with an arrow after each. The arrow after Documents is open and lists its subfolders: Invoices, Photos and Projects.',
+            cap: 'Windows File Explorer: each folder in the address bar is a button, and the arrow after it lists that folder’s subfolders. You can jump up, or up and across, in one move.' },
+          amazon: { html: '<div class="cw-bcw-app"><div class="cw-bcw-head"><span class="cw-bcw-search">' + ic('search') + 'headphones</span></div>' +
+              '<div class="cw-bcw-trail sm">' + l('Electronics') + sep('›') + l('Headphones') + sep('›') + l('Over-ear') + '</div>' +
+              '<div class="cw-bcw-prod"><span class="thumb"></span><div><b>Wireless over-ear headphones</b>' + line(90) + line(70) + '<span class="cw-bcw-price">$89.99</span></div></div></div>',
+            alt: 'A product page. Above the product, a small trail of category links reads Electronics › Headphones › Over-ear.',
+            cap: 'Amazon: a product page shows its category trail, like Electronics › Headphones. It shows where the product sits in the store, not how you got there, and each level opens a broader category.' }
+        };
+        const render = k => { view.innerHTML = S[k].html; view.setAttribute('aria-label', 'Sketch: ' + S[k].alt); cap.textContent = S[k].cap; };
+        wrap.querySelectorAll('input[name="cw-breadcrumbs-w"]').forEach(r => r.addEventListener('change', () => render(r.value)));
+        render('github');
+      })();
+      </script>
+    </div>

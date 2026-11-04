@@ -1,0 +1,175 @@
+<script>
+(() => {
+  const cs = document.currentScript.closest('.cs');
+  const D = (k, html, wire) => csDemo(cs.querySelector('[data-d="' + k + '"]'), html, wire);
+  const P = '#eff-decision-matrix ';
+  const st = document.createElement('style');
+  st.textContent = [
+    '.dm-wrap{width:min(460px,100%);display:flex;flex-direction:column;gap:10px;text-align:left;color:var(--ui-text)}',
+    '.dm-prob{font-size:13.5px;line-height:1.45;margin:0}',
+    '.dm-prob b{font-weight:600}',
+    '.dm-out{font-size:13.5px;line-height:1.45;margin:0}',
+    '.dm-out:empty{display:none}',
+    '.dm-acts{display:flex;flex-wrap:wrap;gap:8px;align-items:center}',
+    '.dm-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:8px}',
+    '.dm-card{background:var(--ui-surface);border:1px solid var(--ui-border);border-radius:10px;padding:10px;display:flex;flex-direction:column;gap:6px;font-size:12.5px;line-height:1.4;min-width:0}',
+    '.dm-card b{font-size:13.5px}',
+    '.dm-card.on{border-color:var(--ui-sel);box-shadow:0 0 0 1px var(--ui-sel)}',
+    '.dm-sk{height:44px;border:1.5px dashed var(--ui-border);border-radius:7px;display:flex;flex-direction:column;justify-content:center;gap:5px;padding:0 8px}',
+    '.dm-sk i{display:block;height:6px;border-radius:3px;background:var(--ui-skel)}',
+    '.dm-pol{height:44px;border-radius:7px;background:linear-gradient(135deg,var(--ui-sel-soft),var(--ui-surface));border:1px solid var(--ui-sel);display:flex;align-items:center;gap:8px;padding:0 8px;font:600 11.5px var(--font-body)}',
+    '.dm-ring{width:26px;height:26px;border-radius:50%;background:conic-gradient(var(--ui-sel) 0 62%,var(--ui-hover) 62% 100%);display:grid;place-items:center;flex:none}',
+    '.dm-ring::after{content:"";width:16px;height:16px;border-radius:50%;background:var(--ui-surface)}',
+    '.dm-sc{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:4px;font-size:12px}',
+    '.dm-sc li{display:grid;grid-template-columns:auto minmax(0,1fr);gap:0 6px}',
+    '.dm-sc .n{font:600 12px var(--font-mono)}',
+    '.dm-sc .why{grid-column:2;color:var(--ui-muted)}',
+    '.dm-tot{font:600 12.5px var(--font-mono)}',
+    '.dm-w{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,110px) 28px;gap:8px;align-items:center;font-size:13px}',
+    '.dm-w input{width:100%;min-width:0;margin:0;accent-color:var(--ui-sel)}',
+    '.dm-row > span:first-child{min-width:0}',
+    '.dm-w output{font:600 12.5px var(--font-mono)}',
+    '.dm-src{grid-column:1/-1;font:500 11.5px var(--font-mono);color:var(--ui-muted);margin-top:-4px}',
+    '.dm-box{background:var(--ui-surface);border:1px solid var(--ui-border);border-radius:10px;padding:10px 12px;display:flex;flex-direction:column;gap:8px}',
+    '.dm-k{font:600 11px var(--font-mono);letter-spacing:.08em;text-transform:uppercase;color:var(--ui-muted)}',
+    '.dm-rows{display:flex;flex-direction:column;gap:6px}',
+    '.dm-row{display:flex;justify-content:space-between;gap:8px;align-items:center;font-size:13px;padding:7px 10px;border:1px solid var(--ui-border);border-radius:8px;background:var(--ui-surface)}',
+    '.dm-row .s{font:500 12px var(--font-mono);color:var(--ui-muted)}',
+    '.dm-row.lead{border-color:var(--ui-ok);box-shadow:0 0 0 1px var(--ui-ok)}',
+    '.dm-row .t{font:600 13px var(--font-mono);margin-left:auto}',
+    '.dm-tbl{width:100%;border-collapse:collapse;font-size:12.5px;background:var(--ui-surface);border:1px solid var(--ui-border);border-radius:10px;overflow:hidden}',
+    '.dm-tbl th,.dm-tbl td{padding:4px 8px;border-bottom:1px solid var(--ui-border);text-align:left}',
+    '.dm-tbl th{font:600 11.5px var(--font-mono);color:var(--ui-muted)}',
+    '.dm-tbl td.num,.dm-tbl th.num{text-align:right;font-family:var(--font-mono)}',
+    '.dm-tbl td.num{white-space:nowrap}',
+    '.dm-tbl th:last-child,.dm-tbl th:nth-child(2){white-space:nowrap}',
+    '.dm-tbl tr.prob td{background:var(--ui-sel-soft);font-weight:600}',
+    '.dm-tbl tr.tot td{font-weight:700;border-bottom:0}',
+    '.dm-tbl .win{color:var(--ui-ok)}',
+    '.dm-ok{color:var(--ui-ok)}',
+    '.dm-bad{color:var(--ui-danger)}'
+  ].map(r => P + r.replace(/,(?=[^{}]*\{)/g, ',' + P)).join('\n');
+  cs.appendChild(st);
+
+  const ic = (n, cls) => '<svg class="icon sm' + (cls ? ' ' + cls : '') + '" aria-hidden="true"><use href="#i-' + n + '"/></svg>';
+  const btn = (label, attr, kind) => '<button class="btn ' + (kind || 'btn-secondary') + ' cs-sm" type="button" ' + (attr || '') + '>' + label + '</button>';
+  const sk = '<span class="dm-sk" aria-hidden="true"><i style="width:80%"></i><i style="width:50%"></i></span>';
+
+  /* 1. Score, not polish */
+  const CRIT1 = [['Shows time left', 3], ['No interruption', 2], ['Low effort', 1]];
+  const DIR1 = [
+    { name: 'Progress ring on the icon', look: '<span class="dm-pol" aria-hidden="true"><span class="dm-ring"></span>Downloading · 62%</span>', s: [[1, 'Shows progress, not time.'], [5, 'Stays on the icon.'], [3, 'A new animated icon.']] },
+    { name: 'Time left in the list', look: sk, s: [[5, 'Says “about 4 min left”.'], [4, 'Only shows in the list.'], [4, 'One new line of text.']] },
+    { name: 'Notify when done', look: sk, s: [[2, 'Says when, not how long.'], [3, 'A notification at the end.'], [4, 'Uses the existing notices.']] }
+  ];
+  const tot1 = d => d.s.reduce((a, s, i) => a + s[0] * CRIT1[i][1], 0);
+  const prob1 = '<p class="dm-prob"><b>Problem:</b> people can’t tell how long a download will take. Brief: shows time left ×3, no interruption ×2, low effort ×1.</p>';
+  const c1Html = fixed => '<div class="dm-wrap">' + prob1 + '<div class="dm-grid">' + DIR1.map((d, i) => '<div class="dm-card" data-c="' + i + '">' + d.look + '<b>' + d.name + '</b>' +
+    (fixed ? '<ul class="dm-sc" data-sc hidden>' + d.s.map((s, k) => '<li><span class="n">' + s[0] + '×' + CRIT1[k][1] + '</span><span>' + CRIT1[k][0] + '</span><span class="why">' + s[1] + '</span></li>').join('') + '</ul><span class="dm-tot" data-sc hidden>Total ' + tot1(d) + '</span>' : '') +
+    btn('Pick', 'data-pick="' + i + '"' + (fixed ? ' disabled' : '')) + '</div>').join('') + '</div>' +
+    (fixed ? '<div class="dm-acts">' + btn('Score against the brief', 'data-score') + '</div>' : '') + '<p class="dm-out" role="status" data-out></p></div>';
+  const c1Wire = fixed => d => {
+    const out = d.querySelector('[data-out]');
+    const sc = d.querySelector('[data-score]');
+    if (sc) sc.addEventListener('click', () => {
+      sc.disabled = true;
+      d.querySelectorAll('[data-sc]').forEach(x => { x.hidden = false; });
+      d.querySelectorAll('[data-pick]').forEach(x => { x.disabled = false; });
+      out.textContent = 'Scored. The polished ring totals 16. The plain “time left” sketch totals 27.';
+    });
+    d.querySelectorAll('[data-pick]').forEach(b => b.addEventListener('click', () => {
+      const i = +b.dataset.pick;
+      d.querySelectorAll('.dm-card').forEach((c, k) => c.classList.toggle('on', k === i));
+      if (fixed) out.textContent = 'You picked ' + DIR1[i].name + ', total ' + tot1(DIR1[i]) + '. ' + (i === 1 ? 'It answers the problem: it shows time left.' : 'Its reasons show what it misses: time left.');
+      else out.textContent = i === 0 ? 'You picked the most finished one. It shows progress, not time left, which is the problem.' : 'You picked a sketch. Without scores, it’s hard to say why it beats the finished ring.';
+    }));
+  };
+  D('eff-decision-matrix-1b', c1Html(false), c1Wire(false));
+  D('eff-decision-matrix-1f', c1Html(true), c1Wire(true));
+
+  /* 2. Weights before scores */
+  const W = [['loss', 'Prevents loss', 3, 'From the brief: people lose files by mistake.'], ['int', 'No interruption', 2, 'From the brief: deleting many files should stay quick.'], ['eff', 'Low effort', 1, 'From the brief: small team this month.']];
+  const DIR2 = [['Confirm dialog', { loss: 4, int: 1, eff: 5 }], ['Trash with restore', { loss: 5, int: 5, eff: 2 }], ['Undo toast', { loss: 3, int: 5, eff: 4 }]];
+  const prob2 = '<p class="dm-prob"><b>Problem:</b> people delete files by mistake.</p>';
+  const sliders = src => W.map(w => '<label class="dm-w"><span>' + w[1] + '</span><input type="range" min="0" max="3" step="1" value="' + w[2] + '" data-w="' + w[0] + '"><output>×' + w[2] + '</output>' + (src ? '<span class="dm-src">' + w[3] + '</span>' : '') + '</label>').join('');
+  const rows2 = '<div class="dm-rows" data-rows>' + DIR2.map((r, i) => '<div class="dm-row" data-r="' + i + '"><span>' + r[0] + '<br><span class="s">' + W.map(w => w[1].split(' ').pop().replace(/^./, c => c.toUpperCase()) + ' ' + r[1][w[0]]).join(' · ') + '</span></span><span class="t" data-t></span></div>').join('') + '</div>';
+  const calc = d => {
+    const w = {}; d.querySelectorAll('[data-w]').forEach(x => { w[x.dataset.w] = +x.value; x.nextElementSibling.textContent = '×' + x.value; });
+    const t = DIR2.map(r => W.reduce((a, k) => a + r[1][k[0]] * w[k[0]], 0));
+    const max = Math.max(...t), leaders = t.map((v, i) => v === max ? i : -1).filter(i => i >= 0);
+    d.querySelectorAll('[data-r]').forEach((row, i) => { row.querySelector('[data-t]').textContent = t[i]; row.classList.toggle('lead', leaders.length === 1 && leaders[0] === i); });
+    return leaders;
+  };
+  D('eff-decision-matrix-2b', '<div class="dm-wrap">' + prob2 + rows2 + '<div class="dm-box"><span class="dm-k">Weights</span>' + sliders(false) + '</div><p class="dm-out" role="status" data-out></p></div>', d => {
+    const out = d.querySelector('[data-out]');
+    const upd = () => {
+      const l = calc(d);
+      out.textContent = l.length > 1 ? 'A tie. Keep going: you like Undo toast.' : l[0] === 2 ? 'Undo toast wins now. But only because you moved the weights after seeing the scores.' : DIR2[l[0]][0] + ' leads. You like Undo toast. Try moving the weights.';
+    };
+    d.querySelectorAll('[data-w]').forEach(x => x.addEventListener('input', upd));
+    upd();
+  });
+  D('eff-decision-matrix-2f', '<div class="dm-wrap">' + prob2 + '<div class="dm-box"><span class="dm-k">Weights, written from the brief</span>' + sliders(true) + '<div class="dm-acts">' + btn('Lock weights and show scores', 'data-lock') + '</div></div><div data-sc hidden>' + rows2 + '</div><p class="dm-out" role="status" data-out>Scores stay hidden until the weights are locked.</p></div>', d => {
+    const out = d.querySelector('[data-out]'), lock = d.querySelector('[data-lock]');
+    d.querySelectorAll('[data-w]').forEach(x => x.addEventListener('input', () => { x.nextElementSibling.textContent = '×' + x.value; }));
+    lock.addEventListener('click', () => {
+      lock.disabled = true; lock.textContent = 'Weights locked';
+      d.querySelectorAll('[data-w]').forEach(x => { x.disabled = true; });
+      d.querySelector('[data-sc]').hidden = false;
+      const l = calc(d);
+      out.textContent = (l.length > 1 ? 'A tie' : DIR2[l[0]][0] + ' wins') + ', with weights written down before anyone saw a score.';
+    });
+  });
+
+  /* 3. Total starts the decision */
+  const CRIT3 = [['Find a model fast', 3], ['Predictable order', 2], ['Low effort', 1]];
+  const S3 = [[5, 3], [2, 5], [4, 5]];
+  const prob3 = '<p class="dm-prob"><b>Problem:</b> people scroll a long model library to find the one they use most. Two ways to sort it.</p>';
+  const tbl3 = '<table class="dm-tbl"><thead><tr><th>Criterion</th><th class="num">Weight</th><th class="num">Recently used</th><th class="num">A to Z</th></tr></thead><tbody>' +
+    CRIT3.map((c, i) => '<tr><td>' + c[0] + '</td><td class="num" data-wt="' + i + '">×' + c[1] + '</td><td class="num">' + S3[i][0] + '</td><td class="num">' + S3[i][1] + '</td></tr>').join('') +
+    '<tr class="tot"><td>Total</td><td></td><td class="num" data-a></td><td class="num" data-b></td></tr></tbody></table>';
+  const totals3 = (w1) => { const w = [3, w1, 1]; return [0, 1].map(j => S3.reduce((a, s, i) => a + s[j] * w[i], 0)); };
+  const paint3 = (d, w1) => {
+    const [a, b] = totals3(w1);
+    d.querySelector('[data-wt="1"]').textContent = '×' + w1;
+    d.querySelector('[data-a]').textContent = a; d.querySelector('[data-b]').textContent = b;
+    d.querySelector('[data-a]').classList.toggle('win', a > b); d.querySelector('[data-b]').classList.toggle('win', b > a);
+    return [a, b];
+  };
+  D('eff-decision-matrix-3b', '<div class="dm-wrap">' + prob3 + tbl3 + '<div class="dm-acts"><span class="dm-tot">Winner: A to Z, 24 to 23</span>' + btn('Ship the winner', 'data-ship') + '</div><p class="dm-out" role="status" data-out></p></div>', d => {
+    paint3(d, 2);
+    d.querySelector('[data-ship]').addEventListener('click', e => {
+      e.target.disabled = true;
+      d.querySelector('[data-out]').innerHTML = ic('x', 'dm-bad') + ' Shipped A to Z. It won by one point, and nobody asked how close that was.';
+    });
+  });
+  D('eff-decision-matrix-3f', '<div class="dm-wrap">' + prob3 + tbl3 + '<div class="dm-acts">' + btn('Predictable ×1', 'aria-pressed="false" data-flip') + '</div><p class="dm-out" role="status" data-out>A to Z leads, 24 to 23.</p></div>', d => {
+    const out = d.querySelector('[data-out]'), f = d.querySelector('[data-flip]');
+    paint3(d, 2);
+    f.addEventListener('click', () => {
+      const on = f.getAttribute('aria-pressed') !== 'true';
+      f.setAttribute('aria-pressed', String(on));
+      const [a, b] = paint3(d, on ? 1 : 2);
+      out.textContent = on ? 'One step on one weight, and Recently used wins, ' + a + ' to ' + b + '. They’re close. The risk that matters most here is slow finding, so choose Recently used and say why.'
+        : 'A to Z leads, ' + b + ' to ' + a + '.';
+    });
+  });
+
+  /* 4. Three to five criteria */
+  const prob4 = '<p class="dm-prob"><b>Problem:</b> people can’t tell which workflow is running.</p>';
+  const MANY = [['Shows which workflow is running', 5, 2, 1], ['Looks modern', 3, 4], ['Uses brand colors', 3, 4], ['Works in dark mode', 4, 4], ['Low effort', 3, 4], ['Fits the system', 4, 4], ['Easy to test', 3, 4], ['Works on narrow screens', 3, 3], ['Has animation', 2, 3], ['Matches mobile', 3, 4], ['Few new strings', 4, 4], ['Accessible', 4, 4]];
+  const FEW = [['Shows which workflow is running', 5, 2, 3, 1], ['No extra clicks', 4, 4, 2], ['Works on narrow screens', 3, 3, 1], ['Low effort', 3, 4, 1]];
+  const tbl4 = (rows, weighted) => {
+    const w = r => weighted ? r[3] : 1;
+    const ta = rows.reduce((a, r) => a + r[1] * w(r), 0), tb = rows.reduce((a, r) => a + r[2] * w(r), 0);
+    return '<table class="dm-tbl"><thead><tr><th>Criterion</th><th class="num">Weight</th><th class="num">Badge on tab</th><th class="num">Status bar</th></tr></thead><tbody>' +
+      rows.map((r, i) => '<tr' + (i === 0 ? ' class="prob"' : '') + '><td>' + r[0] + '</td><td class="num">×' + w(r) + '</td><td class="num">' + r[1] + '</td><td class="num">' + r[2] + '</td></tr>').join('') +
+      '<tr class="tot"><td>Total</td><td></td><td class="num' + (ta > tb ? ' win' : '') + '">' + ta + '</td><td class="num' + (tb > ta ? ' win' : '') + '">' + tb + '</td></tr></tbody></table>';
+  };
+  D('eff-decision-matrix-4b', '<div class="dm-wrap">' + prob4 + tbl4(MANY, false) + '<p class="dm-out">' + ic('x', 'dm-bad') + ' Status bar wins, 44 to 41, while scoring 2 on the problem itself.</p></div>', () => {});
+  D('eff-decision-matrix-4f', '<div class="dm-wrap">' + prob4 + tbl4(FEW, true) + '<p class="dm-out">' + ic('check', 'dm-ok') + ' Badge on tab wins, 29 to 21, because the problem’s own criterion counts three times.</p></div>', () => {});
+
+  csInit(cs);
+})();
+
+</script>

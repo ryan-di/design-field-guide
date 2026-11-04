@@ -1,0 +1,156 @@
+<script>
+(() => {
+  const cs = document.currentScript.closest('.cs');
+  const run = () => {
+  const D = (k, html, wire) => csDemo(cs.querySelector('[data-d="' + k + '"]'), html, wire);
+  const css = document.createElement('style');
+  css.textContent = [
+    '.is-app{width:min(340px,100%);position:relative}',
+    '.is-form .cs-f .input{padding:7px 10px;font-size:14px}',
+    '.is-say{font-size:13.5px;min-height:20px;color:var(--ui-text)}',
+    '.is-say.ok{color:var(--ui-ok);font-weight:600}',
+    '.is-body{min-height:170px}',
+    '.is-body h6{margin:0;font:700 15px var(--font-body);color:var(--ui-text)}',
+    '.is-tabs{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));border-top:1px solid var(--ui-border);background:var(--ui-surface)}',
+    '.is-tab{all:unset;cursor:pointer;text-align:center;padding:9px 2px;font:600 12.5px var(--font-body);color:var(--ui-muted)}',
+    '.is-tab[aria-pressed="true"]{color:var(--ui-sel);box-shadow:inset 0 2px 0 var(--ui-sel)}',
+    '.is-tab:focus-visible{outline:2px solid var(--ui-sel);outline-offset:-2px}',
+    '.is-prod{display:grid;grid-template-columns:72px minmax(0,1fr);gap:12px;align-items:center}',
+    '.is-prod .thumb{width:72px}',
+    '.is-panel{position:absolute;top:46px;right:8px;width:min(220px,calc(100% - 16px));padding:10px;display:flex;flex-direction:column;gap:6px;z-index:2;font-size:13.5px}',
+    '.is-panel[hidden]{display:none}',
+    '.is-path{font:500 12.5px var(--font-mono);color:var(--ui-muted)}',
+    '.is-menu{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:2px}',
+    '.is-mi{all:unset;cursor:pointer;display:flex;justify-content:space-between;width:calc(100% - 20px);padding:8px 10px;border-radius:7px;font-size:14px}',
+    '.is-mi:hover{background:var(--ui-hover)}',
+    '.is-mi:focus-visible{outline:2px solid var(--ui-sel)}',
+    '.is-mi[data-branch]::after{content:"›";color:var(--ui-muted)}',
+    '.is-mi.found{background:var(--ui-sel-soft);font-weight:600}',
+    '.is-nav{display:flex;justify-content:space-between;align-items:center;gap:8px}',
+    '.is-test{display:flex;flex-direction:column;gap:5px;padding:8px 10px;border:1px dashed var(--ui-sel);border-radius:8px;font-size:12.5px;color:var(--ui-muted)}',
+    '.is-test b{color:var(--ui-text);font-size:13px}',
+    '.is-bar{display:grid;grid-template-columns:70px minmax(0,1fr) 22px;gap:6px;align-items:center}',
+    '.is-bar .bar{height:6px}'
+  ].map(r => '#pat-information-scent ' + r).join('\n');
+  cs.appendChild(css);
+  const frame = (title, body, right) => '<div class="app-frame is-app"><div class="app-bar"><span>' + title + '</span>' + (right || '') + '</div>' + body + '</div>';
+
+  /* 1. Internal words */
+  const FIELDS = [
+    ['payee', 'Beneficiary entity', 'Who are you paying?', '“Beneficiary entity” is who gets the money.'],
+    ['iban', 'IBAN / BBAN', 'Their account number (IBAN)', 'That’s their account number.'],
+    ['date', 'Value date', 'When should it arrive?', '“Value date” is the day the money moves.'],
+    ['msg', 'Remittance information', 'Message for them', ''],
+    ['fees', 'Charge bearer', 'Who pays the fees?', '“Charge bearer” is who pays the bank fees.']
+  ];
+  const payHtml = fixed => frame('Send money', '<div class="app-body is-form">' + FIELDS.map(f => '<label class="cs-f">' + (fixed ? f[2] : f[1]) + '<input class="input" type="text" autocomplete="off" data-f="' + f[0] + '"></label>').join('') +
+    '<p class="is-say" role="status" data-msg></p></div>');
+  const payWire = fixed => d => {
+    const say = d.querySelector('[data-msg]');
+    let tries = 0, done = false;
+    d.querySelectorAll('[data-f]').forEach(i => i.addEventListener('focus', () => {
+      if (done) return;
+      tries++;
+      const f = FIELDS.find(x => x[0] === i.dataset.f);
+      if (f[0] === 'msg') {
+        done = true; say.classList.add('ok');
+        say.textContent = 'Found it on try ' + tries + '. ' + (fixed ? 'The message shows on their statement.' : '“Remittance information” is the message on their statement.');
+        i.value = 'March rent';
+      } else say.textContent = 'Try ' + tries + ': not this one. ' + (fixed ? '' : f[3]);
+    }));
+  };
+  D('pat-information-scent-1b', payHtml(false), payWire(false));
+  D('pat-information-scent-1f', payHtml(true), payWire(true));
+
+  /* 2. Clever names */
+  const SECTIONS = [
+    ['Vibes', 'Home', 'Mixes picked for you', ['Morning mix', 'Focus', 'Road trip']],
+    ['The Vault', 'Library', 'Playlists you saved', ['Running', 'Dinner party', 'Sunday']],
+    ['Orbit', 'Downloads', 'On this phone · 42 songs, play offline', ['Golden hour', 'Coastline', 'Blue room']],
+    ['Spark', 'Discover', 'New releases this week', ['Mira Sol', 'Kite Club', 'Otto Bell']]
+  ];
+  const musicHtml = fixed => frame('Music', '<div class="app-body is-body" data-body></div><p class="is-say" role="status" data-msg style="padding:0 14px 8px"></p>' +
+    '<div class="is-tabs" role="group" aria-label="Sections">' + SECTIONS.map((s, i) => '<button type="button" class="is-tab" aria-pressed="' + !i + '" data-tab="' + i + '">' + (fixed ? s[1] : s[0]) + '</button>').join('') + '</div>');
+  const musicWire = fixed => d => {
+    const body = d.querySelector('[data-body]'), say = d.querySelector('[data-msg]');
+    let clicks = 0, done = false;
+    const draw = i => {
+      const s = SECTIONS[i];
+      body.innerHTML = '<h6>' + (fixed ? s[1] : s[0]) + '</h6><span class="cs-meta">' + s[2] + '</span>' + s[3].map(n => '<div class="cs-row"><span class="grow">' + n + '</span></div>').join('');
+    };
+    d.querySelectorAll('[data-tab]').forEach(b => b.addEventListener('click', () => {
+      const i = +b.dataset.tab;
+      d.querySelectorAll('[data-tab]').forEach(x => x.setAttribute('aria-pressed', String(x === b)));
+      draw(i);
+      if (done) return;
+      clicks++;
+      if (i === 2) { done = true; say.classList.add('ok'); say.textContent = 'Found in ' + clicks + (clicks === 1 ? ' click.' : ' clicks.'); }
+      else say.textContent = 'Clicks: ' + clicks;
+    }));
+    draw(0);
+  };
+  D('pat-information-scent-2b', musicHtml(false), musicWire(false));
+  D('pat-information-scent-2f', musicHtml(true), musicWire(true));
+
+  /* 3. Two names for one thing */
+  const shopHtml = fixed => frame('Home shop', '<div class="app-body"><div class="is-prod"><span class="thumb c"></span><span><b>Desk lamp</b><br><span class="cs-meta">€39 · Oak and brass</span></span></div>' +
+    '<button class="btn btn-primary cs-sm" type="button" data-add style="align-self:flex-start">Add to basket</button><div class="line" style="width:80%"></div><div class="line" style="width:60%"></div></div>' +
+    '<div class="is-panel surface" data-panel hidden><b>Your ' + (fixed ? 'basket' : 'bag') + '</b><span data-items class="cs-meta">Nothing here yet.</span><button class="btn btn-secondary cs-sm" type="button">' + (fixed ? 'Check out basket' : 'Check out cart') + '</button></div>',
+    '<button class="btn btn-ghost cs-sm" type="button" aria-expanded="false" data-open>' + (fixed ? 'Basket' : 'Cart') + ' (<span data-n>0</span>)</button>');
+  const shopWire = fixed => (d, t) => {
+    const btn = d.querySelector('[data-open]'), panel = d.querySelector('[data-panel]');
+    let n = 0;
+    d.querySelector('[data-add]').addEventListener('click', () => {
+      n++; d.querySelector('[data-n]').textContent = n;
+      d.querySelector('[data-items]').textContent = 'Desk lamp × ' + n + ' · €' + 39 * n;
+      csToast(d, t, 'Added to your ' + (fixed ? 'basket' : 'bag'), { ms: 3000, replace: true });
+    });
+    btn.addEventListener('click', () => { panel.hidden = !panel.hidden; btn.setAttribute('aria-expanded', String(!panel.hidden)); });
+    panel.addEventListener('keydown', e => { if (e.key === 'Escape') { panel.hidden = true; btn.setAttribute('aria-expanded', 'false'); btn.focus(); } });
+  };
+  D('pat-information-scent-3b', shopHtml(false), shopWire(false));
+  D('pat-information-scent-3f', shopHtml(true), shopWire(true));
+
+  /* 4. Right label, wrong parent */
+  const L = (label, goal) => ({ label, goal: !!goal });
+  const TREES = {
+    b: { label: 'Menu', kids: [{ label: 'Trips', kids: [L('Upcoming'), L('Past trips')] }, { label: 'Payments', kids: [L('Cards'), L('Passport details', 1), L('Invoices')] },
+      { label: 'Account', kids: [L('Profile'), L('Password'), L('Notifications')] }, { label: 'Help', kids: [L('Contact us'), L('Questions')] }] },
+    f: { label: 'Menu', kids: [{ label: 'Trips', kids: [L('Upcoming'), L('Past trips')] }, { label: 'Payments', kids: [L('Cards'), L('Invoices')] },
+      { label: 'Account', kids: [L('Profile'), L('Passport details', 1), L('Password'), L('Notifications')] }, { label: 'Help', kids: [L('Contact us'), L('Questions')] }] }
+  };
+  const bars = '<div class="is-test"><b>Tree test, 10 people: “Where would you add your passport number?”</b>' +
+    [['Account', 8], ['Trips', 1], ['Payments', 1]].map(r => '<span class="is-bar"><span>' + r[0] + '</span><span class="bar"><span style="width:' + r[1] * 10 + '%"></span></span><span>' + r[1] + '</span></span>').join('') + '</div>';
+  const treeHtml = fixed => frame('Travel', '<div class="app-body">' + (fixed ? bars : '') + '<div class="is-nav"><button class="btn btn-ghost cs-sm" type="button" data-back disabled>Back</button><span class="is-path" data-path></span></div><ul class="is-menu" data-menu></ul><p class="is-say" role="status" data-msg></p></div>');
+  const treeWire = fixed => d => {
+    const tree = TREES[fixed ? 'f' : 'b'], menu = d.querySelector('[data-menu]'), back = d.querySelector('[data-back]'), path = d.querySelector('[data-path]'), say = d.querySelector('[data-msg]');
+    let trail = [], clicks = 0, done = false;
+    const cur = () => trail.reduce((n, i) => n.kids[i], tree);
+    const draw = fi => {
+      const n = cur();
+      menu.innerHTML = n.kids.map((k, i) => '<li><button type="button" class="is-mi" data-i="' + i + '"' + (k.kids ? ' data-branch' : '') + '>' + k.label + '</button></li>').join('');
+      path.textContent = ['Menu'].concat(trail.reduce((a, i) => { const p = a.node.kids[i]; a.out.push(p.label); a.node = p; return a; }, { node: tree, out: [] }).out).join(' › ');
+      back.disabled = !trail.length;
+      menu.querySelectorAll('[data-i]').forEach(b => b.addEventListener('click', () => pick(+b.dataset.i, b)));
+      if (fi != null) { const b = menu.querySelectorAll('[data-i]')[fi]; if (b) b.focus({ preventScroll: true }); }
+    };
+    const count = () => { if (!done) clicks++; };
+    const pick = (i, b) => {
+      const k = cur().kids[i];
+      count();
+      if (k.kids) { trail.push(i); say.textContent = done ? '' : 'Clicks: ' + clicks; say.classList.remove('ok'); draw(0); return; }
+      if (k.goal) { if (!done) { done = true; say.classList.add('ok'); say.textContent = 'Found it in ' + clicks + ' clicks.'; } b.classList.add('found'); }
+      else if (!done) say.textContent = '“' + k.label + '” isn’t it. Clicks: ' + clicks;
+    };
+    back.addEventListener('click', () => { count(); const i = trail.pop(); if (!done) { say.textContent = 'Clicks: ' + clicks; say.classList.remove('ok'); } draw(i); });
+    draw();
+  };
+  D('pat-information-scent-4b', treeHtml(false), treeWire(false));
+  D('pat-information-scent-4f', treeHtml(true), treeWire(true));
+
+  csInit(cs);
+  };
+  if (window.csDemo) run(); else document.addEventListener('DOMContentLoaded', run);
+})();
+
+</script>

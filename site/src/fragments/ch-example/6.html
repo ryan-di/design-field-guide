@@ -1,0 +1,52 @@
+<div class="note comfy cw-wrap"><p>Notice that each story moves through clear stages, and each stage leaves something others can read or try.</p>
+      <div class="seg cw-seg" role="radiogroup" aria-label="Example">
+        <input type="radio" name="cw-eff-worked-example-w" id="cw-eff-worked-example-w-1" value="gmail" checked><label for="cw-eff-worked-example-w-1">Gmail</label>
+        <input type="radio" name="cw-eff-worked-example-w" id="cw-eff-worked-example-w-2" value="basecamp"><label for="cw-eff-worked-example-w-2">Basecamp</label>
+        <input type="radio" name="cw-eff-worked-example-w" id="cw-eff-worked-example-w-3" value="amazon"><label for="cw-eff-worked-example-w-3">Amazon</label>
+        <input type="radio" name="cw-eff-worked-example-w" id="cw-eff-worked-example-w-4" value="gv"><label for="cw-eff-worked-example-w-4">GV</label>
+      </div>
+      <div class="cw" data-cw-view role="img" aria-label=""></div>
+      <p class="cw-cap" data-cw-cap aria-live="polite"></p>
+      
+      <script>
+      (() => {
+        const wrap = document.currentScript.closest('.cw-wrap');
+        const view = wrap.querySelector('[data-cw-view]'), cap = wrap.querySelector('[data-cw-cap]');
+        const line = w => '<i class="cw-line" style="width:' + w + '%"></i>';
+        const strip = (a, on) => '<ol class="cw-ewe-strip">' + a.map((s, i) => '<li class="cw-ewe-st' + (i === on ? ' on' : '') + '"><b>' + (i + 1) + ' ' + s[0] + '</b>' + s[1] + '</li>').join('') + '</ol>';
+        const doc = (label, body) => '<div class="cw-ewe-doc"><span class="cw-ewe-lbl">' + label + '</span>' + body + '</div>';
+        const g = (cls, t) => '<span class="' + cls + '">' + (t || '') + '</span>';
+        const S = {
+          gmail: { html: strip([['Problem', 'Sent too soon'], ['Try', 'Opt-in Labs feature'], ['Learn', 'Years of real use'], ['Ship', 'A standard setting']], 3) +
+              doc('What shipped', '<div class="cw-ewe-gm"><div class="cw-ewe-toast">Message sent <u>Undo</u></div>' +
+              '<div class="cw-ewe-set"><span>Undo send</span><span class="cw-ewe-sel">Wait 10 seconds <i>▾</i></span></div></div>'),
+            alt: 'Four stages: problem, sent too soon; try, an opt-in Labs feature; learn, years of real use; ship, a standard setting. Below, the shipped result: a Message sent toast with Undo, and a setting to choose how long to wait.',
+            cap: 'Gmail: Undo send began as an opt-in Labs experiment for people who hit Send too soon. People could try it for years before it became a standard setting, where you choose how long to wait before the message goes.' },
+          basecamp: { html: strip([['Shape', 'Write a pitch'], ['Bet', 'Pick pitches'], ['Build', 'Six-week cycle'], ['Track', 'Hill chart'], ['Cool-down', 'Fix and explore']], 0) +
+              doc('Pitch', '<div class="cw-ewe-pitch"><dl class="cw-ewe-dl"><dt>Problem</dt><dd>' + line(90) + '</dd><dt>Appetite</dt><dd>Six weeks</dd>' +
+              '<dt>Solution</dt><dd>Rough sketch</dd><dt>Rabbit holes</dt><dd>' + line(70) + '</dd><dt>No-gos</dt><dd>' + line(55) + '</dd></dl>' +
+              '<div class="cw-ewe-hill"><svg viewBox="0 0 150 62" aria-hidden="true"><line x1="75" y1="8" x2="75" y2="60"/><path d="M4 58 C 40 58, 52 8, 75 8 S 110 58, 146 58"/>' +
+              '<circle cx="42" cy="38" r="5"/><circle cx="68" cy="10" r="5"/><circle class="d" cx="112" cy="40" r="5"/></svg>' +
+              '<span class="cw-ewe-hl"><span>Figuring out</span><span>Getting done</span></span></div></div>'),
+            alt: 'Five stages: shape, write a pitch; bet, pick pitches; build, a six-week cycle; track, a hill chart; cool-down, fix and explore. Below, a pitch with problem, appetite of six weeks, a rough solution, rabbit holes and no-gos, next to a hill chart with dots on the uphill and downhill sides.',
+            cap: 'Basecamp: in Shape Up, each stage leaves something others can read: the written pitch, the bet leaders place on it, and the hill chart the team updates while it builds.' },
+          amazon: { html: strip([['Write', 'Press release'], ['Answer', 'FAQ'], ['Review', 'Read it together'], ['Build', 'Once it holds up']], 0) +
+              doc('Press release, written first', '<div class="cw-ewe-pr"><b>Headline: what the customer gets</b>' + line(85) + line(95) + line(60) +
+              '<div class="cw-ewe-quote"><span>Customer quote</span>' + line(80) + '</div>' +
+              '<div class="cw-ewe-faq"><span><em>Q</em>' + line(70) + '</span><span><em>Q</em>' + line(55) + '</span></div></div>'),
+            alt: 'Four stages: write a press release, answer an FAQ, review it by reading together, and build once it holds up. Below, a press release with a headline about what the customer gets, a customer quote and an FAQ.',
+            cap: 'Amazon: in “working backwards”, the press release and FAQ are the first thing the team reads and revises together, before anything is built.' },
+          gv: { html: strip([['Mon', 'Map, pick a target'], ['Tue', 'Sketch solutions'], ['Wed', 'Vote, storyboard'], ['Thu', 'Realistic prototype'], ['Fri', 'Five interviews']], 4) +
+              doc('Friday notes', '<div class="cw-ewe-grid">' + g('h') + g('h', 'Start') + g('h', 'Pick') + g('h', 'Pay') +
+              g('r', 'Person 1') + g('y', '+') + g('n', '−') + g('y', '+') + g('r', 'Person 2') + g('y', '+') + g('n', '−') + g('e') +
+              g('r', 'Person 3') + g('y', '+') + g('n', '−') + g('y', '+') + g('r', 'Person 4') + g('e') + g('y', '+') + g('y', '+') +
+              g('r', 'Person 5') + g('y', '+') + g('n', '−') + g('y', '+') + '</div><span class="cw-ewe-note">Pattern: four of five stuck at “Pick”.</span>'),
+            alt: 'Five days: Monday, map and pick a target; Tuesday, sketch solutions; Wednesday, vote and storyboard; Thursday, a realistic prototype; Friday, five interviews. Below, a grid of five people against three steps, start, pick and pay, with plus and minus marks. Four of five got stuck at pick.',
+            cap: 'GV: each day of the design sprint leaves something the team can see: a map and a target on Monday, sketches on Tuesday, a storyboard on Wednesday, a prototype on Thursday and interview notes on Friday.' }
+        };
+        const render = k => { view.innerHTML = S[k].html; view.setAttribute('aria-label', 'Sketch: ' + S[k].alt); cap.textContent = S[k].cap; };
+        wrap.querySelectorAll('input[name="cw-eff-worked-example-w"]').forEach(r => r.addEventListener('change', () => render(r.value)));
+        render('gmail');
+      })();
+      </script>
+    </div>

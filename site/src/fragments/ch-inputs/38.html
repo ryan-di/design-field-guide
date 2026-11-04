@@ -1,0 +1,53 @@
+<div class="note comfy cw-wrap"><p>Notice how each product fits the control to the choice: a filter for long lists, previews when looks matter, chips for several picks, and an open list when people compare.</p>
+  <div class="seg cw-seg" role="radiogroup" aria-label="Example">
+    <input type="radio" name="cw-combobox-w" id="cw-combobox-w-1" value="linear" checked><label for="cw-combobox-w-1">Linear</label>
+    <input type="radio" name="cw-combobox-w" id="cw-combobox-w-2" value="docs"><label for="cw-combobox-w-2">Google Docs</label>
+    <input type="radio" name="cw-combobox-w" id="cw-combobox-w-3" value="gmail"><label for="cw-combobox-w-3">Gmail</label>
+    <input type="radio" name="cw-combobox-w" id="cw-combobox-w-4" value="uber"><label for="cw-combobox-w-4">Uber</label>
+  </div>
+  <div class="cw" data-cw-view role="img" aria-label=""></div>
+  <p class="cw-cap" data-cw-cap aria-live="polite"></p>
+  
+  <script>
+  (() => {
+    const wrap = document.currentScript.closest('.cw-wrap');
+    const view = wrap.querySelector('[data-cw-view]'), cap = wrap.querySelector('[data-cw-cap]');
+    const ic = id => '<svg class="icon sm"><use href="#i-' + id + '"/></svg>';
+    const caret = '<i class="cw-wcb-caret"></i>';
+    const st = k => '<i class="cw-wcb-st' + (k ? ' ' + k : '') + '"></i>';
+    const it = (inner, on, small) => '<span class="cw-wcb-it' + (on ? ' on' : '') + '">' + inner + (small ? '<small>' + small + '</small>' : '') + '</span>';
+    const h = t => '<span class="cw-wcb-h">' + t + '</span>';
+    const font = (name, stack, on) => it('<span style="font-family:' + stack + ';font-size:13px">' + name + '</span>', on);
+    const chip = (i, cls, name) => '<span class="cw-wcb-chip"><i class="cw-wcb-av' + cls + '">' + i + '</i>' + name + ic('x') + '</span>';
+    const person = (i, cls, name, mail, on) => it('<i class="cw-wcb-av' + cls + '">' + i + '</i><span class="cw-wcb-two">' + name + '<small>' + mail + '</small></span>', on);
+    const ride = (car, name, eta, price, on) => '<div class="cw-wcb-ride' + (on ? ' on' : '') + '"><i class="cw-wcb-car' + car + '"></i><span class="cw-wcb-two"><b>' + name + '</b><small>' + eta + '</small></span><em>' + price + '</em></div>';
+    const S = {
+      linear: { html: '<div class="cw-wcb-pane"><b>Export fails on large files</b>'
+          + '<div class="cw-wcb-row"><span class="cw-wcb-pill on">' + st('dash') + 'Backlog ▾</span><span class="cw-wcb-pill">No priority</span><span class="cw-wcb-pill"><i class="cw-wcb-av">A</i></span></div>'
+          + '<div class="cw-wcb-pop"><span class="cw-wcb-in">' + ic('search') + '<span>do' + caret + '</span></span>'
+          + it(st() + '<span>To<b>do</b></span>', true) + it(st('done') + '<span><b>Do</b>ne</span>') + '</div></div>',
+        alt: 'An issue with a status pill open. A small menu has a filter field with the letters do typed, and the list is narrowed to Todo and Done, with Todo highlighted.',
+        cap: 'Linear: fields like status and assignee open a short list with a filter on top. Type a few letters and press Enter, so a change never needs the mouse.' },
+      docs: { html: '<div class="cw-wcb-pane"><div class="cw-wcb-row"><span class="cw-wcb-pill on">Arial ▾</span><span class="cw-wcb-pill">11</span><span class="cw-wcb-pill"><b>B</b></span><span class="cw-wcb-pill"><i>I</i></span></div>'
+          + '<div class="cw-wcb-pop">' + h('Recent') + font('Georgia', 'Georgia,serif') + font('Courier New', '\'Courier New\',monospace')
+          + '<span class="cw-wcb-hr"></span>' + font('Arial', 'Arial,sans-serif', true) + font('Times New Roman', '\'Times New Roman\',serif') + font('Trebuchet MS', '\'Trebuchet MS\',sans-serif') + font('Verdana', 'Verdana,sans-serif') + '</div></div>',
+        alt: 'A toolbar with the font box open. Each font name in the menu is written in its own typeface. Two recent fonts sit above a divider, then the full list.',
+        cap: 'Google Docs: the font menu writes each font name in its own typeface and keeps recently used fonts at the top.' },
+      gmail: { html: '<div class="cw-wcb-pane"><b>New message</b>'
+          + '<div class="cw-wcb-to"><span class="cw-wcb-lab">To</span>' + chip('A', '', 'Ana Ruiz') + chip('B', ' b', 'Ben Ito') + '<span>ma' + caret + '</span></div>'
+          + '<div class="cw-wcb-pop">' + person('M', ' c', 'Maya Chen', 'maya@example.com', true) + person('M', ' b', 'Mark Lee', 'mark@example.com') + '</div>'
+          + '<div class="cw-wcb-row"><span class="cw-wcb-lab">Subject</span><i class="cw-line" style="flex:1"></i></div></div>',
+        alt: 'A new message. The To field holds two recipients as chips with remove buttons, and the letters ma typed after them show two suggested contacts.',
+        cap: 'Gmail: each recipient in the To field becomes a chip with its own remove button, and typing suggests contacts.' },
+      uber: { html: '<div class="cw-wcb-pane"><i class="cw-wcb-grab"></i>'
+          + ride('', 'Standard', '3 min away', '$12.40', true) + ride(' b', 'Comfort', '5 min away', '$15.10') + ride(' c', 'Large', '6 min away', '$19.80')
+          + '<span class="btn btn-primary cw-wcb-btn">Choose Standard</span></div>',
+        alt: 'A bottom sheet lists three ride types, each with a car picture, arrival time and price. Standard is selected, and a wide button says Choose Standard.',
+        cap: 'Uber: ride types are an open list, not a dropdown, so every price and arrival time stays in view.' }
+    };
+    const render = k => { view.innerHTML = S[k].html; view.setAttribute('aria-label', 'Sketch: ' + S[k].alt); cap.textContent = S[k].cap; };
+    wrap.querySelectorAll('input[name="cw-combobox-w"]').forEach(r => r.addEventListener('change', () => render(r.value)));
+    render('linear');
+  })();
+  </script>
+</div>

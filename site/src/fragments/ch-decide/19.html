@@ -1,0 +1,163 @@
+<script>
+(() => {
+  const cs = document.currentScript.closest('.cs');
+  const D = (k, html, wire) => csDemo(cs.querySelector('[data-d="' + k + '"]'), html, wire);
+  const st = document.createElement('style');
+  st.textContent = [
+    '#eff-cut-combine p.cs-meta{font:500 13.5px/1.45 var(--font-body)}',
+    '#eff-cut-combine .cc-col{width:min(380px,100%);display:flex;flex-direction:column;gap:10px;text-align:left}',
+    '#eff-cut-combine .cc-pick{display:flex;flex-wrap:wrap;gap:6px}',
+    '#eff-cut-combine .cc-pick button[aria-pressed="true"]{background:var(--ui-primary);color:var(--ui-on-primary)}',
+    '#eff-cut-combine .cc-part{border:0;margin:0;padding:0;display:flex;flex-direction:column;gap:5px}',
+    '#eff-cut-combine .cc-part legend{font:600 12px var(--font-mono);color:var(--ui-muted);margin-bottom:4px;padding:0}',
+    '#eff-cut-combine .cc-opt{all:unset;box-sizing:border-box;cursor:pointer;display:flex;align-items:center;gap:8px;padding:6px 9px;border:1.5px solid var(--ui-border);border-radius:8px;background:var(--ui-surface);font-size:13.5px;line-height:1.3;color:var(--ui-text)}',
+    '#eff-cut-combine .cc-opt[aria-pressed="true"]{border-color:var(--ui-sel);background:var(--ui-sel-soft)}',
+    '#eff-cut-combine .cc-opt:focus-visible{outline:3px solid var(--ui-sel);outline-offset:1px}',
+    '#eff-cut-combine .cc-src{flex:none;display:inline-grid;place-items:center;width:20px;height:20px;border-radius:5px;background:var(--ui-hover);font:700 11.5px var(--font-mono)}',
+    '#eff-cut-combine .cc-opt .grow{flex:1;min-width:0}',
+    '#eff-cut-combine .cc-q{flex:none;font:600 11.5px var(--font-mono)}',
+    '#eff-cut-combine .cc-q.s{color:var(--ui-ok)}',
+    '#eff-cut-combine .cc-q.w{color:var(--ui-muted)}',
+    '#eff-cut-combine .cc-res{padding:10px 12px;display:flex;flex-direction:column;gap:2px;width:100%}',
+    '#eff-cut-combine .cc-res .cs-row .grow{white-space:normal}',
+    '#eff-cut-combine .cc-sum{font-weight:600;font-size:14px}',
+    '#eff-cut-combine .cc-prob{font-size:14px;padding:8px 11px;border-left:3px solid var(--ui-sel);background:var(--ui-sel-soft);border-radius:0 8px 8px 0}',
+    '#eff-cut-combine .cc-checks{display:flex;flex-direction:column;gap:6px}',
+    '#eff-cut-combine .cc-checks .check{font-size:14px}',
+    '#eff-cut-combine .cc-tagn{font:500 11.5px var(--font-mono);color:var(--ui-muted)}',
+    '#eff-cut-combine .cc-list{margin:0;padding-left:20px;font-size:14px;display:flex;flex-direction:column;gap:3px}',
+    '#eff-cut-combine .cc-panel .cs-row .grow{white-space:normal}',
+    '#eff-cut-combine .cc-cost{font:600 13px var(--font-mono)}',
+    '#eff-cut-combine .cc-photos{display:flex;flex-direction:column}',
+    '#eff-cut-combine .cc-photos .thumb{width:44px;flex:none}',
+    '#eff-cut-combine .cc-photos .icon-btn{width:34px;height:34px}',
+    '#eff-cut-combine .cc-story{font-size:14px;line-height:1.5;padding:9px 11px;border:1px solid var(--ui-border);border-radius:9px;background:var(--ui-surface)}',
+    '#eff-cut-combine .cc-story mark{background:var(--ui-danger-soft);color:var(--ui-danger);font-weight:700;padding:0 3px;border-radius:3px}',
+    '#eff-cut-combine .cc-pr{padding:12px 14px;display:flex;flex-direction:column;gap:7px;width:100%;font-size:14px}',
+    '#eff-cut-combine .cc-pr .cc-k{font:600 11px var(--font-mono);letter-spacing:.06em;text-transform:uppercase;color:var(--ui-muted)}',
+    '#eff-cut-combine .cc-pr b.t{font-size:15px}',
+    '#eff-cut-combine .cc-msg{font-size:13.5px;line-height:1.4;padding:6px 10px;border-radius:10px;background:var(--ui-hover)}',
+    '#eff-cut-combine .cc-msg b{font-weight:600}',
+    '#eff-cut-combine .cc-thread{display:flex;flex-direction:column;gap:6px}',
+    '#eff-cut-combine .cc-thread:empty{display:none}'
+  ].join('\n');
+  cs.appendChild(st);
+  const ic = n => '<svg class="icon sm" aria-hidden="true"><use href="#i-' + n + '"/></svg>';
+  const btn = (attr, label, cls) => '<button class="btn ' + (cls || 'btn-primary') + ' cs-sm" type="button" ' + attr + '>' + label + '</button>';
+
+  /* 1. Take directions apart */
+  const PARTS = ['How people start', 'How they browse', 'How they choose'];
+  const DIRS = {
+    A: [['Button on the empty start screen', 1], ['One long list', 0], ['Name only', 0]],
+    B: [['Item in the File menu', 0], ['Grid with categories', 1], ['Name only', 0]],
+    C: [['Item in the File menu', 0], ['Search box only', 0], ['Preview image and a short description', 1]]
+  };
+  const q = s => '<span class="cc-q ' + (s ? 's' : 'w') + '">' + (s ? 'strong' : 'weak') + '</span>';
+  const result = picks => '<div class="cc-res surface"><b>Finding a template</b>' +
+    picks.map((p, i) => { const o = DIRS[p][i]; return '<div class="cs-row"><span class="grow"><span class="cs-meta">' + PARTS[i] + '</span><br>' + o[0] + '</span>' + q(o[1]) + '</div>'; }).join('') +
+    '<p class="cc-sum">Strong parts: ' + picks.filter((p, i) => DIRS[p][i][1]).length + ' of 3</p></div>';
+  D('eff-cut-combine-1b', '<div class="cc-col"><div class="cc-pick" role="group" aria-label="Direction">' +
+    ['A', 'B', 'C'].map(k => btn('aria-pressed="' + (k === 'A') + '" data-dir="' + k + '"', 'Direction ' + k, 'btn-secondary')).join('') + '</div><div data-res aria-live="polite"></div></div>', d => {
+    const res = d.querySelector('[data-res]');
+    const show = k => { res.innerHTML = result([k, k, k]); d.querySelectorAll('[data-dir]').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.dir === k))); };
+    d.querySelectorAll('[data-dir]').forEach(b => b.addEventListener('click', () => show(b.dataset.dir)));
+    show('A');
+  });
+  D('eff-cut-combine-1f', '<div class="cc-col">' + PARTS.map((p, i) => '<fieldset class="cc-part" data-row="' + i + '"><legend>' + p + '</legend>' +
+    ['A', 'B', 'C'].map(k => '<button class="cc-opt" type="button" aria-pressed="' + (k === 'A') + '" data-k="' + k + '"><span class="cc-src">' + k + '</span><span class="grow">' + DIRS[k][i][0] + '</span>' + q(DIRS[k][i][1]) + '</button>').join('') +
+    '</fieldset>').join('') + '<p class="cc-sum" data-sum role="status"></p></div>', d => {
+    const picks = ['A', 'A', 'A'], sum = d.querySelector('[data-sum]');
+    const render = () => {
+      d.querySelectorAll('[data-row]').forEach((r, i) => r.querySelectorAll('[data-k]').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.k === picks[i]))));
+      const n = picks.filter((p, i) => DIRS[p][i][1]).length;
+      sum.textContent = 'Strong parts: ' + n + ' of 3' + (n === 3 ? '. Each comes from a different direction.' : '');
+    };
+    d.querySelectorAll('[data-row]').forEach((r, i) => r.querySelectorAll('[data-k]').forEach(b => b.addEventListener('click', () => { picks[i] = b.dataset.k; render(); })));
+    render();
+  });
+
+  /* 2. Cut what the problem doesn't need */
+  const IDEAS = [
+    ['badge', 'Count of new mentions on the bell', 1, 'Bell shows 2 new mentions'],
+    ['mark', 'Highlight the mention in the comment', 1, 'Your name is highlighted in the comment'],
+    ['digest', 'Daily email digest', 0, 'Switch: Daily email digest'],
+    ['sound', 'Sound for every new comment', 0, 'Switch: Play a sound'],
+    ['feed', 'Feed of all edits', 0, 'Tab: All activity'],
+    ['react', 'Emoji reactions on comments', 0, 'Reactions under every comment']
+  ];
+  const prob = '<p class="cc-prob"><b>Problem:</b> people miss it when a teammate mentions them.</p>';
+  const panel = keep => '<div class="app-frame cc-panel" style="width:100%"><div class="app-bar"><span>Comments</span>' + ic('info') + '</div><div class="app-body" style="gap:0;padding:6px 14px">' +
+    IDEAS.filter(x => keep.has(x[0])).map(x => '<div class="cs-row"><span class="grow">' + x[3] + '</span></div>').join('') + '</div></div>';
+  const cost = n => '<p class="cc-cost">' + n + ' part' + (n === 1 ? '' : 's') + ' to build, test and explain</p>';
+  D('eff-cut-combine-2b', '<div class="cc-col">' + prob + '<ul class="cc-list">' + IDEAS.map(x => '<li>' + x[1] + '</li>').join('') + '</ul>' +
+    cost(IDEAS.length) + panel(new Set(IDEAS.map(x => x[0]))) + '</div>', () => {});
+  D('eff-cut-combine-2f', '<div class="cc-col">' + prob + '<div class="cc-checks">' +
+    IDEAS.map(x => '<label class="check"><input type="checkbox" checked value="' + x[0] + '"><span>' + x[1] + '</span></label>').join('') + '</div>' +
+    '<div data-cost></div><div data-panel></div><p class="cs-meta" data-out role="status"></p></div>', d => {
+    const keep = new Set(IDEAS.map(x => x[0]));
+    const render = () => {
+      d.querySelector('[data-cost]').innerHTML = cost(keep.size);
+      d.querySelector('[data-panel]').innerHTML = panel(keep);
+      const missing = IDEAS.filter(x => x[2] && !keep.has(x[0]));
+      const extra = IDEAS.filter(x => !x[2] && keep.has(x[0])).length;
+      d.querySelector('[data-out]').textContent = missing.length ? 'Without “' + missing[0][1].toLowerCase() + '”, people still miss mentions.' :
+        extra ? extra + ' of these don’t help with mentions.' : 'Two parts, and both solve the problem.';
+    };
+    d.querySelectorAll('input').forEach(i => i.addEventListener('change', () => { if (i.checked) keep.add(i.value); else keep.delete(i.value); render(); }));
+    render();
+  });
+
+  /* 3. One story */
+  const PHOTOS = [['Beach.jpg', ''], ['Market.jpg', ' b'], ['Hills.jpg', ' c']];
+  const photosHtml = story => '<div class="cc-col"><div class="app-frame" style="width:100%"><div class="app-bar"><span>Photos</span></div><div class="app-body cc-photos" data-list style="gap:0;padding:4px 14px"></div></div>' +
+    '<p class="cc-story"><b>The story:</b> ' + story + '</p><p class="cs-meta" data-out role="status"></p></div>';
+  const photoWire = fixed => (d, t) => {
+    const list = d.querySelector('[data-list]'), out = d.querySelector('[data-out]');
+    let items = PHOTOS.slice();
+    const render = () => {
+      list.innerHTML = items.map(p => '<div class="cs-row"><span class="thumb' + p[1] + '"></span><span class="grow">' + p[0] + '</span><button class="icon-btn" type="button" aria-label="Delete ' + p[0] + '" data-del="' + p[0] + '">' + ic('trash') + '</button></div>').join('') ||
+        '<p class="cs-meta" style="padding:10px 0">No photos.</p>';
+      list.querySelectorAll('[data-del]').forEach(b => b.addEventListener('click', () => del(b.dataset.del)));
+    };
+    const remove = name => {
+      const idx = items.findIndex(p => p[0] === name), p = items[idx];
+      items.splice(idx, 1); render();
+      csToast(d, t, name + ' deleted.', { replace: true, action: { label: 'Undo', run: () => { items.splice(Math.min(idx, items.length), 0, p); render(); out.textContent = name + ' is back.'; } } });
+      out.textContent = fixed ? 'One step: it’s gone, and Undo is there if it was a mistake.' : 'You decided twice for one delete: once in the dialog, and again on the toast.';
+    };
+    const del = name => {
+      if (fixed) { remove(name); return; }
+      const m = document.createElement('div'); m.className = 'cs-modal';
+      m.innerHTML = '<div class="cs-dlg" role="dialog" aria-modal="true" aria-label="Delete photo"><b>Delete ' + name + '?</b><p>You can’t get it back.</p><div class="acts">' + btn('data-no', 'Cancel', 'btn-secondary') + btn('data-yes', 'Delete', 'btn-danger') + '</div></div>';
+      d.appendChild(m);
+      const close = () => { m.remove(); const b = list.querySelector('[data-del]'); if (b) b.focus(); };
+      m.querySelector('[data-no]').addEventListener('click', close);
+      m.querySelector('[data-yes]').addEventListener('click', () => { m.remove(); remove(name); const b = list.querySelector('[data-del]'); if (b) b.focus(); });
+      m.addEventListener('keydown', e => { if (e.key === 'Escape') close(); });
+      m.querySelector('[data-yes]').focus();
+    };
+    render();
+  };
+  D('eff-cut-combine-3b', photosHtml('When people delete a photo, they confirm it in a dialog, <mark>or</mark> they undo it from a toast. The dialog says it can’t be undone, and then the toast offers Undo.'), photoWire(false));
+  D('eff-cut-combine-3f', photosHtml('When people delete a photo, it goes at once, and a toast lets them undo it.'), photoWire(true));
+
+  /* 4. Write down why */
+  const pr = cuts => '<div class="cc-pr surface"><span class="cc-k">Pull request</span><b class="t">Rename many files at once</b>' +
+    '<span>Select files and press Rename. A pattern like <b>Trip-{n}</b> names them Trip-1, Trip-2 and so on. A preview shows the first five names.</span>' +
+    (cuts ? '<span class="cc-k">Cut, and why</span><ul class="cc-list"><li><b>Regex patterns.</b> None of 40 support requests asked for them, and they’re hard to explain.</li><li><b>Preview of every file.</b> The first five are enough to check the pattern.</li></ul>' : '') + '</div>';
+  const later = (d, t, msgs, end) => {
+    const b = d.querySelector('[data-later]'), th = d.querySelector('[data-thread]');
+    b.addEventListener('click', () => {
+      b.disabled = true;
+      msgs.forEach((m, i) => t.after(() => { th.insertAdjacentHTML('beforeend', '<p class="cc-msg"><b>' + m[0] + ':</b> ' + m[1] + '</p>'); if (i === msgs.length - 1) d.querySelector('[data-out]').textContent = end; }, 350 * (i + 1)));
+    });
+  };
+  const prHtml = cuts => '<div class="cc-col">' + pr(cuts) + '<div>' + btn('data-later', 'Two weeks later', 'btn-secondary') + '</div><div class="cc-thread" data-thread aria-live="polite"></div><p class="cs-meta" data-out></p></div>';
+  D('eff-cut-combine-4b', prHtml(false), (d, t) => later(d, t, [['Lee', 'Power users want regex patterns. Shall we add them?'], ['Mia', 'Didn’t we talk about this? I don’t remember why we dropped it.'], ['Lee', 'Let’s just add them.']],
+    'Regex goes back in, with no new evidence.'));
+  D('eff-cut-combine-4f', prHtml(true), (d, t) => later(d, t, [['Lee', 'Power users want regex patterns. Shall we add them?'], ['Mia', 'The pull request says why we cut them. Are there new requests?'], ['Lee', 'Not yet. I’ll wait until there are.']],
+    'Settled in three messages.'));
+  csInit(cs);
+})();
+
+</script>

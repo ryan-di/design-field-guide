@@ -1,0 +1,33 @@
+<div class="stage tall" data-demo="good-contrast">
+      <div class="row p19-top">
+        <div class="surface p19-ct" role="group" aria-labelledby="p19-ct-cap">
+          <p class="p19-ctl-cap" id="p19-ct-cap">Text contrast</p>
+          <div class="p19-ct-sample" id="p19-ct-sample">
+            <p class="p19-ct-big">Backup finished</p>
+            <p class="p19-ct-body">24 photos saved to the Holiday album. Open the album to review them.</p>
+          </div>
+          <div class="p19-range"><label for="p19-ct-l">Text lightness</label><output id="p19-ct-l-out" for="p19-ct-l">68%</output><input type="range" id="p19-ct-l" min="0" max="100" step="1" value="68"></div>
+          <p class="p19-ct-ratio"><span>Contrast ratio</span><b id="p19-ct-ratio">2.32 : 1</b></p>
+          <ul class="p19-checks">
+            <li data-check="body"><svg class="icon sm" aria-hidden="true"><use href="#i-x"/></svg><span>Body text needs 4.5 : 1</span><b>Fail</b></li>
+            <li data-check="large"><svg class="icon sm" aria-hidden="true"><use href="#i-x"/></svg><span>Large text needs 3 : 1</span><b>Fail</b></li>
+          </ul>
+          <button class="btn btn-secondary p19-ct-fix" type="button" data-act="fix">Nearest passing gray</button>
+        </div>
+        <div class="surface p19-st" role="group" aria-labelledby="p19-st-cap">
+          <p class="p19-ctl-cap" id="p19-st-cap">Recent uploads</p>
+          <div class="seg p19-seg-sm" role="radiogroup" aria-label="Status style">
+            <input type="radio" name="p19-st-mode" id="p19-st-color" value="color" checked><label for="p19-st-color">Color only</label>
+            <input type="radio" name="p19-st-mode" id="p19-st-full" value="full"><label for="p19-st-full">Color + icon + word</label>
+          </div>
+          <ul class="p19-st-list" id="p19-st-list" data-mode="color">
+            <li><span>Beach day</span><span class="p19-st-tag" data-s="ok"><svg class="icon sm" aria-hidden="true"><use href="#i-check"/></svg><span class="p19-st-word">Finished</span></span></li>
+            <li><span>Birthday video</span><span class="p19-st-tag" data-s="fail"><svg class="icon sm" aria-hidden="true"><use href="#i-x"/></svg><span class="p19-st-word">Failed</span></span></li>
+            <li><span>Garden</span><span class="p19-st-tag" data-s="ok"><svg class="icon sm" aria-hidden="true"><use href="#i-check"/></svg><span class="p19-st-word">Finished</span></span></li>
+            <li><span>Trip to Lisbon</span><span class="p19-st-tag" data-s="run"><svg class="icon sm" aria-hidden="true"><use href="#i-play"/></svg><span class="p19-st-word">Running</span></span></li>
+          </ul>
+          <label class="switch p19-inline"><span>Remove color</span><input type="checkbox" role="switch" id="p19-st-grey"></label>
+        </div>
+      </div>
+      <p class="try"><b>Try it:</b> drag the lightness until both checks pass, or press “Nearest passing gray”. The ratio is measured against this theme’s real background, so try the other theme too. Then turn on “Remove color”: with color only, Finished and Failed look alike. Switch to “Color + icon + word” and the list reads again.</p>
+    </div>

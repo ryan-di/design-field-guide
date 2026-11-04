@@ -1,0 +1,40 @@
+<div class="note comfy cw-wrap"><p>Notice that each change people will see is shown on its own, in plain words, where someone can decide on it.</p>
+        <div class="seg cw-seg" role="radiogroup" aria-label="Example">
+          <input type="radio" name="cw-eff-ux-calls-w" id="cw-eff-ux-calls-w-1" value="gdocs" checked><label for="cw-eff-ux-calls-w-1">Google Docs</label>
+          <input type="radio" name="cw-eff-ux-calls-w" id="cw-eff-ux-calls-w-2" value="github"><label for="cw-eff-ux-calls-w-2">GitHub</label>
+          <input type="radio" name="cw-eff-ux-calls-w" id="cw-eff-ux-calls-w-3" value="appstore"><label for="cw-eff-ux-calls-w-3">App Store</label>
+        </div>
+        <div class="cw" data-cw-view role="img" aria-label=""></div>
+        <p class="cw-cap" data-cw-cap aria-live="polite"></p>
+        
+        <script>
+        (() => {
+          const wrap = document.currentScript.closest('.cw-wrap');
+          const view = wrap.querySelector('[data-cw-view]'), cap = wrap.querySelector('[data-cw-cap]');
+          const ic = id => '<svg class="icon sm"><use href="#i-' + id + '"/></svg>';
+          const line = w => '<i class="cw-line" style="width:' + w + '%"></i>';
+          const S = {
+            gdocs: { html: '<div class="cw-eux-doc"><div class="cw-eux-page">' + line(90) + line(75) +
+                '<p>When you close a tab with changes, a dialog asks <del>“Discard?”</del> <ins>“Close without saving?”</ins></p>' + line(85) + line(55) + '</div>' +
+                '<div class="cw-eux-sug"><div class="cw-eux-who"><i></i><b>Suggestion</b><span class="cw-eux-yn"><span class="y">' + ic('check') + '</span><span class="n">' + ic('x') + '</span></span></div>' +
+                '<span>Replace “Discard?” with “Close without saving?”</span><small>Accept or reject</small></div></div>',
+              alt: 'A document page where one phrase is struck out and a new phrase is inserted, both marked. Beside it, a suggestion card says Replace “Discard?” with “Close without saving?”, with accept and reject buttons.',
+              cap: 'Google Docs: in Suggesting mode, each edit shows up marked in the text with its own accept and reject. Nothing changes for good until someone decides, one edit at a time.' },
+            github: { html: '<div class="cw-eux-pr"><div class="cw-eux-prh">Ask before closing a tab with changes</div><div class="cw-eux-md">' +
+                '<em>What changes for people</em><span>Closing a tab with unsaved changes asks first</span><span>Tabs show a dot while changes are unsaved</span>' +
+                '<em>Before and after</em><div class="cw-eux-shots"><span class="cw-eux-shot"><i><b></b></i>Before</span><span class="cw-eux-shot after"><i><b></b></i>After</span></div>' +
+                '<em>Code notes</em><div class="cw-eux-under">' + line(80) + line(60) + '</div></div>' +
+                '<span class="cw-eux-src">Sections from the repo’s PR template</span></div>',
+              alt: 'A pull request description built from a template. First: What changes for people, with two plain bullets. Then Before and after screenshots side by side. Then Code notes as gray lines. A footer says the sections come from the repo’s PR template.',
+              cap: 'GitHub: a repo can add a pull request template, so every description starts from the same sections. Teams use it to put what people will see, with before and after screenshots, above the code notes.' },
+            appstore: { html: '<div class="cw-eux-phone"><div class="cw-eux-app"><i></i><span>' + line(70) + '<small>Version 4.2</small></span><span class="btn btn-primary">Update</span></div>' +
+                '<b>What’s New</b><div class="cw-eux-notes"><span>Closing a drawing with unsaved changes now asks first.</span><span>Undo still works after you reopen the app.</span><span>Bigger buttons in the toolbar.</span></div></div>',
+              alt: 'A phone showing an app update with an Update button. Under What’s New, three plain bullets: closing a drawing with unsaved changes now asks first, Undo still works after you reopen the app, bigger buttons in the toolbar.',
+              cap: 'App Store: every app update comes with a “What’s New” note. The good ones name each change people will notice, in plain words, instead of “bug fixes and improvements”.' }
+          };
+          const render = k => { view.innerHTML = S[k].html; view.setAttribute('aria-label', 'Sketch: ' + S[k].alt); cap.textContent = S[k].cap; };
+          wrap.querySelectorAll('input[name="cw-eff-ux-calls-w"]').forEach(r => r.addEventListener('change', () => render(r.value)));
+          render('gdocs');
+        })();
+        </script>
+      </div>

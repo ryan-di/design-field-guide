@@ -1,7 +1,17 @@
 ---
-// Starlight's page title with the book's eyebrow ("Chapter 1") above it. `_top` is the id Starlight's own title uses.
-const { title, eyebrow } = Astro.locals.starlightRoute.entry.data;
+// Starlight's page title with the book's eyebrow ("Chapter 1") above it, and the part's opening on the first
+// chapter of each part. `_top` is the id Starlight's own title uses.
+const { title, eyebrow, part } = Astro.locals.starlightRoute.entry.data;
 ---
 
+{
+	part && (
+		<div class="dfg-part" id={part.id}>
+			<p class="dfg-part-label">{part.label}</p>
+			<p class="dfg-part-title">{part.title}</p>
+			{part.sub && <p class="dfg-part-sub">{part.sub}</p>}
+		</div>
+	)
+}
 {eyebrow && <p class="dfg-eyebrow">{eyebrow}</p>}
 <h1 id="_top">{title}</h1>

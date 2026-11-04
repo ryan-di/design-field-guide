@@ -1,0 +1,326 @@
+<script>
+(() => {
+  const { $, $$, store, demo, toast } = window.dfg;
+
+  /* js-23-find.js */
+  demo('pat-command-palette', st => {
+    const isMac = /Mac|iPhone|iPad/i.test(navigator.platform || navigator.userAgent || '');
+    const KEYS = { mod: isMac ? '⌘' : 'Ctrl', alt: isMac ? '⌥' : 'Alt', shift: isMac ? '⇧' : 'Shift' };
+    const trigger = $('[data-open]', st), palette = $('.p13-palette', st), input = $('#p13-cmd-q'), list = $('#p13-cmd-list');
+    const countEl = $('[data-count]', st), live = $('[data-live]', st), nodes = $('[data-nodes]', st), minimap = $('.p13-minimap', st);
+    $$('[data-mod]', st).forEach(k => { k.textContent = KEYS.mod; });
+    let minimapOn = false, snapOn = false, added = [], recent = [], shown = [], active = 0, returnTo = null, liveTimer, closedAt = 0;
+    const addNode = name => {
+      const n = document.createElement('span'); n.className = 'node new'; n.textContent = name;
+      nodes.appendChild(n); added.push(n); toast(st, 'Added “' + name + '”');
+    };
+    const cmds = [
+      { name: 'Share document', group: 'Document', keys: ['mod', 'Enter'], syn: ['send', 'invite', 'publish', 'email'], run: () => toast(st, 'Sharing options would open here') },
+      { name: 'Save document', group: 'Document', keys: ['mod', 'S'], syn: ['store', 'keep'], run: () => toast(st, 'Document saved') },
+      { name: 'Export to PDF', group: 'Document', keys: ['mod', 'shift', 'E'], syn: ['download', 'print', 'file'], run: () => toast(st, 'Exported to PDF') },
+      { name: 'Undo', group: 'Document', keys: ['mod', 'Z'], syn: ['revert', 'back', 'oops'], run: () => { const n = added.pop(); if (n) { n.remove(); toast(st, 'Removed “' + n.textContent + '”'); } else toast(st, 'Nothing to undo'); } },
+      { name: 'Insert: Table', group: 'Insert', keys: ['alt', 'T'], syn: ['grid', 'rows', 'columns'], run: () => addNode('Table') },
+      { name: 'Insert: Image', group: 'Insert', keys: ['alt', 'I'], syn: ['picture', 'photo', 'upload'], run: () => addNode('Image') },
+      { name: 'Insert: Checklist', group: 'Insert', keys: ['alt', 'C'], syn: ['todo', 'tasks', 'list'], run: () => addNode('Checklist') },
+      { name: 'Fit to width', group: 'View', keys: ['.'], syn: ['zoom', 'center', 'size'], run: () => toast(st, 'Page fit to the window') },
+      { name: 'Toggle outline', group: 'View', keys: ['M'], syn: ['overview', 'map', 'headings', 'contents'], run: () => { minimapOn = !minimapOn; minimap.hidden = !minimapOn; toast(st, minimapOn ? 'Outline on' : 'Outline off'); } },
+      { name: 'Toggle spell check', group: 'View', keys: ['G'], syn: ['spelling', 'typos'], run: () => { snapOn = !snapOn; toast(st, snapOn ? 'Spell check on' : 'Spell check off'); } },
+      { name: 'Open settings', group: 'App', keys: ['mod', ','], syn: ['preferences', 'options', 'config'], run: () => toast(st, 'Settings would open here') },
+      { name: 'Show version history', group: 'App', keys: ['H'], syn: ['changes', 'revisions', 'history'], run: () => toast(st, 'Version history would open here') },
+      { name: 'Show keyboard shortcuts', group: 'App', keys: ['?'], syn: ['keys', 'hotkeys', 'help'], run: () => toast(st, 'The shortcut list would open here') }
+    ];
+    const norm = s => s.toLowerCase().replace(/[:\-_]+/g, ' ').replace(/\s+/g, ' ').trim();
+    const mode = () => ($('input[name="p13-match"]:checked', st) || {}).value || 'fuzzy';
+    const inOrder = (q, s) => { let i = 0; for (const ch of s) { if (ch === q[i]) i++; } return i === q.length; };
+    const match = (c, q) => {
+      const name = norm(c.name);
+      if (name.startsWith(q)) return { s: 5 };
+      if (name.includes(q)) return { s: 4 };
+      if (mode() === 'exact') return null;
+      const words = name.split(' '), qw = q.split(' ');
+      if (qw.every(w => words.some(x => x.startsWith(w)))) return { s: 3 };
+      const syn = c.syn.find(w => w.startsWith(q) || qw.some(x => x.length >= 3 && w.startsWith(x)));
+      if (syn) return { s: 2, why: syn };
+      const flat = q.replace(/ /g, '');
+      if (flat.length >= 3 && inOrder(flat, name.replace(/ /g, ''))) return { s: 1 };
+      return null;
+    };
+    const kbd = keys => {
+      const s = document.createElement('span'); s.className = 'p13-kbd';
+      keys.forEach(k => { const e = document.createElement('kbd'); e.textContent = KEYS[k] || k; s.appendChild(e); });
+      return s;
+    };
+    const announce = text => { clearTimeout(liveTimer); liveTimer = setTimeout(() => { live.textContent = text; }, 700); };
+    const mark = () => {
+      $$('[role="option"]', list).forEach(li => li.setAttribute('aria-selected', String(li.id === 'p13-cmd-' + active)));
+      const el = document.getElementById('p13-cmd-' + active);
+      if (!el) { input.removeAttribute('aria-activedescendant'); return; }
+      input.setAttribute('aria-activedescendant', el.id);
+      const top = el.offsetTop, bottom = top + el.offsetHeight;
+      if (top < list.scrollTop + 6) list.scrollTop = top - 30;
+      else if (bottom > list.scrollTop + list.clientHeight) list.scrollTop = bottom - list.clientHeight + 6;
+    };
+    const render = () => {
+      const raw = input.value.trim(), q = norm(raw);
+      if (!q) {
+        shown = recent.map(i => ({ c: cmds[i], group: 'Recent' })).concat(cmds.map(c => ({ c, group: c.group })));
+      } else {
+        shown = cmds.map((c, i) => ({ c, i, m: match(c, q) })).filter(x => x.m)
+          .sort((a, b) => b.m.s - a.m.s || a.i - b.i).map(x => ({ c: x.c, why: x.m.why }));
+      }
+      active = Math.max(0, Math.min(active, shown.length - 1));
+      list.innerHTML = '';
+      let group = null;
+      shown.forEach((it, i) => {
+        if (it.group && it.group !== group) {
+          group = it.group;
+          const h = document.createElement('li'); h.className = 'p13-group'; h.setAttribute('role', 'presentation'); h.textContent = group; list.appendChild(h);
+        }
+        const li = document.createElement('li'); li.id = 'p13-cmd-' + i; li.setAttribute('role', 'option');
+        const label = document.createElement('span'); label.className = 'p13-cmd-name'; label.textContent = it.c.name;
+        if (it.why) { const w = document.createElement('small'); w.textContent = 'Matches “' + it.why + '”'; label.appendChild(w); }
+        li.append(label, kbd(it.c.keys));
+        li.addEventListener('mousedown', e => e.preventDefault());
+        li.addEventListener('mousemove', () => { if (active !== i) { active = i; mark(); } });
+        li.addEventListener('click', () => runAt(i));
+        list.appendChild(li);
+      });
+      if (!shown.length) {
+        const li = document.createElement('li'); li.className = 'p13-none'; li.setAttribute('role', 'presentation');
+        li.textContent = 'No commands match “' + raw + '”.' + (mode() === 'exact' ? ' Exact matching only finds the command’s own name.' : '');
+        list.appendChild(li);
+      }
+      const n = q ? shown.length + (shown.length === 1 ? ' match' : ' matches') : cmds.length + ' commands';
+      countEl.textContent = n;
+      if (q) announce(n);
+      mark();
+    };
+    const open = () => {
+      const f = document.activeElement;
+      returnTo = f && f !== document.body && st.contains(f) ? f : trigger;
+      palette.hidden = false; trigger.setAttribute('aria-expanded', 'true');
+      input.value = ''; active = 0; list.scrollTop = 0; render(); input.focus();
+    };
+    const close = refocus => {
+      if (palette.hidden) return;
+      palette.hidden = true; trigger.setAttribute('aria-expanded', 'false'); input.removeAttribute('aria-activedescendant');
+      if (refocus && returnTo) returnTo.focus({ preventScroll: true });
+    };
+    const runAt = i => {
+      const it = shown[i]; if (!it) return;
+      const idx = cmds.indexOf(it.c);
+      recent = [idx].concat(recent.filter(x => x !== idx)).slice(0, 3);
+      close(true); it.c.run();
+    };
+    // Some browsers don't focus buttons on click, so a click on the trigger can first close the palette via focusout.
+    trigger.addEventListener('click', () => { if (!palette.hidden) close(true); else if (Date.now() - closedAt > 250) open(); });
+    input.addEventListener('input', () => { active = 0; list.scrollTop = 0; render(); });
+    input.addEventListener('keydown', e => {
+      if (e.key === 'ArrowDown') { e.preventDefault(); if (shown.length) { active = (active + 1) % shown.length; mark(); } }
+      else if (e.key === 'ArrowUp') { e.preventDefault(); if (shown.length) { active = (active - 1 + shown.length) % shown.length; mark(); } }
+      else if (e.key === 'Enter') { e.preventDefault(); runAt(active); }
+      else if (e.key === 'Escape') { e.preventDefault(); e.stopPropagation(); close(true); }
+    });
+    // Ctrl/Cmd+K only while focus is inside this stage, so the page keeps its own shortcuts.
+    st.addEventListener('keydown', e => {
+      if ((e.ctrlKey || e.metaKey) && !e.altKey && !e.shiftKey && (e.key === 'k' || e.key === 'K')) {
+        e.preventDefault();
+        if (palette.hidden) open(); else close(true);
+      }
+    });
+    palette.addEventListener('mousedown', e => { if (e.target !== input) e.preventDefault(); });
+    palette.addEventListener('focusout', e => {
+      const to = e.relatedTarget;
+      if (to && (palette.contains(to) || to === trigger)) return;
+      if (!palette.hidden) closedAt = Date.now();
+      close(false);
+    });
+  });
+
+  demo('pat-search-filters', st => {
+    const input = $('#p13-q'), chips = $$('.p13-chip', st), out = $('#p13-results'), countEl = $('#p13-count');
+    const clearBtn = $('[data-clear]', st), live = $('[data-live]', st);
+    const TYPE = { checkpoint: 'Document', lora: 'Photo', upscaler: 'Video' };
+    const PLURAL = { checkpoint: 'Documents', lora: 'Photos', upscaler: 'Videos' };
+    const models = [
+      { name: 'portrait-session-invoice', type: 'checkpoint', size: '240 KB' },
+      { name: 'tax-return-2025', type: 'checkpoint', size: '1.2 MB' },
+      { name: 'lease-agreement', type: 'checkpoint', size: '860 KB' },
+      { name: 'recipe-list', type: 'checkpoint', size: '48 KB' },
+      { name: 'travel-insurance', type: 'checkpoint', size: '2.1 MB' },
+      { name: 'garden-detail', type: 'lora', size: '4.1 MB' },
+      { name: 'beach-sunset', type: 'lora', size: '3.8 MB' },
+      { name: 'portrait-of-mia', type: 'lora', size: '5.2 MB' },
+      { name: 'watercolor-painting', type: 'lora', size: '2.9 MB' },
+      { name: 'city-at-night', type: 'lora', size: '4.4 MB' },
+      { name: 'birthday-party', type: 'upscaler', size: '640 MB' },
+      { name: 'drone-flight', type: 'upscaler', size: '1.4 GB' },
+      { name: 'cat-jumps', type: 'upscaler', size: '82 MB' }
+    ];
+    let recent = ['portrait-session-invoice', 'garden-detail', 'birthday-party'], liveTimer, first = true;
+    const norm = s => s.toLowerCase().replace(/[-_]+/g, ' ').replace(/\s+/g, ' ').trim();
+    const words = Array.from(new Set(models.flatMap(m => norm(m.name).split(' ')).filter(w => w.length >= 3)));
+    const filters = () => chips.filter(c => c.getAttribute('aria-pressed') === 'true').map(c => c.dataset.type);
+    const hit = (m, q) => !q || norm(m.name).includes(q) || TYPE[m.type].toLowerCase().includes(q) || PLURAL[m.type].toLowerCase().includes(q);
+    const dist = (a, b) => {
+      const d = Array.from({ length: a.length + 1 }, (_, i) => [i]);
+      for (let j = 1; j <= b.length; j++) d[0][j] = j;
+      for (let i = 1; i <= a.length; i++) for (let j = 1; j <= b.length; j++) d[i][j] = Math.min(d[i - 1][j] + 1, d[i][j - 1] + 1, d[i - 1][j - 1] + (a[i - 1] === b[j - 1] ? 0 : 1));
+      return d[a.length][b.length];
+    };
+    const suggest = q => {
+      if (q.length < 4 || q.includes(' ')) return null;
+      let best = null, bd = 3;
+      words.forEach(w => { const dd = dist(q, w); if (dd < bd) { bd = dd; best = w; } });
+      return best;
+    };
+    const el = (tag, cls, text) => { const e = document.createElement(tag); if (cls) e.className = cls; if (text != null) e.textContent = text; return e; };
+    const pick = (m, sec) => {
+      recent = [m.name].concat(recent.filter(n => n !== m.name)).slice(0, 3);
+      toast(st, 'Opened “' + m.name + '”');
+      render();
+      const again = $('[data-sec="' + sec + '"] [data-name="' + m.name + '"]', out) || $('[data-name="' + m.name + '"]', out);
+      if (again) again.focus({ preventScroll: true });
+    };
+    const section = (title, items, key) => {
+      const wrap = el('div'); wrap.dataset.sec = key;
+      if (title) wrap.appendChild(el('p', 'p13-sec', title));
+      const ul = el('ul', 'p13-ul');
+      if (title) ul.setAttribute('aria-label', title);
+      items.forEach(m => {
+        const li = el('li'), b = el('button', 'p13-item'); b.type = 'button'; b.dataset.name = m.name;
+        const txt = el('span'); txt.append(el('b', null, m.name), el('small', null, TYPE[m.type] + ' · ' + m.size));
+        b.append(el('span', 'p13-sw ' + m.type), txt);
+        b.addEventListener('click', () => pick(m, key));
+        li.appendChild(b); ul.appendChild(li);
+      });
+      wrap.appendChild(ul); out.appendChild(wrap);
+    };
+    const clearFilters = () => chips.forEach(c => c.setAttribute('aria-pressed', 'false'));
+    const render = () => {
+      const raw = input.value.trim(), q = norm(raw), f = filters();
+      const inType = m => !f.length || f.includes(m.type);
+      const hits = models.filter(m => hit(m, q)), shown = hits.filter(inType), hidden = hits.length - shown.length;
+      const fl = f.map(t => PLURAL[t]).join(', ');
+      let text;
+      if (!q) text = f.length ? 'Showing ' + shown.length + ' of ' + models.length + ' files · ' + fl : models.length + ' files';
+      else text = shown.length + (shown.length === 1 ? ' result' : ' results') + ' for “' + raw + '”' + (f.length ? ' in ' + fl : '');
+      if (q && hidden) text += ' · ' + hidden + ' more outside your filters';
+      countEl.textContent = text;
+      clearBtn.hidden = !f.length;
+      out.innerHTML = '';
+      if (!q) {
+        const rec = recent.map(n => models.find(m => m.name === n)).filter(m => m && inType(m));
+        if (rec.length) section('Recent', rec, 'recent');
+        section(f.length ? fl : 'All files', shown, 'all');
+      } else if (shown.length) {
+        section('', shown, 'results');
+      } else {
+        const box = el('div', 'empty');
+        const ic = document.createElementNS('http://www.w3.org/2000/svg', 'svg'); ic.setAttribute('class', 'icon'); ic.setAttribute('aria-hidden', 'true');
+        const use = document.createElementNS('http://www.w3.org/2000/svg', 'use'); use.setAttribute('href', '#i-search'); ic.appendChild(use);
+        const s = hits.length ? null : suggest(q);
+        const tip = hidden ? 'Your filters are hiding ' + hidden + (hidden === 1 ? ' match.' : ' matches.')
+          : s ? 'Did you mean “' + s + '”?' : 'Check the spelling, or search for part of the name.';
+        box.append(ic, el('h5', null, 'No ' + (f.length ? fl : 'files') + ' match “' + raw + '”'), el('p', null, tip));
+        const acts = el('div', 'row');
+        if (hidden) {
+          const b = el('button', 'btn btn-secondary', 'Show ' + hidden + ' in all types'); b.type = 'button';
+          b.addEventListener('click', () => { clearFilters(); render(); input.focus(); });
+          acts.appendChild(b);
+        }
+        if (s) {
+          const b = el('button', 'btn btn-secondary', 'Search for “' + s + '”'); b.type = 'button';
+          b.addEventListener('click', () => { input.value = s; render(); input.focus(); });
+          acts.appendChild(b);
+        }
+        if (acts.children.length) box.appendChild(acts);
+        out.appendChild(box);
+      }
+      if (!first) { clearTimeout(liveTimer); liveTimer = setTimeout(() => { live.textContent = text; }, 700); }
+      first = false;
+    };
+    chips.forEach(c => c.addEventListener('click', () => {
+      c.setAttribute('aria-pressed', String(c.getAttribute('aria-pressed') !== 'true'));
+      render();
+    }));
+    clearBtn.addEventListener('click', () => { clearFilters(); render(); input.focus(); });
+    input.addEventListener('input', render);
+    render();
+  });
+
+  demo('pat-information-scent', st => {
+    const leaf = (label, d, goal) => ({ label, d, goal: !!goal });
+    const trees = {
+      before: { label: 'Menu', kids: [
+        { label: 'Configuration', kids: [
+          { label: 'I/O', kids: [leaf('Sink paths', 'It sets the folder where photos are saved.', true), leaf('Source adapters', 'It sets where imported photos come from.')] },
+          { label: 'Persistence', kids: [leaf('Cache policy', 'It sets how long thumbnails are kept.'), leaf('Serialization', 'It sets the file format for saved albums.')] },
+          { label: 'Runtime', kids: [leaf('Job scheduler', 'It sets when backups run.'), leaf('Worker threads', 'It sets how much of the computer editing can use.')] }
+        ] },
+        { label: 'Diagnostics', kids: [leaf('Logs', 'It shows what happened during recent backups.'), leaf('Profiler', 'It shows how long each step took.')] },
+        { label: 'Extensions', kids: [leaf('Hooks', 'It runs scripts before and after each import.'), leaf('Registry', 'It lists add-ons you can install.')] },
+        { label: 'Session', kids: [leaf('Telemetry', 'It sets what usage data is shared.'), leaf('Tokens', 'It manages access keys.')] }
+      ] },
+      after: { label: 'Menu', kids: [
+        { label: 'Account', kids: [leaf('Profile', 'It shows your name and email.'), leaf('Storage', 'It shows how much space your photos use.')] },
+        { label: 'Extensions', kids: [leaf('Browse extensions', 'It lists add-ons you can install.'), leaf('Installed', 'It lists add-ons you already have.')] },
+        { label: 'Help', kids: [leaf('Keyboard shortcuts', 'It lists every shortcut.'), leaf('Report a problem', 'It opens a form to send feedback.')] },
+        { label: 'Settings', kids: [
+          { label: 'Appearance', kids: [leaf('Grid view', 'It sets the size of photo thumbnails.'), leaf('Theme', 'It sets light or dark colors.')] },
+          { label: 'Saving', kids: [leaf('File names', 'It sets how saved photos are named.'), leaf('Image format', 'It sets the file type for saved photos.'), leaf('Save location', 'It sets the folder where photos are saved.', true)] },
+          { label: 'Performance', kids: [leaf('Editing speed', 'It sets how much of the computer editing can use.'), leaf('Backup schedule', 'It sets when backups run.')] }
+        ] }
+      ] }
+    };
+    const menu = $('[data-menu]', st), back = $('[data-back]', st), path = $('[data-path]', st), clicksEl = $('[data-clicks]', st);
+    const msg = $('[data-msg]', st), tally = $('[data-tally]', st), reset = $('[data-reset]', st);
+    const results = { before: null, after: null };
+    let mode = 'before', trail = [], clicks = 0, done = false;
+    const current = () => trail.reduce((n, i) => n.kids[i], trees[mode]);
+    const labels = () => { let n = trees[mode]; return trail.map(i => (n = n.kids[i]).label); };
+    const say = (text, ok) => { msg.textContent = text; msg.classList.toggle('ok', !!ok); };
+    const count = () => { if (!done) clicks++; clicksEl.textContent = 'Clicks: ' + clicks; };
+    const showTally = () => {
+      const f = v => v == null ? 'not found yet' : v + ' clicks';
+      tally.textContent = 'Before: ' + f(results.before) + ' · After: ' + f(results.after);
+    };
+    const draw = focusIndex => {
+      const n = current();
+      menu.innerHTML = '';
+      menu.setAttribute('aria-label', n.label);
+      n.kids.forEach((k, i) => {
+        const li = document.createElement('li'), b = document.createElement('button');
+        b.type = 'button'; b.className = 'p13-mi'; b.textContent = k.label;
+        if (k.kids) b.dataset.branch = '';
+        b.addEventListener('click', () => pick(i, b));
+        li.appendChild(b); menu.appendChild(li);
+      });
+      back.disabled = !trail.length;
+      path.textContent = ['Menu'].concat(labels()).join(' › ');
+      clicksEl.textContent = 'Clicks: ' + clicks;
+      if (focusIndex != null) { const b = $$('.p13-mi', menu)[focusIndex]; if (b) b.focus({ preventScroll: true }); }
+    };
+    const pick = (i, btn) => {
+      const k = current().kids[i];
+      if (!k || !btn.isConnected) return;
+      count();
+      if (k.kids) { trail.push(i); say(''); draw(0); return; }
+      if (k.goal) {
+        if (!done) { done = true; results[mode] = clicks; showTally(); }
+        $$('.p13-mi', menu).forEach(b => b.classList.toggle('is-found', b === btn));
+        say('Found it in ' + results[mode] + ' clicks. ' + k.d + ' The shortest path is 3 clicks.', true);
+      } else {
+        say('“' + k.label + '” isn’t it. ' + k.d + ' Go back and keep looking.');
+      }
+    };
+    const start = () => { trail = []; clicks = 0; done = false; say(''); draw(null); };
+    back.addEventListener('click', () => { count(); const i = trail.pop(); say(''); draw(i); });
+    reset.addEventListener('click', () => { start(); const b = $('.p13-mi', menu); if (b) b.focus({ preventScroll: true }); });
+    $$('input[name="p13-scent"]', st).forEach(r => r.addEventListener('change', () => { mode = r.value; start(); }));
+    start();
+  });
+
+
+})();
+</script>

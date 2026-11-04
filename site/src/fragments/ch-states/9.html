@@ -1,0 +1,71 @@
+<div class="fm" data-fm>
+  <div class="seg fm-seg" role="radiogroup" aria-label="Form">
+    <input type="radio" name="fm-empty-state" id="fm-empty-state-1" value="first" checked><label for="fm-empty-state-1">First use</label>
+    <input type="radio" name="fm-empty-state" id="fm-empty-state-2" value="none"><label for="fm-empty-state-2">No results</label>
+    <input type="radio" name="fm-empty-state" id="fm-empty-state-3" value="done"><label for="fm-empty-state-3">All done</label>
+  </div>
+  <div class="fm-stage" data-fm-stage></div>
+  <p class="fig-cap" data-fm-when aria-live="polite"></p>
+  
+  <script>
+  (() => {
+    const fm = document.currentScript.closest('[data-fm]'), stage = fm.querySelector('[data-fm-stage]'), when = fm.querySelector('[data-fm-when]');
+    const icon = n => '<svg class="icon"><use href="#i-' + n + '"/></svg>';
+    const frame = (title, top, body, right) => '<div class="app-frame fm-frame"><div class="app-bar"><span>' + title + '</span>' + (right || '') + '</div>' + top + '<div class="app-body esf-body" data-body>' + body + '</div></div>';
+    const empty = (ic, h, p, btn) => '<div class="empty" tabindex="-1">' + icon(ic) + '<h5>' + h + '</h5><p>' + p + '</p>' + (btn || '') + '</div>';
+    let gen = 0;
+    const F = {
+      first: {
+        html: frame('Notes', '', empty('book', 'No notes yet', 'Notes you write here are saved and show up on your phone too.', '<button class="btn btn-primary cs-sm" type="button" data-new>' + icon('plus') + 'New note</button>')),
+        use: 'Use it when people haven’t added anything yet.',
+        more: 'This is where people learn what the screen is for, so say what goes here and how to add the first one.',
+        wire: s => s.querySelector('[data-new]').addEventListener('click', () => {
+          const body = s.querySelector('[data-body]');
+          body.classList.add('list');
+          body.innerHTML = '<div class="esf-row"><div class="grow"><b>Untitled note</b><span>Just now</span></div></div><p class="cs-meta">Your first note is here, so the empty state is gone.</p>';
+        })
+      },
+      none: {
+        html: frame('Mail', '<div class="esf-q"><div class="esf-pill">' + icon('search') + '<span>invoice from dana</span></div><span class="esf-in">In: Inbox</span></div>', empty('search', 'No emails in Inbox match “invoice from dana”', 'It may be in another folder.', '<button class="btn btn-secondary cs-sm" type="button" data-all>Search all folders</button>')),
+        use: 'Use it when a search or filter matched nothing.',
+        more: 'Repeat what people searched for, and offer the change most likely to find something.',
+        wire: s => s.querySelector('[data-all]').addEventListener('click', () => {
+          s.querySelector('.esf-in').textContent = 'In: All mail';
+          const body = s.querySelector('[data-body]');
+          body.classList.add('list');
+          body.innerHTML = '<div class="esf-row"><div class="grow"><b>Dana Kim</b><span>Invoice #2041 for the June shoot</span></div><span class="esf-tag">Archive</span></div><div class="esf-row"><div class="grow"><b>Dana Kim</b><span>Invoice #1987, paid</span></div><span class="esf-tag">Archive</span></div>';
+          body.querySelector('.esf-row').setAttribute('tabindex', '-1'); body.querySelector('.esf-row').focus();
+        })
+      },
+      done: {
+        html: frame('Today', '', '<label class="esf-task"><input type="checkbox" data-task><span>Pay rent</span></label>', '<span data-left>1 left</span>'),
+        use: 'Use it when people cleared the list themselves, like an inbox or today’s tasks.',
+        more: 'Confirm that they’re finished, and keep any action small, because nothing needs doing.',
+        wire: s => {
+          const body = s.querySelector('[data-body]');
+          body.classList.add('list');
+          s.querySelector('[data-task]').addEventListener('change', e => {
+            if (!e.target.checked) return;
+            const g = gen;
+            e.target.closest('.esf-task').classList.add('done');
+            setTimeout(() => {
+              if (g !== gen) return;
+              body.classList.remove('list');
+              s.querySelector('[data-left]').textContent = '0 left';
+              body.innerHTML = empty('check', 'All done for today', 'Tasks you add for today will show up here.');
+              body.querySelector('.empty').focus();
+            }, 450);
+          });
+        }
+      }
+    };
+    const show = k => {
+      gen++;
+      stage.innerHTML = F[k].html; F[k].wire(stage);
+      when.innerHTML = '<b>' + fm.querySelector('.fm-seg input:checked + label').textContent + '.</b> ' + F[k].use + ' ' + F[k].more;
+    };
+    fm.querySelectorAll('.fm-seg input').forEach(i => i.addEventListener('change', () => show(i.value)));
+    show('first');
+  })();
+  </script>
+</div>

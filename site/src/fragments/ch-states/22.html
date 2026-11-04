@@ -1,0 +1,42 @@
+<div class="note comfy cw-wrap"><p>Notice that each one names what failed, keeps the work, and offers the fix right there.</p>
+      <div class="seg cw-seg" role="radiogroup" aria-label="Example">
+        <input type="radio" name="cw-error-state-w" id="cw-error-state-w-1" value="figma" checked><label for="cw-error-state-w-1">Figma</label>
+        <input type="radio" name="cw-error-state-w" id="cw-error-state-w-2" value="github"><label for="cw-error-state-w-2">GitHub</label>
+        <input type="radio" name="cw-error-state-w" id="cw-error-state-w-3" value="messages"><label for="cw-error-state-w-3">iPhone Messages</label>
+        <input type="radio" name="cw-error-state-w" id="cw-error-state-w-4" value="chrome"><label for="cw-error-state-w-4">Chrome</label>
+      </div>
+      <div class="cw" data-cw-view role="img" aria-label=""></div>
+      <p class="cw-cap" data-cw-cap aria-live="polite"></p>
+      
+      <script>
+      (() => {
+        const wrap = document.currentScript.closest('.cw-wrap');
+        const view = wrap.querySelector('[data-cw-view]'), cap = wrap.querySelector('[data-cw-cap]');
+        const ic = id => '<svg class="icon sm"><use href="#i-' + id + '"/></svg>';
+        const line = w => '<i class="cw-line" style="width:' + w + '%"></i>';
+        const btn = (t, kind, mod) => '<span class="btn btn-' + kind + ' cw-erw-btn' + (mod ? ' ' + mod : '') + '">' + t + '</span>';
+        const font = (from, to) => '<div class="cw-erw-font"><span>' + from + '</span><span class="cw-erw-m">→</span><span class="cw-erw-pick">' + to + '</span></div>';
+        const S = {
+          figma: { html: '<div class="cw-erw-app"><div class="cw-erw-canvas"><div class="cw-erw-frame"><b>Heading</b>' + line(90) + line(70) + '</div></div>' +
+              '<div class="cw-erw-dlg"><b>' + ic('warn') + 'Missing fonts</b><span class="cw-erw-m">2 fonts in this file aren’t available.</span>' + font('Display Serif', 'Serif') + font('Brand Sans', 'Sans') + btn('Replace fonts', 'primary') + '</div></div>',
+            alt: 'A design file that is open and intact. A dialog titled Missing fonts lists two fonts that aren’t available, each with a replacement picker, and a Replace fonts button.',
+            cap: 'Figma: a file that uses fonts you don’t have still opens. Figma lists the missing fonts and lets you pick replacements, so nothing is lost and the fix is one step.' },
+          github: { html: '<div class="cw-erw-app"><div class="cw-erw-merge"><div class="cw-erw-sec"><b>' + ic('warn') + 'Conflicts with the base branch</b><span class="cw-erw-m">Resolve them before merging.</span>' +
+              '<div class="cw-erw-files"><span>src/app.js</span><span>README.md</span></div>' + btn('Resolve conflicts', 'secondary', 'left') + '</div><div class="cw-erw-sec">' + btn('Merge', 'primary', 'left cw-erw-off') + '</div></div></div>',
+            alt: 'A merge box. A warning says the branch has conflicts to resolve before merging, lists the two conflicting files, and offers a Resolve conflicts button. The Merge button below is dimmed.',
+            cap: 'GitHub: when a pull request can’t merge, it says the branch has conflicts, lists the files, and offers a Resolve conflicts button. Merge stays off until they’re fixed.' },
+          messages: { html: '<div class="cw-erw-chat"><span class="cw-erw-bub in">Are you on the train?</span><span class="cw-erw-bub out">Yes, just left</span>' +
+              '<span class="cw-erw-fail"><span class="cw-erw-bub out">Running 10 min late</span><span class="cw-erw-bang">!</span></span><span class="cw-erw-nd">Not Delivered</span><span class="cw-erw-sheet">Try again</span></div>',
+            alt: 'A chat. The last sent bubble keeps its text and has a red exclamation mark beside it, with Not Delivered underneath. A small Try again option is open.',
+            cap: 'iPhone Messages: a message that fails keeps its text, gets a red mark and “Not Delivered”, and tapping the mark offers Try Again. Nothing has to be retyped.' },
+          chrome: { html: '<div class="cw-erw-app"><div class="cw-erw-tabs"><span class="cw-erw-addr">example.com</span></div><div class="cw-erw-page">' + ic('cloud-off') +
+              '<b>No connection</b><span class="cw-erw-m">Try:</span><ul><li>Checking the cable or router</li><li>Reconnecting to Wi‑Fi</li></ul><span class="cw-erw-code">ERR_INTERNET_DISCONNECTED</span></div></div>',
+            alt: 'A browser page that couldn’t load. A plain heading says there is no connection, a short list suggests things to check, and a small error code sits at the bottom.',
+            cap: 'Chrome: when a page can’t load, it says why in plain words, lists a few things to check, and keeps the error code small at the bottom, for support.' }
+        };
+        const render = k => { view.innerHTML = S[k].html; view.setAttribute('aria-label', 'Sketch: ' + S[k].alt); cap.textContent = S[k].cap; };
+        wrap.querySelectorAll('input[name="cw-error-state-w"]').forEach(r => r.addEventListener('change', () => render(r.value)));
+        render('figma');
+      })();
+      </script>
+    </div>

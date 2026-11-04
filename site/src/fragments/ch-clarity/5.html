@@ -1,0 +1,121 @@
+<script>
+(() => {
+  const cs = document.currentScript.closest('.cs');
+  /* The shared case helpers are defined later in the book, so wait for them. */
+  const start = () => {
+  const D = (k, html, wire) => csDemo(cs.querySelector('[data-d="' + k + '"]'), html, wire);
+  const css = document.createElement('style');
+  css.textContent = `
+#good-visual-hierarchy .vh-wrap{position:relative;width:min(340px,100%)}
+#good-visual-hierarchy .vh-pass{background:var(--ui-surface);border:1px solid var(--ui-border);border-radius:12px;box-shadow:var(--ui-shadow);padding:14px;display:flex;flex-direction:column;gap:10px;text-align:left}
+#good-visual-hierarchy .vh-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px 10px}
+#good-visual-hierarchy .vh-grid span{display:flex;flex-direction:column;min-width:0}
+#good-visual-hierarchy .vh-loud small{font:800 12px var(--font-body);text-transform:uppercase;color:var(--ui-sel)}
+#good-visual-hierarchy .vh-loud b{font:800 17px var(--font-body);color:var(--ui-text)}
+#good-visual-hierarchy .vh-loud span:nth-child(3n+2) b{color:var(--ui-danger)}
+#good-visual-hierarchy .vh-loud span:nth-child(4n) b{color:var(--ui-sel)}
+#good-visual-hierarchy .vh-quiet small{font-size:11.5px;color:var(--ui-muted)}
+#good-visual-hierarchy .vh-quiet b{font:600 13.5px var(--font-body)}
+#good-visual-hierarchy .vh-lead{display:flex;gap:18px;padding-bottom:10px;border-bottom:1px dashed var(--ui-border)}
+#good-visual-hierarchy .vh-lead span{display:flex;flex-direction:column}
+#good-visual-hierarchy .vh-lead small{font-size:12px;color:var(--ui-muted)}
+#good-visual-hierarchy .vh-lead b{font:700 30px/1.1 var(--font-body)}
+#good-visual-hierarchy .vh-cover{position:absolute;inset:0;border-radius:12px;background:var(--ui-surface);border:1px solid var(--ui-border);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;padding:14px;text-align:center;font-size:14px}
+#good-visual-hierarchy .vh-cover[hidden]{display:none}
+#good-visual-hierarchy .vh-ans{display:flex;gap:6px;flex-wrap:wrap;justify-content:center}
+#good-visual-hierarchy .vh-res{font-weight:600}
+#good-visual-hierarchy .vh-res:empty{display:none}
+#good-visual-hierarchy .vh-gray{filter:grayscale(1)}
+#good-visual-hierarchy .vh-set{width:min(320px,100%)}
+#good-visual-hierarchy .vh-set .app-body{gap:0;padding:8px 14px 12px}
+#good-visual-hierarchy .vh-row{display:flex;justify-content:space-between;gap:10px;padding:6px 0;font-size:14px;color:var(--ui-text)}
+#good-visual-hierarchy .vh-row i{width:30px;height:18px;border-radius:9px;background:var(--ui-skel);flex:none}
+#good-visual-hierarchy .vh-row i.on{background:var(--ui-ok)}
+#good-visual-hierarchy .vh-h{margin:0;color:color-mix(in srgb,var(--ui-sel) 80%,var(--ui-text))}
+#good-visual-hierarchy .vh-h.weak{font:400 14px var(--font-body);padding:6px 0}
+#good-visual-hierarchy .vh-h.strong{font:700 16px var(--font-body);padding:14px 0 4px}
+#good-visual-hierarchy .vh-h.strong:first-child{padding-top:4px}
+#good-visual-hierarchy .vh-rec{width:min(320px,100%);background:var(--ui-surface);border:1px solid var(--ui-border);border-radius:12px;box-shadow:var(--ui-shadow);padding:14px;display:flex;flex-direction:column;gap:6px;text-align:left;color:var(--ui-text)}
+#good-visual-hierarchy .vh-rec p{margin:0;line-height:1.35}
+#good-visual-hierarchy .vh-tag{display:none;margin-left:6px;font:500 10.5px var(--font-mono);color:var(--ui-surface);background:var(--ui-muted);border-radius:4px;padding:1px 4px;vertical-align:middle}
+#good-visual-hierarchy .vh-show .vh-tag{display:inline-block}
+#good-visual-hierarchy .vh-count{font:600 13px var(--font-mono)}
+#good-visual-hierarchy .vh-cart{width:min(320px,100%)}
+#good-visual-hierarchy .vh-cart .app-body{gap:6px}
+#good-visual-hierarchy .vh-line{display:flex;justify-content:space-between;font-size:14px}
+#good-visual-hierarchy .vh-acts{display:flex;gap:8px;flex-wrap:wrap;margin-top:6px}
+#good-visual-hierarchy .vh-acts .btn{flex:1 1 120px;justify-content:center;font-size:14px;padding:9px 10px}
+`;
+  cs.appendChild(css);
+
+  /* 1. Everything loud */
+  const F = [['Passenger', 'Maya Chen'], ['Flight', 'LH 2041'], ['Date', '24 Oct'], ['From', 'Berlin'], ['Gate', 'B21'], ['To', 'Lisbon'], ['Seat', '14C'], ['Boarding', '09:40'], ['Group', '3']];
+  const cell = f => '<span><small>' + f[0] + '</small><b>' + f[1] + '</b></span>';
+  const loud = '<div class="vh-pass"><div class="vh-grid vh-loud">' + F.map(cell).join('') + '</div></div>';
+  const quiet = '<div class="vh-pass"><div class="vh-lead"><span><small>Gate</small><b>B21</b></span><span><small>Boarding</small><b>09:40</b></span></div><div class="vh-grid vh-quiet">' +
+    F.filter(f => f[0] !== 'Gate' && f[0] !== 'Boarding').map(cell).join('') + '</div></div>';
+  const glanceHtml = pass => '<div class="vh-wrap">' + pass + '<div class="vh-cover" data-cover><span data-q>Your boarding pass is ready.</span><button class="btn btn-primary cs-sm" type="button" data-go>Glance</button><div class="vh-ans" data-ans hidden role="group" aria-label="Gate">' +
+    ['B12', 'B21', 'C21'].map(g => '<button class="btn btn-secondary cs-sm" type="button" data-g="' + g + '">' + g + '</button>').join('') + '</div></div></div>' +
+    '<p class="vh-res" data-res aria-live="polite"></p><button class="btn btn-secondary cs-sm" type="button" data-again hidden>Glance again</button>';
+  const glanceWire = (d, t) => {
+    const cover = d.querySelector('[data-cover]'), go = d.querySelector('[data-go]'), ans = d.querySelector('[data-ans]'), q = d.querySelector('[data-q]'), res = d.querySelector('[data-res]'), again = d.querySelector('[data-again]');
+    go.addEventListener('click', () => {
+      cover.hidden = true;
+      t.after(() => { cover.hidden = false; go.hidden = true; ans.hidden = false; q.textContent = 'Which gate was it?'; ans.querySelector('button').focus(); }, 1000);
+    });
+    ans.querySelectorAll('[data-g]').forEach(b => b.addEventListener('click', () => {
+      res.textContent = b.dataset.g === 'B21' ? 'Right, gate B21. Here is the pass again.' : 'It was B21. Here is the pass again.';
+      cover.hidden = true; again.hidden = false; again.focus();
+    }));
+    again.addEventListener('click', () => {
+      res.textContent = ''; again.hidden = true; ans.hidden = true; go.hidden = false; q.textContent = 'Your boarding pass is ready.'; cover.hidden = false; go.focus();
+    });
+  };
+  D('good-visual-hierarchy-1b', glanceHtml(loud), glanceWire);
+  D('good-visual-hierarchy-1f', glanceHtml(quiet), glanceWire);
+
+  /* 2. Color alone */
+  const SECT = [['Email', ['Weekly summary', 'Receipts']], ['Push', ['Messages', 'Price drops']], ['Quiet hours', ['From 22:00', 'Weekends']]];
+  const setHtml = cls => '<div class="app-frame vh-set" data-frame><div class="app-bar"><span>Notifications</span></div><div class="app-body">' +
+    SECT.map(s => '<h5 class="vh-h ' + cls + '">' + s[0] + '</h5>' + s[1].map((r, i) => '<div class="vh-row"><span>' + r + '</span><i class="' + (i ? '' : 'on') + '"></i></div>').join('')).join('') +
+    '</div></div><label class="switch"><span>Grayscale</span><input type="checkbox" role="switch" data-gray></label>';
+  const setWire = d => d.querySelector('[data-gray]').addEventListener('change', e => d.querySelector('[data-frame]').classList.toggle('vh-gray', e.target.checked));
+  D('good-visual-hierarchy-2b', setHtml('weak'), setWire);
+  D('good-visual-hierarchy-2f', setHtml('strong'), setWire);
+
+  /* 3. Too many levels */
+  const st = (txt, size, w, extra) => '<p style="font:' + w + ' ' + size + 'px var(--font-body)' + (extra || '') + '">' + txt + '<span class="vh-tag">' + size + ' · ' + w + '</span></p>';
+  const many = [
+    st('Lemon pasta', 22, 700), st('A quick weeknight dinner', 19, 600), st('Serves 4', 17, 500), st('25 minutes', 16, 600),
+    st('Ingredients', 15, 700), st('Spaghetti, lemons, butter, parmesan, pepper.', 14, 400), st('Tip: save a cup of pasta water.', 13, 500), st('From the Weeknights collection', 12, 400)
+  ];
+  const few = [
+    st('Lemon pasta', 22, 700), st('Serves 4 · 25 minutes', 15, 600), st('A quick weeknight dinner. Spaghetti, lemons, butter, parmesan and pepper.', 14, 400), st('Ingredients', 15, 600, ';margin-top:6px'),
+    st('Save a cup of pasta water before you drain it.', 14, 400), st('From the Weeknights collection', 12.5, 400, ';color:var(--ui-muted)')
+  ];
+  const lvHtml = lines => '<div class="vh-rec" data-rec>' + lines.join('') + '</div><label class="switch"><span>Show styles</span><input type="checkbox" role="switch" data-show></label><p class="vh-count" data-count aria-live="polite"></p>';
+  const lvWire = d => d.querySelector('[data-show]').addEventListener('change', e => {
+    d.querySelector('[data-rec]').classList.toggle('vh-show', e.target.checked);
+    const n = new Set(Array.from(d.querySelectorAll('.vh-tag')).map(x => x.textContent)).size;
+    d.querySelector('[data-count]').textContent = e.target.checked ? n + ' different text styles' : '';
+  });
+  D('good-visual-hierarchy-3b', lvHtml(many), lvWire);
+  D('good-visual-hierarchy-3f', lvHtml(few), lvWire);
+
+  /* 4. Two primaries */
+  const cartHtml = second => '<div class="app-frame vh-cart"><div class="app-bar"><span>Your bag</span><span class="cs-meta">2 items</span></div><div class="app-body">' +
+    '<div class="vh-line"><span>Rain jacket</span><span>€79.00</span></div><div class="vh-line"><span>Wool socks</span><span>€12.00</span></div><div class="vh-line"><b>Total</b><b>€91.00</b></div>' +
+    '<div class="vh-acts"><button class="btn ' + second + '" type="button" data-b="shop">Continue shopping</button><button class="btn btn-primary" type="button" data-b="pay">Check out</button></div>' +
+    '<p class="cs-meta" data-out aria-live="polite"></p></div></div>';
+  const cartWire = d => d.querySelectorAll('[data-b]').forEach(b => b.addEventListener('click', () => {
+    d.querySelector('[data-out]').textContent = b.dataset.b === 'pay' ? 'On to payment.' : 'Back to the shop. That wasn’t the next step.';
+  }));
+  D('good-visual-hierarchy-4b', cartHtml('btn-primary'), cartWire);
+  D('good-visual-hierarchy-4f', cartHtml('btn-secondary'), cartWire);
+
+  csInit(cs);
+  };
+  if (window.csDemo) start(); else document.addEventListener('DOMContentLoaded', start);
+})();
+
+</script>

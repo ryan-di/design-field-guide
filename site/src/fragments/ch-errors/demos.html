@@ -1,0 +1,253 @@
+<script>
+(() => {
+  const { $, $$, store, demo, toast } = window.dfg;
+
+  /* js-25-errors.js */
+  demo('pat-constraints', st => {
+    const freeBox = $('[data-panel="free"]', st), conBox = $('[data-panel="con"]', st), out = $('[data-out]', st);
+    const ratio = $('#p15-ratio', st), cw = $('#p15-cw', st), ch = $('#p15-ch', st);
+    const custom = $('#p15-cw-custom', st), customHelp = $('#p15-cw-custom-help', st), customMsg = $('#p15-cw-custom-msg', st);
+    const HELP = customHelp.textContent;
+    let mode = ($('input[name="p15-mode"]:checked', st) || {}).value || 'free';
+    let customW = 1000;
+
+    const errFor = (raw, name) => {
+      const s = raw.trim();
+      if (!s) return 'Enter a ' + name + '.';
+      if (!/^\d+$/.test(s)) return 'Use a whole number, like 1024.';
+      const v = Number(s);
+      if (v < 64 || v > 4096) return 'Must be between 64 and 4096.';
+      if (v % 8) return 'Must be a multiple of 8.';
+      return '';
+    };
+    const fields = [['p15-fw', 'width'], ['p15-fh', 'height']].map(([id, name]) => ({ input: $('#' + id, st), msg: $('#' + id + '-msg', st), name }));
+    const check = f => {
+      const err = errFor(f.input.value, f.name);
+      f.input.setAttribute('aria-invalid', err ? 'true' : 'false');
+      f.msg.hidden = !err;
+      $('span', f.msg).textContent = err;
+      return err;
+    };
+
+    const conSize = () => {
+      const w = cw.value === 'custom' ? customW : Number(cw.value);
+      if (ratio.value === 'free') return { w, h: Number(ch.value), note: 'Both sides come from the list, so both are valid.' };
+      const [a, b] = ratio.value.split(':').map(Number);
+      const exact = w * b / a, h = Math.max(64, Math.round(exact / 8) * 8);
+      return { w, h, note: 'Height follows ' + ratio.value + (h !== exact ? ', rounded to a multiple of 8.' : '.') };
+    };
+    const renderOut = () => {
+      if (mode === 'con') { const s = conSize(); out.textContent = 'Video ' + s.w + ' × ' + s.h + '. ' + s.note; return; }
+      const bad = fields.some(f => errFor(f.input.value, f.name));
+      out.textContent = bad ? 'Can’t export yet: the size has a problem.' : 'Video ' + fields[0].input.value.trim() + ' × ' + fields[1].input.value.trim() + '.';
+    };
+    const renderCon = () => {
+      $('[data-custom]', st).hidden = cw.value !== 'custom';
+      $('[data-height]', st).hidden = ratio.value !== 'free';
+      renderOut();
+    };
+    const applyCustom = () => {
+      const s = custom.value.trim(), v = Number(s);
+      if (!s || !isFinite(v)) {
+        custom.setAttribute('aria-invalid', 'true'); customMsg.hidden = false; customHelp.textContent = HELP;
+        $('span', customMsg).textContent = 'Enter a number of pixels, like 1000.';
+        return;
+      }
+      custom.setAttribute('aria-invalid', 'false'); customMsg.hidden = true; $('span', customMsg).textContent = '';
+      const snapped = Math.min(4096, Math.max(256, Math.round(v / 8) * 8));
+      if (snapped === v) customHelp.textContent = HELP;
+      else if (v > 4096) customHelp.textContent = 'Changed ' + s + ' to 4096, the largest width.';
+      else if (v < 256) customHelp.textContent = 'Changed ' + s + ' to 256, the smallest width.';
+      else customHelp.textContent = 'Rounded ' + s + ' to ' + snapped + ', the nearest multiple of 8.';
+      custom.value = String(snapped); customW = snapped;
+      renderOut();
+    };
+
+    fields.forEach(f => {
+      f.input.addEventListener('blur', () => { check(f); renderOut(); });
+      f.input.addEventListener('input', () => {
+        if (f.input.getAttribute('aria-invalid') === 'true' && !errFor(f.input.value, f.name)) { check(f); renderOut(); }
+      });
+    });
+    custom.addEventListener('change', applyCustom);
+    [ratio, cw, ch].forEach(el => el.addEventListener('change', renderCon));
+    $$('input[name="p15-mode"]', st).forEach(r => r.addEventListener('change', () => {
+      if (!r.checked) return;
+      mode = r.value;
+      freeBox.hidden = mode !== 'free';
+      conBox.hidden = mode !== 'con';
+      renderCon();
+    }));
+    $('[data-act="run"]', st).addEventListener('click', () => {
+      if (mode === 'free') {
+        const errs = fields.map(check);
+        renderOut();
+        const i = errs.findIndex(Boolean);
+        if (i > -1) { fields[i].input.focus(); return; }
+        toast(st, 'Exporting a ' + fields[0].input.value.trim() + ' × ' + fields[1].input.value.trim() + ' video');
+        return;
+      }
+      const s = conSize();
+      toast(st, 'Exporting a ' + s.w + ' × ' + s.h + ' video');
+    });
+
+    fields.forEach(check);
+    freeBox.hidden = mode !== 'free';
+    conBox.hidden = mode !== 'con';
+    renderCon();
+  });
+
+  demo('pat-forgiving-input', st => {
+    const input = $('#p15-size', st), note = $('[data-note]', st), rows = $$('[data-row]', st);
+    const wOut = $('[data-w]', st), hOut = $('[data-h]', st), ask = $('[data-ask]', st), askBtn = $('[data-act="square"]', st);
+    let timer = null, square = 0;
+
+    const parse = raw => {
+      const s = raw.trim().toLowerCase();
+      if (!s) return { kind: 'hint', msg: 'Type a size, like 1024 x 768.' };
+      const re = /(\d+(?:\.\d+)?)\s*(k)?(?:\s*px)?/g;
+      const nums = [], notes = [];
+      let m;
+      while ((m = re.exec(s))) {
+        let v = parseFloat(m[1]);
+        if (m[2]) { const k = Math.round(v * 1024); notes.push('Read “' + m[1] + 'k” as ' + k + '.'); v = k; }
+        else if (v !== Math.round(v)) { notes.push('Rounded ' + m[1] + ' to ' + Math.round(v) + '.'); v = Math.round(v); }
+        nums.push(v);
+      }
+      const rest = s.replace(re, ' ').replace(/[×*,;]/g, ' ').split(/\s+/).filter(t => t && !/^(x|by|w|h|width|height|px|-)$/.test(t));
+      if (!nums.length) return { kind: 'error', msg: 'Couldn’t find a size in that. Try two numbers, like 1024 x 768.' };
+      if (nums.length > 2) return { kind: 'error', msg: 'Found ' + nums.length + ' numbers. Give two: width, then height.' };
+      if (rest.length) notes.push('Ignored “' + rest.join(' ') + '”.');
+      const range = (v, name) => v < 64 ? name + ' ' + v + ' is too small. The smallest size is 64.' : v > 4096 ? name + ' ' + v + ' is too large. The largest size is 4096.' : '';
+      if (nums.length === 1) {
+        if (/(x|×|\*|,|by)\s*$/.test(s)) return { kind: 'hint', msg: 'Now the height.' };
+        const err = range(nums[0], 'Size');
+        if (err) return { kind: 'error', msg: err };
+        return { kind: 'ask', n: nums[0] };
+      }
+      const named = [[nums[0], 'Width'], [nums[1], 'Height']];
+      for (const [v, name] of named) { const err = range(v, name); if (err) return { kind: 'error', msg: err }; }
+      const [w, h] = named.map(([v, name]) => {
+        const r = Math.round(v / 8) * 8;
+        if (r !== v) notes.push('Rounded ' + name.toLowerCase() + ' ' + v + ' to ' + r + ', the nearest multiple of 8.');
+        return r;
+      });
+      return { kind: 'ok', w, h, notes };
+    };
+
+    const render = () => {
+      clearTimeout(timer);
+      const r = parse(input.value);
+      const ok = r.kind === 'ok';
+      rows.forEach(row => { row.hidden = !ok; });
+      ask.hidden = r.kind !== 'ask';
+      input.setAttribute('aria-invalid', r.kind === 'error' ? 'true' : 'false');
+      note.classList.toggle('p15-bad', r.kind === 'error');
+      if (ok) {
+        wOut.textContent = String(r.w); hOut.textContent = String(r.h);
+        note.textContent = r.notes.length ? r.notes.join(' ') : 'Read as width, then height.';
+      } else if (r.kind === 'ask') {
+        square = r.n;
+        note.textContent = 'Just one number. Did you mean a square?';
+        askBtn.textContent = 'Use ' + r.n + ' × ' + r.n;
+      } else {
+        note.textContent = r.msg;
+      }
+    };
+
+    input.addEventListener('input', () => { clearTimeout(timer); timer = setTimeout(render, 350); });
+    input.addEventListener('blur', render);
+    askBtn.addEventListener('click', () => { input.value = square + ' x ' + square; render(); input.focus(); });
+    $$('[data-ex]', st).forEach(b => b.addEventListener('click', () => { input.value = b.dataset.ex; render(); }));
+    render();
+  });
+
+  demo('pat-autosave', st => {
+    const KEY = 'cfg-p15-draft';
+    const ta = $('#p15-prompt', st), status = $('[data-status]', st), banner = $('[data-banner]', st), bannerText = $('[data-banner-text]', st);
+    const crashBtn = $('[data-act="crash"]', st), restoreBtn = $('[data-act="restore"]', st), discardBtn = $('[data-act="discard"]', st);
+    const stored = store.get(KEY, null);
+    const valid = d => !!(d && typeof d.text === 'string' && d.text.trim() && typeof d.t === 'number');
+    let draft = valid(stored) ? stored : { text: ta.value, t: Date.now() };
+    let recovered = null, timer = null, state = '';
+
+    const setStatus = s => {
+      if (s === state) return;
+      state = s;
+      if (s === 'saving') status.innerHTML = '<span class="spinner" aria-hidden="true"></span>Saving…';
+      else if (s === 'saved') status.innerHTML = '<svg class="icon" aria-hidden="true"><use href="#i-check"/></svg>Saved';
+      else if (s === 'reopening') status.innerHTML = '<span class="spinner" aria-hidden="true"></span>Reopening…';
+      else status.textContent = s;
+    };
+    const ago = t => {
+      const unit = (n, w) => n + ' ' + w + (n === 1 ? '' : 's') + ' ago';
+      const s = Math.max(1, Math.round((Date.now() - t) / 1000));
+      if (s < 60) return unit(s, 'second');
+      const m = Math.round(s / 60); if (m < 60) return unit(m, 'minute');
+      const h = Math.round(m / 60); if (h < 24) return unit(h, 'hour');
+      return unit(Math.round(h / 24), 'day');
+    };
+    const save = () => {
+      clearTimeout(timer);
+      draft = ta.value.trim() ? { text: ta.value, t: Date.now() } : null;
+      store.set(KEY, draft);
+      setStatus('saved');
+    };
+    const hideBanner = () => {
+      const hadFocus = banner.contains(document.activeElement);
+      banner.hidden = true; recovered = null;
+      if (hadFocus) ta.focus();
+    };
+    const offer = focus => {
+      if (!valid(draft)) { setStatus('Nothing to recover'); toast(st, 'Reopened. There was no draft to recover.'); return false; }
+      recovered = draft;
+      bannerText.textContent = 'Recovered your unsaved draft from ' + ago(draft.t) + '.';
+      banner.hidden = false;
+      setStatus('Draft found');
+      if (focus) restoreBtn.focus({ preventScroll: true });
+      return true;
+    };
+
+    ta.addEventListener('input', () => {
+      setStatus('saving');
+      clearTimeout(timer);
+      timer = setTimeout(save, 900);
+    });
+
+    crashBtn.addEventListener('click', () => {
+      clearTimeout(timer); // a save that hadn't happened yet is lost, like a real crash
+      banner.hidden = true; recovered = null;
+      ta.value = ''; ta.disabled = true; crashBtn.disabled = true;
+      setStatus('reopening');
+      setTimeout(() => {
+        ta.disabled = false; crashBtn.disabled = false;
+        if (!offer(true)) crashBtn.focus();
+      }, 900);
+    });
+
+    restoreBtn.addEventListener('click', () => {
+      if (!recovered) return;
+      const before = ta.value, text = recovered.text;
+      hideBanner();
+      ta.value = text; ta.focus();
+      save();
+      const changed = before.trim() && before !== text;
+      toast(st, 'Draft restored', changed ? { action: { label: 'Undo', run: () => { ta.value = before; save(); } } } : {});
+    });
+
+    discardBtn.addEventListener('click', () => {
+      const r = recovered;
+      if (!r) return;
+      hideBanner();
+      save();
+      if (!ta.value.trim()) setStatus('Draft discarded');
+      toast(st, 'Draft discarded', { action: { label: 'Undo', run: () => { ta.value = r.text; save(); toast(st, 'Draft restored'); } } });
+    });
+
+    if (valid(stored)) { ta.value = ''; offer(false); }
+    else setStatus('saved');
+  });
+
+
+})();
+</script>

@@ -1,0 +1,139 @@
+<script>
+(() => {
+  const cs = document.currentScript.closest('.cs');
+  const D = (k, html, wire) => csDemo(cs.querySelector('[data-d="' + k + '"]'), html, wire);
+  const st = document.createElement('style');
+  st.textContent = [
+    '#eff-worked-example .we-card{width:min(400px,100%);background:var(--ui-surface);border:1px solid var(--ui-border);border-radius:12px;padding:14px;box-shadow:var(--ui-shadow);display:flex;flex-direction:column;gap:10px;text-align:left;font-size:14px;line-height:1.45;color:var(--ui-text)}',
+    '#eff-worked-example .we-top{display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap}',
+    '#eff-worked-example .we-lbl{font:600 11.5px var(--font-mono);letter-spacing:.06em;text-transform:uppercase;color:var(--ui-muted)}',
+    '#eff-worked-example .we-day{font:700 13px var(--font-mono);padding:3px 8px;border-radius:6px;background:var(--ui-hover)}',
+    '#eff-worked-example .we-steps{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:6px}',
+    '#eff-worked-example .we-steps:empty{display:none}',
+    '#eff-worked-example .we-steps li{display:flex;gap:10px;align-items:baseline}',
+    '#eff-worked-example .we-steps li > em{font:600 12px var(--font-mono);font-style:normal;color:var(--ui-muted);flex:none;min-width:44px}',
+    '#eff-worked-example .we-steps li.bad > span{color:var(--ui-danger);font-weight:600}',
+    '#eff-worked-example .we-steps li.good > span{font-weight:600}',
+    '#eff-worked-example .we-steps li.skip > span{color:var(--ui-muted)}',
+    '#eff-worked-example .we-sum{border-top:1px solid var(--ui-border);padding-top:8px;font-weight:600}',
+    '#eff-worked-example .we-sum:empty{display:none}',
+    '#eff-worked-example .we-sum.bad{color:var(--ui-danger)}',
+    '#eff-worked-example .we-ask{padding:8px 10px;border-radius:8px;background:var(--ui-sel-soft);font-weight:600}',
+    '#eff-worked-example .we-chat{height:160px;overflow:auto;border:1px solid var(--ui-border);border-radius:8px;padding:8px 10px;display:flex;flex-direction:column;gap:6px;background:var(--ui-bg);font-size:13px}',
+    '#eff-worked-example .we-chat:focus-visible{outline:2px solid var(--ui-sel)}',
+    '#eff-worked-example .we-chat p > b{font-weight:600;margin-right:4px}',
+    '#eff-worked-example .we-meta{font:500 12.5px var(--font-mono);color:var(--ui-muted)}',
+    '#eff-worked-example .we-links{display:flex;flex-wrap:wrap;gap:6px}',
+    '#eff-worked-example .we-links .btn[aria-expanded="true"]{background:var(--ui-sel-soft);border-color:var(--ui-sel)}',
+    '#eff-worked-example .we-doc{padding:8px 10px;border-left:3px solid var(--ui-sel);border-radius:0 8px 8px 0;background:var(--ui-hover);font-size:13.5px}',
+    '#eff-worked-example .we-doc:empty{display:none}',
+    '#eff-worked-example .we-plan{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:7px}',
+    '#eff-worked-example .we-plan li{display:grid;grid-template-columns:18px minmax(0,1fr);gap:8px;align-items:start}',
+    '#eff-worked-example .we-plan li > i{width:16px;height:16px;margin-top:2px;border-radius:4px;border:1.5px solid var(--ui-muted);font-style:normal;display:grid;place-items:center;font-size:11px;font-weight:700}',
+    '#eff-worked-example .we-plan li.on > i{background:var(--ui-ok);border-color:var(--ui-ok);color:var(--ui-surface)}',
+    '#eff-worked-example .we-plan li small{display:block;color:var(--ui-muted);font-size:12.5px}',
+    '#eff-worked-example .we-plan li strong{display:block;font-size:13px;color:var(--ui-ok)}',
+    '#eff-worked-example .we-status{font:600 12px var(--font-mono);padding:3px 8px;border-radius:6px;background:var(--ui-hover);color:var(--ui-muted)}'
+  ].join('\n');
+  cs.appendChild(st);
+
+  /* 1. Straight to code vs directions first: missed replies in email threads */
+  const flowHtml = '<div class="we-card"><div class="we-top"><span class="we-lbl">People miss new replies in long threads</span><span class="we-day" data-day>Day 0</span></div>' +
+    '<ol class="we-steps" data-steps></ol><p class="we-sum" aria-live="polite" data-sum></p><button class="btn btn-primary cs-sm" type="button" style="align-self:flex-start" data-go>Next step</button></div>';
+  const flowWire = (steps, sum, bad) => d => {
+    const go = d.querySelector('[data-go]'), list = d.querySelector('[data-steps]');
+    let n = 0;
+    go.addEventListener('click', () => {
+      const s = steps[n++];
+      list.insertAdjacentHTML('beforeend', '<li class="' + (s[2] || '') + '"><em>Day ' + s[0] + '</em><span>' + s[1] + '</span></li>');
+      d.querySelector('[data-day]').textContent = 'Day ' + s[0];
+      if (n === steps.length) { go.disabled = true; go.textContent = 'Done'; const m = d.querySelector('[data-sum]'); m.textContent = sum; if (bad) m.className = 'we-sum bad'; }
+    });
+  };
+  D('eff-worked-example-1b', flowHtml, flowWire([
+    [1, 'Brief written.'],
+    [1, 'The agent builds an unread dot on each new reply.'],
+    [3, 'Review: “Why not jump straight to the first unread reply?”', 'bad'],
+    [4, 'Rebuild: jump to the first unread. The dot work is thrown away.', 'bad'],
+    [6, 'Shipped.']
+  ], 'Six days, two builds. The better idea came after the first build.', true));
+  D('eff-worked-example-1f', flowHtml, flowWire([
+    [1, 'Brief written.'],
+    [1, 'Three directions sketched in an hour: unread dots, jump to the first unread, fold read replies.'],
+    [1, 'Picked “jump to the first unread”, with a count on the jump button.', 'good'],
+    [3, 'The agent builds it once.'],
+    [3, 'Shipped.']
+  ], 'Three days, one build. The choice was made before any real code.', false));
+
+  /* 2. Long chat vs artifacts: default reminder in a calendar */
+  const CHAT = [
+    ['You', 'Let’s look at event reminders.'], ['Agent', 'Here is how reminders are stored today…'], ['You', 'Can you list the reminder options?'],
+    ['Agent', '5, 10, 15, 30 and 60 minutes, plus a day before.'], ['You', 'Try a version with a bigger default.'], ['Agent', 'Done. Preview is ready.'],
+    ['You', 'Hmm, not sure. Show the old one again.'], ['Agent', 'Switched back.'], ['You', 'ok let’s go with 10'], ['Agent', 'Updated the default to 10 minutes.'],
+    ['You', 'Now the settings page copy.'], ['Agent', 'Here are three options for the label…'], ['You', 'Second one.'], ['Agent', 'Done. Shall I run the tests?']
+  ];
+  D('eff-worked-example-2b', '<div class="we-card"><p class="we-ask">Sam: “I’m picking this up. Why is the default reminder 10 minutes, not 30?”</p>' +
+    '<span class="we-lbl">Chat with the agent · 214 messages</span><div class="we-chat" tabindex="0" role="log" aria-label="Chat with the agent">' +
+    CHAT.map(c => '<p><b>' + c[0] + ':</b> ' + c[1] + '</p>').join('') + '</div>' +
+    '<span class="we-meta">Showing the first 14 of 214 messages.</span></div>', () => {});
+  const DOCS = {
+    brief: '<b>Brief.</b> People miss meetings because the reminder comes too late, or too early to act on.',
+    dirs: '<b>Directions.</b> A: 10 minutes. B: 30 minutes. C: ask on the first event. Prototypes linked.',
+    dec: '<b>Decision.</b> 10 minutes. In the sample, 8 of 10 events were short meetings in the same building. With 30 minutes, people dismissed the reminder and then forgot.',
+    checks: '<b>Checks.</b> New events get a 10-minute reminder. Changing it in settings sticks after restart.'
+  };
+  D('eff-worked-example-2f', '<div class="we-card"><p class="we-ask">Sam: “I’m picking this up. Why is the default reminder 10 minutes, not 30?”</p>' +
+    '<span class="we-lbl">Ticket · Set a better default reminder</span><div class="we-links">' +
+    [['brief', 'Brief'], ['dirs', 'Directions page'], ['dec', 'Decision (in the PR)'], ['checks', 'Checks']].map(l => '<button class="btn btn-secondary cs-sm" type="button" aria-expanded="false" data-doc="' + l[0] + '">' + l[1] + '</button>').join('') +
+    '</div><p class="we-doc" aria-live="polite" data-out></p></div>', d => {
+    d.querySelectorAll('[data-doc]').forEach(b => b.addEventListener('click', () => {
+      d.querySelectorAll('[data-doc]').forEach(x => x.setAttribute('aria-expanded', String(x === b)));
+      d.querySelector('[data-out]').innerHTML = DOCS[b.dataset.doc];
+    }));
+  });
+
+  /* 3. Full size vs scaled: a typo in Settings */
+  const typo = (rows, time, note, bad) => '<div class="we-card"><span class="we-lbl">Settings says “Recieve emails”</span><ol class="we-steps">' +
+    rows.map(r => '<li class="' + (r[2] || '') + '"><em>' + r[0] + '</em><span>' + r[1] + '</span></li>').join('') + '</ol>' +
+    '<p class="we-sum' + (bad ? ' bad' : '') + '">' + time + '</p><span class="we-meta">' + note + '</span></div>';
+  D('eff-worked-example-3b', typo([
+    ['Brief', 'A full page on who sees the label and why it matters.'],
+    ['Context', 'A context pack with six sources.'],
+    ['Explore', 'Three directions for the label, each prototyped.'],
+    ['Decide', 'A scoring table for the three directions.'],
+    ['Build', 'A build plan and its own worktree.'],
+    ['Check', 'A three-line evaluation plan.'],
+    ['Learn', 'A session tally.']
+  ], 'Took a day and a half.', 'Reviewer: “Which line is the actual change?”', true), () => {});
+  D('eff-worked-example-3f', typo([
+    ['Brief', '“Settings says Recieve. Fix the spelling.”'],
+    ['Build', 'One word changed.'],
+    ['Check', 'A test checks that the label reads “Receive emails”.'],
+    ['Others', 'Skipped. None of them would change a decision.', 'skip']
+  ], 'Took 15 minutes.', 'Reviewer: “Looks good.”', false), () => {});
+
+  /* 4. Close at merge vs check after release: a hotel search filter */
+  const PLAN = [
+    ['People find the filter on their own.', 'Watch five people book a hotel.', '4 of 5 found it.'],
+    ['More searches use the filter.', 'Share of searches with it on, now 6%.', '6% → 15%.'],
+    ['No new “where is the filter?” threads.', 'Read support threads a month after release.', 'One thread, from an old app version.']
+  ];
+  const tkHtml = fixed => '<div class="we-card"><div class="we-top"><span class="we-lbl">Make “Free cancellation” easy to find</span><span class="we-status" data-status>' + (fixed ? 'Open until checked' : 'Closed at merge') + '</span></div>' +
+    '<span class="we-lbl">Evaluation plan</span><ul class="we-plan">' +
+    PLAN.map((p, n) => '<li data-p="' + n + '"><i aria-hidden="true"></i><span>' + p[0] + '<small>' + p[1] + '</small></span></li>').join('') +
+    '</ul><p class="we-sum" aria-live="polite" data-sum></p><button class="btn btn-primary cs-sm" type="button" style="align-self:flex-start" data-go>One month later</button></div>';
+  D('eff-worked-example-4b', tkHtml(false), d => d.querySelector('[data-go]').addEventListener('click', e => {
+    e.target.disabled = true; const s = d.querySelector('[data-sum]'); s.className = 'we-sum bad';
+    s.textContent = 'Nobody looked. All three lines are still unchecked, and the next filter change starts from guesses again.';
+  }));
+  D('eff-worked-example-4f', tkHtml(true), d => d.querySelector('[data-go]').addEventListener('click', e => {
+    e.target.disabled = true;
+    PLAN.forEach((p, n) => { const li = d.querySelector('[data-p="' + n + '"]'); li.classList.add('on'); li.querySelector('i').textContent = '✓'; li.querySelector('span').insertAdjacentHTML('beforeend', '<strong>' + p[2] + '</strong>'); });
+    d.querySelector('[data-status]').textContent = 'Closed after the check';
+    d.querySelector('[data-sum]').textContent = 'Learned: filters next to the search button get found. Do the same for the price filter.';
+  }));
+
+  csInit(cs);
+})();
+
+</script>

@@ -1,0 +1,287 @@
+<script>
+(() => {
+  const { $, $$, store, demo, toast } = window.dfg;
+
+  /* js-47-practice.js */
+  demo('good-train-your-eye', st => {
+    const DIFFS = {
+      spacing: { name: 'Padding', text: 'the copy has 10px above and below the content. The original has 14px.' },
+      thumb: { name: 'Corner radius', text: 'the image corners are 3px. The original’s are 8px.' },
+      icon: { name: 'Alignment', text: 'the icon sits 2px lower than the title.' },
+      title: { name: 'Font weight', text: 'the title is 500. The original is 600.' },
+      meta: { name: 'Text color', text: 'the meta line is lighter, so it has less contrast.' }
+    };
+    const NAMES = { badge: 'The badge', desc: 'The description', open: 'The Open button' };
+    const total = Object.keys(DIFFS).length;
+    const spots = $$('[data-spot]', st);
+    const score = $('#p24-eye-score', st), missEl = $('#p24-eye-miss', st), say = $('#p24-eye-say', st);
+    const list = $('#p24-eye-list', st), reveal = $('#p24-eye-reveal', st), reset = $('#p24-eye-reset', st);
+    let found = [], misses = 0;
+    const baseLabel = new Map(spots.map(b => [b, b.getAttribute('aria-label')]));
+    const mark = (btn, key, how) => {
+      found.push(key);
+      btn.classList.add(how === 'revealed' ? 'p24-revealed' : 'p24-found');
+      btn.dataset.n = String(found.length);
+      btn.setAttribute('aria-label', (baseLabel.get(btn) || btn.textContent.trim()) + ', ' + how + ': ' + DIFFS[key].name.toLowerCase());
+      const li = document.createElement('li');
+      const b = document.createElement('b');
+      b.textContent = DIFFS[key].name + ': ';
+      li.append(b, DIFFS[key].text);
+      if (how === 'revealed') { const s = document.createElement('span'); s.className = 'p24-tagline'; s.textContent = ' (revealed)'; li.append(s); }
+      list.appendChild(li);
+    };
+    const render = () => {
+      score.textContent = 'Found ' + found.length + ' of ' + total;
+      missEl.textContent = misses + (misses === 1 ? ' miss' : ' misses');
+      reveal.disabled = found.length === total;
+    };
+    spots.forEach(btn => btn.addEventListener('click', () => {
+      const key = btn.dataset.spot;
+      if (found.includes(key)) { say.textContent = 'Already found: ' + DIFFS[key].name.toLowerCase() + '.'; return; }
+      if (found.length === total) { say.textContent = 'All ' + total + ' are marked. Press Start over to play again.'; return; }
+      if (!DIFFS[key]) {
+        misses += 1;
+        say.textContent = (NAMES[key] || 'That part') + ' matches the original. Look again.';
+        btn.classList.remove('p24-miss');
+        void btn.offsetWidth;
+        btn.classList.add('p24-miss');
+        render();
+        return;
+      }
+      mark(btn, key, 'found');
+      const left = total - found.length;
+      say.textContent = 'Found: ' + DIFFS[key].name + '. ' + (left ? left + ' to go.' : 'That’s all ' + total + (misses ? ', with ' + misses + (misses === 1 ? ' miss.' : ' misses.') : ', with no misses.'));
+      render();
+    }));
+    reveal.addEventListener('click', () => {
+      const missing = Object.keys(DIFFS).filter(k => !found.includes(k));
+      const had = found.length;
+      missing.forEach(k => mark(spots.find(b => b.dataset.spot === k), k, 'revealed'));
+      say.textContent = 'All ' + total + ' shown. You found ' + had + ' yourself.';
+      render();
+    });
+    reset.addEventListener('click', () => {
+      found = []; misses = 0;
+      spots.forEach(b => {
+        b.classList.remove('p24-found', 'p24-revealed', 'p24-miss');
+        delete b.dataset.n;
+        if (baseLabel.get(b)) b.setAttribute('aria-label', baseLabel.get(b)); else b.removeAttribute('aria-label');
+      });
+      list.textContent = '';
+      say.textContent = 'Click anything on the copy that looks different.';
+      render();
+      spots[0].focus();
+    });
+    render();
+  });
+
+  demo('good-real-material', st => {
+    const D = { pad: 10, rad: 10, wt: 600, dur: 4.5, spd: 180 };
+    const WEIGHTS = { 400: 'Regular', 500: 'Medium', 600: 'Semibold', 700: 'Bold' };
+    const MSG = {
+      short: 'Album saved',
+      long: 'Saved “Lisbon, May 2026, with Ana and the kids (edited)”. 4 photos are still uploading, so it may take a few minutes to show on your other devices.'
+    };
+    const ranges = $$('input[type="range"]', st);
+    const preview = $('#p24-rm-preview', st), slot = $('#p24-rm-slot', st), longBox = $('#p24-rm-long', st);
+    const code = $('#p24-rm-code', st), msg = $('#p24-rm-msg', st), copyBtn = $('#p24-rm-copy', st);
+    let current = null, msgTimer;
+    const v = () => { const o = {}; ranges.forEach(r => { o[r.dataset.k] = Number(r.value); }); return o; };
+    const padX = y => Math.round(y * 1.6);
+    const fmtSec = s => (Number.isInteger(s) ? s : s.toFixed(1)) + ' s';
+    const show = {
+      pad: n => n + 'px ' + padX(n) + 'px',
+      rad: n => n + 'px',
+      wt: n => n + ' ' + WEIGHTS[n],
+      dur: n => fmtSec(n),
+      spd: n => n ? n + ' ms' : '0 ms, instant'
+    };
+    const speak = {
+      pad: n => n + ' by ' + padX(n) + ' pixels',
+      rad: n => n + ' pixels',
+      wt: n => n + ', ' + WEIGHTS[n],
+      dur: n => n + ' seconds',
+      spd: n => n ? n + ' milliseconds' : 'instant'
+    };
+    const css = o => [
+      '/* Prototype values, tuned in the browser.',
+      '   Throwaway: rebuild with tokens before shipping. */',
+      '.save-button {',
+      '  padding: ' + o.pad + 'px ' + padX(o.pad) + 'px;',
+      '  border-radius: ' + o.rad + 'px;',
+      '  font-weight: ' + o.wt + ';',
+      '}',
+      '.toast {',
+      '  --toast-duration: ' + Math.round(o.dur * 1000) + 'ms; /* read by the toast script */',
+      '  transition: opacity ' + o.spd + 'ms ease-out, transform ' + o.spd + 'ms ease-out;',
+      '}'
+    ].join('\n');
+    const render = () => {
+      const o = v();
+      ranges.forEach(r => {
+        const k = r.dataset.k, n = o[k];
+        $('#' + r.id + '-o', st).textContent = show[k](n);
+        r.setAttribute('aria-valuetext', speak[k](n));
+      });
+      preview.style.setProperty('--p24-py', o.pad + 'px');
+      preview.style.setProperty('--p24-px', padX(o.pad) + 'px');
+      preview.style.setProperty('--p24-r', o.rad + 'px');
+      preview.style.setProperty('--p24-w', String(o.wt));
+      preview.style.setProperty('--p24-speed', o.spd + 'ms');
+      code.textContent = css(o);
+    };
+    const hideToast = t => {
+      if (!t || t.dataset.leaving) return;
+      t.dataset.leaving = '1';
+      clearTimeout(t._timer);
+      t.classList.remove('p24-in');
+      setTimeout(() => t.remove(), v().spd + 60);
+      if (current === t) current = null;
+    };
+    const showToast = () => {
+      const o = v();
+      if (current) { clearTimeout(current._timer); current.remove(); current = null; }
+      const t = document.createElement('div');
+      t.className = 'p24-toast';
+      const text = document.createElement('span');
+      text.textContent = longBox.checked ? MSG.long : MSG.short;
+      const bar = document.createElement('span');
+      bar.className = 'p24-drain';
+      bar.setAttribute('aria-hidden', 'true');
+      bar.style.animationDuration = o.dur + 's';
+      t.append(text, bar);
+      slot.appendChild(t);
+      current = t;
+      let remaining = o.dur * 1000, startedAt = 0;
+      const start = () => { startedAt = Date.now(); clearTimeout(t._timer); t._timer = setTimeout(() => hideToast(t), remaining); bar.style.animationPlayState = 'running'; };
+      const pause = () => { clearTimeout(t._timer); remaining = Math.max(400, remaining - (Date.now() - startedAt)); bar.style.animationPlayState = 'paused'; };
+      t.addEventListener('mouseenter', pause);
+      t.addEventListener('mouseleave', start);
+      void t.offsetWidth;
+      t.classList.add('p24-in');
+      start();
+    };
+    const copy = (text, pre, out) => {
+      clearTimeout(msgTimer);
+      const fallback = () => {
+        pre.focus({ preventScroll: true });
+        const sel = window.getSelection(), range = document.createRange();
+        range.selectNodeContents(pre);
+        sel.removeAllRanges();
+        sel.addRange(range);
+        out.textContent = 'Couldn’t copy automatically. The code is selected: press Ctrl/Cmd+C.';
+      };
+      try {
+        if (!navigator.clipboard || !navigator.clipboard.writeText) { fallback(); return; }
+        navigator.clipboard.writeText(text).then(() => {
+          out.textContent = 'Copied the CSS.';
+          msgTimer = setTimeout(() => { out.textContent = ''; }, 4000);
+        }, fallback);
+      } catch (e) { fallback(); }
+    };
+    ranges.forEach(r => r.addEventListener('input', render));
+    $('#p24-rm-live', st).addEventListener('click', showToast);
+    $('#p24-rm-show', st).addEventListener('click', showToast);
+    $('#p24-rm-reset', st).addEventListener('click', () => {
+      ranges.forEach(r => { r.value = D[r.dataset.k]; });
+      longBox.checked = false;
+      render();
+    });
+    copyBtn.addEventListener('click', () => copy(code.textContent, code, msg));
+    render();
+  });
+
+  demo('good-design-rationale', st => {
+    const KEY = 'cfg-p24-rationale';
+    const EXAMPLE = {
+      context: 'Removing a song from a playlist asks “Are you sure?” every time. People who tidy playlists click through it without reading, so it doesn’t stop the removals they regret.',
+      options: [
+        'Keep the confirm dialog: familiar, but people click through it and it slows every removal',
+        'Remove at once, with an Undo toast and Ctrl/Cmd+Z: fast, and a mistake costs one click (chosen)',
+        'Move removed songs to a “Recently removed” list: safest, but one more place to learn and manage'
+      ].join('\n'),
+      decision: 'Removing a song from a playlist happens at once. A toast says what was removed and offers Undo, and Ctrl/Cmd+Z brings the song back too.',
+      why: 'Most removals are on purpose, so the dialog taxes every one of them to guard against a few. Undo protects the rare mistake without slowing the rest.',
+      trade: 'Undo history is lost on reload. People who miss the toast need to know Ctrl/Cmd+Z works, so the toast says so.',
+      know: 'Fewer reports of songs lost from playlists. Undo gets used now and then. If it’s used on most removals, removing is too easy to trigger.'
+    };
+    const BLANK = { context: '', options: '', decision: '', why: '', trade: '', know: '' };
+    const fields = $$('[data-f]', st);
+    const code = $('#p24-dr-code', st), check = $('#p24-dr-check', st), msg = $('#p24-dr-msg', st);
+    let msgTimer, checkTimer;
+    const get = () => { const o = {}; fields.forEach(f => { o[f.dataset.f] = f.value; }); return o; };
+    const fit = f => { f.style.height = 'auto'; f.style.height = (f.scrollHeight + 3) + 'px'; };
+    const set = o => fields.forEach(f => { f.value = typeof o[f.dataset.f] === 'string' ? o[f.dataset.f] : ''; fit(f); });
+    const optionLines = s => s.split('\n').map(l => l.trim().replace(/^[-*•]\s*/, '')).filter(Boolean);
+    const para = s => s.trim() || '_Not written yet._';
+    const md = o => {
+      const opts = optionLines(o.options);
+      return [
+        '## What changes for people', para(o.decision), '',
+        '## Why', para(o.why), '',
+        '## Context', para(o.context), '',
+        '## Options considered', opts.length ? opts.map(l => '- ' + l).join('\n') : '_Not written yet._', '',
+        '## Trade-offs', para(o.trade), '',
+        '## How we’ll know it worked', para(o.know)
+      ].join('\n');
+    };
+    const verdict = o => {
+      if (!o.decision.trim()) return 'Start with the decision: what will people notice?';
+      if (optionLines(o.options).length < 2) return 'Only one option listed. Add what you rejected, and why.';
+      if (!o.why.trim()) return 'Say why this option beats the others.';
+      if (!o.trade.trim()) return 'Every choice costs something. Write down the trade-off.';
+      if (!o.know.trim()) return 'Say how you’ll know it worked.';
+      if (!o.context.trim()) return 'Add the context: what problem, for whom?';
+      return 'Ready to paste into a PR.';
+    };
+    const render = (announce) => {
+      const o = get();
+      code.textContent = md(o);
+      const text = verdict(o);
+      check.classList.toggle('p24-ok', text === 'Ready to paste into a PR.');
+      clearTimeout(checkTimer);
+      if (announce === false) check.textContent = text;
+      else checkTimer = setTimeout(() => { check.textContent = text; }, 500);
+    };
+    const save = () => store.set(KEY, get());
+    const replace = (next, label) => {
+      const prev = get();
+      set(next); save(); render(false);
+      toast(st, label, { action: { label: 'Undo', run: () => { set(prev); save(); render(false); } } });
+      fields[0].focus();
+    };
+    const copy = (text, pre, out) => {
+      clearTimeout(msgTimer);
+      const fallback = () => {
+        pre.focus({ preventScroll: true });
+        const sel = window.getSelection(), range = document.createRange();
+        range.selectNodeContents(pre);
+        sel.removeAllRanges();
+        sel.addRange(range);
+        out.textContent = 'Couldn’t copy automatically. The Markdown is selected: press Ctrl/Cmd+C.';
+      };
+      try {
+        if (!navigator.clipboard || !navigator.clipboard.writeText) { fallback(); return; }
+        navigator.clipboard.writeText(text).then(() => {
+          out.textContent = 'Copied. Paste it at the top of your PR description.';
+          msgTimer = setTimeout(() => { out.textContent = ''; }, 5000);
+        }, fallback);
+      } catch (e) { fallback(); }
+    };
+    const saved = store.get(KEY, null);
+    set(saved && typeof saved === 'object' ? Object.assign({}, BLANK, saved) : EXAMPLE);
+    fields.forEach(f => f.addEventListener('input', () => { fit(f); save(); render(); }));
+    if ('ResizeObserver' in window) {
+      let lastW = 0;
+      new ResizeObserver(es => { const w = Math.round(es[0].contentRect.width); if (w !== lastW) { lastW = w; fields.forEach(fit); } }).observe($('.p24-form', st));
+    }
+    if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => fields.forEach(fit));
+    $('#p24-dr-blank', st).addEventListener('click', () => replace(BLANK, 'Fields cleared'));
+    $('#p24-dr-example', st).addEventListener('click', () => replace(EXAMPLE, 'Example loaded'));
+    $('#p24-dr-copy', st).addEventListener('click', () => copy(code.textContent, code, msg));
+    render(false);
+  });
+
+
+})();
+</script>

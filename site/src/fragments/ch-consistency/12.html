@@ -1,0 +1,45 @@
+<div class="note comfy cw-wrap">
+  <div class="seg cw-seg" role="radiogroup" aria-label="Example">
+    <input type="radio" name="cw-good-design-tokens-w" id="cw-good-design-tokens-w-1" value="figma" checked><label for="cw-good-design-tokens-w-1">Figma</label>
+    <input type="radio" name="cw-good-design-tokens-w" id="cw-good-design-tokens-w-2" value="vscode"><label for="cw-good-design-tokens-w-2">VS Code</label>
+    <input type="radio" name="cw-good-design-tokens-w" id="cw-good-design-tokens-w-3" value="ios"><label for="cw-good-design-tokens-w-3">iOS</label>
+    <input type="radio" name="cw-good-design-tokens-w" id="cw-good-design-tokens-w-4" value="x"><label for="cw-good-design-tokens-w-4">X (Twitter)</label>
+  </div>
+  <div class="cw" data-cw-view role="img" aria-label=""></div>
+  <p class="cw-cap" data-cw-cap aria-live="polite"></p>
+  
+  <script>
+  (() => {
+    const wrap = document.currentScript.closest('.cw-wrap');
+    const view = wrap.querySelector('[data-cw-view]'), cap = wrap.querySelector('[data-cw-cap]');
+    const v = (c, name, sel) => '<span class="cw-gtok-var' + (sel ? ' sel' : '') + '"><i class="cw-gtok-sw cw-gtok-c-' + c + '"></i>' + name + '</span>';
+    const line = w => '<i class="cw-line cw-gtok-w' + w + '"></i>';
+    const n = k => '<span class="cw-gtok-n">' + k + '</span>';
+    const phone = (size, label, knob) => '<div class="cw-gtok-ph"><span class="cw-gtok-sl"><small>A</small><span class="cw-gtok-track"><i style="left:' + knob + '%"></i></span><big>A</big></span>' +
+      '<div class="cw-gtok-msg cw-gtok-' + size + '"><b>Headline</b><span>Body text, a full sentence.</span><em>Caption</em></div><span class="cw-gtok-cap">' + label + '</span></div>';
+    const S = {
+      figma: { html: '<div class="cw-gtok-row"><div class="cw-gtok-box"><span class="cw-gtok-h">Variables</span>' + v('surface', 'surface') + v('text', 'text') + v('muted', 'text-muted') + v('accent', 'accent', true) + '</div>' +
+          '<div class="cw-gtok-box"><span class="cw-gtok-h">Frame</span><div class="cw-gtok-card"><b>Weekly digest</b>' + line(80) +
+          '<span class="cw-gtok-chk"><span class="cw-gtok-tick cw-gtok-bound">✓</span>Email me</span><span class="cw-gtok-acts"><span class="cw-gtok-fill cw-gtok-bound">Subscribe</span><span class="cw-gtok-link cw-gtok-bound">Learn more</span></span></div>' +
+          '<span class="cw-gtok-note">Dashed: layers that use accent</span></div></div>',
+        alt: 'A Variables panel lists surface, text, text-muted and accent, with accent selected. Beside it, a frame whose checkbox, button and link are outlined as the layers that use accent.',
+        cap: 'Figma: layers can point at a variable, like accent, instead of a raw color. Change the variable once and every layer that uses it updates. Modes, like Light and Dark, swap a whole set of values at once.' },
+      vscode: { html: '<div class="cw-gtok-win"><div class="cw-gtok-body"><div class="cw-gtok-act">' + n(1) + '<i></i><i></i></div><div class="cw-gtok-side">' + n(2) + line(80) + line(60) + line(80) + '</div>' +
+          '<div class="cw-gtok-ed">' + n(3) + line(60) + line(80) + line(40) + '</div></div><div class="cw-gtok-status">' + n(4) + '</div></div>' +
+          '<div class="cw-gtok-key"><span>' + n(1) + 'activityBar.background</span><span>' + n(2) + 'sideBar.background</span><span>' + n(3) + 'editor.background</span><span>' + n(4) + 'statusBar.background</span></div>',
+        alt: 'An editor window split into four numbered parts: activity bar, side bar, editor and status bar. A key names the theme color each part reads, such as editor.background.',
+        cap: 'VS Code: every part of the window reads a named theme color, like editor.background or statusBar.background. A theme only fills in those names. Extensions use the same names, so they follow every theme too.' },
+      ios: { html: '<div class="cw-gtok-row">' + phone('s', 'Default', 35) + phone('l', 'Larger', 80) + '</div>',
+        alt: 'Two phones show the same Headline, Body and Caption text. With the text size slider moved to the right, all three grow together.',
+        cap: 'iOS: apps set text by role, like Headline, Body and Caption, not by pixel size. Move the Text Size slider in Settings and every app that uses these roles scales all its text together.' },
+      x: { html: '<div class="cw-gtok-row"><div class="cw-gtok-box"><span class="cw-gtok-h">Display</span><span>Color</span><span class="cw-gtok-dots"><i class="cw-gtok-d1 on"></i><i class="cw-gtok-d2"></i><i class="cw-gtok-d3"></i><i class="cw-gtok-d4"></i><i class="cw-gtok-d5"></i></span></div>' +
+          '<div class="cw-gtok-box"><span class="cw-gtok-tabs"><span class="on">For you</span><span>Following</span></span><div class="cw-gtok-post"><i class="cw-gtok-av"></i><p>Trying a new layout today. <span class="cw-gtok-link">#design</span></p></div><span class="cw-gtok-pill">Post</span></div></div>',
+        alt: 'Display settings with five color dots, the first one selected. Beside it, the active tab underline, a hashtag link and a Post button all use that color.',
+        cap: 'X (Twitter): the display settings let you pick one accent color, and buttons, links and highlights across the app switch to it at once.' }
+    };
+    const render = k => { view.innerHTML = S[k].html; view.setAttribute('aria-label', 'Sketch: ' + S[k].alt); cap.textContent = S[k].cap; };
+    wrap.querySelectorAll('input[name="cw-good-design-tokens-w"]').forEach(r => r.addEventListener('change', () => render(r.value)));
+    render('figma');
+  })();
+  </script>
+</div>

@@ -1,0 +1,31 @@
+<div class="stage tall" data-demo="pat-shortcuts">
+      <div class="app-frame">
+        <div class="app-bar"><span>Lisbon trip</span><span class="p16-count" id="p16-sc-count">You used 0 shortcuts</span></div>
+        <div class="app-body">
+          <div class="p16-tools">
+            <button class="btn btn-secondary" type="button" data-cmd="run" aria-keyshortcuts="R">Rotate<kbd class="p16-kbd" aria-hidden="true">R</kbd></button>
+            <button class="btn btn-secondary" type="button" data-cmd="save" aria-keyshortcuts="S">Save<kbd class="p16-kbd" aria-hidden="true">S</kbd></button>
+            <button class="btn btn-secondary" type="button" data-cmd="fit" aria-keyshortcuts="F"><svg class="icon sm" aria-hidden="true"><use href="#i-fit"/></svg>Fit view<kbd class="p16-kbd" aria-hidden="true">F</kbd></button>
+            <button class="btn btn-ghost" type="button" data-cmd="keys">Shortcuts<kbd class="p16-kbd" aria-hidden="true">?</kbd></button>
+          </div>
+          <input class="input p16-find" id="p16-find" type="search" placeholder="Search photos" aria-label="Search photos" autocomplete="off">
+          <div class="p16-canvas" id="p16-canvas" tabindex="0" role="group" aria-label="Photo board. Shortcuts work here. Press question mark for the list.">
+            <span class="node">Tram 28</span><span class="node">Harbour</span><span class="node">Old town</span><span class="node">Sunset</span>
+          </div>
+        </div>
+      </div>
+      <dialog class="ui-dialog" id="p16-keys" aria-labelledby="p16-keys-title">
+        <form method="dialog">
+          <div class="dlg-body">
+            <h4 id="p16-keys-title">Keyboard shortcuts</h4>
+            <div class="kv"><span>Rotate photo</span><kbd class="p16-kbd">R</kbd></div>
+            <div class="kv"><span>Save album</span><kbd class="p16-kbd">S</kbd></div>
+            <div class="kv"><span>Fit view</span><kbd class="p16-kbd">F</kbd></div>
+            <div class="kv"><span>Show this list</span><kbd class="p16-kbd">?</kbd></div>
+            <p>They work while focus is inside this demo, and never while you type in a field.</p>
+          </div>
+          <div class="dlg-actions"><button class="btn btn-primary" value="close">Close</button></div>
+        </form>
+      </dialog>
+      <p class="try"><b>Try it:</b> click the photo board, then press R, S and F. Type “fire” in the search box: no shortcut fires while you type. Press ? for the list. Click Save twice to get a hint.</p>
+    </div>

@@ -1,0 +1,174 @@
+<script>
+(() => {
+  const cs = document.currentScript.closest('.cs');
+  const D = (k, html, wire) => csDemo(cs.querySelector('[data-d="' + k + '"]'), html, wire);
+  const icon = n => '<svg class="icon sm"><use href="#i-' + n + '"/></svg>';
+  // Listeners on the demo element itself survive Reset, so drop the previous run's ones first.
+  const scoped = d => { (d._pvOff || []).forEach(f => f()); d._pvOff = []; return (type, fn) => { d.addEventListener(type, fn); d._pvOff.push(() => d.removeEventListener(type, fn)); }; };
+  const field = (label, k, v, attrs) => '<label class="pv-f">' + label + '<input class="input" data-k="' + k + '" value="' + v + '"' + (attrs || '') + '></label>';
+  const repeat = '<label class="pv-f">Repeat<select class="select" data-k="repeat"><option>Never</option><option>Every week</option><option>Every month</option></select></label>';
+
+  /* 1. Big form */
+  const slot = (time, inner) => '<div class="pv-slot"><span class="pv-time">' + time + '</span>' + inner + '</div>';
+  const day = slot('9:00', '<span class="pv-static">Stand-up</span>') +
+    slot('12:30', '<button class="pv-ev" type="button" data-ev aria-haspopup="dialog" aria-expanded="false"><b data-ev-title>Team lunch</b><span class="cs-meta" data-ev-place>Café Rosa</span></button>') +
+    slot('15:00', '<span class="pv-static">Design review</span>') + slot('17:30', '<span class="pv-static">Gym</span>');
+  const smallForm = '<div class="pv-pop" role="dialog" aria-label="Edit event" data-pp hidden style="left:66px;right:8px;top:118px;max-height:150px;overflow:auto"><b>Edit event</b>' +
+    field('Title', 'title', 'Team lunch') + field('Date', 'date', 'Fri 24 Oct') + field('Time', 'time', '12:30') + repeat +
+    field('Place', 'place', 'Café Rosa') + field('Guests', 'guests', 'Sam, Lena') + field('Notes', 'notes', '', ' placeholder="Add a note"') +
+    '<button class="btn btn-primary cs-sm" type="button" data-save style="align-self:flex-end">Save</button></div>';
+  const sidePanel = '<div class="pv-side" role="dialog" aria-label="Edit event" data-pp hidden><div class="pv-sh"><b>Edit event</b>' +
+    '<button class="icon-btn" type="button" aria-label="Close" data-cancel style="width:32px;height:32px">' + icon('x') + '</button></div><div class="pv-sb">' +
+    field('Title', 'title', 'Team lunch') + '<span class="pv-h">When</span><div class="pv-two">' + field('Date', 'date', 'Fri 24 Oct') + field('Time', 'time', '12:30') + '</div>' + repeat +
+    '<span class="pv-h">Where</span>' + field('Place', 'place', 'Café Rosa') + '<span class="pv-h">Who</span>' + field('Guests', 'guests', 'Sam, Lena') +
+    field('Notes', 'notes', '', ' placeholder="Add a note"') + '</div><div class="pv-sf"><button class="btn btn-ghost cs-sm" type="button" data-cancel>Cancel</button><button class="btn btn-primary cs-sm" type="button" data-save>Save</button></div></div>';
+  const evHtml = fixed => '<div class="app-frame pv-frame" style="width:min(360px,100%);height:400px"><div class="app-bar"><span>Fri 24 Oct</span></div>' +
+    '<div class="app-body" style="position:relative">' + day + (fixed ? '' : smallForm) + '</div>' + (fixed ? sidePanel : '') + '</div><p class="cs-meta" data-m></p>';
+  const evWire = fixed => d => {
+    const on = scoped(d);
+    const ev = d.querySelector('[data-ev]'), pop = d.querySelector('[data-pp]'), m = d.querySelector('[data-m]');
+    const title = d.querySelector('[data-ev-title]'), place = d.querySelector('[data-ev-place]');
+    const inp = k => pop.querySelector('[data-k="' + k + '"]');
+    const close = (msg, focus) => { if (pop.hidden) return; pop.hidden = true; ev.setAttribute('aria-expanded', 'false'); m.textContent = msg; if (focus) ev.focus(); };
+    const dirty = () => inp('title').value !== title.textContent || inp('place').value !== place.textContent;
+    ev.addEventListener('click', () => {
+      if (!pop.hidden) { close(dirty() ? 'Closed without saving.' : 'Closed.'); return; }
+      inp('title').value = title.textContent; inp('place').value = place.textContent;
+      pop.hidden = false; ev.setAttribute('aria-expanded', 'true'); m.textContent = '';
+      if (!fixed) pop.scrollTop = 0;
+      inp('title').focus();
+    });
+    pop.querySelectorAll('[data-save]').forEach(b => b.addEventListener('click', () => {
+      title.textContent = inp('title').value.trim() || 'Untitled'; place.textContent = inp('place').value.trim() || 'No place';
+      close('Saved: ' + title.textContent + ' at ' + place.textContent + '.', true);
+    }));
+    pop.querySelectorAll('[data-cancel]').forEach(b => b.addEventListener('click', () => close('Closed without saving.', true)));
+    on('keydown', e => { if (e.key === 'Escape') close(dirty() ? 'Closed without saving.' : 'Closed.', true); });
+    if (!fixed) on('pointerdown', e => { if (!pop.hidden && !pop.contains(e.target) && !ev.contains(e.target)) close(dirty() ? 'Closed. Your changes were not saved.' : 'Closed.'); });
+  };
+  D('popover-1b', evHtml(false), evWire(false));
+  D('popover-1f', evHtml(true), evWire(true));
+
+  /* 2. Stray click */
+  const docHtml = live => '<div class="app-frame" style="width:min(340px,100%)"><div class="app-bar"><span>Documents</span></div><div class="app-body" style="gap:0">' +
+    '<div class="pv-doc"><span class="grow" data-name>Budget 2026</span><button class="btn btn-secondary cs-sm" type="button" data-open aria-haspopup="dialog" aria-expanded="false">Rename</button>' +
+    '<div class="pv-pop" role="dialog" aria-label="Rename" data-pp hidden style="right:0;top:calc(100% + 4px);width:min(250px,100%)">' +
+    '<label class="pv-f">New name<input class="input" data-in></label>' +
+    (live ? '<span class="cs-meta" data-st>Saved as you type</span>' : '<button class="btn btn-primary cs-sm" type="button" data-apply style="align-self:flex-end">Apply</button>') + '</div></div>' +
+    '<div class="pv-doc"><span class="grow">Trip plan</span><span class="cs-meta">Yesterday</span></div>' +
+    '<div class="pv-doc"><span class="grow">Reading list</span><span class="cs-meta">Mon</span></div>' +
+    '<div class="pv-doc"><span class="grow">Recipes</span><span class="cs-meta">2 Oct</span></div></div></div><p class="cs-meta" data-m></p>';
+  const docWire = live => d => {
+    const on = scoped(d);
+    const name = d.querySelector('[data-name]'), open = d.querySelector('[data-open]'), pop = d.querySelector('[data-pp]'), inp = d.querySelector('[data-in]'), m = d.querySelector('[data-m]');
+    let before = '';
+    const apply = () => { name.textContent = inp.value.trim() || 'Untitled'; };
+    const close = how => {
+      if (pop.hidden) return;
+      pop.hidden = true; open.setAttribute('aria-expanded', 'false');
+      if (how === 'apply') m.textContent = 'Renamed to “' + name.textContent + '”.';
+      else if (live) m.textContent = name.textContent === before ? 'Closed.' : 'Closed. The new name stayed: “' + name.textContent + '”.';
+      else m.textContent = inp.value.trim() && inp.value !== before ? 'Closed. Your new name is gone.' : 'Closed.';
+      if (how !== 'outside') open.focus();
+    };
+    open.addEventListener('click', () => {
+      if (!pop.hidden) { close('toggle'); return; }
+      before = name.textContent; inp.value = before; pop.hidden = false; open.setAttribute('aria-expanded', 'true');
+      m.textContent = ''; inp.focus(); inp.select();
+    });
+    if (live) {
+      inp.addEventListener('input', apply);
+      inp.addEventListener('keydown', e => { if (e.key === 'Enter') close('enter'); });
+    } else {
+      d.querySelector('[data-apply]').addEventListener('click', () => { apply(); close('apply'); });
+      inp.addEventListener('keydown', e => { if (e.key === 'Enter') { apply(); close('apply'); } });
+    }
+    on('pointerdown', e => { if (!pop.hidden && !pop.contains(e.target) && !open.contains(e.target)) close('outside'); });
+    on('keydown', e => { if (e.key === 'Escape') close('esc'); });
+    pop.addEventListener('focusout', e => { if (e.relatedTarget && !pop.contains(e.relatedTarget) && e.relatedTarget !== open) close('outside'); });
+  };
+  D('popover-2b', docHtml(false), docWire(false));
+  D('popover-2f', docHtml(true), docWire(true));
+
+  /* 3. Nested */
+  const COLORS = [['Default', 'var(--ui-text)'], ['Blue', 'var(--ui-sel)'], ['Orange', 'var(--ui-danger)'], ['Green', 'var(--ui-ok)'], ['Gray', 'var(--ui-muted)']];
+  const SIZES = [['Small', 'S', '18px'], ['Medium', 'M', '24px'], ['Large', 'L', '32px']];
+  const sw = c => '<i class="pv-sw" style="background:' + c[1] + '"></i>';
+  const mi = (label, attrs, pre, more) => '<button class="pv-mi" type="button" role="menuitem" ' + attrs + '><span>' + (pre || '') + label + '</span>' + (more ? '<span aria-hidden="true">›</span>' : '') + '</button>';
+  const nestPops = '<div class="pv-pop pv-menu" role="menu" aria-label="Text style" data-l="1" hidden>' + mi('Color', 'data-go="color" aria-haspopup="menu"', '', 1) + mi('Size', 'data-go="size" aria-haspopup="menu"', '', 1) + '</div>' +
+    '<div class="pv-pop pv-menu" role="menu" aria-label="Color" data-l="color" hidden>' + COLORS.slice(0, 2).map((c, i) => mi(c[0], 'data-color="' + i + '"', sw(c))).join('') + mi('More colors', 'data-go="more" aria-haspopup="menu"', '', 1) + '</div>' +
+    '<div class="pv-pop pv-menu" role="menu" aria-label="More colors" data-l="more" hidden>' + COLORS.slice(2).map((c, i) => mi(c[0], 'data-color="' + (i + 2) + '"', sw(c))).join('') + '</div>' +
+    '<div class="pv-pop pv-menu" role="menu" aria-label="Size" data-l="size" hidden>' + SIZES.map((s, i) => mi(s[0], 'data-size="' + i + '"')).join('') + '</div>';
+  const flatPop = '<div class="pv-pop" role="dialog" aria-label="Text style" data-l="1" hidden style="width:min(250px,calc(100% - 32px))"><span class="pv-h">Color</span><div class="pv-sws">' +
+    COLORS.map((c, i) => '<button class="pv-swb" type="button" aria-label="' + c[0] + '" aria-pressed="' + (i === 0) + '" data-color="' + i + '" style="background:' + c[1] + '"></button>').join('') +
+    '</div><span class="pv-h">Size</span><div class="pv-seg" role="group" aria-label="Size">' + SIZES.map((s, i) => '<button type="button" aria-label="' + s[0] + '" aria-pressed="' + (i === 1) + '" data-size="' + i + '">' + s[1] + '</button>').join('') + '</div></div>';
+  const slideHtml = fixed => '<div class="app-frame" style="width:min(360px,100%)"><div class="app-bar"><span>Slides</span></div><div class="app-body" data-body style="position:relative;min-height:350px">' +
+    '<div class="pv-slide"><span class="pv-title" data-title>Q3 review</span><span class="line" style="width:62%"></span><span class="line" style="width:44%"></span></div>' +
+    '<button class="btn btn-secondary cs-sm" type="button" data-style aria-haspopup="true" aria-expanded="false" style="align-self:flex-start">' + icon('sliders') + 'Text style</button>' +
+    (fixed ? flatPop : nestPops) + '</div></div><p class="cs-meta" data-m></p>';
+  const slideWire = fixed => d => {
+    const on = scoped(d);
+    const btn = d.querySelector('[data-style]'), title = d.querySelector('[data-title]'), m = d.querySelector('[data-m]');
+    const L = k => d.querySelector('[data-l="' + k + '"]');
+    let clicks = 0, color = 0, size = 1, done = false;
+    const report = () => {
+      if (!done && color === 2 && size === 2) done = true;
+      m.textContent = done ? 'Done in ' + clicks + ' clicks.' : 'Goal: an orange, large title. Clicks so far: ' + clicks;
+    };
+    const paint = () => {
+      title.style.color = COLORS[color][1]; title.style.fontSize = SIZES[size][2];
+      d.querySelectorAll('.pv-swb').forEach(b => b.setAttribute('aria-pressed', String(Number(b.dataset.color) === color)));
+      d.querySelectorAll('.pv-seg button').forEach(b => b.setAttribute('aria-pressed', String(Number(b.dataset.size) === size)));
+    };
+    const pops = () => Array.from(d.querySelectorAll('[data-l]'));
+    const closeAll = focus => { pops().forEach(p => { p.hidden = true; }); d.querySelectorAll('.pv-mi.on').forEach(x => x.classList.remove('on')); btn.setAttribute('aria-expanded', 'false'); if (focus) btn.focus(); };
+    const top0 = () => btn.offsetTop + btn.offsetHeight + 6;
+    const place = (p, left, dy) => { p.style.left = left; p.style.top = (top0() + dy) + 'px'; };
+    const open = (k, from) => {
+      const p = L(k);
+      if (k === '1') place(p, '16px', 0);
+      else if (k === 'more') place(p, 'min(236px, calc(100% - 140px))', 56);
+      else place(p, 'min(126px, 34%)', 28);
+      if (from) { const parent = from.closest('[data-l]'); parent.querySelectorAll('.pv-mi').forEach(x => x.classList.toggle('on', x === from)); pops().forEach(q => { if (q !== p && q !== parent && q.dataset.l !== '1') q.hidden = true; }); }
+      p.hidden = false;
+      const first = p.querySelector('button'); if (first) first.focus();
+    };
+    btn.addEventListener('click', () => { if (!L('1').hidden) { closeAll(false); return; } open('1'); btn.setAttribute('aria-expanded', 'true'); });
+    d.querySelectorAll('[data-go]').forEach(b => b.addEventListener('click', () => open(b.dataset.go, b)));
+    d.querySelectorAll('[data-color]').forEach(b => b.addEventListener('click', () => { color = Number(b.dataset.color); paint(); if (!fixed) closeAll(true); }));
+    d.querySelectorAll('[data-size]').forEach(b => b.addEventListener('click', () => { size = Number(b.dataset.size); paint(); if (!fixed) closeAll(true); }));
+    on('click', e => { if (e.target.closest('button')) { clicks++; report(); } });
+    on('pointerdown', e => { if (!e.target.closest('[data-l]') && !btn.contains(e.target) && pops().some(p => !p.hidden)) closeAll(false); });
+    on('keydown', e => { if (e.key === 'Escape' && pops().some(p => !p.hidden)) closeAll(true); });
+    paint(); report();
+  };
+  D('popover-3b', slideHtml(false), slideWire(false));
+  D('popover-3f', slideHtml(true), slideWire(true));
+
+  /* 4. Covers target */
+  const photo = '<svg class="pv-photo" data-photo viewBox="0 0 160 120" role="img" aria-label="Photo of green hills under a sunny sky" style="filter:brightness(.7)">' +
+    '<rect width="160" height="120" style="fill:var(--thumb-a)"/><circle cx="118" cy="34" r="15" style="fill:var(--thumb-d)"/>' +
+    '<path d="M0 82 Q40 54 82 76 T160 66 V120 H0Z" style="fill:var(--thumb-c)"/><path d="M0 100 Q52 80 104 96 T160 90 V120 H0Z" style="fill:var(--ui-ok);opacity:.5"/></svg>';
+  const editHtml = fixed => '<div class="app-frame" style="width:min(470px,100%)"><div class="app-bar"><span>Edit photo</span>' +
+    '<button class="btn btn-secondary cs-sm" type="button" data-open aria-haspopup="dialog" aria-expanded="false">' + icon('sliders') + 'Brightness</button></div>' +
+    '<div class="app-body pv-edit">' + photo +
+    '<div class="pv-pop' + (fixed ? ' pv-inflow' : '') + '" role="dialog" aria-label="Brightness" data-pp hidden' + (fixed ? '' : ' style="left:30px;top:44px;width:min(200px,calc(100% - 60px))"') + '>' +
+    '<label class="pv-f"><span class="pv-rl">Brightness <span data-val>70%</span></span><input class="pv-range" type="range" min="40" max="160" value="70" data-r></label>' +
+    '<button class="btn btn-secondary cs-sm" type="button" data-done style="align-self:flex-end">Done</button></div></div></div>';
+  const editWire = () => d => {
+    const on = scoped(d);
+    const open = d.querySelector('[data-open]'), pop = d.querySelector('[data-pp]'), r = d.querySelector('[data-r]'), val = d.querySelector('[data-val]'), img = d.querySelector('[data-photo]');
+    const set = o => { pop.hidden = !o; open.setAttribute('aria-expanded', String(o)); if (o) r.focus(); };
+    open.addEventListener('click', () => set(pop.hidden));
+    d.querySelector('[data-done]').addEventListener('click', () => { set(false); open.focus(); });
+    r.addEventListener('input', () => { val.textContent = r.value + '%'; img.style.filter = 'brightness(' + (r.value / 100) + ')'; });
+    on('keydown', e => { if (e.key === 'Escape' && !pop.hidden) { set(false); open.focus(); } });
+    on('pointerdown', e => { if (!pop.hidden && !pop.contains(e.target) && !open.contains(e.target)) set(false); });
+  };
+  D('popover-4b', editHtml(false), editWire());
+  D('popover-4f', editHtml(true), editWire());
+
+  csInit(cs);
+})();
+
+  </script>

@@ -1,0 +1,52 @@
+<div class="fm" data-fm>
+  <div class="seg fm-seg" role="radiogroup" aria-label="Version">
+    <input type="radio" name="fm-design-what" id="fm-design-what-1" value="orig" checked><label for="fm-design-what-1">Original</label>
+    <input type="radio" name="fm-design-what" id="fm-design-what-2" value="surface"><label for="fm-design-what-2">New surface</label>
+    <input type="radio" name="fm-design-what" id="fm-design-what-3" value="behaviour"><label for="fm-design-what-3">New behavior</label>
+    <input type="radio" name="fm-design-what" id="fm-design-what-4" value="problem"><label for="fm-design-what-4">New problem</label>
+  </div>
+  <div class="fm-stage" data-fm-stage style="flex-direction:column;gap:14px"></div>
+  <p class="fig-cap" data-fm-when aria-live="polite"></p>
+  <script>
+  (() => {
+    const fm = document.currentScript.closest('[data-fm]'), stage = fm.querySelector('[data-fm-stage]'), when = fm.querySelector('[data-fm-when]');
+    const CAP = {
+      orig: '<b>Original.</b> You buy an hour up front and guess how long you’ll stay. <b>Try:</b> wait, then go back to the car at 1 h 20 min.',
+      surface: '<b>New surface.</b> Same flow, with a clearer timer. It looks better, and you still get the ticket.',
+      behaviour: '<b>New behavior.</b> The app warns you with 10 minutes left and lets you add time. It works, if you see the alert and act in time.',
+      problem: '<b>New problem.</b> The real problem is that people don’t know how long they’ll stay. So you start parking when you arrive, stop when you leave and pay for the time you used. There’s no ticket to get.'
+    };
+    const price = m => '€' + (m * 0.04).toFixed(2);
+    const hm = m => (m >= 60 ? Math.floor(m / 60) + ' h ' : '') + (m % 60) + ' min';
+    let k = 'orig', t = 0, paid = 60, done = false, dismissed = false;
+    const render = () => {
+      let body = '';
+      const left = paid - t;
+      if (k === 'problem') {
+        body = done
+          ? '<div class="pk-res ok">Parking stopped. You parked ' + hm(t) + ' and paid ' + price(t) + '.</div>'
+          : '<div class="pk-meter"><span>Parking since 9:00 · Main St</span><b>' + hm(t) + '</b><span>' + price(t) + ' so far</span></div>';
+      } else if (k === 'surface') {
+        const p = Math.max(0, Math.min(100, left / 60 * 100));
+        body = '<div class="pk-ring' + (left <= 10 ? ' low' : '') + '" style="--p:' + p + '"><div>' + (left > 0 ? left + ' min' : 'Expired') + '<small>' + (left > 0 ? 'left' : 'since ' + hm(-left)) + '</small></div></div>';
+      } else {
+        body = '<p class="pk-plain">Paid: <b>1 hour</b>' + (paid > 60 ? ' + <b>' + (paid - 60) + ' min</b>' : '') + '<br>Time parked: ' + hm(t) + '</p>';
+        if (k === 'behaviour' && !done && left <= 10 && left > 0 && !dismissed) body += '<div class="pk-note"><span><b>10 minutes left</b> on your parking.</span><button class="btn btn-secondary cs-sm" type="button" data-add>Add 30 min</button></div>';
+      }
+      if (done && k !== 'problem') body += t > paid ? '<div class="pk-res bad">Parking ticket: €40. You were ' + hm(t - paid) + ' over.</div>' : '<div class="pk-res ok">No ticket. You paid ' + price(paid) + '.</div>';
+      stage.innerHTML = '<div class="pk"><div class="pk-bar">ParkEasy<span>' + (k === 'problem' ? 'Pay as you go' : 'Main St · zone 4') + '</span></div><div class="pk-body">' + body + '</div></div>' +
+        '<div class="pk-ctl">' + (done ? '<button class="btn btn-secondary cs-sm" type="button" data-again>Park again</button>' :
+          '<button class="btn btn-secondary cs-sm" type="button" data-wait' + (t >= 80 ? ' disabled' : '') + '>Wait 10 min</button><button class="btn btn-primary cs-sm" type="button" data-back>' + (k === 'problem' ? 'Back to the car: stop parking' : 'Back to the car') + '</button>') + '</div>';
+      const q = s => stage.querySelector(s);
+      if (q('[data-wait]')) q('[data-wait]').addEventListener('click', () => { t += 10; render(); const w = q('[data-wait]'); if (w && !w.disabled) w.focus(); else q('[data-back]').focus(); });
+      if (q('[data-back]')) q('[data-back]').addEventListener('click', () => { done = true; render(); q('[data-again]').focus(); });
+      if (q('[data-again]')) q('[data-again]').addEventListener('click', () => { reset(); render(); });
+      if (q('[data-add]')) q('[data-add]').addEventListener('click', () => { paid += 30; dismissed = true; render(); });
+      when.innerHTML = CAP[k];
+    };
+    const reset = () => { t = 0; paid = 60; done = false; dismissed = false; };
+    fm.querySelectorAll('.fm-seg input').forEach(i => i.addEventListener('change', () => { k = i.value; reset(); render(); }));
+    render();
+  })();
+  </script>
+</div>

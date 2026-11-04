@@ -1,0 +1,110 @@
+<script>
+(() => {
+  const cs = document.currentScript.closest('.cs');
+  const run = () => {
+    const D = (k, html, wire) => csDemo(cs.querySelector('[data-d="' + k + '"]'), html, wire);
+    const st = document.createElement('style');
+    st.textContent = `
+#pat-smart-defaults .sd-card{width:min(340px,100%);background:var(--ui-surface);border:1px solid var(--ui-border);border-radius:12px;box-shadow:var(--ui-shadow);padding:12px 14px;display:flex;flex-direction:column;gap:9px;text-align:left;font-size:14px}
+#pat-smart-defaults .sd-card > b{font-size:15px}
+#pat-smart-defaults .sd-card .field{width:100%;gap:4px}
+#pat-smart-defaults .sd-card .input,#pat-smart-defaults .sd-card .select{padding:7px 10px;font-size:14px}
+#pat-smart-defaults .sd-line{display:flex;gap:8px;align-items:baseline;border-bottom:1px solid var(--ui-border);padding:5px 0}
+#pat-smart-defaults .sd-line span:first-child{color:var(--ui-muted);width:64px;flex:none}
+#pat-smart-defaults .sd-acts{display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap}
+#pat-smart-defaults .sd-stat{font:500 12.5px var(--font-mono);color:var(--ui-muted)}
+#pat-smart-defaults .sd-mark{font:600 11.5px var(--font-mono);color:var(--ui-sel);margin-left:6px}
+#pat-smart-defaults .sd-bad{border-left:3px solid var(--ui-danger);padding:4px 10px;line-height:1.45}
+#pat-smart-defaults .sd-good{border-left:3px solid var(--ui-ok);padding:4px 10px;line-height:1.45}
+#pat-smart-defaults .sd-up{display:flex;align-items:center;gap:10px}
+#pat-smart-defaults .sd-up .thumb{width:56px;aspect-ratio:3/2;flex:none}
+#pat-smart-defaults .input::placeholder{color:var(--ui-muted);opacity:1}
+`;
+    cs.prepend(st);
+
+    /* 1. Based on what people pick */
+    const SIZES = [['passport', 'Passport, 3.5 × 4.5 cm'], ['10x15', '10 × 15 cm'], ['13x18', '13 × 18 cm'], ['a4', 'A4']];
+    const prints = fixed => '<div class="sd-card"><b>Order prints</b><div class="sd-line"><span>Photos</span><span>12 from “Summer”</span></div>' +
+      '<label class="field"><span class="field-label">Size <span class="sd-mark" data-why></span></span><select class="select" data-size>' + SIZES.map(s => '<option value="' + s[0] + '">' + s[1] + '</option>').join('') + '</select></label>' +
+      '<div class="sd-acts"><span class="sd-stat" data-n>Size changed by hand: 0 times</span><button class="btn btn-primary cs-sm" type="button" data-go>Order</button></div><p class="cs-meta" data-out></p></div>';
+    const printsWire = fixed => d => {
+      const size = d.querySelector('[data-size]'), why = d.querySelector('[data-why]'), n = d.querySelector('[data-n]'), out = d.querySelector('[data-out]');
+      let def = fixed ? '10x15' : 'passport', changes = 0, orders = 0, label = fixed ? 'Most people pick this' : '';
+      const reset = () => { size.value = def; why.textContent = label; };
+      size.addEventListener('change', () => { changes++; n.textContent = 'Size changed by hand: ' + changes + (changes === 1 ? ' time' : ' times'); why.textContent = size.value === def ? label : 'Changed'; });
+      d.querySelector('[data-go]').addEventListener('click', () => {
+        orders++;
+        out.textContent = 'Order ' + orders + ' placed: ' + size.options[size.selectedIndex].text + '. Next order started.';
+        if (fixed) { def = size.value; label = 'Your last size'; }
+        reset();
+      });
+      reset();
+    };
+    D('pat-smart-defaults-1b', prints(false), printsWire(false));
+    D('pat-smart-defaults-1f', prints(true), printsWire(true));
+
+    /* 2. Keep defaults in view */
+    const upload = fixed => '<div class="sd-card"><b>Add to album “Garden”</b><div class="sd-up"><i class="thumb b"></i><span>IMG_3301.jpg<br><span class="cs-meta">6000 × 4000</span></span></div>' +
+      (fixed ? '<label class="field"><span class="field-label">Size <span class="sd-mark" data-mk></span></span><select class="select" data-size><option value="2048">Reduce to 2048 px, faster</option><option value="full">Original size</option></select></label>' : '') +
+      '<div class="sd-acts"><span></span><button class="btn btn-primary cs-sm" type="button" data-go>Upload</button></div><div data-out></div></div>';
+    D('pat-smart-defaults-2b', upload(false), (d, t) => {
+      d.querySelector('[data-go]').addEventListener('click', e => {
+        e.target.disabled = true;
+        const out = d.querySelector('[data-out]');
+        out.innerHTML = '<span class="cs-meta">Uploading…</span>';
+        t.after(() => { out.innerHTML = '<p class="sd-bad">Uploaded. The photo in the album is 2048 × 1365. It was reduced without asking, and the full-size photo isn’t there.</p>'; }, 700);
+      });
+    });
+    D('pat-smart-defaults-2f', upload(true), (d, t) => {
+      const size = d.querySelector('[data-size]'), mk = d.querySelector('[data-mk]');
+      size.addEventListener('change', () => { mk.textContent = size.value === '2048' ? '' : 'Changed'; });
+      d.querySelector('[data-go]').addEventListener('click', e => {
+        e.target.disabled = true;
+        const out = d.querySelector('[data-out]');
+        out.innerHTML = '<span class="cs-meta">Uploading…</span>';
+        t.after(() => { out.innerHTML = '<p class="sd-good">Uploaded at ' + (size.value === 'full' ? '6000 × 4000, the original size' : '2048 × 1365, as the form said') + '.</p>'; }, size.value === 'full' ? 1400 : 700);
+      });
+    });
+
+    /* 3. Risky options start off */
+    const album = on => '<div class="sd-card"><b>New album</b><label class="field"><span class="field-label">Name</span><input class="input" value="Kids at the beach" autocomplete="off"></label>' +
+      '<label class="check"><input type="checkbox" data-pub' + (on ? ' checked' : '') + '><span>Anyone with the link can view<small>Visible to people outside your contacts</small></span></label>' +
+      '<div class="sd-acts"><span></span><button class="btn btn-primary cs-sm" type="button" data-go>Create album</button></div><div data-out></div></div>';
+    const albumWire = d => {
+      d.querySelector('[data-go]').addEventListener('click', e => {
+        const pub = d.querySelector('[data-pub]').checked;
+        e.target.disabled = true;
+        d.querySelector('[data-out]').innerHTML = pub
+          ? '<p class="sd-bad">Album created. It’s public: anyone with the link can see the kids’ photos.</p>'
+          : '<p class="sd-good">Album created. Only you can see it. Share it when you’re ready.</p>';
+      });
+    };
+    D('pat-smart-defaults-3b', album(true), albumWire);
+    D('pat-smart-defaults-3f', album(false), albumWire);
+
+    /* 4. Real values, not placeholders */
+    const book = fixed => '<div class="sd-card"><b>Book a table at Casa Lume</b><div class="sd-line"><span>When</span><span>Fri, 19:30</span></div>' +
+      '<label class="field"><span class="field-label">People</span>' +
+      (fixed ? '<select class="select" data-ppl>' + [1, 2, 3, 4, 5, 6].map(n => '<option' + (n === 2 ? ' selected' : '') + '>' + n + (n === 1 ? ' person' : ' people') + '</option>').join('') + '</select>'
+        : '<input class="input" placeholder="2 people" autocomplete="off" data-ppl>') + '</label>' +
+      '<div class="sd-acts"><span></span><button class="btn btn-primary cs-sm" type="button" data-go>Book</button></div><div data-out></div></div>';
+    const bookWire = d => {
+      const ppl = d.querySelector('[data-ppl]'), out = d.querySelector('[data-out]');
+      d.querySelector('[data-go]').addEventListener('click', () => {
+        const v = ppl.value.trim();
+        if (!v) { ppl.setAttribute('aria-invalid', 'true'); out.innerHTML = '<p class="sd-bad">Enter the number of people. The field looked filled in, but it was empty.</p>'; ppl.focus(); return; }
+        ppl.removeAttribute('aria-invalid');
+        out.innerHTML = '<p class="sd-good">Table for ' + (parseInt(v, 10) || v) + ' booked, Friday at 19:30.</p>';
+      });
+      ppl.addEventListener('input', () => ppl.removeAttribute('aria-invalid'));
+    };
+    D('pat-smart-defaults-4b', book(false), bookWire);
+    D('pat-smart-defaults-4f', book(true), bookWire);
+
+    csInit(cs);
+  };
+  /* csDemo and csInit are defined further down the book, so wait for them */
+  if (window.csDemo) run(); else document.addEventListener('DOMContentLoaded', run);
+})();
+
+</script>

@@ -1,0 +1,177 @@
+<script>
+(() => {
+  const cs = document.currentScript.closest('.cs');
+  const D = (k, html, wire) => csDemo(cs.querySelector('[data-d="' + k + '"]'), html, wire);
+  const icon = n => '<svg class="icon sm"><use href="#i-' + n + '"/></svg>';
+  const frame = (bar, body, o = {}) => '<div class="app-frame" data-app style="width:min(' + (o.w || 340) + 'px,100%);position:relative">' +
+    '<div class="app-bar">' + bar + '</div>' + (o.top || '') + '<div class="app-body" data-body' + (o.body ? ' style="' + o.body + '"' : '') + '>' + body + '</div></div>';
+
+  /* A modal over the app frame. Everything behind it is inert until a button closes it. */
+  const modal = (app, o) => {
+    const m = document.createElement('div'); m.className = 'cs-modal';
+    const dlg = document.createElement('div'); dlg.className = 'cs-dlg'; dlg.setAttribute('role', 'dialog'); dlg.setAttribute('aria-modal', 'true'); dlg.setAttribute('aria-label', o.title);
+    if (o.w) dlg.style.width = 'min(' + o.w + 'px,100%)';
+    dlg.innerHTML = '<b></b>' + (o.text ? '<p></p>' : '') + (o.html || '') + '<div class="acts"></div>';
+    dlg.querySelector('b').textContent = o.title;
+    if (o.text) dlg.querySelector('p').textContent = o.text;
+    const rest = Array.from(app.children); rest.forEach(c => { c.inert = true; });
+    const close = () => { m.remove(); rest.forEach(c => { c.inert = false; }); };
+    const btns = o.buttons.map(([label, cls, run]) => {
+      const b = document.createElement('button'); b.type = 'button'; b.className = 'btn cs-sm ' + cls; b.textContent = label;
+      b.addEventListener('click', () => {
+        if (run && run(dlg) === false) return;
+        close();
+        if (o.back && o.back.isConnected && (!document.activeElement || document.activeElement === document.body)) o.back.focus({ preventScroll: true });
+      });
+      dlg.querySelector('.acts').appendChild(b); return b;
+    });
+    m.addEventListener('keydown', e => { if (e.key === 'Escape') { e.stopPropagation(); btns[0].click(); } });
+    m.appendChild(dlg); app.appendChild(m);
+    if (o.focus !== undefined) btns[o.focus].focus({ preventScroll: true });
+    return dlg;
+  };
+
+  /* 1. News */
+  const MAIL = [['Sam', 'Lunch on Friday?', 'Are you free at 12:30? There’s a new place on King Street I’d like to try.'],
+    ['Bank', 'Your statement is ready', 'Your October statement is ready to view in the app.'],
+    ['Mia', 'Photos from the trip', 'I put all the photos in one album for you.']];
+  const listHtml = MAIL.map((m, i) => '<button type="button" class="dl-mail" data-i="' + i + '"><b>' + m[0] + '</b><span>' + m[1] + '</span></button>').join('');
+  const newsHtml = frame('<span>Inbox</span>', '<div data-list>' + listHtml + '</div>', { top: '<div data-ban></div>', body: 'padding:6px 14px 12px;gap:0;min-height:210px' });
+  const newsWire = fixed => d => {
+    const app = d.querySelector('[data-app]'), list = d.querySelector('[data-list]'), ban = d.querySelector('[data-ban]');
+    const bind = () => list.querySelectorAll('.dl-mail').forEach(b => b.addEventListener('click', () => open(+b.dataset.i)));
+    const open = i => {
+      list.innerHTML = '<div class="dl-read"><button type="button" class="btn btn-ghost cs-sm dl-ghost" data-back>← Inbox</button><b></b><span class="cs-meta"></span><p></p></div>';
+      list.querySelector('b').textContent = MAIL[i][1]; list.querySelector('.cs-meta').textContent = 'From ' + MAIL[i][0]; list.querySelector('p').textContent = MAIL[i][2];
+      const back = list.querySelector('[data-back]'); back.focus({ preventScroll: true });
+      back.addEventListener('click', () => { list.innerHTML = listHtml; bind(); list.querySelectorAll('.dl-mail')[i].focus({ preventScroll: true }); });
+    };
+    bind();
+    if (!fixed) { modal(app, { title: 'What’s new in 4.2', text: 'Smarter search, new themes and a faster inbox. Take a look around!', buttons: [['Got it', 'btn-primary']] }); return; }
+    ban.innerHTML = '<div class="banner" style="padding:8px 12px;font-size:13.5px">' + icon('info') + '<span class="grow" data-bt>New: smarter search. <button type="button" class="dl-more">See what’s new</button></span>' +
+      '<button type="button" class="icon-btn dl-x" aria-label="Close banner">' + icon('x') + '</button></div>';
+    ban.querySelector('.dl-more').addEventListener('click', () => { ban.querySelector('[data-bt]').textContent = 'Search now finds words inside attachments, too.'; });
+    ban.querySelector('.dl-x').addEventListener('click', () => { ban.innerHTML = ''; });
+  };
+  D('dialog-1b', newsHtml, newsWire(false));
+  D('dialog-1f', newsHtml, newsWire(true));
+
+  /* 2. Are you sure? */
+  const CHATS = [['Sam', 'See you at 6'], ['Lena', 'Lunch on Friday?'], ['Mia', 'Sent the photos'], ['Omar', 'Thanks!']];
+  const chatHtml = frame('<span>Chats</span>', '<div data-list></div><p class="cs-meta" data-count></p>', { body: 'padding:4px 14px 12px;gap:6px' });
+  const chatWire = fixed => (d, t) => {
+    const app = d.querySelector('[data-app]'), list = d.querySelector('[data-list]'), count = d.querySelector('[data-count]');
+    let clicks = 0;
+    const tick = () => { count.textContent = (list.children.length ? '' : 'No chats left. ') + 'Clicks so far: ' + clicks; };
+    const click = () => { clicks++; tick(); };
+    const ask = (text, yes, back) => modal(app, { title: 'Are you sure?', text, back, focus: 1, buttons: [['Cancel', 'btn-secondary', click], ['OK', 'btn-primary', () => { click(); yes(); }]] });
+    const archive = (r, c) => {
+      const idx = Array.from(list.children).indexOf(r); r.remove(); tick();
+      if (fixed) csToast(d, t, 'Chat with ' + c[0] + ' archived', { ms: 5000, replace: true, action: { label: 'Undo', run: () => { click(); list.insertBefore(rowFor(c), list.children[idx] || null); tick(); } } });
+    };
+    const rowFor = c => {
+      const r = document.createElement('div'); r.className = 'cs-row';
+      r.innerHTML = '<span class="grow"><b></b> · <span></span></span><button type="button" class="btn btn-secondary cs-sm" data-arc>Archive</button><button type="button" class="icon-btn" data-del style="width:32px;height:32px">' + icon('trash') + '</button>';
+      r.querySelector('b').textContent = c[0]; r.querySelector('.grow span').textContent = c[1];
+      const arc = r.querySelector('[data-arc]'), del = r.querySelector('[data-del]');
+      arc.setAttribute('aria-label', 'Archive chat with ' + c[0]); del.setAttribute('aria-label', 'Delete chat with ' + c[0]);
+      arc.addEventListener('click', () => { click(); if (fixed) archive(r, c); else ask('Archive your chat with ' + c[0] + '?', () => archive(r, c), arc); });
+      del.addEventListener('click', () => {
+        click();
+        if (!fixed) { ask('Delete your chat with ' + c[0] + '?', () => { r.remove(); tick(); }, del); return; }
+        modal(app, { title: 'Delete chat with ' + c[0] + '?', text: 'All messages and photos in it will be gone for good.', back: del, focus: 0,
+          buttons: [['Cancel', 'btn-secondary', click], ['Delete chat', 'btn-danger', () => { click(); r.remove(); tick(); }]] });
+      });
+      return r;
+    };
+    CHATS.forEach(c => list.appendChild(rowFor(c))); tick();
+  };
+  D('dialog-2b', chatHtml, chatWire(false));
+  D('dialog-2f', chatHtml, chatWire(true));
+
+  /* 3. Long form */
+  const DAYS = [['Mon', 1.4], ['Tue', 1.2], ['Wed', 0.8], ['Thu', 1.1], ['Fri', 2.1], ['Sat', 2.4], ['Sun', 1.6]];
+  const chart = '<p class="dl-cap">Sales this week, in dollars</p><div class="dl-chart" aria-hidden="true">' + DAYS.map(([, v]) => '<div class="dl-col"><span class="dl-v">' + v.toFixed(1) + 'k</span><i style="height:' + Math.round(v / 2.4 * 100) + 'px"></i></div>').join('') + '</div>' +
+    '<div class="dl-days" aria-hidden="true">' + DAYS.map(([d]) => '<span>' + d + '</span>').join('') + '</div>' +
+    '<p class="sr-only" style="position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)">' + DAYS.map(([d, v]) => d + ' $' + Math.round(v * 1000)).join(', ') + '</p>';
+  const sel = opts => '<select class="select dl-in">' + opts.map(o => '<option>' + o + '</option>').join('') + '</select>';
+  const fields = '<div class="dl-fields">' +
+    '<label class="cs-f">Report name<input class="input dl-in" value="Weekly sales"></label>' +
+    '<label class="cs-f">Date range' + sel(['Last 7 days', 'Last 30 days']) + '</label>' +
+    '<label class="cs-f">Group by' + sel(['Day', 'Region', 'Product']) + '</label>' +
+    '<label class="cs-f">Compare to' + sel(['Last week', 'Last year', 'Nothing']) + '</label>' +
+    '<label class="cs-f">Alert me when a day is below<input class="input dl-in" data-alert inputmode="decimal" placeholder="Amount in $"></label>' +
+    '<label class="cs-f">Send to<input class="input dl-in" value="team@shop.com"></label>' +
+    '<label class="cs-f">Format' + sel(['PDF', 'Spreadsheet']) + '</label>' +
+    '<label class="cs-f">Schedule' + sel(['Every Monday', 'Every day', 'Once a month']) + '</label></div>';
+  const verdict = raw => {
+    const s = (raw || '').trim().toLowerCase();
+    if (!s) return 'Report saved, with no alert.';
+    let n = parseFloat(s.replace(/[^\d.]/g, '')); if (/k/.test(s)) n *= 1000;
+    if (!isFinite(n)) return 'Report saved, with no alert.';
+    const amt = '$' + Math.round(n).toLocaleString('en');
+    return n >= 800 ? 'Saved. Alert below ' + amt + ', but Wednesday ($800) is already below that.' : 'Saved. Alert when a day is below ' + amt + '.';
+  };
+  const formHtml = fixed => '<div class="app-frame" data-app style="width:min(560px,100%);position:relative"><div class="app-bar"><span>Sales</span>' +
+    '<button type="button" class="btn btn-secondary cs-sm" data-edit' + (fixed ? ' aria-expanded="false"' : '') + '>Edit report</button></div>' +
+    '<div class="dl-split"><div class="dl-main">' + chart + '<p class="cs-ok" data-st></p></div>' +
+    (fixed ? '<aside class="dl-panel" aria-label="Report settings" hidden><div class="dl-ph"><span>Report settings</span><button type="button" class="icon-btn dl-x" data-x aria-label="Close panel">' + icon('x') + '</button></div>' + fields +
+      '<div class="dl-acts"><button type="button" class="btn btn-primary cs-sm" data-save>Save report</button></div></aside>' : '') + '</div></div>';
+  D('dialog-3b', formHtml(false), d => {
+    const app = d.querySelector('[data-app]'), edit = d.querySelector('[data-edit]'), st = d.querySelector('[data-st]');
+    edit.addEventListener('click', () => {
+      const dlg = modal(app, { title: 'Report settings', w: 280, html: '<div class="dl-scroll">' + fields + '</div>', back: edit,
+        buttons: [['Cancel', 'btn-secondary'], ['Save report', 'btn-primary', dl => { st.textContent = verdict(dl.querySelector('[data-alert]').value); }]] });
+      dlg.querySelector('input').focus({ preventScroll: true });
+    });
+  });
+  D('dialog-3f', formHtml(true), d => {
+    const edit = d.querySelector('[data-edit]'), panel = d.querySelector('.dl-panel'), st = d.querySelector('[data-st]');
+    const show = on => { panel.hidden = !on; edit.setAttribute('aria-expanded', String(on)); if (on) panel.querySelector('input').focus({ preventScroll: true }); else edit.focus({ preventScroll: true }); };
+    edit.addEventListener('click', () => show(panel.hidden));
+    panel.querySelector('[data-x]').addEventListener('click', () => show(false));
+    panel.querySelector('[data-save]').addEventListener('click', () => { st.textContent = verdict(panel.querySelector('[data-alert]').value); show(false); });
+  });
+
+  /* 4. OK / Cancel */
+  const editBody = '<div data-view><div class="thumb dl-photo"><span class="dl-crop"></span></div></div><p class="cs-meta" data-st>beach.jpg · cropped to a square, not saved</p>';
+  const editHtml = frame('<button type="button" class="btn btn-ghost cs-sm dl-ghost" data-back>← Photos</button><span>Edit photo</span>', editBody, { w: 320 });
+  const editWire = fixed => d => {
+    const app = d.querySelector('[data-app]'), back = d.querySelector('[data-back]'), view = d.querySelector('[data-view]'), st = d.querySelector('[data-st]');
+    const keep = () => { st.textContent = 'Still editing. Your crop is kept.'; };
+    const discard = () => {
+      view.innerHTML = '<div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px"><div class="thumb"></div><div class="thumb b"></div><div class="thumb c"></div></div>';
+      st.textContent = 'Back in Photos. Your crop was thrown away.'; back.disabled = true;
+    };
+    back.addEventListener('click', () => modal(app, { title: 'Discard changes?', text: 'Your crop of beach.jpg will be lost.', back, focus: fixed ? 0 : 1,
+      buttons: fixed ? [['Keep editing', 'btn-secondary', keep], ['Discard crop', 'btn-danger', discard]] : [['Cancel', 'btn-secondary', keep], ['OK', 'btn-primary', discard]] }));
+  };
+  D('dialog-4b', editHtml, editWire(false));
+  D('dialog-4f', editHtml, editWire(true));
+
+  /* 5. On load */
+  const LISTS = [['Road trip', '42 songs', ''], ['Focus', '28 songs', ' b'], ['Chill', '35 songs', ' c']];
+  const musicHtml = frame('<span>Music</span>', '<div data-lib></div><p class="cs-meta" data-st></p>', { body: 'padding:6px 12px 12px;gap:6px;min-height:220px' });
+  const musicWire = fixed => (d, t) => {
+    const app = d.querySelector('[data-app]'), lib = d.querySelector('[data-lib]'), st = d.querySelector('[data-st]');
+    lib.innerHTML = '<p class="cs-meta" style="padding:6px 0">Loading your library…</p><div class="skel t" style="margin:8px 0"></div><div class="skel t2" style="margin:8px 0"></div><div class="skel t" style="margin:8px 0"></div>';
+    t.after(() => {
+      lib.innerHTML = LISTS.map(([n, s, c]) => '<div class="dl-song"><div class="thumb' + c + '"></div><div class="grow"><b>' + n + '</b><span>' + s + '</span></div>' +
+        '<button type="button" class="icon-btn" data-play aria-label="Play ' + n + '">' + icon('play') + '</button><button type="button" class="btn btn-secondary cs-sm" data-dl aria-label="Download ' + n + '">Download</button></div>').join('');
+      lib.querySelectorAll('.dl-song').forEach((row, i) => {
+        const n = LISTS[i][0], dl = row.querySelector('[data-dl]');
+        row.querySelector('[data-play]').addEventListener('click', () => { st.textContent = 'Playing ' + n + '.'; });
+        dl.addEventListener('click', () => modal(app, { title: 'Download on mobile data?', text: n + ' is 240 MB, and you’re not on Wi‑Fi.', back: dl, focus: 0,
+          buttons: [['Wait for Wi‑Fi', 'btn-secondary', () => { st.textContent = n + ' will download on Wi‑Fi.'; }], ['Download now', 'btn-primary', () => { st.textContent = 'Downloading ' + n + '…'; }]] }));
+      });
+      if (!fixed) modal(app, { title: 'Enjoying Music?', text: 'Rate us 5 stars before you start.',
+        buttons: [['Not now', 'btn-secondary'], ['Rate now', 'btn-primary', () => { st.textContent = 'Opening the app store…'; }]] });
+    }, 700);
+  };
+  D('dialog-5b', musicHtml, musicWire(false));
+  D('dialog-5f', musicHtml, musicWire(true));
+
+  csInit(cs);
+})();
+
+  </script>

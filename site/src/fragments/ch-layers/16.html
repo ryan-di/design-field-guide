@@ -1,0 +1,46 @@
+<div class="note comfy cw-wrap"><p>Notice how each product teaches its shortcuts on the slow path, and keeps single keys out of the way while people type.</p>
+  <div class="seg cw-seg" role="radiogroup" aria-label="Example">
+    <input type="radio" name="cw-pat-shortcuts-w" id="cw-pat-shortcuts-w-1" value="mac" checked><label for="cw-pat-shortcuts-w-1">macOS</label>
+    <input type="radio" name="cw-pat-shortcuts-w" id="cw-pat-shortcuts-w-2" value="code"><label for="cw-pat-shortcuts-w-2">VS Code</label>
+    <input type="radio" name="cw-pat-shortcuts-w" id="cw-pat-shortcuts-w-3" value="gmail"><label for="cw-pat-shortcuts-w-3">Gmail</label>
+    <input type="radio" name="cw-pat-shortcuts-w" id="cw-pat-shortcuts-w-4" value="yt"><label for="cw-pat-shortcuts-w-4">YouTube</label>
+  </div>
+  <div class="cw cw-keys-view" data-cw-view role="img" aria-label=""></div>
+  <p class="cw-cap" data-cw-cap aria-live="polite"></p>
+  
+  <script>
+  (() => {
+    const wrap = document.currentScript.closest('.cw-wrap');
+    const view = wrap.querySelector('[data-cw-view]'), cap = wrap.querySelector('[data-cw-cap]');
+    const ic = id => '<svg class="icon sm" aria-hidden="true"><use href="#i-' + id + '"/></svg>';
+    const L = w => '<i class="cw-line" style="width:' + w + '%"></i>';
+    const k = (...keys) => keys.map(x => '<span class="cw-keys-k">' + x + '</span>').join('');
+    const item = (name, sc, on) => '<span class="cw-keys-item' + (on ? ' on' : '') + '"><span>' + name + '</span><i>' + sc + '</i></span>';
+    const cmd = (name, keys, on) => '<span class="cw-keys-cmd' + (on ? ' on' : '') + '"><span>' + name + '</span>' + (keys ? '<span class="cw-keys-ks' + (on ? ' cw-keys-hl' : '') + '">' + k(...keys) + '</span>' : '') + '</span>';
+    const S = {
+      mac: { html: '<div class="cw-keys-win"><div class="cw-keys-bar"><span>File</span><span class="on">Edit</span><span>View</span><span>Window</span></div>' +
+          '<div class="cw-keys-menu">' + item('Undo', '⌘Z') + item('Redo', '⇧⌘Z') + '<hr>' + item('Cut', '⌘X') + item('Copy', '⌘C', true) + item('Paste', '⌘V') + item('Select All', '⌘A') + '<span class="cw-keys-col"></span></div></div>',
+        alt: 'An open Edit menu. Each item, like Undo, Cut, Copy and Paste, shows its shortcut in a column on the right, such as Command C for Copy.',
+        cap: 'macOS: every menu shows each command’s shortcut on the right. Using the menu once teaches the faster key.' },
+      code: { html: '<div class="cw-keys-win"><div class="cw-keys-bar"><span>app.js</span></div><div class="cw-keys-code">' + L(30) + L(55) + L(48) + L(62) + L(40) + L(52) + L(36) + L(58) + L(44) + L(66) + L(38) + L(20) + '</div>' +
+          '<div class="cw-keys-pal"><div class="cw-keys-q">&gt; format</div>' + cmd('Format Document', ['⇧', '⌥', 'F'], true) + cmd('Format Selection', ['⌘K', '⌘F']) + cmd('Format Document With…') + '</div></div>',
+        alt: 'A command palette over a code editor, filtered by the word format. Format Document is highlighted with its keys, Shift Option F. Format Selection shows Command K, Command F.',
+        cap: 'VS Code: the command palette shows each command’s key binding beside it, and the Keyboard Shortcuts editor lets you search and remap any of them.' },
+      gmail: { html: '<div class="cw-keys-win"><div class="cw-keys-bar">Settings</div><div class="cw-keys-body">' +
+          '<span class="cw-keys-set cw-keys-hl"><b>Keyboard shortcuts</b><span class="cw-keys-radios"><span>Off</span><span class="on">On</span></span></span>' +
+          '<span class="cw-keys-note">Then press ? for the list:</span>' +
+          '<div class="cw-keys-list"><span>' + k('j') + 'Older conversation</span><span>' + k('k') + 'Newer conversation</span><span>' + k('e') + 'Archive</span><span>' + k('r') + 'Reply</span></div></div></div>',
+        alt: 'A Settings page with Keyboard shortcuts switched from Off to On. Below, a list of single keys: j older conversation, k newer conversation, e archive, r reply.',
+        cap: 'Gmail: single-key shortcuts like j, k and e are off until you turn them on in Settings. Once they’re on, ? opens the full list.' },
+      yt: { html: '<div class="cw-keys-win"><div class="cw-keys-search">' + ic('search') + '<span>kayak trip<span class="cw-keys-caret"></span></span></div>' +
+          '<div class="cw-keys-video"><span class="cw-keys-pause"><i></i><i></i></span></div>' +
+          '<div class="cw-keys-row"><span>' + k('K') + 'Pause</span><span>' + k('J') + 'Back 10 s</span><span>' + k('L') + 'Ahead 10 s</span><span>' + k('?') + 'All keys</span></div></div>',
+        alt: 'A video page. Someone is typing kayak trip in the search box, and the video doesn’t react. Below the paused video: K pause, J back 10 seconds, L ahead 10 seconds, question mark for all keys.',
+        cap: 'YouTube: k pauses, j and l jump back and ahead 10 seconds, and ? lists the rest. None of them fire while you type a search or a comment.' }
+    };
+    const render = key => { view.innerHTML = S[key].html; view.setAttribute('aria-label', 'Sketch: ' + S[key].alt); cap.textContent = S[key].cap; };
+    wrap.querySelectorAll('input[name="cw-pat-shortcuts-w"]').forEach(r => r.addEventListener('change', () => render(r.value)));
+    render('mac');
+  })();
+  </script>
+</div>

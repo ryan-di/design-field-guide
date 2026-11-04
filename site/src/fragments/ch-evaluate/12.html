@@ -1,0 +1,119 @@
+<script>
+(() => {
+  const cs = document.currentScript.closest('.cs');
+  const D = (k, html, wire) => csDemo(cs.querySelector('[data-d="' + k + '"]'), html, wire);
+  const st = document.createElement('style');
+  st.textContent = [
+    '#eff-measure .me-card{width:min(380px,100%);background:var(--ui-surface);border:1px solid var(--ui-border);border-radius:12px;padding:14px;box-shadow:var(--ui-shadow);display:flex;flex-direction:column;gap:10px;text-align:left;font-size:14px;line-height:1.45;color:var(--ui-text)}',
+    '#eff-measure .me-lbl{font:600 11.5px var(--font-mono);letter-spacing:.06em;text-transform:uppercase;color:var(--ui-muted)}',
+    '#eff-measure .me-big{font:700 34px/1.1 var(--font-body)}',
+    '#eff-measure .me-up{color:var(--ui-ok);font-weight:600}',
+    '#eff-measure .me-down{color:var(--ui-danger);font-weight:600}',
+    '#eff-measure .me-meta{font:500 12.5px var(--font-mono);color:var(--ui-muted)}',
+    '#eff-measure .me-tog{display:inline-flex;align-self:flex-start;gap:4px;padding:3px;border-radius:9px;background:var(--ui-hover)}',
+    '#eff-measure .me-tog button{all:unset;cursor:pointer;padding:6px 11px;border-radius:7px;font:600 13px var(--font-body);color:var(--ui-muted)}',
+    '#eff-measure .me-tog button[aria-pressed="true"]{background:var(--ui-surface);color:var(--ui-text);box-shadow:var(--ui-shadow)}',
+    '#eff-measure .me-tog button:focus-visible{outline:2px solid var(--ui-sel)}',
+    '#eff-measure .me-tbl{width:100%;border-collapse:collapse;font-size:13.5px}',
+    '#eff-measure .me-tbl th,#eff-measure .me-tbl td{padding:6px 4px;border-bottom:1px solid var(--ui-border);text-align:left;vertical-align:middle}',
+    '#eff-measure .me-tbl .btn{white-space:nowrap}',
+    '#eff-measure .me-tbl th{font-weight:600;color:var(--ui-muted);font-size:12.5px}',
+    '#eff-measure .me-tbl td.num{font-family:var(--font-mono);white-space:nowrap}',
+    '#eff-measure .me-tbl td.over{color:var(--ui-danger);font-weight:700}',
+    '#eff-measure .me-tbl tr.on td{background:var(--ui-sel-soft)}',
+    '#eff-measure .me-out{border-top:1px solid var(--ui-border);padding-top:8px}',
+    '#eff-measure .me-out:empty{display:none}',
+    '#eff-measure .me-out.bad{color:var(--ui-danger);font-weight:600}',
+    '#eff-measure .me-out.good{font-weight:600}',
+    '#eff-measure .me-sec{display:flex;flex-direction:column;gap:3px;padding:8px 10px;border-radius:8px;background:var(--ui-hover)}',
+    '#eff-measure .me-sec ul{margin:0;padding-left:18px}',
+    '#eff-measure .me-sec b{font-size:13px}',
+    '#eff-measure .me-sec code{font:500 12.5px var(--font-mono);color:var(--ui-sel);word-break:break-word}',
+    '#eff-measure .me-btns{display:flex;flex-wrap:wrap;gap:8px}',
+    '#eff-measure .me-quote{margin:0;padding-left:10px;border-left:3px solid var(--ui-border);color:var(--ui-muted);font-size:13.5px}'
+  ].join('\n');
+  cs.appendChild(st);
+
+  /* 1. Clicks vs outcome rate: Reorder in a shop */
+  const WEEKS = {
+    normal: { visits: '35,000 visitors', b: ['2,100', ''], f: ['12%', '504 of 4,200 people who opened a past order'] },
+    sale: { visits: '70,000 visitors', b: ['4,150', '<span class="me-up">↑ 98% from last week</span>'], f: ['12%', '1,008 of 8,400 people who opened a past order'] }
+  };
+  const tileHtml = fixed => '<div class="me-card"><div class="me-tog" role="group" aria-label="Week"><button type="button" aria-pressed="true" data-w="normal">Normal week</button><button type="button" aria-pressed="false" data-w="sale">Sale week</button></div>' +
+    '<span class="me-lbl">' + (fixed ? 'Reorders finished' : 'Reorder button clicks') + '</span><span class="me-big" data-big></span><span data-sub></span><span class="me-meta" data-vis></span></div>';
+  const tileWire = fixed => d => {
+    const set = k => {
+      d.querySelectorAll('[data-w]').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.w === k)));
+      const v = WEEKS[k][fixed ? 'f' : 'b'];
+      d.querySelector('[data-big]').textContent = v[0];
+      d.querySelector('[data-sub]').innerHTML = v[1] + (fixed && k === 'sale' ? '<br><b>Same share as last week.</b>' : '');
+      d.querySelector('[data-vis]').textContent = 'This week: ' + WEEKS[k].visits;
+    };
+    d.querySelectorAll('[data-w]').forEach(b => b.addEventListener('click', () => set(b.dataset.w)));
+    set('normal');
+  };
+  D('eff-measure-1b', tileHtml(false), tileWire(false));
+  D('eff-measure-1f', tileHtml(true), tileWire(true));
+
+  /* 2. Guardrail: music autoplay */
+  const VERS = [['A', 'Similar songs', 41, 3], ['B', 'Songs you liked', 46, 4], ['C', 'New releases', 52, 11]];
+  const guardHtml = fixed => '<div class="me-card"><span class="me-lbl">Autoplay test · 3 versions</span><table class="me-tbl"><thead><tr><th scope="col">Version</th><th scope="col">Listening a day</th>' +
+    (fixed ? '<th scope="col">Turned it off <span class="me-meta">max 5%</span></th>' : '') + '<th></th></tr></thead><tbody>' +
+    VERS.map(v => '<tr data-v="' + v[0] + '"><td><b>' + v[0] + '</b><br><span class="me-meta">' + v[1] + '</span></td><td class="num">' + v[2] + ' min</td>' +
+      (fixed ? '<td class="num' + (v[3] > 5 ? ' over' : '') + '">' + v[3] + '%</td>' : '') +
+      '<td><button class="btn btn-secondary cs-sm" type="button" data-pick="' + v[0] + '" aria-label="Ship ' + v[0] + '">Ship</button></td></tr>').join('') +
+    '</tbody></table><p class="me-out" aria-live="polite" data-out></p></div>';
+  const guardWire = verdict => d => {
+    d.querySelectorAll('[data-pick]').forEach(b => b.addEventListener('click', () => {
+      d.querySelectorAll('tr[data-v]').forEach(r => r.classList.toggle('on', r.dataset.v === b.dataset.pick));
+      const o = d.querySelector('[data-out]'), v = verdict[b.dataset.pick];
+      o.className = 'me-out ' + v[0]; o.textContent = v[1];
+    }));
+  };
+  D('eff-measure-2b', guardHtml(false), guardWire({
+    A: ['', 'A has the least listening. The dashboard points to C.'],
+    B: ['', 'B is good, but the dashboard points to C: 52 minutes a day.'],
+    C: ['bad', 'C ships. A month later, 11% of people have turned autoplay off, and reviews say it plays songs they don’t want.']
+  }));
+  D('eff-measure-2f', guardHtml(true), guardWire({
+    A: ['', 'A is safe, but B adds listening and stays under the limit.'],
+    B: ['good', 'B ships: 5 more minutes a day, and 4% turned autoplay off, under the 5% limit.'],
+    C: ['bad', 'C is out. 11% turned autoplay off, over the 5% limit, however good its listening time is.']
+  }));
+
+  /* 3. Choose before you build: a new address form */
+  const prHtml = fixed => '<div class="me-card"><div class="me-sec"><b>Brief · Done when</b><span>Fewer parcels fail to arrive.' +
+    (fixed ? ' <br><b>Number:</b> failed deliveries per 100 orders, now 4.1.' : '') + '</span></div>' +
+    '<div class="me-sec"><b>Pull request · New address form with suggestions</b><ul><li>Suggests full addresses as people type.</li><li>Flags a missing flat number.</li>' +
+    (fixed ? '<li>Event <code>address_suggestion_used</code>. Logs that a suggestion was picked, not the address.</li>' : '') + '</ul></div>' +
+    '<button class="btn btn-primary cs-sm" type="button" data-go>Two weeks later</button><p class="me-out" aria-live="polite" data-out></p></div>';
+  const prWire = (cls, text) => d => d.querySelector('[data-go]').addEventListener('click', e => {
+    e.target.disabled = true; const o = d.querySelector('[data-out]'); o.className = 'me-out ' + cls; o.innerHTML = text;
+  });
+  D('eff-measure-3b', prHtml(false), prWire('bad', '“Did failed deliveries go down?” Nobody can tell. Nothing was logged when people used a suggestion. Only page views were counted.'));
+  D('eff-measure-3f', prHtml(true), prWire('good', 'Failed deliveries: 4.1 → 2.6 per 100 orders. 38% of orders used a suggestion.'));
+
+  /* 4. Number plus what people say: price alerts in a travel app */
+  const alertHtml = fixed => '<div class="me-card"><span class="me-lbl">Price alerts set per week</span><span class="me-big">800</span><span><span class="me-down">↓ 33%</span> since the app update (was 1,200)</span>' +
+    (fixed ? '<div class="me-btns"><button class="btn btn-secondary cs-sm" type="button" aria-expanded="false" data-open="th">Support threads (3)</button><button class="btn btn-secondary cs-sm" type="button" aria-expanded="false" data-open="se">Sessions (5)</button></div>' +
+      '<div data-pane="th" hidden><p class="me-quote">“Where did the price alert bell go?”</p><p class="me-quote">“I can’t set alerts anymore since the update.”</p><p class="me-quote">“Found it under More. Why is it hidden?”</p></div>' +
+      '<div data-pane="se" hidden><p class="me-quote">4 of 5 people looked for the bell next to the price. It’s now under More.</p></div>' : '') +
+    '<button class="btn btn-primary cs-sm" type="button" data-go>Decide</button><p class="me-out" aria-live="polite" data-out></p></div>';
+  D('eff-measure-4b', alertHtml(false), d => d.querySelector('[data-go]').addEventListener('click', e => {
+    e.target.disabled = true; const o = d.querySelector('[data-out]'); o.className = 'me-out bad';
+    o.textContent = 'Decision: people don’t want price alerts anymore. Remove the feature next quarter.';
+  }));
+  D('eff-measure-4f', alertHtml(true), d => {
+    d.querySelectorAll('[data-open]').forEach(b => b.addEventListener('click', () => {
+      const p = d.querySelector('[data-pane="' + b.dataset.open + '"]'); p.hidden = !p.hidden; b.setAttribute('aria-expanded', String(!p.hidden));
+    }));
+    d.querySelector('[data-go]').addEventListener('click', e => {
+      e.target.disabled = true; const o = d.querySelector('[data-out]'); o.className = 'me-out good';
+      o.textContent = 'Decision: people still want alerts but can’t find them. Move the bell back next to the price.';
+    });
+  });
+
+  csInit(cs);
+})();
+
+</script>

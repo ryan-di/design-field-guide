@@ -1,0 +1,48 @@
+<div class="note comfy cw-wrap"><p>Notice how far each one goes: one page, one component, a real branch, real people.</p>
+  <div class="seg cw-seg" role="radiogroup" aria-label="Example">
+    <input type="radio" name="cw-eff-prototype-in-code-w" id="cw-eff-prototype-in-code-w-1" value="codepen" checked><label for="cw-eff-prototype-in-code-w-1">CodePen</label>
+    <input type="radio" name="cw-eff-prototype-in-code-w" id="cw-eff-prototype-in-code-w-2" value="storybook"><label for="cw-eff-prototype-in-code-w-2">Storybook</label>
+    <input type="radio" name="cw-eff-prototype-in-code-w" id="cw-eff-prototype-in-code-w-3" value="vercel"><label for="cw-eff-prototype-in-code-w-3">Vercel</label>
+    <input type="radio" name="cw-eff-prototype-in-code-w" id="cw-eff-prototype-in-code-w-4" value="instagram"><label for="cw-eff-prototype-in-code-w-4">Instagram</label>
+  </div>
+  <div class="cw" data-cw-view role="img" aria-label=""></div>
+  <p class="cw-cap" data-cw-cap aria-live="polite"></p>
+  
+  <script>
+  (() => {
+    const wrap = document.currentScript.closest('.cw-wrap');
+    const view = wrap.querySelector('[data-cw-view]'), cap = wrap.querySelector('[data-cw-cap]');
+    const ic = id => '<svg class="icon sm" aria-hidden="true"><use href="#i-' + id + '"/></svg>';
+    const L = (w, k) => '<i class="cw-line' + (k ? ' k' : '') + '" style="width:' + w + '%"></i>';
+    const pane = (name, lines) => '<span class="cw-pq-pane"><b>' + name + '</b>' + lines.map(l => L(l[0], l[1])).join('') + '</span>';
+    const toast = () => '<div class="toast">Item deleted<span class="toast-action">Undo</span></div>';
+    const heart = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.6-7 10-7 10z"/></svg>';
+    const bubble = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 12a8 8 0 1 1-3.2-6.4A8 8 0 0 1 20 12zM6 20l1.5-3.5"/></svg>';
+    const send = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M21 4L3 11l7 3 3 7z"/></svg>';
+    const S = {
+      codepen: { html: '<div class="cw-pq-win"><div class="cw-pq-panes">' + pane('HTML', [[80], [55, 1], [70]]) + pane('CSS', [[60, 1], [85], [45]]) + pane('JS', [[75, 1], [50], [90], [40, 1]]) + '</div>' +
+          '<div class="cw-pq-res"><small>Result</small><span class="btn btn-secondary">Delete</span>' + toast() + '</div></div>',
+        alt: 'An editor with three small panes for HTML, CSS and JS, and a live result below: a Delete button and a toast that says Item deleted, with Undo.',
+        cap: 'CodePen: a pen is one page of HTML, CSS and JavaScript with the result running underneath. It’s enough for a question about feel, like how long a toast should stay, without touching the real app.' },
+      storybook: { html: '<div class="cw-pq-win"><div class="cw-pq-sb"><div class="cw-pq-side"><b>' + ic('folder') + 'Toast</b><span>Default</span><span class="on">With undo</span><span>Error</span><span>Long text</span><b>' + ic('folder') + 'Button</b></div>' +
+          '<div class="cw-pq-main"><div class="cw-pq-canvas">' + toast() + '</div><div class="cw-pq-ctl"><b>Controls</b><span>message<u>Item deleted</u></span><span>action<u>Undo</u></span></div></div></div></div>',
+        alt: 'A component workshop. The sidebar lists Toast stories: Default, With undo, Error and Long text; With undo is selected. The canvas shows the real toast, and a Controls panel below edits its message and action.',
+        cap: 'Storybook: each story renders one real component in one state, outside the app. You can check the error and long-text states in real code, and change props live, before any screen uses it.' },
+      vercel: { html: '<div class="cw-pq-pr"><span class="cw-pq-title">Restore closed tabs <em>#128</em><span>Open</span></span>' +
+          '<div class="cw-pq-cmt"><div class="cw-pq-who"><i class="cw-pq-av"></i><b>deploy bot</b>commented</div><div class="cw-pq-tbl"><i>Status</i><i>Preview</i><i></i>' +
+          '<span class="cw-pq-ok">' + ic('check') + 'Ready</span><span class="cw-pq-a">Visit preview</span><span></span></div></div>' +
+          '<div class="cw-pq-br"><div class="cw-pq-url"><i></i><i></i>restore-tabs.preview.app</div><div class="cw-pq-page"><span class="cw-pq-tab">Draft 2' + ic('x') + '</span>' + L(30) + '</div></div></div>',
+        alt: 'A pull request named Restore closed tabs. A bot comment says the preview is Ready, with a Visit preview link. Below, a browser window opens the branch at its own preview address.',
+        cap: 'Vercel: every pull request gets its own live preview link. Reviewers click through the real branch in a browser instead of judging screenshots.' },
+      instagram: { html: '<div class="cw-pq-ig"><div class="cw-pq-post"><div class="cw-pq-ph"><i class="cw-pq-av"></i>' + L(60) + '</div><i class="cw-pq-img"></i>' +
+          '<div class="cw-pq-acts">' + heart + bubble + send + '</div><div class="cw-pq-likes">Liked by mia and others</div></div>' +
+          '<div class="cw-pq-set"><span class="cw-pq-sw">Hide like counts<i></i></span></div></div>',
+        alt: 'A photo post with like, comment and share icons but no like count. It says Liked by mia and others. Beside it a setting, Hide like counts, switched on.',
+        cap: 'Instagram: it tested hiding like counts with real accounts in several countries before deciding, because how people would feel about it could only be learned from real use, not from a mock. It later became a setting people can turn on.' }
+    };
+    const render = k => { view.innerHTML = S[k].html; view.setAttribute('aria-label', 'Sketch: ' + S[k].alt); cap.textContent = S[k].cap; };
+    wrap.querySelectorAll('input[name="cw-eff-prototype-in-code-w"]').forEach(r => r.addEventListener('change', () => render(r.value)));
+    render('codepen');
+  })();
+  </script>
+</div>

@@ -1,0 +1,45 @@
+<div class="note comfy cw-wrap"><p>Notice the one thing that leads in each, marked with a dashed outline, and how far everything else steps down from it.</p>
+  <div class="seg cw-seg" role="radiogroup" aria-label="Example">
+    <input type="radio" name="cw-good-visual-hierarchy-w" id="cw-good-visual-hierarchy-w-1" value="weather" checked><label for="cw-good-visual-hierarchy-w-1">iOS Weather</label>
+    <input type="radio" name="cw-good-visual-hierarchy-w" id="cw-good-visual-hierarchy-w-2" value="bnb"><label for="cw-good-visual-hierarchy-w-2">Airbnb</label>
+    <input type="radio" name="cw-good-visual-hierarchy-w" id="cw-good-visual-hierarchy-w-3" value="linear"><label for="cw-good-visual-hierarchy-w-3">Linear</label>
+    <input type="radio" name="cw-good-visual-hierarchy-w" id="cw-good-visual-hierarchy-w-4" value="gmail"><label for="cw-good-visual-hierarchy-w-4">Gmail</label>
+  </div>
+  <div class="cw cw-gvh-view" data-cw-view role="img" aria-label=""></div>
+  <p class="cw-cap" data-cw-cap aria-live="polite"></p>
+  
+  <script>
+  (() => {
+    const wrap = document.currentScript.closest('.cw-wrap');
+    const view = wrap.querySelector('[data-cw-view]'), cap = wrap.querySelector('[data-cw-cap]');
+    const ic = id => '<svg class="icon sm" aria-hidden="true"><use href="#i-' + id + '"/></svg>';
+    const sv = body => '<svg class="icon sm" viewBox="0 0 24 24" aria-hidden="true">' + body + '</svg>';
+    const line = w => '<i class="cw-line" style="width:' + w + '%"></i>';
+    const hours = [['Now', '21°'], ['14', '22°'], ['15', '22°'], ['16', '21°'], ['17', '19°']].map(h => '<span>' + h[0] + '<b>' + h[1] + '</b></span>').join('');
+    const S = {
+      weather: { html: '<div class="cw-gvh-phone"><div class="cw-gvh-wx"><span class="cw-gvh-wx-place">Lisbon</span><span class="cw-gvh-wx-temp cw-gvh-lead">21°</span>' +
+          '<span class="cw-gvh-wx-cond">Partly cloudy</span><span class="cw-gvh-wx-hl">H:24° L:15°</span><div class="cw-gvh-wx-hours">' + hours + '</div></div></div>',
+        alt: 'A weather screen. The current temperature, 21 degrees, is huge and outlined. Above it the city name, below it the conditions, the high and low, and a row of small hourly temperatures.',
+        cap: 'iOS Weather: the current temperature is by far the largest thing on screen. The place, the conditions and the forecast step down below it, so one glance tells you how warm it is.' },
+      bnb: { html: '<div class="cw-gvh-win"><div class="cw-gvh-split"><div class="cw-gvh-bnb-main"><span class="cw-gvh-photo"></span><b>Cabin by the lake</b><small>4 guests · 2 bedrooms</small>' + line(90) + line(70) + '</div>' +
+          '<div class="cw-gvh-book"><span><b>$120</b> night</span><div class="cw-gvh-dates"><span>Check-in<br>12 May</span><span>Checkout<br>15 May</span></div><span class="btn btn-primary cw-gvh-lead">Reserve</span><span>Total before taxes $410</span></div></div></div>',
+        alt: 'A listing page. On the right, a booking card with the nightly price in bold, two date fields, and one filled Reserve button, outlined. Fine print below it is small and gray.',
+        cap: 'Airbnb: on a listing, the booking card has one filled button, Reserve, with the nightly price in bold above it. Dates, guests and fine print stay quieter.' },
+      linear: { html: '<div class="cw-gvh-win cw-gvh-lin"><div class="cw-gvh-lin-main"><small>Team › ABC-42</small><span class="cw-gvh-lin-title cw-gvh-lead">Export fails on large files</span>' + line(95) + line(88) + line(60) + '</div>' +
+          '<dl class="cw-gvh-lin-side"><dt>Status</dt><dd>In progress</dd><dt>Priority</dt><dd>High</dd><dt>Assignee</dt><dd>Ana</dd><dt>Labels</dt><dd>Bug</dd></dl></div>',
+        alt: 'An issue page. The title, Export fails on large files, is large and bold, and outlined. The description is plain lines. A side panel lists status, priority, assignee and labels in small gray text.',
+        cap: 'Linear: an issue’s title is the largest, darkest text on the page. Status, priority and assignee sit in a side panel in smaller, lighter text.' },
+      gmail: { html: '<div class="cw-gvh-win"><div class="cw-gvh-gm-head"><span>New message</span><span>— ✕</span></div><div class="cw-gvh-gm-row">To</div><div class="cw-gvh-gm-row">Subject</div>' +
+          '<div class="cw-gvh-gm-body">' + line(90) + line(78) + line(40) + '</div>' +
+          '<div class="cw-gvh-gm-foot"><span class="btn btn-primary cw-gvh-lead">Send</span>' + sv('<path d="M7 19h10M12 5l-5 12M12 5l5 12M9 13h6"/>') +
+          sv('<path d="M16 8l-6.5 6.5a2 2 0 0 0 2.8 2.8L19 10.6a4 4 0 0 0-5.7-5.7L6.6 11.6a6 6 0 0 0 8.5 8.5L19 16"/>') + sv('<path d="M10 14a4 4 0 0 0 5.7 0l3-3a4 4 0 0 0-5.7-5.7l-1 1M14 10a4 4 0 0 0-5.7 0l-3 3a4 4 0 0 0 5.7 5.7l1-1"/>') +
+          ic('image') + '<span class="end">' + ic('trash') + '</span></div></div>',
+        alt: 'A compose window. Send is the only filled button, outlined. Formatting, attach, link, image and delete are small gray icons beside it.',
+        cap: 'Gmail: in the compose window, Send is the only filled button. Formatting, attachments and delete are small gray icons, so the next step is never in doubt.' }
+    };
+    const render = k => { view.innerHTML = S[k].html; view.setAttribute('aria-label', 'Sketch: ' + S[k].alt); cap.textContent = S[k].cap; };
+    wrap.querySelectorAll('input[name="cw-good-visual-hierarchy-w"]').forEach(r => r.addEventListener('change', () => render(r.value)));
+    render('weather');
+  })();
+  </script>
+</div>

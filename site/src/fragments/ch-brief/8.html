@@ -1,0 +1,45 @@
+<div class="note comfy cw-wrap"><p>Notice that each format makes the writer state the problem and the limits before anyone builds.</p>
+      <div class="seg cw-seg" role="radiogroup" aria-label="Example">
+        <input type="radio" name="cw-eff-brief-w" id="cw-eff-brief-w-1" value="amazon" checked><label for="cw-eff-brief-w-1">Amazon</label>
+        <input type="radio" name="cw-eff-brief-w" id="cw-eff-brief-w-2" value="basecamp"><label for="cw-eff-brief-w-2">Basecamp</label>
+        <input type="radio" name="cw-eff-brief-w" id="cw-eff-brief-w-3" value="github"><label for="cw-eff-brief-w-3">GitHub</label>
+      </div>
+      <div class="cw" data-cw-view role="img" aria-label=""></div>
+      <p class="cw-cap" data-cw-cap aria-live="polite"></p>
+      
+      <script>
+      (() => {
+        const wrap = document.currentScript.closest('.cw-wrap');
+        const view = wrap.querySelector('[data-cw-view]'), cap = wrap.querySelector('[data-cw-cap]');
+        const line = w => '<i class="cw-line" style="width:' + w + '%"></i>';
+        const lines = ws => ws.map(line).join('');
+        const sec = (label, body, hi) => '<div class="cw-wbrief-sec' + (hi ? ' hi' : '') + '"><b>' + label + '</b>' + body + '</div>';
+        const doc = (title, kind, body) => '<div class="cw-wbrief-doc"><div class="cw-wbrief-h"><span>' + title + '</span><span class="cw-wbrief-k">' + kind + '</span></div>' + body + '</div>';
+        const qa = '<div class="cw-wbrief-q"><span>Q</span>' + line(85) + '<span>A</span>' + line(70) + '</div>';
+        const field = (label, req, body) => '<div class="cw-wbrief-f"><b>' + label + (req ? ' <em>*</em>' : '') + '</b><div class="cw-wbrief-in">' + body + '</div></div>';
+        const S = {
+          amazon: { html: '<div class="cw-wbrief-docs">' +
+              doc('Press release', 'written first', '<i class="cw-wbrief-big" style="width:85%"></i>' + sec('Who it’s for', lines([70])) + sec('The problem', lines([90, 60]), true) + sec('How it helps', lines([85, 55])) + sec('Customer quote', lines([75]))) +
+              doc('FAQ', 'hard questions', qa + qa + qa) + '</div>',
+            alt: 'Two documents. A press release with a headline, who it’s for, the problem (highlighted), how it helps and a customer quote. Next to it, an FAQ with three question and answer pairs.',
+            cap: 'Amazon: in “working backwards”, teams write the press release and FAQ they’d publish at launch before they build. It forces a plain answer to who the customer is and what problem goes away.' },
+          basecamp: { html: doc('Pitch', 'Shape Up',
+              sec('Problem', lines([90, 65])) + sec('Appetite', '<span class="cw-wbrief-chip">Six weeks</span>') +
+              sec('Solution', '<span class="cw-wbrief-bb"><span>List</span><i>→</i><span>Detail</span><i>→</i><span>Done</span></span>') +
+              sec('Rabbit holes', lines([80])) + sec('No-gos <em>= non-goals</em>', lines([75, 50]), true)),
+            alt: 'A pitch with five parts: problem, appetite of six weeks, a rough solution drawn as three linked boxes, rabbit holes, and no-gos, highlighted as the non-goals.',
+            cap: 'Basecamp: a Shape Up pitch names the problem, the appetite (how much time it’s worth), a rough solution, rabbit holes and no-gos. The no-gos are its non-goals, set before anyone starts.' },
+          github: { html: doc('New issue', 'Bug report',
+              field('Title', true, '<span>' + line(60) + '</span>') +
+              field('Steps to reproduce', true, '<span>1. ' + line(70) + '</span><span>2. ' + line(55) + '</span><span>3. ' + line(65) + '</span>') +
+              field('Expected', true, '<span>' + line(75) + '</span>') + field('Actual', true, '<span>' + line(60) + '</span>') +
+              '<div class="cw-wbrief-foot"><span class="btn btn-primary">Submit</span></div>'),
+            alt: 'A new issue form from a bug report template, with required fields: title, steps to reproduce, expected and actual. A Submit button at the bottom.',
+            cap: 'GitHub: issue templates can ask for steps to reproduce, expected and actual behavior before an issue is filed. Whoever finds the bug writes the brief, so nobody has to guess later.' }
+        };
+        const render = k => { view.innerHTML = S[k].html; view.setAttribute('aria-label', 'Sketch: ' + S[k].alt); cap.textContent = S[k].cap; };
+        wrap.querySelectorAll('input[name="cw-eff-brief-w"]').forEach(r => r.addEventListener('change', () => render(r.value)));
+        render('amazon');
+      })();
+      </script>
+      </div>

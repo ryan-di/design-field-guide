@@ -1,0 +1,83 @@
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="i-check" viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5"/></symbol>
+  <symbol id="i-warn" viewBox="0 0 24 24"><path d="M12 3.5l9 16H3z"/><path d="M12 10v4.5"/><path d="M12 17.3v.2"/></symbol>
+  <symbol id="i-info" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 11v6"/><path d="M12 7.6v.2"/></symbol>
+  <symbol id="i-cloud-off" viewBox="0 0 24 24"><path d="M3 3l18 18"/><path d="M9.2 6.4A6 6 0 0 1 17.6 10a4 4 0 0 1 2.7 6.6"/><path d="M6.6 9.6A4.5 4.5 0 0 0 7 18.5h10.5"/></symbol>
+  <symbol id="i-dots" viewBox="0 0 24 24"><circle cx="5" cy="12" r="1.3" fill="currentColor"/><circle cx="12" cy="12" r="1.3" fill="currentColor"/><circle cx="19" cy="12" r="1.3" fill="currentColor"/></symbol>
+  <symbol id="i-search" viewBox="0 0 24 24"><circle cx="11" cy="11" r="6.5"/><path d="M16 16l4.5 4.5"/></symbol>
+  <symbol id="i-fit" viewBox="0 0 24 24"><path d="M4 9V4h5"/><path d="M20 9V4h-5"/><path d="M4 15v5h5"/><path d="M20 15v5h-5"/></symbol>
+  <symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></symbol>
+  <symbol id="i-minus" viewBox="0 0 24 24"><path d="M5 12h14"/></symbol>
+  <symbol id="i-x" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></symbol>
+  <symbol id="i-home" viewBox="0 0 24 24"><path d="M4 11l8-7 8 7v9h-5v-6H9v6H4z"/></symbol>
+  <symbol id="i-folder" viewBox="0 0 24 24"><path d="M3 7a2 2 0 0 1 2-2h4l2 2.5h8a2 2 0 0 1 2 2V18a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></symbol>
+  <symbol id="i-gear" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3.2"/><path d="M12 2.8v2.6M12 18.6v2.6M2.8 12h2.6M18.6 12h2.6M5.5 5.5l1.8 1.8M16.7 16.7l1.8 1.8M5.5 18.5l1.8-1.8M16.7 7.3l1.8-1.8"/></symbol>
+  <symbol id="i-image" viewBox="0 0 24 24"><rect x="3.5" y="4.5" width="17" height="15" rx="2"/><circle cx="9" cy="10" r="1.8"/><path d="M20.5 16l-5-5-9 8.5"/></symbol>
+  <symbol id="i-cube" viewBox="0 0 24 24"><path d="M12 3l8 4.5v9L12 21l-8-4.5v-9z"/><path d="M4 7.5l8 4.5 8-4.5M12 12v9"/></symbol>
+  <symbol id="i-play" viewBox="0 0 24 24"><path d="M7 5l12 7-12 7z"/></symbol>
+  <symbol id="i-trash" viewBox="0 0 24 24"><path d="M4 7h16M10 11v6M14 11v6M6 7l1 13h10l1-13M9 7V4h6v3"/></symbol>
+  <symbol id="i-sliders" viewBox="0 0 24 24"><path d="M4 7h10M18 7h2M4 17h2M10 17h10"/><circle cx="16" cy="7" r="2"/><circle cx="8" cy="17" r="2"/></symbol>
+  <symbol id="i-layers" viewBox="0 0 24 24"><path d="M12 4l9 5-9 5-9-5z"/><path d="M3 14l9 5 9-5"/></symbol>
+  <symbol id="i-book" viewBox="0 0 24 24"><path d="M4 5.5A2.5 2.5 0 0 1 6.5 3H20v15H6.5A2.5 2.5 0 0 0 4 20.5z"/><path d="M4 20.5A2.5 2.5 0 0 0 6.5 23H20v-5"/></symbol>
+</svg>
+<div id="fx-shared" hidden></div>
+<script>
+window.csInit = cs => {
+  const chips = Array.from(cs.querySelectorAll('.cs-chip')), cases = Array.from(cs.querySelectorAll('.cs-case'));
+  if (!chips.length) { cases.forEach(p => { p.hidden = false; }); if (window.csToggle) csToggle(cs); return; }
+  const show = i => {
+    chips.forEach((c, k) => { const on = k === i; c.setAttribute('aria-selected', String(on)); c.tabIndex = on ? 0 : -1; });
+    cases.forEach((p, k) => { if (!p.hidden && k !== i) p.dispatchEvent(new Event('cs:hide')); const was = p.hidden; p.hidden = k !== i; if (was && k === i) p.dispatchEvent(new Event('cs:show')); });
+  };
+  chips.forEach((c, i) => {
+    c.addEventListener('click', () => show(i));
+    c.addEventListener('keydown', e => {
+      const k = { ArrowRight: i + 1, ArrowLeft: i - 1, Home: 0, End: chips.length - 1 }[e.key];
+      if (k === undefined) return;
+      e.preventDefault(); const n = (k + chips.length) % chips.length; show(n); chips[n].focus();
+    });
+  });
+  if (window.csToggle) csToggle(cs);
+  show(0);
+};
+window.csToggle = cs => {
+  cs.querySelectorAll('.cs-case').forEach(c => {
+    const panel = c.querySelector('.cs-panel'), btns = Array.from(c.querySelectorAll('.cs-switch button')), sides = Array.from(c.querySelectorAll('.cs-side'));
+    const set = mode => {
+      panel.dataset.mode = mode;
+      btns.forEach(b => { const on = b.dataset.mode === mode; b.setAttribute('aria-checked', String(on)); b.tabIndex = on ? 0 : -1; });
+      sides.forEach(s => { s.hidden = s.dataset.mode !== mode; });
+    };
+    btns.forEach((b, i) => {
+      b.addEventListener('click', () => set(b.dataset.mode));
+      b.addEventListener('keydown', e => { if (['ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown'].includes(e.key)) { e.preventDefault(); const n = btns[1 - i]; set(n.dataset.mode); n.focus(); } });
+    });
+    set('broken');
+  });
+};
+window.csDemo = (demo, html, wire) => {
+  let ids = [];
+  const t = {
+    after: (fn, ms) => { const id = setTimeout(fn, ms); ids.push(id); return id; },
+    every: (fn, ms) => { const id = setInterval(fn, ms); ids.push(id); return id; },
+    clear: () => { ids.forEach(id => { clearTimeout(id); clearInterval(id); }); ids = []; }
+  };
+  const run = () => { t.clear(); demo.innerHTML = html; wire(demo, t); };
+  const side = demo.closest('.cs-side'), r = side && side.querySelector('.cs-reset');
+  if (r) r.addEventListener('click', run);
+  demo.closest('.cs-case').addEventListener('cs:hide', run);
+  run();
+};
+window.csToast = (demo, t, text, opts = {}) => {
+  let st = demo.querySelector('.cs-toasts');
+  if (!st) { st = document.createElement('div'); st.className = 'cs-toasts'; st.setAttribute('role', 'status'); demo.appendChild(st); }
+  if (opts.replace) st.innerHTML = '';
+  const el = document.createElement('div'); el.className = 'toast' + (opts.tone ? ' toast-' + opts.tone : '');
+  const sp = document.createElement('span'); sp.textContent = text; el.appendChild(sp);
+  if (opts.action) { const b = document.createElement('button'); b.type = 'button'; b.className = 'toast-action'; b.textContent = opts.action.label; b.addEventListener('click', () => { el.remove(); opts.action.run(); }); el.appendChild(b); }
+  st.appendChild(el);
+  el.hide = () => { el.classList.add('leaving'); t.after(() => el.remove(), 220); };
+  if (opts.ms !== 0) t.after(el.hide, opts.ms || 4000);
+  return el;
+};
+</script>

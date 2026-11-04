@@ -1,0 +1,122 @@
+<script>
+(() => {
+  const cs = document.currentScript.closest('.cs');
+  const D = (k, html, wire) => csDemo(cs.querySelector('[data-d="' + k + '"]'), html, wire);
+  const icon = n => '<svg class="icon sm"><use href="#i-' + n + '"/></svg>';
+  const info = label => '<button class="tt-q" type="button" aria-label="' + label + '" data-q>' + icon('info') + '</button>';
+  const frame = (title, body, bar) => '<div class="app-frame" style="width:min(340px,100%)"><div class="app-bar"><span>' + title + '</span>' + (bar || '') + '</div><div class="app-body">' + body + '</div></div>';
+  // Listeners on the demo element itself survive Reset, so drop the previous run's ones first.
+  const scoped = d => { (d._ttOff || []).forEach(f => f()); d._ttOff = []; return (type, fn) => { d.addEventListener(type, fn); d._ttOff.push(() => d.removeEventListener(type, fn)); }; };
+  // A typical tooltip: shows on mouse hover and on keyboard focus; hides on leave, blur and Esc.
+  const hoverTip = (btn, tip, onHide) => {
+    const show = () => { tip.hidden = false; };
+    const hide = why => { if (tip.hidden) return; tip.hidden = true; if (onHide) onHide(why); };
+    btn.addEventListener('pointerenter', e => { if (e.pointerType === 'mouse') show(); });
+    btn.addEventListener('pointerleave', () => hide('leave'));
+    btn.addEventListener('focus', show);
+    btn.addEventListener('blur', () => hide('blur'));
+    btn.addEventListener('keydown', e => { if (e.key === 'Escape') hide('esc'); });
+  };
+  // A popover that opens on tap/click/Enter and stays until tapped again, Esc, or a click elsewhere.
+  const tapPop = (d, btn, pop) => {
+    const on = scoped(d);
+    const set = open => { pop.hidden = !open; btn.setAttribute('aria-expanded', String(open)); };
+    set(false);
+    btn.addEventListener('click', () => set(pop.hidden));
+    on('keydown', e => { if (e.key === 'Escape' && !pop.hidden) { set(false); btn.focus(); } });
+    on('pointerdown', e => { if (!pop.hidden && !pop.contains(e.target) && !btn.contains(e.target)) set(false); });
+    return set;
+  };
+
+  /* 1. Touch */
+  const ticketHtml = (name, fixed) => '<p class="cs-meta">On a phone</p><div class="app-frame tt-phone"><div class="app-bar"><span>Choose a ticket</span></div><div class="app-body">' +
+    '<div class="tt-opt"><label class="grow"><input type="radio" name="' + name + '" value="Standard" checked>Standard</label><b>£24</b></div>' +
+    '<div class="tt-opt"><label><input type="radio" name="' + name + '" value="Flexible">Flexible ticket</label>' + info('About flexible tickets') + '<span class="grow"></span><b>£31</b>' +
+    (fixed ? '<div class="tt-pop" data-pp hidden style="left:8px;right:8px;top:calc(100% + 6px)">Change your travel dates for free, up to a day before you travel.</div>' : '') + '</div>' +
+    '<button class="btn btn-primary" type="button" data-go style="justify-content:center;margin-top:auto">Continue</button></div></div><p class="cs-meta" data-m></p>';
+  const ticketWire = fixed => d => {
+    const q = d.querySelector('[data-q]'), m = d.querySelector('[data-m]');
+    d.querySelector('[data-go]').addEventListener('click', () => {
+      const r = Array.from(d.querySelectorAll('input[type="radio"]')).find(x => x.checked);
+      m.textContent = (r ? r.value : 'Standard') + ' ticket chosen.';
+    });
+    if (fixed) { tapPop(d, q, d.querySelector('[data-pp]')); return; }
+    let n = 0;
+    q.addEventListener('click', () => { n++; m.textContent = (n > 1 ? 'Tapped ' + n + ' times. ' : 'Tapped. ') + 'Nothing shows: a phone has no hover.'; });
+  };
+  D('tooltip-1b', ticketHtml('tooltip-1b-ticket', false), ticketWire(false));
+  D('tooltip-1f', ticketHtml('tooltip-1f-ticket', true), ticketWire(true));
+
+  /* 2. Must-know */
+  const WARN = 'Older messages are deleted for everyone in this chat, including ones already sent.';
+  const MSG = [['Mum', 'Mon', 'Photos from the trip are in the shared album', 1], ['Sam', 'Tue', 'Flight lands at 6. Can someone pick me up?', 1], ['You', '10:42', 'See you all on Sunday!', 0]];
+  const chatHtml = fixed => frame('Family',
+    '<div data-msgs style="display:flex;flex-direction:column;gap:6px">' + MSG.map(([w, when, txt, old]) =>
+      '<div class="tt-msg' + (w === 'You' ? ' me' : '') + '"' + (old ? ' data-old' : '') + '><span class="cs-meta">' + w + ' · ' + when + '</span><span>' + txt + '</span></div>').join('') + '</div>' +
+    '<div class="tt-set"><div class="tt-setrow"><span>Disappearing messages</span>' +
+    (fixed ? '' : info('About disappearing messages') + '<span class="tt-tip" role="tooltip" hidden>' + WARN + '</span>') + '</div>' +
+    '<select class="select" aria-label="Disappearing messages" data-sel><option value="0">Off</option><option value="1">After 24 hours</option><option value="7">After 7 days</option></select>' +
+    (fixed ? '<span class="field-help">' + WARN + '</span>' : '') + '</div>', '<span class="cs-meta">4 people</span>') + '<p class="cs-meta" data-m></p>';
+  const chatWire = fixed => d => {
+    const sel = d.querySelector('[data-sel]'), m = d.querySelector('[data-m]');
+    let gone = 0;
+    if (!fixed) hoverTip(d.querySelector('[data-q]'), d.querySelector('.tt-tip'));
+    sel.addEventListener('change', () => {
+      if (sel.value === '0') { m.textContent = 'Off.' + (gone ? ' The deleted messages don’t come back.' : ''); return; }
+      const old = d.querySelectorAll('[data-old]');
+      if (sel.value === '1' && old.length) {
+        gone += old.length; old.forEach(x => x.remove());
+        m.textContent = old.length + ' older messages were deleted for everyone in Family.';
+        return;
+      }
+      m.textContent = 'On. Messages older than ' + (sel.value === '1' ? '24 hours' : '7 days') + ' are deleted for everyone.';
+    });
+  };
+  D('tooltip-2b', chatHtml(false), chatWire(false));
+  D('tooltip-2f', chatHtml(true), chatWire(true));
+
+  /* 3. Links inside */
+  const calHtml = fixed => frame('Calendar settings',
+    '<div><div class="tt-line"><span>Time zone</span><span>Lisbon</span></div>' +
+    '<div class="tt-line"><span class="tt-lab">Working hours' + info('About working hours') + '</span><span>9:00–17:00</span>' +
+    (fixed ? '<div class="tt-pop" data-pp hidden>Others see when you’re free. <button class="tt-a" type="button" data-more>Learn more</button></div>'
+      : '<span class="tt-tip" role="tooltip" hidden>Others see when you’re free. <span class="tt-a">Learn more</span></span>') + '</div>' +
+    '<div class="tt-line" style="border-bottom:0"><span>Show weekends</span><span>On</span></div></div>' +
+    '<button class="btn btn-secondary cs-sm" type="button" data-edit style="align-self:flex-start">Edit hours</button>') + '<p class="cs-meta" data-m></p>';
+  const calWire = fixed => d => {
+    const q = d.querySelector('[data-q]'), m = d.querySelector('[data-m]');
+    d.querySelector('[data-edit]').addEventListener('click', () => { m.textContent = 'Editing working hours.'; });
+    if (!fixed) {
+      hoverTip(q, d.querySelector('.tt-tip'), why => {
+        if (why === 'leave') m.textContent = 'The tooltip closed before you reached Learn more.';
+        if (why === 'blur') m.textContent = 'The tooltip closed when focus moved on. Learn more was never reachable.';
+      });
+      return;
+    }
+    const set = tapPop(d, q, d.querySelector('[data-pp]'));
+    d.querySelector('[data-more]').addEventListener('click', () => { set(false); q.focus(); m.textContent = 'Opened the help page “About working hours”.'; });
+  };
+  D('tooltip-3b', calHtml(false), calWire(false));
+  D('tooltip-3f', calHtml(true), calWire(true));
+
+  /* 4. Repeats label */
+  const shopHtml = fixed => '<div class="app-frame tt-card"><div class="app-bar"><span>Shop</span><span data-cart>Cart (0)</span></div><div class="app-body">' +
+    '<div class="thumb c" style="aspect-ratio:16/9"></div><div><b>Linen shirt</b><div class="cs-meta">Size M · Sand</div></div><div class="tt-price">£39.00</div>' +
+    '<span class="tt-anchor"><button class="btn btn-primary" type="button" data-add>' + icon('plus') + 'Add to cart</button>' +
+    (fixed ? '' : '<span class="tt-tip" role="tooltip" hidden>Add to cart</span>') + '</span></div></div><p class="cs-meta tt-sr" data-m></p>';
+  const shopWire = fixed => d => {
+    const btn = d.querySelector('[data-add]'), m = d.querySelector('[data-m]'), cart = d.querySelector('[data-cart]');
+    let n = 0;
+    const say = () => { m.textContent = 'A screen reader says: “Add to cart, button' + (fixed ? '”' : ', Add to cart”'); };
+    if (!fixed) hoverTip(btn, d.querySelector('.tt-tip'));
+    btn.addEventListener('pointerenter', e => { if (e.pointerType === 'mouse') say(); });
+    btn.addEventListener('focus', say);
+    btn.addEventListener('click', () => { n++; cart.textContent = 'Cart (' + n + ')'; m.textContent = 'Added. Your cart has ' + n + (n === 1 ? ' item.' : ' items.'); });
+  };
+  D('tooltip-4b', shopHtml(false), shopWire(false));
+  D('tooltip-4f', shopHtml(true), shopWire(true));
+
+  csInit(cs);
+})();
+
+  </script>

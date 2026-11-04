@@ -1,0 +1,86 @@
+<div class="fm" data-fm>
+  <div class="seg fm-seg" role="radiogroup" aria-label="Form">
+    <input type="radio" name="fm-pat-version-history" id="fm-pat-version-history-1" value="auto" checked><label for="fm-pat-version-history-1">Automatic</label>
+    <input type="radio" name="fm-pat-version-history" id="fm-pat-version-history-2" value="named"><label for="fm-pat-version-history-2">Named</label>
+    <input type="radio" name="fm-pat-version-history" id="fm-pat-version-history-3" value="value"><label for="fm-pat-version-history-3">One value</label>
+    <input type="radio" name="fm-pat-version-history" id="fm-pat-version-history-4" value="trash"><label for="fm-pat-version-history-4">Trash</label>
+  </div>
+  <div class="fm-stage" data-fm-stage></div>
+  <p class="fig-cap" data-fm-when aria-live="polite"></p>
+  
+  <script>
+  (() => {
+    const fm = document.currentScript.closest('[data-fm]'), stage = fm.querySelector('[data-fm-stage]'), when = fm.querySelector('[data-fm-when]');
+    const F = {
+      auto: {
+        html: () => '<div class="app-frame fv-app"><div class="app-bar"><span>Shared shopping list</span><span class="cs-meta">History</span></div><div class="fv-split"><div class="fv-page" data-page aria-live="polite"></div><div class="fv-list" data-list></div></div></div>',
+        use: 'Use it for documents people edit over days. The app saves versions on its own, lists them by time and author, and shows what each one changed.',
+        wire: s => {
+          const V = [
+            { t: 'Today, 10:42', who: 'Ana', items: ['Milk', 'Eggs', 'Bread', 'Coffee', 'Tomatoes'], add: ['Coffee', 'Tomatoes'] },
+            { t: 'Yesterday, 18:05', who: 'Ben', items: ['Milk', 'Eggs', 'Bread'], add: ['Bread'], b: 1 },
+            { t: 'Monday, 09:12', who: 'Ana', items: ['Milk', 'Eggs'], add: ['Milk', 'Eggs'] }
+          ];
+          const page = s.querySelector('[data-page]'), list = s.querySelector('[data-list]');
+          list.innerHTML = V.map((v, i) => '<button class="fv-v' + (i ? '' : ' on') + '" type="button" data-i="' + i + '"><b>' + v.t + '</b><small><i class="' + (v.b ? 'b' : '') + '"></i>' + v.who + (i ? '' : ' · Current') + '</small></button>').join('');
+          const show = i => { page.innerHTML = V[i].items.map(x => '<span class="' + (V[i].add.includes(x) ? 'add' : '') + '">' + x + '</span>').join('') + '<span class="cs-meta">Highlighted: added by ' + V[i].who + '</span>'; };
+          list.addEventListener('click', e => { const b = e.target.closest('.fv-v'); if (!b) return; list.querySelectorAll('.fv-v').forEach(x => x.classList.toggle('on', x === b)); show(Number(b.dataset.i)); });
+          show(0);
+        }
+      },
+      named: {
+        html: () => '<div class="app-frame fv-app"><div class="app-bar"><span>My resume · Versions</span></div><div class="fv-save"><input class="input" placeholder="Name this version" aria-label="Version name" value="Sent to Northwind" data-name><button class="btn btn-primary cs-sm" type="button" data-save>Save</button></div><div class="app-body" data-list></div></div>',
+        use: 'Use it when some moments matter more than others. People save a version with a name, and it stands out among the automatic ones.',
+        wire: s => {
+          const list = s.querySelector('[data-list]'), name = s.querySelector('[data-name]');
+          const V = [{ t: 'Today, 09:30' }, { t: 'Oct 2', name: 'Before the redesign' }, { t: 'Sep 28' }];
+          const draw = () => { list.innerHTML = V.map(v => '<div class="fv-row' + (v.name ? '' : ' auto') + '"><span class="grow"><b>' + (v.name || 'Saved automatically') + '</b><small>' + v.t + '</small></span></div>').join(''); };
+          s.querySelector('[data-save]').addEventListener('click', () => {
+            const n = name.value.trim(); if (!n) { name.focus(); return; }
+            V.unshift({ t: 'Just now', name: n }); name.value = ''; draw();
+          });
+          draw();
+        }
+      },
+      value: {
+        html: () => '<div class="app-frame fv-app"><div class="app-bar"><span>Budget 2026</span></div><div class="fv-tbl"><span>Rent</span><span class="num">1,200</span><span>Food</span><span class="num sel" data-cell>450</span><span>Travel</span><span class="num">300</span></div>' +
+          '<div class="fv-hist" aria-live="polite"><div class="nav"><button class="icon-btn" type="button" aria-label="Older edit" data-older><svg class="icon sm" viewBox="0 0 24 24"><path d="M15 6l-6 6 6 6"/></svg></button><span data-h></span><button class="icon-btn" type="button" aria-label="Newer edit" data-newer><svg class="icon sm" viewBox="0 0 24 24"><path d="M9 6l6 6-6 6"/></svg></button></div><button class="btn btn-secondary cs-sm" type="button" data-r>Restore this value</button></div><p class="fv-out" data-out></p></div>',
+        use: 'Use it when people care about one value more than the whole document, such as a cell in a spreadsheet. Its own history shows who changed it, when, and from what.',
+        wire: s => {
+          const H = [['450', 'Sam', 'today'], ['380', 'You', 'Monday'], ['400', 'You', '1 October']];
+          let i = 0, cur = '450';
+          const h = s.querySelector('[data-h]'), cell = s.querySelector('[data-cell]'), r = s.querySelector('[data-r]'), out = s.querySelector('[data-out]');
+          const older = s.querySelector('[data-older]'), newer = s.querySelector('[data-newer]');
+          const draw = () => {
+            h.innerHTML = '<b>Food: ' + H[i][0] + '</b> · ' + H[i][1] + ', ' + H[i][2];
+            older.disabled = i === H.length - 1; newer.disabled = i === 0; r.disabled = H[i][0] === cur;
+          };
+          older.addEventListener('click', () => { i = Math.min(H.length - 1, i + 1); out.textContent = ''; draw(); });
+          newer.addEventListener('click', () => { i = Math.max(0, i - 1); out.textContent = ''; draw(); });
+          r.addEventListener('click', () => { cur = H[i][0]; cell.textContent = cur; H.unshift([cur, 'You', 'just now']); i = 0; out.textContent = 'Food is ' + cur + ' again. The change is in the history too.'; draw(); });
+          draw();
+        }
+      },
+      trash: {
+        html: () => '<div class="app-frame fv-app"><div class="app-bar"><span>Recently deleted</span><span class="cs-meta">Photos</span></div><div class="fv-grid" data-grid></div><p class="fv-out" data-out>Photos are deleted for good when their days run out.</p></div>',
+        use: 'Use it for anything people delete. Each item in the trash shows how many days it has left.',
+        wire: s => {
+          const P = [['', 29], ['b', 21], ['c', 14], ['b', 6], ['c', 2], ['', 1]];
+          const grid = s.querySelector('[data-grid]'), out = s.querySelector('[data-out]');
+          const draw = () => {
+            grid.innerHTML = P.map((p, i) => p.back ? '' : '<span class="fv-ph"><i class="thumb ' + p[0] + '"></i>' + p[1] + (p[1] === 1 ? ' day' : ' days') + '<button class="btn btn-secondary" type="button" data-i="' + i + '" aria-label="Restore photo, ' + p[1] + ' days left">Restore</button></span>').join('');
+          };
+          grid.addEventListener('click', e => { const b = e.target.closest('[data-i]'); if (!b) return; P[Number(b.dataset.i)].back = true; out.textContent = 'Back in your library.'; draw(); const nb = grid.querySelector('[data-i]'); if (nb) nb.focus(); });
+          draw();
+        }
+      }
+    };
+    const show = k => {
+      stage.innerHTML = F[k].html(); F[k].wire(stage);
+      when.innerHTML = '<b>' + fm.querySelector('.fm-seg input:checked + label').textContent + '.</b> ' + F[k].use;
+    };
+    fm.querySelectorAll('.fm-seg input').forEach(i => i.addEventListener('change', () => show(i.value)));
+    show('auto');
+  })();
+  </script>
+</div>

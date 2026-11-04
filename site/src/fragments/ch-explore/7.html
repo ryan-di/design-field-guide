@@ -1,0 +1,23 @@
+<div class="stage tall" data-demo="eff-axes">
+      <div class="seg" role="radiogroup" aria-label="How you ask">
+        <input type="radio" name="p27-ax-mode" id="p27-ax-m-v" value="versions" checked><label for="p27-ax-m-v">“3 versions”</label>
+        <input type="radio" name="p27-ax-mode" id="p27-ax-m-a" value="axes"><label for="p27-ax-m-a">Named axes</label>
+      </div>
+
+      <div class="p27-ax-view" id="p27-ax-v-versions">
+        <div class="p27-vers" aria-label="Three variations" role="group"></div>
+        <p class="state-caption p27-cap">All three ask the same question at the same moment. The only choice left is wording.</p>
+      </div>
+
+      <div class="p27-ax-view" id="p27-ax-v-axes" hidden>
+        <div class="p27-ax-pick">
+          <div class="field"><label class="field-label" for="p27-ax-x">Across</label>
+            <select class="select" id="p27-ax-x"><option value="loud">How loud</option><option value="where">Where</option><option value="when" selected>When</option></select></div>
+          <div class="field"><label class="field-label" for="p27-ax-y">Down</label>
+            <select class="select" id="p27-ax-y"><option value="loud" selected>How loud</option><option value="where">Where</option><option value="when">When</option></select></div>
+        </div>
+        <div class="p27-mx" id="p27-ax-mx" role="group" aria-label="Matrix of directions"></div>
+        <p class="p27-ax-detail" id="p27-ax-detail" role="status"></p>
+      </div>
+      <p class="try"><b>Try it:</b> look at the three versions, then switch to Named axes. Pick a cell to read the direction, then change the axes and watch the whole grid change. Look at the odd corners too.</p>
+    </div>

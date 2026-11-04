@@ -1,0 +1,154 @@
+<script>
+(() => {
+  const cs = document.currentScript.closest('.cs');
+  /* Part 1 sits above the shared case helpers in the book, so wait for them. */
+  const run = () => {
+  const D = (k, html, wire) => csDemo(cs.querySelector('[data-d="' + k + '"]'), html, wire);
+  const css = document.createElement('style');
+  css.textContent = `
+#good-break-on-purpose .bp-out{font:500 12.5px/1.45 var(--font-mono);color:var(--ui-muted);text-align:center;max-width:min(330px,100%);min-height:18px;margin:0}
+#good-break-on-purpose .bp-co{position:relative;width:min(320px,100%);display:flex;flex-direction:column;gap:8px;background:var(--ui-surface);border:1px solid var(--ui-border);border-radius:12px;box-shadow:var(--ui-shadow);padding:14px;text-align:left;font-size:14px;overflow:hidden}
+#good-break-on-purpose .bp-co > b{font-size:16px}
+#good-break-on-purpose .bp-cover{position:absolute;inset:0;z-index:2;display:grid;place-items:center;background:color-mix(in srgb,var(--ui-surface) 70%,transparent);backdrop-filter:blur(7px);-webkit-backdrop-filter:blur(7px)}
+#good-break-on-purpose .bp-coupon{display:flex;gap:6px}
+#good-break-on-purpose .bp-coupon input{flex:1;min-width:0;font:400 13.5px var(--font-body);padding:6px 9px;border:1.5px solid var(--ui-border);border-radius:8px;background:var(--ui-bg);color:var(--ui-text)}
+#good-break-on-purpose .bp-opt{display:flex;align-items:center;gap:7px;font-size:13.5px;cursor:pointer}
+#good-break-on-purpose .bp-opt .grow{flex:1}
+#good-break-on-purpose .bp-opt input{margin:0;accent-color:var(--ui-sel)}
+#good-break-on-purpose .bp-tag{font:700 10.5px var(--font-body);letter-spacing:.04em;text-transform:uppercase;padding:2px 6px;border-radius:999px}
+#good-break-on-purpose .bp-total{display:flex;justify-content:space-between;font-weight:700;border-top:1px solid var(--ui-border);padding-top:8px}
+#good-break-on-purpose .bp-acts{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+#good-break-on-purpose .bp-b{all:unset;cursor:pointer;padding:7px 12px;border-radius:8px;font:600 13.5px var(--font-body);text-align:center}
+#good-break-on-purpose .bp-b:focus-visible,#good-break-on-purpose .bp-acts a:focus-visible{outline:3px solid var(--ui-text);outline-offset:2px}
+#good-break-on-purpose [data-m="b"] .bp-b{color:var(--ui-on-sel)}
+#good-break-on-purpose [data-m="b"] [data-x="Apply coupon"]{background:#c27c12}
+#good-break-on-purpose [data-m="b"] [data-x="Back to cart"]{background:var(--ui-sel);color:var(--ui-on-sel)}
+#good-break-on-purpose [data-m="b"] [data-pay]{background:var(--ui-ok)}
+#good-break-on-purpose [data-m="b"] [data-x="Save for later"]{color:#7a5cc4;font-weight:800}
+#good-break-on-purpose [data-m="b"] .bp-tag{background:#7a5cc4;color:#fff}
+#good-break-on-purpose [data-m="b"] .bp-tag.hot{background:var(--ui-danger);color:var(--ui-on-danger)}
+#good-break-on-purpose [data-m="b"] .bp-total{color:var(--ui-danger)}
+#good-break-on-purpose [data-m="f"] .bp-b{border:1.5px solid var(--ui-border);color:var(--ui-text)}
+#good-break-on-purpose [data-m="f"] [data-x="Back to cart"]{border-color:transparent;text-decoration:underline;text-underline-offset:3px;padding-inline:4px}
+#good-break-on-purpose [data-m="f"] [data-pay]{background:var(--ui-primary);color:var(--ui-on-primary);border-color:transparent;width:100%;box-sizing:border-box;padding:10px}
+#good-break-on-purpose [data-m="f"] [data-x="Save for later"]{color:var(--ui-text)}
+#good-break-on-purpose [data-m="f"] .bp-tag{border:1px solid var(--ui-border);color:var(--ui-muted)}
+#good-break-on-purpose .bp-acts a{font-size:13.5px;text-underline-offset:3px}
+#good-break-on-purpose .bp-guide{width:min(320px,100%);background:var(--ui-surface);border:1px solid var(--ui-border);border-left:4px solid var(--ui-sel);border-radius:10px;padding:10px 12px;display:flex;flex-direction:column;gap:5px;text-align:left;font-size:13.5px;line-height:1.45}
+#good-break-on-purpose .bp-guide > b{font:600 11.5px var(--font-mono);letter-spacing:.06em;text-transform:uppercase;color:var(--ui-muted)}
+#good-break-on-purpose .bp-guide p{margin:0}
+#good-break-on-purpose .bp-guide em{font-style:normal;font-weight:600}
+#good-break-on-purpose .bp-scr{width:min(320px,100%);display:flex;flex-direction:column;background:var(--ui-surface);border:1px solid var(--ui-border);border-radius:12px;box-shadow:var(--ui-shadow);text-align:left;overflow:hidden;animation:gbop-in .25s ease-out}
+@keyframes gbop-in{from{opacity:0;transform:translateY(6px)}}
+#good-break-on-purpose .bp-scr > b{padding:9px 12px;border-bottom:1px solid var(--ui-border);font-size:14px}
+#good-break-on-purpose .bp-scr .cs-row{padding:7px 12px;font-size:13.5px}
+#good-break-on-purpose .bp-scr .btn{flex:none}
+#good-break-on-purpose .bp-list{width:min(330px,100%);background:var(--ui-surface);border:1px solid var(--ui-border);border-radius:12px;box-shadow:var(--ui-shadow);padding:4px 12px;text-align:left}
+#good-break-on-purpose .bp-r{display:flex;align-items:center;gap:10px;padding:7px 0;border-bottom:1px solid var(--ui-border);font-size:13.5px;animation:gbop-in .25s ease-out}
+#good-break-on-purpose .bp-r:last-child{border-bottom:0}
+#good-break-on-purpose .bp-r .grow{flex:1;min-width:0;display:flex;flex-direction:column;line-height:1.3}
+#good-break-on-purpose .bp-r small{font-size:11.5px;color:var(--ui-muted)}
+#good-break-on-purpose .bp-r small.ok{color:var(--ui-ok);font-weight:600}
+#good-break-on-purpose .bp-s{flex:none;font:600 12.5px var(--font-body);padding:6px 11px;color:#fff;white-space:nowrap;transition:all .3s}
+#good-break-on-purpose .bp-btns{display:flex;gap:8px;flex-wrap:wrap;justify-content:center}
+`;
+  cs.prepend(css);
+
+  /* 1. Exceptions everywhere */
+  const checkout = m => '<div class="bp-co" data-m="' + m + '"><div class="bp-cover" data-cover><button class="btn btn-primary cs-sm" type="button" data-start>Start</button></div>' +
+    '<b>Checkout</b><div class="cs-row"><span>Wireless headphones</span><span>€52.00</span></div>' +
+    '<div class="bp-coupon"><input type="text" placeholder="Coupon code" aria-label="Coupon code" autocomplete="off"><button class="bp-b" type="button" data-x="Apply coupon">Apply coupon</button></div>' +
+    '<label class="bp-opt"><input type="checkbox"><span class="grow">Gift wrap <span class="bp-tag">New</span></span><span>€2</span></label>' +
+    '<label class="bp-opt"><input type="checkbox"><span class="grow">Add insurance <span class="bp-tag hot">Popular</span></span><span>€4</span></label>' +
+    '<div class="bp-total"><span>Total</span><span>€52.00</span></div>' +
+    '<div class="bp-acts"><button class="bp-b" type="button" data-x="Back to cart">Back to cart</button><a href="#" data-x="Save for later">Save for later</a><button class="bp-b" type="button" data-pay>Pay €52.00</button></div></div>' +
+    '<p class="bp-out" aria-live="polite" data-out></p>';
+  const wireCheckout = (d, t) => {
+    let t0 = 0;
+    const out = d.querySelector('[data-out]'), cover = d.querySelector('[data-cover]');
+    d.querySelector('[data-start]').addEventListener('click', () => { cover.remove(); t0 = Date.now(); out.textContent = 'Find Pay.'; d.querySelector('.bp-coupon input').focus(); });
+    d.querySelectorAll('[data-x]').forEach(b => b.addEventListener('click', e => { e.preventDefault(); if (t0) out.textContent = 'That’s “' + b.dataset.x + '”. Keep looking.'; }));
+    d.querySelector('[data-pay]').addEventListener('click', () => {
+      if (!t0) return;
+      out.textContent = 'You found Pay in ' + ((Date.now() - t0) / 1000).toFixed(1) + ' s.';
+      t0 = 0;
+    });
+  };
+  D('good-break-on-purpose-1b', checkout('b'), wireCheckout);
+  D('good-break-on-purpose-1f', checkout('f'), wireCheckout);
+
+  /* 2. No reason */
+  const guide = fixed => '<div class="bp-guide"><b>Style guide · Buttons</b><p>Use the standard style for every button.</p>' +
+    (fixed ? '<p><em>Exception: red, only for actions that destroy data.</em> Why: people have to stop and read before they lose something.</p>'
+      : '<p><em>Exception: red, for “Delete account” and “Upgrade”.</em></p>') + '</div>' +
+    '<div data-slot><button class="btn btn-secondary cs-sm" type="button" data-build>Build the next screen</button></div><p class="bp-out" aria-live="polite" data-out></p>';
+  const wireGuide = fixed => d => {
+    d.querySelector('[data-build]').addEventListener('click', () => {
+      const save = fixed ? 'btn-primary' : 'btn-danger', clear = fixed ? 'btn-danger' : 'btn-secondary';
+      d.querySelector('[data-slot]').innerHTML = '<div class="bp-scr" role="group" aria-label="Chat settings, built from the guide"><b>Chat settings</b>' +
+        '<div class="cs-row"><span>Notification sound</span><span class="cs-meta">Chime</span></div>' +
+        '<div class="cs-row"><span class="grow">Delete all messages</span><button class="btn ' + clear + ' cs-sm" type="button">Clear chat history</button></div>' +
+        '<div class="cs-row"><span class="grow">Your changes</span><button class="btn ' + save + ' cs-sm" type="button">Save changes</button></div></div>';
+      d.querySelector('[data-out]').textContent = fixed ? 'Red went only to Clear chat history, the one action that destroys data.'
+        : 'Your teammate read red as “important”. Save changes is red, and Clear chat history, which deletes data, is not.';
+    });
+  };
+  D('good-break-on-purpose-2b', guide(false), wireGuide(false));
+  D('good-break-on-purpose-2f', guide(true), wireGuide(true));
+
+  /* 3. Drift */
+  const STD = { r: 8, c: 'var(--ui-sel)', pad: '6px 11px', w: 600 };
+  const OFF = 'color-mix(in srgb,var(--ui-sel) 72%,#7a5cc4)';
+  const START = [
+    { s: 'Search', why: 'The standard button', st: {} },
+    { s: 'Checkout', why: 'Copied from the old checkout: 4 px corners', st: { r: 4 }, drift: true },
+    { s: 'Profile', why: 'Someone picked a blue that looked close', st: { c: OFF }, drift: true },
+    { s: 'Sign in', why: 'Apple requires its own black button', st: { c: '#111', label: 'Continue with Apple' }, brand: true }
+  ];
+  const MORE = [
+    { s: 'Settings', why: 'Copied from Profile, then padding trimmed', st: { c: OFF, pad: '4px 8px' }, drift: true },
+    { s: 'Help', why: 'Copied from Checkout, text made bold', st: { r: 4, w: 800 }, drift: true }
+  ];
+  const drift = fixed => '<div class="bp-list" data-list></div><div class="bp-btns"><button class="btn btn-secondary cs-sm" type="button" data-next>Next release</button>' +
+    (fixed ? '<button class="btn btn-primary cs-sm" type="button" data-audit>Run audit</button>' : '') + '</div><p class="bp-out" aria-live="polite" data-out></p>';
+  const wireDrift = fixed => d => {
+    const rows = START.map(r => Object.assign({}, r)), list = d.querySelector('[data-list]'), out = d.querySelector('[data-out]'), next = d.querySelector('[data-next]');
+    let audited = false;
+    const sig = r => { const s = Object.assign({}, STD, r.st); return [s.r, s.c, s.pad, s.w].join('|'); };
+    const row = r => {
+      const s = Object.assign({}, STD, r.st);
+      const note = r.done ? '<small class="ok">' + r.done + '</small>' : '<small>' + r.why + '</small>';
+      return '<div class="bp-r"><span class="grow"><span>' + r.s + '</span>' + note + '</span><span class="bp-s" style="border-radius:' + s.r + 'px;background:' + s.c + ';padding:' + s.pad + ';font-weight:' + s.w + '">' + (s.label || 'Continue') + '</span></div>';
+    };
+    const render = () => {
+      list.innerHTML = rows.map(row).join('');
+      const n = new Set(rows.map(sig)).size;
+      if (!audited) out.textContent = n + ' button styles in use. Two were chosen on purpose.';
+    };
+    next.addEventListener('click', () => {
+      const r = MORE[rows.length - START.length];
+      if (r) rows.push(Object.assign({}, r));
+      if (rows.length - START.length >= MORE.length) next.disabled = true;
+      audited = false;
+      render();
+    });
+    if (fixed) d.querySelector('[data-audit]').addEventListener('click', () => {
+      rows.forEach(r => {
+        if (r.drift) { r.st = {}; r.drift = false; r.done = 'Folded back into the standard button'; }
+        if (r.brand) r.done = 'Named and added: button-apple';
+      });
+      audited = true;
+      render();
+      out.textContent = 'Two named styles left: the standard button and button-apple.';
+    });
+    render();
+  };
+  D('good-break-on-purpose-3b', drift(false), wireDrift(false));
+  D('good-break-on-purpose-3f', drift(true), wireDrift(true));
+
+  csInit(cs);
+  };
+  if (window.csDemo) run(); else document.addEventListener('DOMContentLoaded', run);
+})();
+
+</script>

@@ -1,0 +1,96 @@
+<div class="fm" data-fm>
+  
+  <div class="seg fm-seg" role="radiogroup" aria-label="Form">
+    <input type="radio" name="fm-buttons" id="fm-buttons-1" value="primary" checked><label for="fm-buttons-1">Primary</label>
+    <input type="radio" name="fm-buttons" id="fm-buttons-2" value="secondary"><label for="fm-buttons-2">Secondary</label>
+    <input type="radio" name="fm-buttons" id="fm-buttons-3" value="tertiary"><label for="fm-buttons-3">Tertiary</label>
+    <input type="radio" name="fm-buttons" id="fm-buttons-4" value="danger"><label for="fm-buttons-4">Destructive</label>
+  </div>
+  <div class="fm-stage" data-fm-stage></div>
+  <p class="fig-cap" data-fm-when aria-live="polite"></p>
+  <script>
+  (() => {
+    const fm = document.currentScript.closest('[data-fm]'), stage = fm.querySelector('[data-fm-stage]'), when = fm.querySelector('[data-fm-when]');
+    const icon = n => '<svg class="icon sm"><use href="#i-' + n + '"/></svg>';
+    const frame = (title, body) => '<div class="app-frame fm-frame"><div class="app-bar"><span>' + title + '</span></div><div class="app-body btm-body">' + body + '</div></div>';
+    const sum = (a, b, cls) => '<div class="btm-sum' + (cls ? ' ' + cls : '') + '"><span>' + a + '</span><span>' + b + '</span></div>';
+    const THUMBS = ['', ' b', ' c', ' b', '', ' c'];
+    const F = {
+      primary: {
+        html: frame('Checkout', '<span class="btm-h">Order summary</span>' + sum('Linen shirt', '$42.00') + sum('Delivery', '$6.00') + sum('Total', '$48.00', 'total') +
+          '<div class="btm-acts"><button class="btn btn-ghost" type="button" data-back>Back to bag</button><button class="btn btn-primary" type="button" data-pay>Pay $48.00</button></div><p class="cs-meta" data-out aria-live="polite"></p>'),
+        use: 'Use it for the one main action on a screen or in a dialog, like Pay.',
+        more: 'Put it where people finish reading, at the end of the form.',
+        wire: s => {
+          const out = s.querySelector('[data-out]'), pay = s.querySelector('[data-pay]');
+          s.querySelector('[data-back]').addEventListener('click', () => { out.textContent = 'Back in your bag. Nothing was paid.'; });
+          let paid = false;
+          pay.addEventListener('click', () => {
+            if (paid || pay.getAttribute('aria-disabled') === 'true') return;
+            pay.setAttribute('aria-disabled', 'true'); pay.classList.add('busy'); pay.innerHTML = '<span class="spinner" aria-hidden="true"></span>Paying…'; out.textContent = '';
+            const g = gen;
+            setTimeout(() => { if (g !== gen) return; pay.removeAttribute('aria-disabled'); pay.classList.remove('busy'); paid = true; pay.innerHTML = icon('check') + 'Paid'; out.textContent = 'Paid. We’ve emailed your receipt.'; }, 900);
+          });
+        }
+      },
+      secondary: {
+        html: frame('Shop', '<div class="btm-prod"><div class="thumb b"></div><div><b>Linen shirt</b><span>$42.00 · Size M</span></div></div>' +
+          '<div class="btm-acts"><button class="btn btn-secondary" type="button" data-save>Save for later</button><button class="btn btn-primary" type="button" data-add>Add to bag</button></div><p class="cs-meta" data-out aria-live="polite"></p>'),
+        use: 'Use it for other likely actions next to the main one, like Save for later beside Add to bag.',
+        more: 'The outline keeps it easy to find without pulling the eye from the main action.',
+        wire: s => {
+          const out = s.querySelector('[data-out]'), save = s.querySelector('[data-save]');
+          let saved = false;
+          save.addEventListener('click', () => { saved = !saved; save.innerHTML = saved ? icon('check') + 'Saved' : 'Save for later'; out.textContent = saved ? 'Saved to your list.' : 'Removed from your list.'; });
+          s.querySelector('[data-add]').addEventListener('click', () => { out.textContent = 'Added to your bag.'; });
+        }
+      },
+      tertiary: {
+        html: frame('Photos', '<div data-card><span class="btm-h">Back up your photos?</span><p class="btm-p">Keep a copy of every photo in the cloud, so you don’t lose them if you lose your phone.</p>' +
+          '<div class="btm-acts"><button class="btn btn-ghost" type="button" data-no>Not now</button><button class="btn btn-primary" type="button" data-yes>Turn on backup</button></div></div><p class="cs-meta" data-out aria-live="polite"></p>' +
+          '<div class="btm-grid">' + THUMBS.slice(0, 3).map(c => '<div class="thumb btm-ph' + c + '"></div>').join('') + '</div>'),
+        use: 'Use it for rare or low-stakes actions, like Not now or Show more.',
+        more: 'It’s plain text, so it fits in tight spots and never competes with the main action.',
+        wire: s => {
+          const card = s.querySelector('[data-card]'), out = s.querySelector('[data-out]');
+          const done = t => { card.remove(); out.textContent = t; };
+          s.querySelector('[data-no]').addEventListener('click', () => done('Okay. You can turn it on later in Settings.'));
+          s.querySelector('[data-yes]').addEventListener('click', () => done('Backup is on.'));
+        }
+      },
+      danger: {
+        html: frame('Photos', '<div class="btm-grid" data-grid>' + THUMBS.map((c, i) => '<div class="thumb btm-ph' + c + (i < 3 ? ' on' : '') + '"></div>').join('') + '</div><div data-zone></div><p class="cs-meta" data-out aria-live="polite"></p>'),
+        use: 'Use it for actions that delete or lose something, like Delete photos.',
+        more: 'Save the solid red for the last step, where people confirm, and use a red outline before that.',
+        wire: s => {
+          const zone = s.querySelector('[data-zone]'), out = s.querySelector('[data-out]'), grid = s.querySelector('[data-grid]');
+          const bar = () => {
+            const n = grid.querySelectorAll('.on').length;
+            zone.innerHTML = n ? '<div class="btm-bar"><span>' + n + ' selected</span><button class="btn btm-del" type="button" data-del>' + icon('trash') + 'Delete</button></div>' : '';
+            if (n) zone.querySelector('[data-del]').addEventListener('click', ask);
+          };
+          const ask = () => {
+            zone.innerHTML = '<div class="btm-confirm" role="group" aria-label="Confirm delete"><b>Delete 3 photos?</b><p class="btm-p">They’ll be removed from all your devices.</p>' +
+              '<div class="btm-acts"><button class="btn btn-secondary" type="button" data-cancel>Cancel</button><button class="btn btn-danger" type="button" data-yes>Delete 3 photos</button></div></div>';
+            zone.querySelector('[data-cancel]').addEventListener('click', () => { bar(); zone.querySelector('[data-del]').focus(); });
+            zone.querySelector('[data-yes]').addEventListener('click', () => {
+              grid.querySelectorAll('.on').forEach(p => p.remove());
+              zone.innerHTML = ''; out.textContent = '3 photos deleted.';
+            });
+            zone.querySelector('[data-cancel]').focus();
+          };
+          bar();
+        }
+      }
+    };
+    let gen = 0;
+    const show = k => {
+      gen++;
+      stage.innerHTML = F[k].html; F[k].wire(stage);
+      when.innerHTML = '<b>' + fm.querySelector('.fm-seg input:checked + label').textContent + '.</b> ' + F[k].use + ' ' + F[k].more;
+    };
+    fm.querySelectorAll('.fm-seg input').forEach(i => i.addEventListener('change', () => show(i.value)));
+    show('primary');
+  })();
+  </script>
+</div>

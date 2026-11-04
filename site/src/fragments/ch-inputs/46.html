@@ -1,0 +1,47 @@
+<div class="note comfy cw-wrap"><p>Notice how each product pairs dragging with something exact or something you can see: a typed number, a live result, or a preview of where you’ll land.</p>
+  <div class="seg cw-seg" role="radiogroup" aria-label="Example">
+    <input type="radio" name="cw-slider-w" id="cw-slider-w-1" value="figma" checked><label for="cw-slider-w-1">Figma</label>
+    <input type="radio" name="cw-slider-w" id="cw-slider-w-2" value="lr"><label for="cw-slider-w-2">Lightroom</label>
+    <input type="radio" name="cw-slider-w" id="cw-slider-w-3" value="yt"><label for="cw-slider-w-3">YouTube</label>
+    <input type="radio" name="cw-slider-w" id="cw-slider-w-4" value="airbnb"><label for="cw-slider-w-4">Airbnb</label>
+  </div>
+  <div class="cw" data-cw-view role="img" aria-label=""></div>
+  <p class="cw-cap" data-cw-cap aria-live="polite"></p>
+  
+  <script>
+  (() => {
+    const wrap = document.currentScript.closest('.cw-wrap');
+    const view = wrap.querySelector('[data-cw-view]'), cap = wrap.querySelector('[data-cw-cap]');
+    const ic = id => '<svg class="icon sm"><use href="#i-' + id + '"/></svg>';
+    const caret = '<i class="cw-wsl-caret"></i>';
+    const f = (lab, val, extra) => '<span class="cw-wsl-f' + (extra === 'on' ? ' on' : '') + '"><i>' + lab + '</i>' + (extra === 'on' ? '<span class="cw-wsl-cur">↔</span>' : '') + val + '</span>';
+    const track = (pos, val, on) => '<span class="cw-wsl-tr"><b style="left:50%;width:' + Math.abs(pos - 50) + '%;' + (pos < 50 ? 'left:' + pos + '%' : '') + '"></b><i style="left:' + pos + '%"></i></span>';
+    const sl = (lab, pos, val, on) => '<div class="cw-wsl-row"><span class="cw-wsl-lab">' + lab + '</span>' + track(pos) + '<span class="cw-wsl-val' + (on ? ' on' : '') + '">' + val + (on ? caret : '') + '</span></div>';
+    const hist = [2, 3, 5, 8, 12, 16, 20, 22, 19, 17, 14, 12, 10, 9, 7, 6, 5, 4, 4, 3, 2, 2, 1, 2].map((h, i) => '<i class="' + (i >= 4 && i <= 17 ? 'in' : '') + '" style="height:' + (h / 22 * 100) + '%"></i>').join('');
+    const S = {
+      figma: { html: '<div class="cw-wsl-pane"><span class="cw-wsl-h">Layout</span>'
+          + '<div class="cw-wsl-row">' + f('W', '268', 'on') + f('H', '160') + '</div>'
+          + '<div class="cw-wsl-row">' + f('X', '120') + f('Y', '48') + '</div>'
+          + '<span class="cw-wsl-h">Layer</span><div class="cw-wsl-row">' + f('◐', '100%') + f('↻', '0°') + '</div></div>',
+        alt: 'A properties panel with number fields for width, height, position, opacity and rotation. The pointer is dragging sideways on the W label, and the width field is highlighted.',
+        cap: 'Figma: number fields double as sliders. Drag sideways on a field’s label to scrub the value, or click into it and type the exact number.' },
+      lr: { html: '<div class="cw-wsl-pane"><i class="cw-wsl-photo"></i>'
+          + sl('Exposure', 62, '+0.35', true) + sl('Contrast', 56, '+12') + sl('Highlights', 30, '−40') + sl('Shadows', 64, '+28') + '</div>',
+        alt: 'A photo above four edit sliders: Exposure, Contrast, Highlights and Shadows. Each slider has its value in a small box on the right, and the Exposure value is being typed.',
+        cap: 'Lightroom: every edit slider shows its value, and the value can be typed. The photo changes while you drag, so people judge by the result, not the number.' },
+      yt: { html: '<div class="cw-wsl-vid"><span class="cw-wsl-prev"><i></i><span>5:18</span></span><div class="cw-wsl-ctl"><span class="cw-wsl-seek"><b></b><s></s><i></i></span>'
+          + '<span class="cw-wsl-bar">' + ic('play') + '<span>1:54 / 8:40</span><span class="grow"></span>' + ic('gear') + ic('fit') + '</span></div></div>',
+        alt: 'A video player. The pointer hovers over the seek bar past the current position, and a small frame from that point appears above it with the time 5:18.',
+        cap: 'YouTube: hovering or dragging along the seek bar shows a small frame and the time at that point. People see where they’ll land before they let go.' },
+      airbnb: { html: '<div class="cw-wsl-pane"><b>Price range</b><span class="cw-wsl-hist">' + hist + '</span>'
+          + '<span class="cw-wsl-tr cw-wsl-range"><b style="left:17%;width:58%"></b><i style="left:17%"></i><i style="left:75%"></i></span>'
+          + '<div class="cw-wsl-mm"><span><small>Minimum</small>$40</span><span><small>Maximum</small>$220</span></div></div>',
+        alt: 'A price range filter. A bar chart of how many places cost each price sits above a slider with two handles. Below are Minimum 40 and Maximum 220 fields.',
+        cap: 'Airbnb: the price filter shows a bar chart of prices above a two-handle slider, with minimum and maximum fields below. Drag for a rough range, or type an exact one.' }
+    };
+    const render = k => { view.innerHTML = S[k].html; view.setAttribute('aria-label', 'Sketch: ' + S[k].alt); cap.textContent = S[k].cap; };
+    wrap.querySelectorAll('input[name="cw-slider-w"]').forEach(r => r.addEventListener('change', () => render(r.value)));
+    render('figma');
+  })();
+  </script>
+</div>

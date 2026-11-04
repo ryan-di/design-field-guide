@@ -1,0 +1,121 @@
+<script>
+(() => {
+  const cs = document.currentScript.closest('.cs');
+  /* Part 2 sits before the shared case helpers in the book, so wait for them when needed. */
+  const run = () => {
+  const D = (k, html, wire) => csDemo(cs.querySelector('[data-d="' + k + '"]'), html, wire);
+  const heart = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 20s-7.5-4.6-7.5-10A4.3 4.3 0 0 1 12 7.4 4.3 4.3 0 0 1 19.5 10C19.5 15.4 12 20 12 20z"/></svg>';
+  const css = document.createElement('style');
+  css.textContent = `
+#pat-optimistic-ui .ou-app{width:min(340px,100%);text-align:left}
+#pat-optimistic-ui .ou-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+#pat-optimistic-ui .ou-item{position:relative;display:flex;flex-direction:column;gap:4px;font-size:13.5px;border-radius:8px;transition:box-shadow .3s}
+#pat-optimistic-ui .ou-item .thumb{height:84px;aspect-ratio:auto;border-radius:8px}
+#pat-optimistic-ui .ou-item.rolled{box-shadow:0 0 0 2px var(--ui-danger)}
+#pat-optimistic-ui .ou-heart{position:absolute;right:6px;top:6px;width:34px;height:34px;border-radius:50%}
+#pat-optimistic-ui .ou-heart svg{width:18px;height:18px;fill:none;stroke:var(--ui-text);stroke-width:1.8;stroke-linejoin:round}
+#pat-optimistic-ui .ou-heart[aria-pressed="true"] svg{fill:var(--ui-danger);stroke:var(--ui-danger)}
+#pat-optimistic-ui .ou-note{font-size:13.5px;text-align:center;max-width:320px;margin:0}
+#pat-optimistic-ui .ou-note:empty{display:none}
+#pat-optimistic-ui .ou-pay{display:flex;flex-direction:column;gap:10px}
+#pat-optimistic-ui .ou-pay .cs-row b{font-weight:600}
+#pat-optimistic-ui .ou-pay .btn{justify-content:center}
+#pat-optimistic-ui .ou-res{display:flex;align-items:center;justify-content:center;gap:8px;min-height:40px;border-radius:9px;font:600 15px var(--font-body)}
+#pat-optimistic-ui .ou-res:empty{display:none}
+#pat-optimistic-ui .ou-res.ok{background:color-mix(in srgb,var(--ui-ok) 16%,var(--ui-surface));color:var(--ui-ok)}
+#pat-optimistic-ui .ou-res.bad{background:var(--ui-danger-soft);color:var(--ui-danger)}
+#pat-optimistic-ui .ou-res .spinner{width:15px;height:15px;border-width:2px}
+#pat-optimistic-ui .ou-log{display:flex;flex-direction:column;gap:2px;font:500 12px var(--font-mono);color:var(--ui-muted);min-height:54px}
+#pat-optimistic-ui .ou-srv{font:600 12.5px var(--font-mono);color:var(--ui-text)}
+#pat-optimistic-ui .check.ou-fail{font-size:13.5px}
+`;
+  cs.appendChild(css);
+
+  /* 1. Silent failure: wishlist */
+  const ITEMS = [['Desk lamp', '$39', ''], ['Linen throw', '$54', 'b'], ['Plant pot', '$18', 'c'], ['Wall clock', '$45', 'b']];
+  const wishHtml = fixed => '<div class="app-frame ou-app"><div class="app-bar"><span>Shop · Home</span>' + (fixed ? '' : '<button class="btn btn-ghost cs-sm" type="button" data-reload>Reload</button>') + '</div><div class="app-body"><div class="ou-grid">' +
+    ITEMS.map((x, i) => '<div class="ou-item" data-i="' + i + '"><i class="thumb ' + x[2] + '"></i><button class="icon-btn ou-heart" type="button" aria-pressed="false" aria-label="Save ' + x[0] + ' to wishlist">' + heart + '</button><span><b>' + x[0] + '</b> · ' + x[1] + '</span></div>').join('') +
+    '</div><span class="cs-meta">The network drops every save in this demo.</span></div></div><p class="ou-note" data-note aria-live="polite"></p>';
+  const wishWire = fixed => (d, t) => {
+    const note = d.querySelector('[data-note]');
+    const saved = ITEMS.map(() => false);
+    const save = (btn, i, want) => {
+      btn.setAttribute('aria-pressed', String(want));
+      note.textContent = '';
+      t.after(() => {
+        if (!fixed) return; // broken: the failure is ignored, the heart stays as it is
+        btn.setAttribute('aria-pressed', String(saved[i]));
+        const item = btn.closest('.ou-item');
+        item.classList.add('rolled'); t.after(() => item.classList.remove('rolled'), 1600);
+        csToast(d, t, 'Couldn’t save ' + ITEMS[i][0] + '. No connection.', { tone: 'error', ms: 6000, replace: true, action: { label: 'Retry', run: () => save(btn, i, want) } });
+      }, 900);
+    };
+    d.querySelectorAll('.ou-heart').forEach(btn => btn.addEventListener('click', () => {
+      const i = Number(btn.closest('.ou-item').dataset.i);
+      save(btn, i, btn.getAttribute('aria-pressed') !== 'true');
+    }));
+    if (fixed) return;
+    d.querySelector('[data-reload]').addEventListener('click', () => {
+      const lost = [];
+      d.querySelectorAll('.ou-heart').forEach((btn, i) => { if (btn.getAttribute('aria-pressed') === 'true' && !saved[i]) lost.push(ITEMS[i][0]); btn.setAttribute('aria-pressed', String(saved[i])); });
+      note.textContent = lost.length ? 'After the reload, ' + lost.join(' and ') + (lost.length > 1 ? ' are' : ' is') + ' not in your wishlist. It was never saved.' : 'Reloaded. Your wishlist is empty.';
+    });
+  };
+  D('pat-optimistic-ui-1b', wishHtml(false), wishWire(false));
+  D('pat-optimistic-ui-1f', wishHtml(true), wishWire(true));
+
+  /* 2. Optimism where it matters: payment */
+  const payHtml = '<div class="app-frame ou-app"><div class="app-bar"><span>Checkout</span></div><div class="app-body ou-pay"><div class="cs-row"><span class="grow">2 concert tickets</span><b>$48.00</b></div><div class="cs-row"><span class="grow">Card ending 4242</span><span class="cs-meta">test card</span></div>' +
+    '<label class="check ou-fail"><input type="checkbox" checked data-fail> The bank declines this card</label><button class="btn btn-primary" type="button" data-pay>Pay $48.00</button><div class="ou-res" data-res role="status"></div></div></div>';
+  const payWire = fixed => (d, t) => {
+    const pay = d.querySelector('[data-pay]'), res = d.querySelector('[data-res]'), fail = d.querySelector('[data-fail]');
+    const icon = n => '<svg class="icon sm" aria-hidden="true"><use href="#i-' + n + '"/></svg>';
+    const answer = () => {
+      const ok = !fail.checked;
+      res.className = 'ou-res ' + (ok ? 'ok' : 'bad');
+      res.innerHTML = ok ? icon('check') + 'Paid. Tickets sent to your email.' : icon('warn') + (fixed ? 'Declined. You weren’t charged.' : 'Sorry, payment declined. You weren’t charged.');
+      pay.disabled = ok; pay.textContent = ok ? 'Paid' : 'Try another card';
+    };
+    pay.addEventListener('click', () => {
+      pay.disabled = true;
+      if (fixed) { res.className = 'ou-res'; res.innerHTML = '<span class="spinner" aria-hidden="true"></span>Paying…'; }
+      else { res.className = 'ou-res ok'; res.innerHTML = icon('check') + 'Paid. Enjoy the show!'; }
+      t.after(answer, 1500);
+    });
+  };
+  D('pat-optimistic-ui-2b', payHtml, payWire(false));
+  D('pat-optimistic-ui-2f', payHtml, payWire(true));
+
+  /* 3. Out-of-order answers: online status */
+  const swHtml = '<div class="app-frame ou-app"><div class="app-bar"><span>Privacy</span></div><div class="app-body"><label class="switch"><span class="grow">Show when I’m online</span><input type="checkbox" role="switch" data-sw></label>' +
+    '<span class="ou-srv" data-srv>Saved on the server: Off</span><div class="ou-log" data-log aria-live="polite"></div></div></div><p class="ou-note" data-note></p>';
+  const swWire = fixed => (d, t) => {
+    const sw = d.querySelector('[data-sw]'), srv = d.querySelector('[data-srv]'), log = d.querySelector('[data-log]'), note = d.querySelector('[data-note]');
+    let server = false, seq = 0, open = 0;
+    const word = v => v ? 'On' : 'Off';
+    const line = s => { const p = document.createElement('span'); p.textContent = s; log.appendChild(p); while (log.children.length > 4) log.firstChild.remove(); };
+    sw.addEventListener('change', () => {
+      const want = sw.checked, my = ++seq;
+      server = want; // the server applies requests in the order they were sent
+      srv.textContent = 'Saved on the server: ' + word(server);
+      note.textContent = '';
+      line('Request ' + my + ': ' + word(want) + ' sent');
+      const delay = open === 0 ? 1500 : 400;
+      open++;
+      t.after(() => {
+        open--;
+        if (fixed && my !== seq) line('Answer ' + my + ' is old. Ignored.');
+        else { sw.checked = fixed ? server : want; line('Answer ' + my + ' arrived: ' + word(want)); }
+        if (open === 0) note.textContent = sw.checked === server ? 'The switch shows ' + word(sw.checked) + ', and the server has ' + word(server) + '.' : 'The switch shows ' + word(sw.checked) + ', but the server saved ' + word(server) + '.';
+      }, delay);
+    });
+  };
+  D('pat-optimistic-ui-3b', swHtml, swWire(false));
+  D('pat-optimistic-ui-3f', swHtml, swWire(true));
+
+  csInit(cs);
+  };
+  if (window.csDemo) run(); else document.addEventListener('DOMContentLoaded', run);
+})();
+
+</script>

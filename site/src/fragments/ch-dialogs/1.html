@@ -1,0 +1,113 @@
+<div class="fm" data-fm>
+  
+  <div class="seg fm-seg" role="radiogroup" aria-label="Form">
+    <input type="radio" name="fm-dialog" id="fm-dialog-1" value="confirm" checked><label for="fm-dialog-1">Confirm</label>
+    <input type="radio" name="fm-dialog" id="fm-dialog-2" value="unsaved"><label for="fm-dialog-2">Unsaved work</label>
+    <input type="radio" name="fm-dialog" id="fm-dialog-3" value="form"><label for="fm-dialog-3">Short form</label>
+    <input type="radio" name="fm-dialog" id="fm-dialog-4" value="notice"><label for="fm-dialog-4">Notice</label>
+  </div>
+  <div class="fm-stage" data-fm-stage></div>
+  <p class="fig-cap" data-fm-when aria-live="polite"></p>
+  <script>
+  (() => {
+    const fm = document.currentScript.closest('[data-fm]'), stage = fm.querySelector('[data-fm-stage]'), when = fm.querySelector('[data-fm-when]');
+    const icon = n => '<svg class="icon sm"><use href="#i-' + n + '"/></svg>';
+    const frame = (bar, body, modal) => '<div class="app-frame fm-frame fmd-app" tabindex="-1"><div class="app-bar">' + bar + '</div><div class="app-body">' + body + '<p class="cs-meta" data-out></p></div>' + modal + '</div>';
+    const dlg = (title, text, acts) => '<div class="cs-modal" data-modal><div class="cs-dlg fmd-dlg" role="dialog" aria-modal="true" aria-label="' + title + '"><b>' + title + '</b><p>' + text + '</p><div class="acts">' + acts + '</div></div></div>';
+    const btn = (label, cls, key, first) => '<button type="button" class="btn cs-sm ' + cls + '" data-b="' + key + '"' + (first ? ' data-first' : '') + '>' + label + '</button>';
+    const lines = '<div class="line" style="width:92%"></div><div class="line" style="width:80%"></div><div class="line" style="width:88%"></div><div class="line" style="width:60%"></div>';
+
+    /* The dialog starts open over the frame. Everything behind it is inert until it closes. */
+    const modal = (s, onEsc) => {
+      const app = s.querySelector('.fmd-app'), m = s.querySelector('[data-modal]'), rest = Array.from(app.children).filter(c => c !== m);
+      const lock = on => rest.forEach(c => { c.inert = on; });
+      app.addEventListener('keydown', e => { if (e.key === 'Escape' && onEsc && !m.hidden) { e.stopPropagation(); onEsc(); } });
+      lock(true);
+      return {
+        open() { m.hidden = false; lock(true); m.querySelector('[data-first]').focus({ preventScroll: true }); },
+        close() { m.hidden = true; lock(false); const t = s.querySelector('[data-open]'); (t && !t.disabled ? t : app).focus({ preventScroll: true }); },
+        on(key, fn) { m.querySelector('[data-b="' + key + '"]').addEventListener('click', fn); }
+      };
+    };
+
+    const ph = (i, sel) => '<span class="fmd-ph' + (sel ? ' sel' : '') + '"><span class="thumb ' + ['', 'b', 'c'][i % 3] + '"></span>' + (sel ? icon('check') : '') + '</span>';
+    const F = {
+      confirm: {
+        html: frame('<span>Photos</span><span class="fmd-bar"><span class="cs-meta" data-n>3 selected</span><button type="button" class="btn btn-secondary cs-sm" data-open>' + icon('trash') + 'Delete</button></span>',
+          '<div class="fmd-grid">' + [0, 1, 2, 3, 4, 5, 6, 7].map(i => ph(i, i === 0 || i === 2 || i === 5)).join('') + '</div>',
+          dlg('Delete 3 photos?', 'They’ll be removed from all your devices. You can’t undo this.', btn('Cancel', 'btn-secondary', 'no', 1) + btn('Delete photos', 'btn-danger', 'yes'))),
+        use: 'Use it before an action that can’t be undone.',
+        more: 'Cancel gets focus first, so pressing Enter by mistake loses nothing.',
+        wire: s => {
+          const out = s.querySelector('[data-out]'), del = s.querySelector('[data-open]');
+          const no = () => { d.close(); out.textContent = 'Nothing was deleted.'; };
+          const d = modal(s, no);
+          d.on('no', no);
+          d.on('yes', () => { s.querySelectorAll('.fmd-ph.sel').forEach(p => p.remove()); s.querySelector('[data-n]').textContent = '0 selected'; del.disabled = true; d.close(); out.textContent = '3 photos deleted.'; });
+          del.addEventListener('click', () => { out.textContent = ''; d.open(); });
+        }
+      },
+      unsaved: {
+        html: frame('<span>Trip budget <span class="cs-meta">Edited</span></span><button type="button" class="icon-btn fmd-x" data-open aria-label="Close document">' + icon('x') + '</button>',
+          '<div class="fmd-doc" data-doc><b>Trip budget</b>' + lines + '</div>',
+          dlg('Save changes to “Trip budget”?', 'If you don’t save, your changes since 10:40 will be lost.', btn('Don’t save', 'btn-secondary fmd-left', 'drop') + btn('Cancel', 'btn-secondary', 'no') + btn('Save', 'btn-primary', 'yes', 1))),
+        use: 'Use it when people close something with changes they haven’t saved.',
+        more: 'It has three answers, and Save gets focus because it keeps their work.',
+        wire: s => {
+          const out = s.querySelector('[data-out]');
+          const no = () => { d.close(); out.textContent = 'Still open. Nothing was lost.'; };
+          const d = modal(s, no);
+          const closed = msg => { s.querySelector('.app-bar').innerHTML = '<span>Docs</span>'; s.querySelector('[data-doc]').innerHTML = '<b>Trip budget is closed.</b>'; d.close(); out.textContent = msg; };
+          d.on('no', no);
+          d.on('yes', () => closed('Saved and closed.'));
+          d.on('drop', () => closed('Closed without saving. The changes are gone.'));
+          s.querySelector('[data-open]').addEventListener('click', () => { out.textContent = ''; d.open(); });
+        }
+      },
+      form: {
+        html: frame('<span>Albums</span><button type="button" class="btn btn-secondary cs-sm" data-open>Rename</button>',
+          '<div class="fmd-alb"><span class="thumb b"></span><span><b data-name>Untitled album</b><span class="cs-meta">24 photos</span></span></div>' +
+          '<div class="fmd-alb"><span class="thumb c"></span><span><b>Lisbon 2026</b><span class="cs-meta">112 photos</span></span></div>',
+          '<div class="cs-modal" data-modal><form class="cs-dlg fmd-dlg" role="dialog" aria-modal="true" aria-label="Rename album" data-form><b>Rename album</b>' +
+          '<label class="cs-f">Album name<input class="input fmd-in" data-first value="Untitled album" autocomplete="off"></label>' +
+          '<div class="acts"><button type="button" class="btn btn-secondary cs-sm" data-b="no">Cancel</button><button type="submit" class="btn btn-primary cs-sm" data-ok>Rename</button></div></form></div>'),
+        use: 'Use it to ask for one or two things that belong to one action, like a new name.',
+        more: 'Enter submits, and the button can’t be pressed while the field is empty.',
+        wire: s => {
+          const out = s.querySelector('[data-out]'), inp = s.querySelector('[data-first]'), ok = s.querySelector('[data-ok]'), name = s.querySelector('[data-name]');
+          const no = () => { d.close(); out.textContent = 'Nothing changed.'; };
+          const d = modal(s, no);
+          const sync = () => { ok.disabled = !inp.value.trim(); };
+          inp.addEventListener('input', sync);
+          d.on('no', no);
+          s.querySelector('[data-form]').addEventListener('submit', e => {
+            e.preventDefault(); if (ok.disabled) return;
+            name.textContent = inp.value.trim(); d.close(); out.textContent = 'Renamed to “' + name.textContent + '”.';
+          });
+          s.querySelector('[data-open]').addEventListener('click', () => { inp.value = name.textContent; sync(); out.textContent = ''; d.open(); inp.select(); });
+        }
+      },
+      notice: {
+        html: frame('<span>Mail</span>',
+          ['Sam', 'Bank', 'Mia', 'Airline'].map((n, i) => '<div class="fmd-mail"><b>' + n + '</b><div class="line" style="width:' + [74, 58, 82, 66][i] + '%"></div></div>').join(''),
+          dlg('You’ve been signed out', 'For your security, Mail signs you out after 30 days. Sign in again to see your messages.', btn('Sign in again', 'btn-primary', 'yes', 1))),
+        use: 'Use it only when people can’t go on without knowing, like after they’ve been signed out.',
+        more: 'It has one button, and that button takes the next step.',
+        wire: s => {
+          const d = modal(s, null);
+          d.on('yes', () => {
+            s.querySelector('.app-body').innerHTML = '<div class="fmd-doc"><b>Sign in to Mail</b><div class="line" style="width:100%;height:30px"></div><div class="line" style="width:100%;height:30px"></div></div><p class="cs-meta">The sign-in page opens next.</p>';
+            d.close();
+          });
+        }
+      }
+    };
+    const show = k => {
+      stage.innerHTML = F[k].html; F[k].wire(stage);
+      when.innerHTML = '<b>' + fm.querySelector('.fm-seg input:checked + label').textContent + '.</b> ' + F[k].use + ' ' + F[k].more;
+    };
+    fm.querySelectorAll('.fm-seg input').forEach(i => i.addEventListener('change', () => show(i.value)));
+    show('confirm');
+  })();
+  </script>
+</div>

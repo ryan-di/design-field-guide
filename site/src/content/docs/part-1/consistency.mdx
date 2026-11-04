@@ -1,0 +1,272 @@
+---
+title: "Same thing, same look, same place"
+description: "People learn a product one screen at a time, and they bring habits from every other product they use."
+eyebrow: "Chapter 3"
+sidebar:
+  label: "Consistency"
+---
+
+import Raw from '../../../components/Raw.astro';
+import Learned from '../../../components/Learned.astro';
+import Runtime from '../../../components/Runtime.astro';
+import F0 from '../../../fragments/ch-consistency/0.html?raw';
+import F1 from '../../../fragments/ch-consistency/1.html?raw';
+import F2 from '../../../fragments/ch-consistency/2.html?raw';
+import F3 from '../../../fragments/ch-consistency/3.html?raw';
+import F4 from '../../../fragments/ch-consistency/4.html?raw';
+import F5 from '../../../fragments/ch-consistency/5.html?raw';
+import F6 from '../../../fragments/ch-consistency/6.html?raw';
+import F7 from '../../../fragments/ch-consistency/7.html?raw';
+import F8 from '../../../fragments/ch-consistency/8.html?raw';
+import F9 from '../../../fragments/ch-consistency/9.html?raw';
+import F10 from '../../../fragments/ch-consistency/10.html?raw';
+import F11 from '../../../fragments/ch-consistency/11.html?raw';
+import F12 from '../../../fragments/ch-consistency/12.html?raw';
+import F13 from '../../../fragments/ch-consistency/13.html?raw';
+import F14 from '../../../fragments/ch-consistency/14.html?raw';
+import F15 from '../../../fragments/ch-consistency/15.html?raw';
+import F16 from '../../../fragments/ch-consistency/16.html?raw';
+import F17 from '../../../fragments/ch-consistency/17.html?raw';
+import F18 from '../../../fragments/ch-consistency/18.html?raw';
+
+<Runtime at="start" />
+
+<section class="dfg-chapter" id="ch-consistency">
+
+People learn a product one screen at a time, and they bring habits from every other product they use. The entries below cover spotting drift, keeping shared values in one place, and breaking the rule only on purpose.
+
+<article class="entry essay" id="good-consistency" data-entry data-name="Internal & external">
+
+<div class="entry-head">
+
+## Internal and external consistency \{#good-consistency-h\}
+
+<Learned id="good-consistency" />
+
+</div>
+
+Consistency means one action has one look, one concept has one name, and the same buttons sit in the same order everywhere. People learn a product by noticing patterns, so when the patterns hold, what they learned on one screen works on the next. When they don’t, people slow down and wonder whether two things that look different do different things.
+
+There are two kinds. Internal consistency is about your own product: the same thing looks and works the same on every screen. External consistency is about everything else people use, the platform and other common products, as in [Jakob’s law](/part-2/laws/#pat-jakobs-law). Keyboard and screen-reader users lean on both, because they can’t take in a whole screen at a glance.
+
+<Raw html={F0} />
+
+### Rules \{#good-consistency-rules\}
+
+Three rules keep a product consistent.
+
+<div class="cs essay-cs">
+
+<section class="rule" id="good-consistency-rule-1">
+
+#### 1. Give one action one look \{#good-consistency-rule-1-h\}
+
+When Add to cart is a filled button on one page and a plain link on another, people wonder whether the two do different things: a link usually opens a page, so some expect to see the item rather than add it. Build the action once as a component and use it everywhere. If two places really need different styles, they probably need different names too.
+
+<Raw html={F1} />
+
+</section>
+
+<section class="rule" id="good-consistency-rule-2">
+
+#### 2. Give one thing one name \{#good-consistency-rule-2-h\}
+
+When one thing has two names, people assume there are two things, so they look in the wrong place or doubt that their action worked. Pick one word for each concept and keep a short glossary. Use the same word in buttons, menus, messages and help.
+
+<Raw html={F2} />
+
+</section>
+
+<section class="rule" id="good-consistency-rule-3">
+
+#### 3. Follow the platform’s conventions \{#good-consistency-rule-3-h\}
+
+People bring habits from every other app they use. Most dialogs put the main button at the right end, with Cancel just before it, so when a product flips that order, people press by position and hit the wrong button. Follow the convention unless you can show a clear win for a real task, and if you do break it, break it the same way everywhere.
+
+<Raw html={F3} />
+
+</section>
+
+<Raw html={F4} />
+
+</div>
+
+### In real products \{#good-consistency-products\}
+
+<Raw html={F5} />
+
+</article>
+
+<article class="entry essay" id="good-design-tokens" data-entry data-name="Design tokens">
+
+<div class="entry-head">
+
+## Design tokens \{#good-design-tokens-h\}
+
+<Learned id="good-design-tokens" />
+
+</div>
+
+A design token is a shared value with a name, such as a corner radius, a spacing step, a color or a text size. Components point at the name instead of holding their own number, so when the token changes, every component that uses it changes with it.
+
+Tokens are how [Spacing rhythm](/part-1/clarity/#good-spacing-rhythm) and [consistency](#good-consistency) hold up in a large team. They can carry [contrast](/part-1/clarity/#good-contrast) too: give every background token a matching text token, like “accent” and “on-accent”, and check each pair once, so no component can pick a pair that fails.
+
+<Raw html={F6} />
+
+### Kinds of tokens \{#good-design-tokens-kinds\}
+
+Most systems have three layers of tokens: base, role and component. Each layer points at the one before it, so a change happens in one place.
+
+<Raw html={F7} />
+
+### Rules \{#good-design-tokens-rules\}
+
+Three rules keep tokens useful.
+
+<div class="cs essay-cs">
+
+<section class="rule" id="good-design-tokens-rule-1">
+
+#### 1. Point components at tokens \{#good-design-tokens-rule-1-h\}
+
+When each component holds its own numbers, a change has to be made in every component. Someone always misses one, and the product drifts: a 6 px corner here, an 8 px corner there. Point every component at a token instead, so a change in one place reaches all of them.
+
+<Raw html={F8} />
+
+</section>
+
+<section class="rule" id="good-design-tokens-rule-2">
+
+#### 2. Name tokens by their job \{#good-design-tokens-rule-2-h\}
+
+A token named after its value, like blue-500, can’t change without becoming wrong: to rebrand, you either edit every component, or make blue-500 green and turn everything else that used it green too. Name tokens by their job, such as accent or rain. Only the job token knows which blue it is, so a rebrand changes one line.
+
+<Raw html={F9} />
+
+</section>
+
+<section class="rule" id="good-design-tokens-rule-3">
+
+#### 3. Keep the set small \{#good-design-tokens-rule-3-h\}
+
+Tokens that are close, like radius-7, radius-8 and radius-9, look the same on screen. People can’t choose between them, so they pick one at random, and the product drifts anyway. Keep a few clear steps, each with a job. When two tokens are close and used for the same job, merge them.
+
+<Raw html={F10} />
+
+</section>
+
+<Raw html={F11} />
+
+</div>
+
+### In real products \{#good-design-tokens-products\}
+
+<Raw html={F12} />
+
+</article>
+
+<article class="entry essay" id="good-break-on-purpose" data-entry data-name="Break it on purpose">
+
+<div class="entry-head">
+
+## Break it on purpose \{#good-break-on-purpose-h\}
+
+<Learned id="good-break-on-purpose" />
+
+</div>
+
+Consistency doesn’t mean everything looks the same. When one thing really is different, such as an action that destroys work, it should look different, and it should be the only thing that does. People notice the one element that breaks a pattern, but only while the pattern holds everywhere else.
+
+This is the other half of [Internal and external consistency](#good-consistency). Like any [meaning carried by color](/part-1/clarity/#good-contrast), an exception needs a second cue: an icon, a divider, a place at the end of the list, or the word itself, like “Delete”.
+
+<Raw html={F13} />
+
+### Rules \{#good-break-on-purpose-rules\}
+
+Three rules keep exceptions meaningful.
+
+<div class="cs essay-cs">
+
+<section class="rule" id="good-break-on-purpose-rule-1">
+
+#### 1. Keep exceptions rare \{#good-break-on-purpose-rule-1-h\}
+
+When every action gets its own color, weight or badge, nothing stands out, and people have to read every item to find the one they need, as on a [screen where everything is bold](/part-1/clarity/#good-visual-hierarchy). Keep about one exception per screen, for the one thing that really differs, and give everything else the normal style.
+
+<Raw html={F14} />
+
+</section>
+
+<section class="rule" id="good-break-on-purpose-rule-2">
+
+#### 2. Write down the reason \{#good-break-on-purpose-rule-2-h\}
+
+An exception without a reason looks like any other style choice, so the next person copies it to places where it doesn’t belong, and soon it means nothing. Write the reason next to the rule, like “red only for actions that destroy data”. If you can’t write a reason, follow the rule.
+
+<Raw html={F15} />
+
+</section>
+
+<section class="rule" id="good-break-on-purpose-rule-3">
+
+#### 3. Audit for drift \{#good-break-on-purpose-rule-3-h\}
+
+Not every difference is a choice: someone copies an old screen or picks a value that’s close enough, and small variants pile up release after release. Check the product now and then. Fold drift back into the system, and if a variant has a real job, give it a name and add it.
+
+<Raw html={F16} />
+
+</section>
+
+<Raw html={F17} />
+
+</div>
+
+### In real products \{#good-break-on-purpose-products\}
+
+<Raw html={F18} />
+
+</article>
+
+<aside class="in-short" id="ch-consistency-in-short" aria-labelledby="ch-consistency-in-short-h" data-pagefind-ignore>
+
+## In short \{#ch-consistency-in-short-h\}
+
+<div class="is-grid">
+
+<div>
+
+<a class="is-e" href="#good-consistency">Internal and external consistency</a>
+
+1. [Give one action one look](#good-consistency-rule-1)
+2. [Give one thing one name](#good-consistency-rule-2)
+3. [Follow the platform’s conventions](#good-consistency-rule-3)
+
+</div>
+
+<div>
+
+<a class="is-e" href="#good-design-tokens">Design tokens</a>
+
+1. [Point components at tokens](#good-design-tokens-rule-1)
+2. [Name tokens by their job](#good-design-tokens-rule-2)
+3. [Keep the set small](#good-design-tokens-rule-3)
+
+</div>
+
+<div>
+
+<a class="is-e" href="#good-break-on-purpose">Break it on purpose</a>
+
+1. [Keep exceptions rare](#good-break-on-purpose-rule-1)
+2. [Write down the reason](#good-break-on-purpose-rule-2)
+3. [Audit for drift](#good-break-on-purpose-rule-3)
+
+</div>
+
+</div>
+
+</aside>
+
+</section>
+
+<Runtime chapter="ch-consistency" />

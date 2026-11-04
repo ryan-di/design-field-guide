@@ -1,0 +1,121 @@
+<script>
+(() => {
+  const cs = document.currentScript.closest('.cs');
+  const D = (k, html, wire) => csDemo(cs.querySelector('[data-d="' + k + '"]'), html, wire);
+  const icon = n => '<svg class="icon sm"><use href="#i-' + n + '"/></svg>';
+  const frame = (bar, body, extra) => '<div class="app-frame' + (extra ? ' ' + extra : '') + '" style="width:min(340px,100%)"><div class="app-bar">' + bar + '</div>' + body + '</div>';
+  const wait = text => '<span class="sp-wait"><span class="spinner"></span>' + text + '</span>';
+
+  /* 1. Flash */
+  const SHOP = { Lamps: [['Desk lamp', '€39'], ['Floor lamp', '€89'], ['Clip-on lamp', '€24']], Chairs: [['Desk chair', '€149'], ['Armchair', '€299'], ['Stool', '€45']], Mugs: [['Tall mug', '€12'], ['Espresso cup', '€8'], ['Travel mug', '€19']] };
+  const T = ['', ' b', ' c'];
+  const results = k => SHOP[k].map((r, i) => '<div class="cs-row"><span class="thumb sp-sq' + T[i] + '"></span><span class="grow">' + r[0] + '</span><span>' + r[1] + '</span></div>').join('');
+  const flashHtml = frame('<span>Shop</span>',
+    '<div class="app-body" style="gap:8px"><div class="sp-chips">' + Object.keys(SHOP).map(k => '<button class="btn btn-secondary cs-sm" type="button" data-q="' + k + '" aria-pressed="' + (k === 'Lamps') + '">' + k + '</button>').join('') + '</div>' +
+    '<div class="sp-res" data-res aria-live="polite">' + results('Lamps') + '</div><p class="cs-meta" data-t>Showing lamps.</p></div>') +
+    '<label class="switch sp-net"><span>Slow network</span><input type="checkbox" role="switch" data-slow></label>';
+  const flashWire = delay => (d, t) => {
+    const res = d.querySelector('[data-res]'), meta = d.querySelector('[data-t]'), slow = d.querySelector('[data-slow]'), qs = d.querySelectorAll('[data-q]');
+    let run = 0;
+    qs.forEach(b => b.addEventListener('click', () => {
+      const id = ++run, k = b.dataset.q, ms = slow.checked ? 2000 : 300;
+      let spun = false, done = false;
+      qs.forEach(x => x.setAttribute('aria-pressed', String(x === b)));
+      const spin = () => { if (id === run && !done) { res.innerHTML = wait('Searching…'); spun = true; } };
+      if (delay) t.after(spin, delay); else spin();
+      t.after(() => {
+        if (id !== run) return;
+        done = true; res.innerHTML = results(k);
+        meta.textContent = 'Results in ' + (ms / 1000) + ' s, ' + (spun ? 'spinner shown.' : 'no spinner.');
+      }, ms);
+    }));
+  };
+  D('spinner-1b', flashHtml, flashWire(0));
+  D('spinner-1f', flashHtml, flashWire(400));
+
+  /* 2. Too long */
+  const SIZE = 6.5, TOTAL = 60;
+  const longHtml = frame('<span>Upload</span>',
+    '<div class="app-body"><div class="cs-row"><span class="grow sp-file">' + icon('image') + 'Beach day.mov</span><span class="cs-meta">6.5 GB</span></div>' +
+    '<div class="sp-st" data-st><p class="cs-meta">Not uploaded yet.</p></div>' +
+    '<button class="btn btn-primary cs-sm" type="button" data-go style="align-self:flex-start">Upload video</button><p class="cs-meta" data-clock>Time so far: 0:00</p></div>');
+  const clock = s => Math.floor(s / 60) + ':' + String(s % 60).padStart(2, '0');
+  const longWire = bar => (d, t) => {
+    const st = d.querySelector('[data-st]'), go = d.querySelector('[data-go]'), clk = d.querySelector('[data-clock]');
+    go.addEventListener('click', () => {
+      go.disabled = true;
+      let s = 0;
+      st.innerHTML = bar
+        ? '<div class="sp-top"><span>Uploading video…</span><span data-pct>0%</span></div><div class="bar" role="progressbar" aria-label="Upload" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><span></span></div><p class="cs-meta" data-left></p>'
+        : wait('Uploading video…');
+      const step = () => {
+        clk.textContent = 'Time so far: ' + clock(s);
+        if (bar) {
+          const p = Math.round(s / TOTAL * 100), left = TOTAL - s;
+          st.querySelector('[data-pct]').textContent = p + '%';
+          st.querySelector('.bar > span').style.width = p + '%';
+          st.querySelector('.bar').setAttribute('aria-valuenow', p);
+          st.querySelector('[data-left]').textContent = (SIZE * s / TOTAL).toFixed(1) + ' of 6.5 GB · about ' + left + ' s left';
+        }
+      };
+      step();
+      const id = t.every(() => {
+        s++; step();
+        if (s < TOTAL) return;
+        clearInterval(id);
+        st.innerHTML = '<p class="cs-ok">Uploaded.</p>';
+        go.disabled = false;
+      }, 200);
+    });
+  };
+  D('spinner-2b', longHtml, longWire(false));
+  D('spinner-2f', longHtml, longWire(true));
+
+  /* 3. Blocks all */
+  const folders = n => '<span class="sp-fold on">Inbox <b>' + n + '</b></span><span class="sp-fold">Sent</span><span class="sp-fold">Drafts</span>';
+  const blockHtml = frame('<span>Mail</span><button class="btn btn-secondary cs-sm" type="button" data-ref>Refresh</button>',
+    '<div class="app-body" data-body><div class="sp-folders" data-f>' + folders(12) + '</div><label class="cs-f">Reply to Sam<textarea class="input" rows="3" data-txt>See you at 6. I’ll book a table for</textarea></label></div>', 'sp-rel');
+  const blockWire = whole => (d, t) => {
+    const f = d.querySelector('[data-f]'), ref = d.querySelector('[data-ref]'), body = d.querySelector('[data-body]'), fr = d.querySelector('.app-frame');
+    let n = 12;
+    ref.addEventListener('click', () => {
+      ref.disabled = true;
+      let cover = null;
+      if (whole) {
+        cover = document.createElement('div'); cover.className = 'sp-cover'; cover.innerHTML = wait('Loading…');
+        fr.appendChild(cover); body.inert = true;
+      } else f.innerHTML = wait('Loading folders…');
+      t.after(() => {
+        n++; f.innerHTML = folders(n); ref.disabled = false;
+        if (cover) { cover.remove(); body.inert = false; }
+      }, 4000);
+    });
+  };
+  D('spinner-3b', blockHtml, blockWire(true));
+  D('spinner-3f', blockHtml, blockWire(false));
+
+  /* 4. Jump */
+  const FILES = [['Budget.xlsx', '2 min ago'], ['Trip plan.docx', '1 h ago'], ['Logo.png', 'Yesterday']];
+  const fileRows = FILES.map((f, i) => '<div class="cs-row"><span class="thumb sp-sq' + T[i] + '"></span><span class="grow">' + f[0] + '</span><span class="cs-meta">' + f[1] + '</span></div>').join('');
+  const skelRows = FILES.map(() => '<div class="cs-row"><span class="skel sp-sq"></span><span class="grow"><span class="skel sp-ln"></span></span></div>').join('');
+  const jumpHtml = frame('<span>Recent files</span><button class="btn btn-ghost cs-sm" type="button" data-re>Refresh</button>',
+    '<div class="app-body" style="gap:10px"><div data-list aria-live="polite"></div><button class="btn btn-primary cs-sm" type="button" data-up style="align-self:flex-start">Upload file</button><p class="cs-meta" data-m></p></div>');
+  const jumpWire = skel => (d, t) => {
+    const list = d.querySelector('[data-list]'), m = d.querySelector('[data-m]');
+    let run = 0;
+    const load = () => {
+      const id = ++run;
+      list.innerHTML = skel ? skelRows : '<div class="cs-row" style="justify-content:center;border:0">' + wait('Loading…') + '</div>';
+      t.after(() => { if (id === run) list.innerHTML = fileRows; }, 1500);
+    };
+    d.querySelector('[data-re]').addEventListener('click', load);
+    d.querySelector('[data-up]').addEventListener('click', () => { m.textContent = 'Choose a file to upload…'; });
+    load();
+  };
+  D('spinner-4b', jumpHtml, jumpWire(false));
+  D('spinner-4f', jumpHtml, jumpWire(true));
+
+  csInit(cs);
+})();
+
+  </script>

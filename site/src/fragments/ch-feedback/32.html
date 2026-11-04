@@ -1,0 +1,46 @@
+<div class="note comfy cw-wrap"><p>Notice that each badge stays small, and only shows a number when the number matters.</p>
+      <div class="seg cw-seg" role="radiogroup" aria-label="Example">
+        <input type="radio" name="cw-badge-w" id="cw-badge-w-1" value="slack" checked><label for="cw-badge-w-1">Slack</label>
+        <input type="radio" name="cw-badge-w" id="cw-badge-w-2" value="github"><label for="cw-badge-w-2">GitHub</label>
+        <input type="radio" name="cw-badge-w" id="cw-badge-w-3" value="youtube"><label for="cw-badge-w-3">YouTube</label>
+        <input type="radio" name="cw-badge-w" id="cw-badge-w-4" value="ios"><label for="cw-badge-w-4">iOS</label>
+      </div>
+      <div class="cw" data-cw-view role="img" aria-label=""></div>
+      <p class="cw-cap" data-cw-cap aria-live="polite"></p>
+      
+      <script>
+      (() => {
+        const wrap = document.currentScript.closest('.cw-wrap');
+        const view = wrap.querySelector('[data-cw-view]'), cap = wrap.querySelector('[data-cw-cap]');
+        const ic = id => '<svg class="icon sm"><use href="#i-' + id + '"/></svg>';
+        const svg = d => '<svg class="icon sm" viewBox="0 0 24 24">' + d + '</svg>';
+        const bell = svg('<path d="M6 9a6 6 0 0 1 12 0c0 6 2.5 8 2.5 8h-17S6 15 6 9z"/><path d="M10 20.5a2.2 2.2 0 0 0 4 0"/>');
+        const inbox = svg('<path d="M3.5 13.5l2.6-7.2A1.5 1.5 0 0 1 7.5 5.3h9a1.5 1.5 0 0 1 1.4 1l2.6 7.2V18a1.5 1.5 0 0 1-1.5 1.5h-14A1.5 1.5 0 0 1 3.5 18z"/><path d="M3.5 13.5H8l1.5 2.2h5l1.5-2.2h4.5"/>');
+        const line = w => '<i class="cw-line" style="width:' + w + '%"></i>';
+        const ch = (name, opts = {}) => '<span class="cw-badgew-ch' + (opts.isNew ? ' new' : '') + '">' + (opts.dm ? '<i class="' + (opts.dm === 2 ? 'b' : '') + '"></i>' : '#') + ' ' + name + (opts.n ? '<span class="badge">' + opts.n + '</span>' : '') + '</span>';
+        const bar = right => '<div class="cw-badgew-bar"><span class="cw-badgew-search">' + ic('search') + 'Search</span>' + right + '<span class="cw-badgew-me"></span></div>';
+        const app = (cls, n) => '<span class="cw-badgew-app' + cls + '">' + (n ? '<span class="badge">' + n + '</span>' : '') + '</span>';
+        const S = {
+          slack: { html: '<div class="cw-badgew-side"><b>Channels</b>' + ch('general', { isNew: true }) + ch('design', { isNew: true, n: 2 }) + ch('random') +
+              '<b>Direct messages</b>' + ch('Mia', { dm: 1, isNew: true, n: 1 }) + ch('Sam', { dm: 2 }) + '</div>',
+            alt: 'A sidebar of channels and direct messages. General is bold with no number. Design is bold with a 2. Random is plain. A direct message from Mia is bold with a 1.',
+            cap: 'Slack: a channel with new messages turns bold, and only mentions and direct messages get a number. Bold says something’s new, and a number says someone wants you.' },
+          github: { html: '<div class="cw-badgew-win">' + bar('<span class="cw-badgew-ico">' + inbox + '<span class="badge dot"></span></span>') +
+              '<div class="cw-badgew-body">' + line(45) + line(90) + line(75) + line(60) + '</div></div>',
+            alt: 'A top bar with a search field and an inbox icon. The inbox icon has a small dot, with no number.',
+            cap: 'GitHub: the notifications icon shows a small dot when something’s unread, not a count. The exact number waits in the inbox it opens.' },
+          youtube: { html: '<div class="cw-badgew-win">' + bar('<span class="cw-badgew-ico">' + bell + '<span class="badge">9+</span></span>') +
+              '<div class="cw-badgew-grid"><div class="thumb"></div><div class="thumb b"></div><div class="thumb c"></div></div></div>',
+            alt: 'A top bar with a search field and a bell icon. The bell’s badge says 9+. A row of video thumbnails below.',
+            cap: 'YouTube: the count on the bell stops at 9+. Past that, the exact number wouldn’t change what you do, so the badge stays small.' },
+          ios: { html: '<div class="cw-badgew-phone">' + app('', 3) + app(' b') + app(' c') + app(' b') + app(' c') + app('') + app(' b', 1) + app(' c') + app(' b') + app(' c') + app('') + app(' b') +
+              '<div class="cw-badgew-dock">' + app(' c') + app('', 12) + app(' b') + app(' c') + '</div></div>',
+            alt: 'A phone home screen with a grid of app icons and a dock. Three icons show counts: 3, 1 and 12.',
+            cap: 'iOS: apps can put a count on their home screen icon, like unread mail. People can turn badges off for each app in notification settings, so a noisy app loses its badge.' }
+        };
+        const render = k => { view.innerHTML = S[k].html; view.setAttribute('aria-label', 'Sketch: ' + S[k].alt); cap.textContent = S[k].cap; };
+        wrap.querySelectorAll('input[name="cw-badge-w"]').forEach(r => r.addEventListener('change', () => render(r.value)));
+        render('slack');
+      })();
+      </script>
+    </div>

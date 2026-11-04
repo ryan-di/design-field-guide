@@ -1,0 +1,204 @@
+<script>
+  (() => {
+    const sec = document.currentScript.closest('section');
+    const ic = n => '<svg class="icon sm" aria-hidden="true"><use href="#i-' + n + '"/></svg>';
+
+    /* 1 · Small steps */
+    {
+      const stage = sec.querySelector('[data-demo="eff-small-steps"]');
+      const STEPS = [
+        ['Track unsaved changes per tab', 'Check: unit test'],
+        ['Show a dot on tabs with unsaved changes', 'Check: screenshots'],
+        ['Ask before closing an unsaved tab', 'Check: end-to-end spec'],
+        ['Warn when the window closes with unsaved tabs', 'Check: end-to-end spec'],
+        ['Wording and keyboard pass', 'Check: you try it']
+      ];
+      const list = stage.querySelector('#p29-ss-list');
+      list.innerHTML = STEPS.map((s, i) =>
+        '<li><span class="p29-n">' + (i + 1) + '</span><span class="p29-ss-t">' + s[0] + '<small>' + s[1] + '</small></span>' +
+        '<label class="p29-ss-f"><input type="checkbox" data-i="' + i + '"' + (i === 2 ? ' checked' : '') + '> Fails review</label>' +
+        '<span class="p29-ss-st"></span></li>').join('');
+      const boxes = [...list.querySelectorAll('input')];
+      const rows = [...list.querySelectorAll('li')];
+      const track = stage.querySelector('#p29-ss-track');
+      const back = stage.querySelector('#p29-ss-back'), backLbl = stage.querySelector('#p29-ss-backlbl'), why = stage.querySelector('#p29-ss-why');
+      const mode = () => stage.querySelector('input[name="p29-ss-mode"]:checked').value;
+      const render = () => {
+        const fails = boxes.map(b => b.checked);
+        const first = fails.indexOf(true);
+        const big = mode() === 'big';
+        const st = fails.map((f, i) => {
+          if (f) return 'bad';
+          if (big && first !== -1) return i > first ? 're' : 'redo-review';
+          return 'ok';
+        });
+        rows.forEach((r, i) => {
+          r.classList.toggle('fail', fails[i]);
+          const s = r.querySelector('.p29-ss-st');
+          const t = st[i];
+          s.className = 'p29-ss-st ' + (t === 'bad' ? 'bad' : t === 'ok' ? 'ok' : 're');
+          s.innerHTML = t === 'bad' ? ic('x') + 'Redo this step'
+            : t === 're' ? ic('warn') + 'Check again: built on step ' + (first + 1)
+            : t === 'redo-review' ? ic('info') + 'Review again with the rest'
+            : ic('check') + (big ? 'Passes in the one review' : 'Reviewed and kept');
+        });
+        const cells = st.map((t, i) => '<span class="p29-cell ' + (t === 'bad' ? 'bad' : t === 're' ? 're' : t === 'ok' ? 'ok' : '') + '">' + (i + 1) + '</span>');
+        track.innerHTML = big ? cells.join('') + '<span class="p29-gate">Review</span>'
+          : cells.map(c => c + '<span class="p29-gate">✓</span>').join('');
+        const nFail = fails.filter(Boolean).length;
+        if (nFail === 0) {
+          back.textContent = '0';
+          backLbl.textContent = 'steps sent back';
+          why.textContent = big ? 'Nothing failed, but the reviewer read all five steps in one long diff, which is where problems hide.'
+            : 'Nothing failed. Five short reviews, each small enough to read closely.';
+        } else if (big) {
+          const n = STEPS.length - first;
+          back.textContent = String(n);
+          backLbl.textContent = n === 1 ? 'step sent back' : 'steps sent back';
+          why.textContent = 'The problem in step ' + (first + 1) + ' shows up only after everything is built. Every later step built on it needs checking again, and the whole change goes back to review.';
+        } else {
+          back.textContent = String(nFail);
+          backLbl.textContent = nFail === 1 ? 'step sent back' : 'steps sent back, one at a time';
+          why.textContent = 'Each problem is caught right after its own step, before anything is built on it. You redo only that step and review only that step again.';
+        }
+      };
+      stage.addEventListener('change', render);
+      render();
+    }
+
+    /* 2 · Agent verification */
+    {
+      const stage = sec.querySelector('[data-demo="eff-agent-verification"]');
+      const NAMES = { unit: 'unit tests', e2e: 'end-to-end specs', shots: 'screenshots', types: 'type check' };
+      const BUGS = [
+        ['Saving doesn’t clear the unsaved dot.', ['unit', 'e2e']],
+        ['The close-tab shortcut skips the dialog.', ['e2e']],
+        ['On narrow tabs the dot covers the close button.', ['shots']],
+        ['One caller still passes a tab name where an id is needed.', ['types']],
+        ['The dialog appears after only panning the canvas.', []]
+      ];
+      const list = stage.querySelector('#p29-av-list'), sum = stage.querySelector('#p29-av-sum');
+      const render = () => {
+        const on = new Set([...stage.querySelectorAll('.p29-av-checks input:checked')].map(i => i.value));
+        let caught = 0;
+        list.innerHTML = BUGS.map(([text, by]) => {
+          const hit = by.filter(c => on.has(c));
+          if (hit.length) caught++;
+          const res = hit.length ? '<span class="p29-av-res ok">' + ic('check') + 'Caught by ' + hit.map(c => NAMES[c]).join(' and ') + '</span>'
+            : '<span class="p29-av-res bad">' + ic('warn') + 'Slips through</span>';
+          return '<li class="' + (hit.length ? '' : 'slip') + '"><span>' + text + '</span>' + res + '</li>';
+        }).join('');
+        sum.textContent = caught + ' of ' + BUGS.length + ' bugs caught before review. ' +
+          (on.size === 4 ? 'The last one needs a person: no test asked for it, so you find it by trying the change.'
+            : 'Tick more checks to catch more.');
+      };
+      stage.addEventListener('change', render);
+      render();
+    }
+
+    /* 3 · UX calls */
+    {
+      const stage = sec.querySelector('[data-demo="eff-ux-calls"]');
+      const LINES = [
+        { t: 'Workflow store tracks unsaved changes per tab.', v: false },
+        { t: 'Tabs with unsaved changes show a dot.', v: true },
+        { t: 'Closing a tab with unsaved changes asks: Save, Don’t save or Cancel.', v: true },
+        { t: 'Tab close logic moved into one function.', v: false },
+        { t: 'Closing the browser window with unsaved tabs shows the browser’s leave warning.', v: true },
+        { t: 'Tab menu item renamed from “Close” to “Close tab”.', v: true, side: true },
+        { t: 'Added unit tests and end-to-end specs.', v: false }
+      ];
+      const dec = LINES.map(() => null);
+      const list = stage.querySelector('#p29-ux-list'), body = stage.querySelector('#p29-ux-body'), state = stage.querySelector('#p29-ux-state');
+      list.innerHTML = LINES.map((l, i) => '<li class="' + (l.v ? 'vis' : '') + '"><span class="p29-ux-txt">' + l.t + '</span>' +
+        '<span class="p29-ux-kind' + (l.v ? ' vis' : '') + '">' + (l.v ? 'People will see this' : 'Invisible') + '</span>' +
+        (l.v ? '<span class="p29-ux-acts" role="group" aria-label="Decision"><button class="btn" type="button" aria-pressed="false" data-i="' + i + '" data-d="yes">Approve</button><button class="btn" type="button" aria-pressed="false" data-i="' + i + '" data-d="no">Reject</button></span>' : '') +
+        '</li>').join('');
+      const render = () => {
+        list.querySelectorAll('button').forEach(b => b.setAttribute('aria-pressed', String(dec[b.dataset.i] === b.dataset.d)));
+        const vis = LINES.map((l, i) => ({ ...l, d: dec[i] })).filter(l => l.v);
+        const yes = vis.filter(l => l.d === 'yes'), no = vis.filter(l => l.d === 'no'), open = vis.filter(l => !l.d);
+        const ul = (items, cls) => '<ul>' + items.map(l => '<li' + (cls ? ' class="' + cls + '"' : '') + '>' + l.t + '</li>').join('') + '</ul>';
+        let h = '<h5>What changes for people</h5>' + (yes.length ? ul(yes) : '<p class="p29-ux-none">Nothing approved yet.</p>');
+        if (open.length) h += '<h5>Needs your call</h5>' + ul(open, 'held');
+        if (no.length) h += '<h5>Left out of this PR</h5>' + ul(no);
+        h += '<h5>Under the hood</h5>' + ul(LINES.filter(l => !l.v), 'p29-ux-under');
+        body.innerHTML = h;
+        state.className = 'p29-ux-state ' + (open.length ? 'wait' : 'ok');
+        state.innerHTML = open.length ? ic('warn') + (open.length === 1 ? '1 visible change still needs your call.' : open.length + ' visible changes still need your call.')
+          : ic('check') + 'Ready for review: every visible change is your call.';
+      };
+      list.addEventListener('click', e => {
+        const b = e.target.closest('button[data-d]');
+        if (!b) return;
+        const i = +b.dataset.i;
+        dec[i] = dec[i] === b.dataset.d ? null : b.dataset.d;
+        render();
+      });
+      render();
+    }
+
+    /* In Comfy switchers */
+    const SW = {
+      steps: (() => {
+        const chip = (t, k, cls) => '<div class="cw-steps-chip' + (cls ? ' ' + cls : '') + '"><b>' + t + '</b><i>' + k + '</i></div>';
+        const row = (...c) => '<div class="cw-steps-row">' + c.join('<span class="cw-steps-arrow" aria-hidden="true">→</span>') + '</div>';
+        return {
+          refactor: { html: row(chip('1 · Pin today’s behavior with tests', 'Invisible'), chip('2 · Move tab close logic into one place', 'Invisible'), chip('3 · Remove the old path', 'Invisible')),
+            alt: 'Three steps, all invisible: pin behavior with tests, move logic, remove the old path.',
+            cap: 'Refactor: pin today’s behavior with tests first, then move code in steps that keep them green. Nothing people see should change.' },
+          copy: { html: row(chip('1 · List every string and where it shows', 'Plan'), chip('2 · Change the strings', 'People will see this', 'vis'), chip('3 · Screenshot each in context', 'Check')),
+            alt: 'Three steps: list strings, change them, screenshot each in context.',
+            cap: 'Copy change: one small step is often enough. The plan lists each string and where it appears, so review happens in context.' },
+          new: { html: row(chip('1 · Track unsaved changes', 'Invisible'), chip('2 · Dot on unsaved tabs', 'People will see this', 'vis'), chip('3 · Ask before closing', 'People will see this', 'vis'), chip('4 · Window close warning', 'People will see this', 'vis')),
+            alt: 'Four steps for the unsaved-work prompt: one invisible, then three visible pieces.',
+            cap: 'New behavior: for the unsaved-work prompt, invisible plumbing goes first, then one visible piece per step, so each is reviewed and called out on its own.' },
+          migration: { html: row(chip('1 · Read old and new format', 'Invisible'), chip('2 · Write new format behind a flag', 'Can be undone'), chip('3 · Turn it on for everyone', 'Risky', 'risk'), chip('4 · Remove the old path later', 'Last')),
+            alt: 'Four steps: read both formats, write new behind a flag, turn it on, remove old path later.',
+            cap: 'Risky migration: for example, changing how open tabs are stored between sessions. Each step can ship and be undone alone; the point of no return comes last.' }
+        };
+      })(),
+      verify: (() => {
+        const L = { must: 'Must', helps: 'Helps', skip: 'Skip' };
+        const t = rows => '<div class="cw-verify-t">' + rows.map(([n, k]) => '<div class="cw-verify-r"><span>' + n + '</span><span class="cw-verify-l ' + k + '">' + L[k] + '</span></div>').join('') + '</div>';
+        const names = ['Unit tests', 'Affected end-to-end specs', 'Screenshots before/after', 'Type check', 'You try it'];
+        const mk = ks => t(names.map((n, i) => [n, ks[i]]));
+        const alt = ks => names.map((n, i) => n + ': ' + L[ks[i]]).join(', ');
+        const S = {
+          refactor: [['must', 'must', 'helps', 'must', 'helps'], 'Refactor: the checks are the proof. Tests and types pass unchanged, and screenshots before and after should match.'],
+          copy: [['skip', 'helps', 'must', 'skip', 'helps'], 'Copy change: screenshots carry it, in light and dark and at a narrow width. Specs that find buttons by their text may need updating.'],
+          new: [['must', 'must', 'must', 'must', 'must'], 'New behavior: the unsaved-work prompt needs all four, plus you closing a few tabs yourself. Trying it catches what nobody wrote a test for.'],
+          migration: [['must', 'must', 'helps', 'must', 'must'], 'Risky migration: test with files saved by older versions, not only new ones. Ask the agent to add them as fixtures, and keep a way back.']
+        };
+        const out = {};
+        for (const k in S) out[k] = { html: mk(S[k][0]), alt: alt(S[k][0]), cap: S[k][1] };
+        return out;
+      })(),
+      ux: (() => {
+        const pr = (title, people, under) => '<div class="cw-ux-pr"><b>' + title + '</b><em>What changes for people</em>' + people.map(p => '<span>' + p + '</span>').join('') +
+          '<em>Under the hood</em>' + under.map(p => '<span class="under">' + p + '</span>').join('') + '</div>';
+        return {
+          refactor: { html: pr('Move tab close logic into one function', ['No visible change. Screenshots before and after match.'], ['Tab close logic moved into one function']),
+            alt: 'PR description: no visible change, screenshots match; under the hood, logic moved.',
+            cap: 'Refactor: say “No visible change” at the top and show the proof. Anything visible the agent changed on the way is a separate call.' },
+          copy: { html: pr('Clearer wording when closing tabs', ['Tab menu: “Close” → “Close tab”', 'Close dialog: “Discard” → “Don’t save”'], ['Strings updated in the locale file']),
+            alt: 'PR description listing old and new text for two strings.',
+            cap: 'Copy change: every string is something people see. List old and new text side by side, with a screenshot of each.' },
+          new: { html: pr('Ask before closing a tab with unsaved changes', ['Tabs with unsaved changes show a dot', 'Closing one asks: Save, Don’t save or Cancel'], ['Workflow store tracks unsaved changes']),
+            alt: 'PR description for the unsaved-work prompt, leading with two visible behaviors.',
+            cap: 'New behavior: lead with what people will notice, in their words. Each line is a call you made, not one the agent made for you.' },
+          migration: { html: pr('Store open tabs in the new format', ['Nothing should look different', 'Tabs from before the update reopen as they were', 'If they don’t: how to get back'], ['Reads old and new format', 'Writes new format behind a flag']),
+            alt: 'PR description for a migration: what people could notice if it goes wrong, and the way back.',
+            cap: 'Risky migration: even when nothing should change, say what people could notice if it goes wrong, and how to get back.' }
+        };
+      })()
+    };
+    sec.querySelectorAll('[data-p29-sw]').forEach(wrap => {
+      const S = SW[wrap.dataset.p29Sw];
+      const view = wrap.querySelector('[data-cw-view]'), cap = wrap.querySelector('[data-cw-cap]');
+      const render = k => { view.innerHTML = S[k].html; view.setAttribute('aria-label', 'Sketch: ' + S[k].alt); cap.textContent = S[k].cap; };
+      wrap.querySelectorAll('.cw-seg input').forEach(r => r.addEventListener('change', () => render(r.value)));
+      render(wrap.querySelector('.cw-seg input:checked').value);
+    });
+  })();
+  </script>

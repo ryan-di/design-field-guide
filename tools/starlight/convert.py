@@ -18,7 +18,11 @@ from html.parser import HTMLParser
 ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 SITE = os.path.join(ROOT, 'site')
 LIVE = 'https://ryan-di.github.io/design-field-guide/'
-PILOT = ['ch-preface', 'ch-problem']
+PILOT = None  # chapter ids to convert; None converts every chapter
+
+
+def converted(ch):
+    return PILOT is None or ch.get('id') in PILOT
 
 VOID = {'area', 'base', 'br', 'col', 'embed', 'hr', 'img', 'input', 'link', 'meta', 'source', 'track', 'wbr'}
 
@@ -97,8 +101,19 @@ class Parser(HTMLParser):
 
 # ------------------------------------------------------------------ CSS
 
-DROP = re.compile(r'^(html|body|\.page|\.main\b|\.rail|\.hero|\.lede|\.chapter\b|\.chapter-head|\.part-|#toc|\.toc|\.pg-|\.view-toggle|\.endnote|\.essay\s*$|\.essay p\.prose|\.ess-h|\.sec-link|h[3-5]:hover>\.sec-link)')
+DROP = re.compile(r'^(html|body|\.page|\.main\b|\.rail|\.hero|\.lede|\.chapter\b|\.chapter-head|\.part-divider|\.part-title|\.part-sub|#toc|\.toc|\.pg-|\.view-toggle|\.endnote|\.essay\s*$|\.essay p\.prose|\.ess-h|\.sec-link|h[3-5]:hover>\.sec-link)')
 BARE = re.compile(r'^(a|h[1-6]|p|code|pre|:focus-visible)(?=$|[\s:.\[>,+~])')
+ROOT_SEL = re.compile(r'^(:root|html)(\[[^\]]*\]|:not\([^)]*\))*')
+SCOPE = ':where(.sl-markdown-content) '
+
+
+def scope(sel):
+    """Keep the book's rules inside page content; Starlight's chrome shares class names like .icon and .label."""
+    m = ROOT_SEL.match(sel)
+    if m and m.end():
+        rest = sel[m.end():]
+        return sel if not rest.strip() or not rest[0].isspace() else sel[:m.end()] + ' ' + scope(rest.lstrip())
+    return SCOPE + ('.dfg-raw ' + sel if BARE.match(sel) else sel)
 
 
 def split_top(s, sep=','):
@@ -148,7 +163,7 @@ def filter_css(css):
             for sel in (x.strip() for x in split_top(pre)):
                 if not sel or DROP.match(sel):
                     continue
-                sels.append('.dfg-raw ' + sel if BARE.match(sel) else sel)
+                sels.append(scope(sel))
             if sels:
                 out.append('%s{%s}' % (','.join(sels), body))
     return '\n'.join(out)
@@ -178,16 +193,22 @@ class Book:
         part = None
         for n in self.main.kids():
             if 'part-divider' in n.cls:
-                part = {'id': n.get('id'), 'label': n.get('data-part'), 'chapters': []}
+                part = {'id': n.get('id'), 'label': n.get('data-part'), 'chapters': [], 'node': n}
                 self.parts.append(part)
             elif n in self.chapters:
                 (part or self.front())['chapters'].append(n)
         self.page_of = {}
         for ch in self.chapters:
-            if ch.get('id') in PILOT:
+            if converted(ch):
                 for n in [ch] + list(ch.iter()):
                     if n.get('id'):
                         self.page_of[n.get('id')] = self.slug(ch)
+        for part in self.parts:
+            first = next((c for c in part['chapters'] if converted(c)), None)
+            if part.get('node') is not None and first is not None:
+                for n in [part['node']] + list(part['node'].iter()):
+                    if n.get('id'):
+                        self.page_of[n.get('id')] = self.slug(first)
 
     def front(self):
         if not self.parts or self.parts[0]['id'] != 'front':
@@ -235,9 +256,17 @@ class Book:
                 out.append('[%s](%s)' % (t.strip(), self.href(c.get('href'), here)))
             elif c.tag == 'br':
                 out.append(' ')
+            elif c.get('id'):
+                out.append('<span id="%s">%s</span>' % (c.get('id'), t))
             else:
                 out.append(t)
         return re.sub(r' {2,}', ' ', ''.join(out)).strip()
+
+
+def attr_str(n):
+    """The id and non-prose classes a markdown block has to keep."""
+    cls = ' '.join(c for c in n.get('class').split() if c != 'prose')
+    return ('' if not n.get('id') else ' id="%s"' % n.get('id')) + ('' if not cls else ' class="%s"' % cls)
 
 
 class Page:
@@ -248,20 +277,29 @@ class Page:
         self.lines = []
 
     def frag(self, html):
+        html = re.sub(r'<style\b[^>]*>.*?</style>', '', html, flags=re.S)
+        html = re.sub(r'href="#([^"]+)"', lambda m: 'href="%s"' % (self.b.href('#' + m.group(1), self.here) if m.group(1) in self.b.page_of else '#' + m.group(1)), html)
+        if not html.strip():
+            return
         k = len(self.frags)
         self.frags.append(html)
         self.lines += ['<Raw html={F%d} />' % k, '']
 
     def para(self, n):
         t = self.b.inline(n, self.here)
-        if t:
-            self.lines += [t, '']
+        if not t:
+            return
+        attrs = attr_str(n)
+        self.lines += ['<p%s>%s</p>' % (attrs, t) if attrs else t, '']
 
     def heading(self, lvl, n, hid=None):
         t = self.b.inline(n, self.here)
         self.lines += ['%s %s%s' % ('#' * lvl, t, ' \\{#%s\\}' % hid if hid else ''), '']
 
     def prose_block(self, n):
+        attrs = attr_str(n)
+        if attrs:
+            self.lines += ['<div%s>' % attrs, '']
         for c in n.kids():
             if c.tag == 'p':
                 self.para(c)
@@ -269,6 +307,8 @@ class Page:
                 self.heading(2 if self.cid == 'ch-preface' else 3, c, c.get('id') or None)
             else:
                 self.frag(self.b.raw(c))
+        if attrs:
+            self.lines += ['</div>', '']
 
     def rule(self, s):
         h5 = s.find(lambda x: x.tag == 'h5')
@@ -336,11 +376,24 @@ class Page:
             self.lines += ['', '</div>', '']
         self.lines += ['</div>', '', '</aside>', '']
 
-    def build(self, sidebar_label, eyebrow):
+    def borrowed(self):
+        """Elements in other chapters that this chapter's inline scripts look up by id, such as word lists kept in the text."""
+        js = ''.join(self.b.raw(n) for n in self.ch.iter() if n.tag == 'script')
+        own = {n.get('id') for n in self.ch.iter() if n.get('id')}
+        ids = sorted({i for i in re.findall(r"['\"]#([A-Za-z][\w-]*)", js) if i not in own and i in self.b.page_of})
+        nodes = [n for n in self.b.main.iter() if n.get('id') in ids]
+        html = ''.join(re.sub(r'<script\b[^>]*>.*?</script>', '', self.b.raw(n), flags=re.S) for n in nodes)
+        return '<div hidden aria-hidden="true" class="dfg-borrowed">%s</div>' % html if html else ''
+
+    def build(self, sidebar_label, eyebrow, part=None):
         head = self.ch.find(lambda x: 'chapter-head' in x.cls)
-        title = head.find(lambda x: x.tag == 'h2').text()
+        title = head.find(lambda x: x.tag == 'h2').text() if head else self.ch.get('data-short')
         entries = []
-        self.lines += ['<div class="dfg-chapter" id="%s">' % self.cid, '']
+        self.lines += ['<Runtime at="start" />', '']
+        borrowed = self.borrowed()
+        if borrowed:
+            self.frag(borrowed)
+        self.lines += ['<section class="dfg-chapter" id="%s">' % self.cid, '']
         for c in self.ch.kids():
             if c is head:
                 continue
@@ -352,13 +405,17 @@ class Page:
             else:
                 self.frag(self.b.raw(c))
         self.in_short(entries)
-        self.lines += ['</div>', '', '<Runtime chapter="%s" />' % self.cid, '']
+        self.lines += ['</section>', '', '<Runtime chapter="%s" />' % self.cid, '']
         first = next((x for x in self.ch.iter() if x.tag == 'p' and 'eyebrow' not in x.cls and x.text()), None)
         desc = re.split(r'(?<=[.!?])\s', first.text())[0] if first else title
         depth = '../' * (self.here.count('/') + 2)
         front = ['---', 'title: %s' % json.dumps(title, ensure_ascii=False), 'description: %s' % json.dumps(desc, ensure_ascii=False)]
         if eyebrow:
             front.append('eyebrow: %s' % json.dumps(eyebrow, ensure_ascii=False))
+        if part is not None:
+            q = lambda c: next((x.text() for x in part.iter() if c in x.cls), '')
+            front += ['part:', '  id: %s' % json.dumps(part.get('id')), '  label: %s' % json.dumps(part.get('data-part'), ensure_ascii=False),
+                      '  title: %s' % json.dumps(q('part-title'), ensure_ascii=False), '  sub: %s' % json.dumps(q('part-sub'), ensure_ascii=False)]
         front += ['sidebar:', '  label: %s' % json.dumps(sidebar_label, ensure_ascii=False), '---', '',
                   "import Raw from '%scomponents/Raw.astro';" % depth,
                   "import Learned from '%scomponents/Learned.astro';" % depth,
@@ -375,7 +432,7 @@ def runtime(book):
     js = s[big.start:big.end]
     js = js[js.index('>') + 1:js.rindex('</script>')]
     head = js[:js.index('  /* ---------- Contents rail')]
-    helpers = js[js.index('  /* ---------- Shared helpers'):js.index('  /* ---------- Demos')]
+    helpers = js[js.index('  /* ---------- Review checklist'):js.index('  /* ---------- Demos')]
     demos = js[js.index('  /* ---------- Demos'):js.rindex('})();')]
     parts = re.split(r'(?=\n  /\* js-[\w-]+\.js \*/)', demos)
     core = ('<script>' + head + helpers +
@@ -409,11 +466,11 @@ def sidebar(book):
         items = []
         for ch in p['chapters']:
             label = ch.get('data-short')
-            if ch.get('id') in PILOT:
+            if converted(ch):
                 items.append({'label': label, 'slug': book.slug(ch)})
             else:
                 items.append({'label': label + ' ↗', 'link': LIVE + '#' + ch.get('id'), 'attrs': {'class': 'dfg-live'}})
-        out.append({'label': p['label'], 'items': items, 'collapsed': not any(c.get('id') in PILOT for c in p['chapters'])})
+        out.append({'label': p['label'], 'items': items, 'collapsed': p['id'] not in ('front', 'start')})
     return out
 
 
@@ -435,7 +492,9 @@ def main():
 
     sprite, cs, core, parts = runtime(book)
     os.makedirs(frag_dir, exist_ok=True)
-    open(os.path.join(frag_dir, 'runtime.html'), 'w', encoding='utf-8').write(sprite + '\n' + cs + '\n' + core + '\n')
+    fx = book.main.find(lambda n: n.get('id') == 'fx-shared')
+    open(os.path.join(frag_dir, 'runtime-head.html'), 'w', encoding='utf-8').write(sprite + '\n' + (book.raw(fx) + '\n' if fx else '') + cs + '\n')
+    open(os.path.join(frag_dir, 'runtime.html'), 'w', encoding='utf-8').write(core + '\n')
 
     labels = {}
     for ch in book.chapters:
@@ -443,10 +502,12 @@ def main():
         eb = head.find(lambda x: 'eyebrow' in x.cls) if head else None
         labels[ch.get('id')] = eb.text() if eb else ''
     for ch in book.chapters:
-        if ch.get('id') not in PILOT:
+        if not converted(ch):
             continue
         pg = Page(book, ch)
-        mdx = pg.build(ch.get('data-short'), labels[ch.get('id')])
+        part = next((p for p in book.parts if p['chapters'] and p['chapters'][0] is ch), {})
+        js = chapter_js(book, ch, parts)
+        mdx = pg.build(ch.get('data-short'), labels[ch.get('id')], part.get('node'))
         path = os.path.join(docs, pg.here + '.mdx')
         os.makedirs(os.path.dirname(path), exist_ok=True)
         open(path, 'w', encoding='utf-8').write(mdx)
@@ -454,15 +515,16 @@ def main():
         os.makedirs(d, exist_ok=True)
         for k, f in enumerate(pg.frags):
             open(os.path.join(d, '%d.html' % k), 'w', encoding='utf-8').write(f)
-        open(os.path.join(d, 'demos.html'), 'w', encoding='utf-8').write(chapter_js(book, ch, parts))
+        open(os.path.join(d, 'demos.html'), 'w', encoding='utf-8').write(js)
         print('wrote', path, len(pg.frags), 'fragments')
 
     open(os.path.join(SITE, 'src', 'sidebar.json'), 'w', encoding='utf-8').write(json.dumps(sidebar(book), ensure_ascii=False, indent=1) + '\n')
     anchors = dict(book.page_of)
     for ch in book.chapters:
-        if ch.get('id') in PILOT:
+        if converted(ch):
             anchors[ch.get('id') + '-in-short'] = anchors[ch.get('id') + '-in-short-h'] = book.slug(ch)
-    open(os.path.join(SITE, 'src', 'anchors.json'), 'w', encoding='utf-8').write(json.dumps(anchors, sort_keys=True, indent=0) + '\n')
+    os.makedirs(os.path.join(SITE, 'public'), exist_ok=True)
+    open(os.path.join(SITE, 'public', 'anchors.json'), 'w', encoding='utf-8').write(json.dumps(anchors, sort_keys=True, separators=(',', ':')) + '\n')
     print('wrote book.css, runtime, sidebar, %d anchors' % len(anchors))
 
 

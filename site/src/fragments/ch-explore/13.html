@@ -1,0 +1,42 @@
+<div class="note comfy cw-wrap">
+  <div class="seg cw-seg" role="radiogroup" aria-label="Example">
+    <input type="radio" name="cw-eff-axes-w" id="cw-eff-axes-w-1" value="figma" checked><label for="cw-eff-axes-w-1">Figma</label>
+    <input type="radio" name="cw-eff-axes-w" id="cw-eff-axes-w-2" value="tailwind"><label for="cw-eff-axes-w-2">Tailwind CSS</label>
+    <input type="radio" name="cw-eff-axes-w" id="cw-eff-axes-w-3" value="optimizely"><label for="cw-eff-axes-w-3">Optimizely</label>
+  </div>
+  <div class="cw" data-cw-view role="img" aria-label=""></div>
+  <p class="cw-cap" data-cw-cap aria-live="polite"></p>
+  
+  <script>
+  (() => {
+    const wrap = document.currentScript.closest('.cw-wrap');
+    const view = wrap.querySelector('[data-cw-view]'), cap = wrap.querySelector('[data-cw-cap]');
+    const states = [['Default', ''], ['Hover', ' hov'], ['Disabled', ' off']];
+    const sizes = [['Small', ''], ['Large', ' lg']];
+    const figGrid = '<div class="cw-nx-grid" style="grid-template-columns:42px repeat(3,minmax(0,1fr))"><i></i>' + states.map(s => '<i>' + s[0] + '</i>').join('') +
+      sizes.map((z, r) => '<i class="y">' + z[0] + '</i>' + states.map((s, c) => '<span class="cw-nx-cell' + (r === 1 && c === 1 ? ' on' : '') + '"><span class="cw-nx-b' + z[1] + s[1] + '">Save</span></span>').join('')).join('') + '</div>';
+    const hues = [['blue', 'var(--ui-sel)'], ['red', 'var(--ui-danger)'], ['green', 'var(--ui-ok)'], ['gray', 'var(--ui-muted)']];
+    const shades = [['100', 's1'], ['300', 's3'], ['500', ''], ['700', 's7'], ['900', 's9']];
+    const pal = '<div class="cw-nx-pal"><i class="ax">Hue ↓ · Shade →</i><i></i>' + shades.map(s => '<i>' + s[0] + '</i>').join('') +
+      hues.map((h, r) => '<i class="y">' + h[0] + '</i>' + shades.map((s, c) => '<i class="cw-nx-sw ' + s[1] + (r === 0 && c === 2 ? ' on' : '') + '" style="--h:' + h[1] + '"></i>').join('')).join('') + '</div>';
+    const pg = (hl, img, a, b) => '<span class="cw-nx-pg"><b class="' + (hl ? 'alt' : '') + '" style="width:' + (hl ? 60 : 85) + '%"></b><u class="' + (img ? 'alt' : '') + '"></u><small>' + a + ' + ' + b + '</small></span>';
+    const S = {
+      figma: { html: '<div class="cw-nx-row"><div class="cw-nx-set"><span class="cw-nx-name"><i></i>Button</span>' + figGrid + '</div>' +
+          '<div class="cw-nx-props"><b>Properties</b><span class="cw-nx-prop">Size<span>Large</span></span><span class="cw-nx-prop">State<span>Hover</span></span></div></div>',
+        alt: 'A Button component set laid out as a grid: Small and Large down the side, Default, Hover and Disabled across the top. The Large, Hover cell is selected, and a Properties panel shows Size Large and State Hover.',
+        cap: 'Figma: a component’s variants are set by named properties, like Size and State, each with its values. The set is usually laid out as a grid, one property per direction, so a missing or odd combination is easy to spot.' },
+      tailwind: { html: '<div class="cw-nx-row">' + pal + '<span class="cw-nx-code"><code>bg-blue-500</code></span></div>',
+        alt: 'A grid of color swatches. Hues down the side: blue, red, green, gray. Shades across the top from 100 to 900. The blue 500 swatch is outlined, and below it the class name bg-blue-500.',
+        cap: 'Tailwind CSS: every default color is named by two axes, a hue and a shade from light to dark, like blue-500. The palette is the full grid, so choosing a color means choosing a position, and its neighbors are easy to compare.' },
+      optimizely: { html: '<div class="cw-nx-row"><div class="cw-nx-mvt"><span class="cw-nx-top">Multivariate test<span>2 × 2 = 4 combinations</span></span>' +
+          '<div class="cw-nx-mx"><i></i><i>Headline A</i><i>Headline B</i><i class="y">Image 1</i>' + pg(0, 0, 'A', '1') + pg(1, 0, 'B', '1') +
+          '<i class="y">Image 2</i>' + pg(0, 1, 'A', '2') + pg(1, 1, 'B', '2') + '</div></div></div>',
+        alt: 'A multivariate test set up as a two by two grid: headline A or B across, image 1 or 2 down. Each cell is a small page with that combination, four in total.',
+        cap: 'Optimizely: a multivariate test names the parts of a page that change, like the headline and the image, with a few options each. It then tests every combination, so you can tell which part made the difference.' }
+    };
+    const render = k => { view.innerHTML = S[k].html; view.setAttribute('aria-label', 'Sketch: ' + S[k].alt); cap.textContent = S[k].cap; };
+    wrap.querySelectorAll('input[name="cw-eff-axes-w"]').forEach(r => r.addEventListener('change', () => render(r.value)));
+    render('figma');
+  })();
+  </script>
+</div>

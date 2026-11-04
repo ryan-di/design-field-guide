@@ -1,0 +1,52 @@
+<div class="note comfy cw-wrap"><p>Notice that the tool renders every state, theme or size and points at what changed or failed, but a person makes the call.</p>
+      <div class="seg cw-seg" role="radiogroup" aria-label="Example">
+        <input type="radio" name="cw-eff-design-qa-w" id="cw-eff-design-qa-w-1" value="chromatic" checked><label for="cw-eff-design-qa-w-1">Chromatic</label>
+        <input type="radio" name="cw-eff-design-qa-w" id="cw-eff-design-qa-w-2" value="xcode"><label for="cw-eff-design-qa-w-2">Xcode</label>
+        <input type="radio" name="cw-eff-design-qa-w" id="cw-eff-design-qa-w-3" value="lighthouse"><label for="cw-eff-design-qa-w-3">Lighthouse</label>
+        <input type="radio" name="cw-eff-design-qa-w" id="cw-eff-design-qa-w-4" value="devtools"><label for="cw-eff-design-qa-w-4">Chrome DevTools</label>
+      </div>
+      <div class="cw" data-cw-view role="img" aria-label=""></div>
+      <p class="cw-cap" data-cw-cap aria-live="polite"></p>
+      
+      <script>
+      (() => {
+        const wrap = document.currentScript.closest('.cw-wrap');
+        const view = wrap.querySelector('[data-cw-view]'), cap = wrap.querySelector('[data-cw-cap]');
+        const ic = id => '<svg class="icon sm" aria-hidden="true"><use href="#i-' + id + '"/></svg>';
+        const line = w => '<i class="cw-line" style="width:' + w + '%"></i>';
+        const snap = (name, shot, mb, cls) => '<div class="cw-eqa-snap ' + (cls || '') + '"><div class="cw-eqa-shot ' + shot + '"><i class="cw-eqa-mb ' + mb + '"></i>' +
+          (/chg/.test(cls || '') ? '<i class="cw-eqa-diff"></i><i class="cw-eqa-dot"></i>' : '') + '</div><span>' + name + '</span></div>';
+        const phone = (name, size, cls) => '<div class="cw-eqa-ph ' + (cls || '') + '"><div class="cw-eqa-scr">' + line(70) + line(92) + line(55) +
+          '<span class="cw-eqa-pb" style="font-size:' + size + 'px">Save all</span></div><span>' + name + '</span></div>';
+        const item = (cls, icon, text, meta) => '<div class="cw-eqa-item ' + cls + '">' + ic(icon) + '<span>' + text + '</span>' + (meta ? '<em>' + meta + '</em>' : '') + '</div>';
+        const opt = (label, value, on) => '<div class="cw-eqa-opt"><span>' + label + '</span><span class="cw-eqa-sel' + (on ? ' on' : '') + '">' + value + '<i>▾</i></span></div>';
+        const S = {
+          chromatic: { html: '<div class="cw-eqa-win"><div class="cw-eqa-top"><b>UI review · Button</b><span>2 of 6 changed</span></div><div class="cw-eqa-body"><div class="cw-eqa-grid">' +
+              snap('Default', '', '') + snap('Hover', '', 'hov') + snap('Disabled', '', 'off', 'chg on') +
+              snap('Loading', '', 'load') + snap('Long label', '', 'long', 'chg') + snap('Narrow', 'narrow', 'thin') + '</div>' +
+              '<div class="cw-eqa-act"><b>Disabled: changed</b><span class="cw-eqa-btns"><span class="btn btn-secondary">Deny</span><span class="btn btn-primary">Accept</span></span></div></div></div>',
+            alt: 'A visual review screen with six snapshots of a button: default, hover, disabled, loading, long label and narrow. Two are marked changed. The selected one, disabled, has Deny and Accept buttons.',
+            cap: 'Chromatic: every Storybook story is captured on each change, in the browsers and widths you choose, and changed snapshots wait for a person to accept or deny them.' },
+          xcode: { html: '<div class="cw-eqa-win"><div class="cw-eqa-top"><b>Preview · Variants</b></div><div class="cw-eqa-body">' +
+              '<div class="cw-eqa-tabs"><span>Color scheme</span><span class="on">Text size</span></div><div class="cw-eqa-phones">' +
+              phone('Small', 11.5) + phone('Default', 13) + phone('Largest', 19, 'bad') + '</div></div></div>',
+            alt: 'A preview canvas shows the same screen three times, at small, default and largest text size. At the largest size the button label is cut off, and that frame is outlined in red.',
+            cap: 'Xcode: SwiftUI previews have a variants mode that shows one screen in each color scheme, orientation or text size, side by side. A label that only breaks at the largest text size is in view while you work.' },
+          lighthouse: { html: '<div class="cw-eqa-win"><div class="cw-eqa-body"><div class="cw-eqa-lh"><span class="cw-eqa-ring"></span><b>Accessibility</b></div>' +
+              '<p class="cw-eqa-sec bad">Failed</p><div>' + item('bad', 'x', 'Text contrast is too low', '3 items') + item('bad', 'x', 'A button has no name') + '</div>' +
+              '<p class="cw-eqa-sec">Passed</p><div>' + item('ok', 'check', 'Images have text alternatives') + '</div>' +
+              '<p class="cw-eqa-sec">Check by hand</p><div>' + item('hand', 'info', 'Tab order makes sense') + item('hand', 'info', 'Focus moves to new content') + '</div></div></div>',
+            alt: 'An accessibility report. Failed: text contrast is too low on 3 items, a button has no name. Passed: images have text alternatives. Check by hand: tab order makes sense, focus moves to new content.',
+            cap: 'Lighthouse: besides what a tool can measure, the accessibility audit lists items to check by hand, like a sensible tab order, because a scan can’t judge them.' },
+          devtools: { html: '<div class="cw-eqa-win"><div class="cw-eqa-dt"><span>Responsive</span><span>360</span><i>×</i><span>740</span></div>' +
+              '<div class="cw-eqa-split"><div class="cw-eqa-dev">' + line(60) + line(90) + line(75) + line(40) + '<i class="cw-eqa-mb"></i></div>' +
+              '<div class="cw-eqa-rend"><b>Rendering</b>' + opt('Color scheme', 'Dark', true) + opt('Reduced motion', 'Reduce', true) + opt('Vision', 'No change') + '</div></div></div>',
+            alt: 'Browser developer tools. The page is resized to 360 by 740 and shown dark. A Rendering panel sets color scheme to dark and reduced motion to reduce.',
+            cap: 'Chrome DevTools: device mode resizes the page to a phone width, and the Rendering panel can switch it to dark mode or reduced motion. You can confirm a finding yourself in seconds, without a phone or a change to system settings.' }
+        };
+        const render = k => { view.innerHTML = S[k].html; view.setAttribute('aria-label', 'Sketch: ' + S[k].alt); cap.textContent = S[k].cap; };
+        wrap.querySelectorAll('input[name="cw-eff-design-qa-w"]').forEach(r => r.addEventListener('change', () => render(r.value)));
+        render('chromatic');
+      })();
+      </script>
+    </div>

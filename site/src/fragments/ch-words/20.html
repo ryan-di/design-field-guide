@@ -1,0 +1,39 @@
+<div class="note comfy cw-wrap">
+  <div class="seg cw-seg" role="radiogroup" aria-label="Example">
+    <input type="radio" name="cw-good-plain-language-w" id="cw-good-plain-language-w-1" value="docs" checked><label for="cw-good-plain-language-w-1">Google Docs</label>
+    <input type="radio" name="cw-good-plain-language-w" id="cw-good-plain-language-w-2" value="uber"><label for="cw-good-plain-language-w-2">Uber</label>
+    <input type="radio" name="cw-good-plain-language-w" id="cw-good-plain-language-w-3" value="ios"><label for="cw-good-plain-language-w-3">iOS</label>
+  </div>
+  <div class="cw" data-cw-view role="img" aria-label=""></div>
+  <p class="cw-cap" data-cw-cap aria-live="polite"></p>
+  
+  <script>
+  (() => {
+    const wrap = document.currentScript.closest('.cw-wrap');
+    const view = wrap.querySelector('[data-cw-view]'), cap = wrap.querySelector('[data-cw-cap]');
+    const ic = id => '<svg class="icon sm"><use href="#i-' + id + '"/></svg>';
+    const svg = d => '<svg class="icon sm" viewBox="0 0 24 24">' + d + '</svg>';
+    const hl = t => '<mark class="cw-gpl-hl">' + t + '</mark>';
+    const ver = (when, who, on) => '<span class="cw-gpl-ver' + (on ? ' on' : '') + '"><span>' + when + '</span><em>' + who + '</em></span>';
+    const S = {
+      docs: { html: '<div class="cw-gpl-row"><div class="cw-gpl-menu"><span class="cw-gpl-mh">File</span><span>Make a copy</span><span>Download</span><span class="on"><i class="cw-gpl-arr">›</i>' + hl('Version') + ' history</span></div>' +
+          '<div class="cw-gpl-menu"><span>Name current ' + hl('version') + '</span><span>See ' + hl('version') + ' history</span></div></div>' +
+          '<div class="cw-gpl-panel"><span class="btn btn-primary">Restore this ' + hl('version') + '</span><b>' + hl('Version') + ' history</b>' + ver('Today, 10:42', 'Sam') + ver('Yesterday, 18:05', 'Ana', true) + ver('Monday, 09:12', 'Sam') + '</div>',
+        alt: 'A File menu with Version history open: Name current version, See version history. Below, a Version history panel with three saved versions and a Restore this version button. The word version is highlighted each time.',
+        cap: 'Google Docs: the menu, the side panel and the button all use the same word: Version history, Name current version, Restore this version.' },
+      uber: { html: '<div class="cw-gpl-mid"><div class="cw-gpl-phone"><i class="cw-gpl-map"></i><div class="cw-gpl-sheet"><span class="cw-gpl-where">' + ic('search') + 'Where to?</span>' +
+          '<span class="cw-gpl-place">' + ic('home') + '<span><b>Home</b><em>12 Elm Street</em></span></span>' +
+          '<span class="cw-gpl-place">' + svg('<rect x="4" y="7" width="16" height="12" rx="2"/><path d="M9 7V5h6v2"/>') + '<span><b>Work</b><em>40 Market Street</em></span></span></div></div></div>',
+        alt: 'A phone with a small map. Below it, a large search field reads Where to?, with saved places Home and Work under it.',
+        cap: 'Uber: the main field asks “Where to?”, the way a driver would, instead of “Enter destination address”. Saved places use people’s own names, like Home and Work.' },
+      ios: { html: '<div class="cw-gpl-mid"><div class="cw-gpl-set"><div class="cw-gpl-group"><span class="cw-gpl-item">Battery Percentage<i class="cw-gpl-sw on"></i></span></div><div class="cw-gpl-group"><span class="cw-gpl-item">Low Power Mode<i class="cw-gpl-sw"></i></span></div>' +
+          '<p class="cw-gpl-foot">Cuts background activity, like downloads and mail fetch, until you can fully charge.</p></div></div>',
+        alt: 'Two settings with switches: Battery Percentage and Low Power Mode. A short gray line under Low Power Mode explains in plain words what Low Power Mode cuts back and for how long.',
+        cap: 'iOS: a setting has a plain name, and the line under it says what it does with everyday examples. Low Power Mode names what it cuts back, like downloads and mail, and for how long.' }
+    };
+    const render = k => { view.innerHTML = S[k].html; view.setAttribute('aria-label', 'Sketch: ' + S[k].alt); cap.textContent = S[k].cap; };
+    wrap.querySelectorAll('input[name="cw-good-plain-language-w"]').forEach(r => r.addEventListener('change', () => render(r.value)));
+    render('docs');
+  })();
+  </script>
+</div>

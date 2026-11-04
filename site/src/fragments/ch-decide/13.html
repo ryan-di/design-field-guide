@@ -1,0 +1,47 @@
+<div class="note comfy cw-wrap">
+  <div class="seg cw-seg" role="radiogroup" aria-label="Example">
+    <input type="radio" name="cw-eff-spot-plausible-w" id="cw-eff-spot-plausible-w-1" value="github" checked><label for="cw-eff-spot-plausible-w-1">GitHub</label>
+    <input type="radio" name="cw-eff-spot-plausible-w" id="cw-eff-spot-plausible-w-2" value="chromatic"><label for="cw-eff-spot-plausible-w-2">Chromatic</label>
+    <input type="radio" name="cw-eff-spot-plausible-w" id="cw-eff-spot-plausible-w-3" value="lighthouse"><label for="cw-eff-spot-plausible-w-3">Lighthouse</label>
+    <input type="radio" name="cw-eff-spot-plausible-w" id="cw-eff-spot-plausible-w-4" value="gmail"><label for="cw-eff-spot-plausible-w-4">Gmail</label>
+  </div>
+  <div class="cw" data-cw-view role="img" aria-label=""></div>
+  <p class="cw-cap" data-cw-cap aria-live="polite"></p>
+  
+  <script>
+  (() => {
+    const wrap = document.currentScript.closest('.cw-wrap');
+    const view = wrap.querySelector('[data-cw-view]'), cap = wrap.querySelector('[data-cw-cap]');
+    const ic = id => '<svg class="icon sm" aria-hidden="true"><use href="#i-' + id + '"/></svg>';
+    const L = w => '<i class="cw-line" style="width:' + w + '%"></i>';
+    const chk = (name, ok) => '<span class="cw-pl-chk' + (ok ? '' : ' bad') + '">' + ic(ok ? 'check' : 'x') + '<b>' + name + '</b>' + (ok ? '' : '<u>Details</u>') + '<span class="cw-pl-req">Required</span></span>';
+    const aud = (t, n) => '<span>' + ic('warn') + '<span>' + t + '</span><em>' + n + '</em></span>';
+    const S = {
+      github: { html: '<div class="cw-pl-card"><div class="cw-pl-head bad">' + ic('x') + '1 of 3 checks failed</div>' +
+          chk('Unit tests', 1) + chk('Lint', 1) + chk('End-to-end tests', 0) +
+          '<div class="cw-pl-foot"><span class="btn btn-primary" aria-disabled="true">Merge</span><small>Required checks must pass first.</small></div></div>',
+        alt: 'A pull request’s merge box. Unit tests and lint pass; the end-to-end tests fail. All three are required, so the Merge button is disabled.',
+        cap: 'GitHub: a repository can require status checks, like tests and lint (automatic checks for code mistakes), to pass before a pull request can merge. A change that looks right in review still can’t land until they pass.' },
+      chromatic: { html: '<div class="cw-pl-card"><div class="cw-pl-head">Card / With action<small>1 change</small></div><div class="cw-pl-diff">' +
+          '<div class="cw-pl-side"><small>Baseline</small><div class="cw-pl-shot">' + L(80) + L(55) + '<span class="cw-pl-b">Open</span></div></div>' +
+          '<div class="cw-pl-side"><small>New</small><div class="cw-pl-shot">' + L(80) + L(55) + '<span class="cw-pl-chg"><span class="cw-pl-b">Open</span></span></div></div></div>' +
+          '<div class="cw-pl-acts"><span class="btn btn-secondary">Deny</span><span class="btn btn-primary">Accept</span></div></div>',
+        alt: 'Two snapshots of the same card story: the accepted baseline and the new version. In the new one the button has moved a few pixels and changed shade; the changed area is highlighted. Deny and Accept buttons below.',
+        cap: 'Chromatic: it highlights the pixels that changed in every Storybook story since the last accepted version, so a small shift in spacing or color can’t slip in unseen.' },
+      lighthouse: { html: '<div class="cw-pl-card"><div class="cw-pl-score"><span class="cw-pl-ring"><span>78</span></span><span><b>Accessibility</b><small>3 checks failed</small></span></div>' +
+          '<div class="cw-pl-aud">' + aud('Text has low contrast', '3 items') + aud('Button has no accessible name', '1 item') + '<code>&lt;button class="icon-close"&gt;</code>' + aud('Form field has no label', '2 items') + '</div></div>',
+        alt: 'An accessibility audit scoring 78. Three failed checks: low contrast text, 3 items; a button with no accessible name, 1 item, with the exact button element shown; form fields with no label, 2 items.',
+        cap: 'Lighthouse: an audit built into Chrome’s developer tools checks a page for problems a screenshot hides, like low contrast or buttons with no name. Each failed check lists the exact elements to fix.' },
+      gmail: { html: '<div class="cw-pl-card cw-pl-mail"><div class="cw-pl-head">New message</div><div class="cw-pl-f"><i>To</i>Ana Lee</div><div class="cw-pl-f"><i>Subject</i>Signed contract</div>' +
+          '<div class="cw-pl-body"><span>Hi Ana, the signed contract is <mark>attached</mark>.</span>' + L(60) + '</div>' +
+          '<div class="cw-pl-scrim"><div class="cw-pl-dlg"><b>Forgot a file?</b><span>Your message mentions an attachment, but nothing is attached.</span>' +
+          '<div class="cw-pl-acts"><span class="btn btn-secondary">Send anyway</span><span class="btn btn-primary">Go back</span></div></div></div></div>',
+        alt: 'A new email that says the signed contract is attached, with the word attached highlighted. There is no attachment, and a dialog asks: forgot a file? with Send anyway and Go back.',
+        cap: 'Gmail: if a message says something is attached but nothing is, it asks before sending. The email reads as finished, and the check catches the one thing it promised but doesn’t have.' }
+    };
+    const render = k => { view.innerHTML = S[k].html; view.setAttribute('aria-label', 'Sketch: ' + S[k].alt); cap.textContent = S[k].cap; };
+    wrap.querySelectorAll('input[name="cw-eff-spot-plausible-w"]').forEach(r => r.addEventListener('change', () => render(r.value)));
+    render('github');
+  })();
+  </script>
+</div>

@@ -1,0 +1,44 @@
+<div class="note comfy cw-wrap"><p>Each one gets a different heuristic right. Naming the heuristic when you see it done well makes it easier to spot when it’s missing.</p>
+  <div class="seg cw-seg" role="radiogroup" aria-label="Example">
+    <input type="radio" name="cw-good-heuristic-review-w" id="cw-good-heuristic-review-w-1" value="uber" checked><label for="cw-good-heuristic-review-w-1">Uber</label>
+    <input type="radio" name="cw-good-heuristic-review-w" id="cw-good-heuristic-review-w-2" value="gmail"><label for="cw-good-heuristic-review-w-2">Gmail</label>
+    <input type="radio" name="cw-good-heuristic-review-w" id="cw-good-heuristic-review-w-3" value="macos"><label for="cw-good-heuristic-review-w-3">macOS</label>
+    <input type="radio" name="cw-good-heuristic-review-w" id="cw-good-heuristic-review-w-4" value="search"><label for="cw-good-heuristic-review-w-4">Google Search</label>
+  </div>
+  <div class="cw" data-cw-view role="img" aria-label=""></div>
+  <p class="cw-cap" data-cw-cap aria-live="polite"></p>
+  
+  <script>
+  (() => {
+    const wrap = document.currentScript.closest('.cw-wrap');
+    const view = wrap.querySelector('[data-cw-view]'), cap = wrap.querySelector('[data-cw-cap]');
+    const L = (w, cls) => '<i class="cw-line' + (cls ? ' ' + cls : '') + '" style="width:' + w + '"></i>';
+    const hs = (...t) => '<div class="cw-ghr-hs">' + t.map(x => '<span class="cw-ghr-h">' + x + '</span>').join('') + '</div>';
+    const item = (name, key, on) => '<span' + (on ? ' class="on"' : '') + '>' + name + '<kbd>' + key + '</kbd></span>';
+    const map = '<svg viewBox="0 0 300 120" aria-hidden="true"><rect class="rd" x="0" y="32" width="300" height="12"/><rect class="rd" x="0" y="84" width="300" height="12"/><rect class="rd" x="58" y="0" width="12" height="120"/><rect class="rd" x="198" y="0" width="12" height="120"/>' +
+      '<polyline class="rt" points="64,76 64,38 204,38 204,90 252,90"/><rect class="car" x="58" y="72" width="12" height="20" rx="3"/><circle class="pin" cx="252" cy="90" r="8"/></svg>';
+    const S = {
+      uber: { html: hs('1 · Visibility of system status') + '<div class="cw-ghr-win"><div class="cw-ghr-map">' + map + '</div><div class="cw-ghr-sheet"><b>Arriving in 3 min</b>' + L('62%') + L('40%') + '</div></div>',
+        alt: 'A map with a car on a road and a route line to the pickup pin. A sheet below says Arriving in 3 min.',
+        cap: 'Uber: after you book, the map shows the car moving toward you and the arrival time keeps updating, so you never wonder whether anything is happening. Heuristic 1, visibility of system status.' },
+      gmail: { html: hs('5 · Error prevention') + '<div class="cw-ghr-stack"><div class="cw-ghr-win"><div class="cw-ghr-bar">New message</div><div class="cw-ghr-f">To ' + L('90px') + '</div>' +
+          '<div class="cw-ghr-body"><span>Hi Sam, the draft is <mark>attached</mark>.</span>' + L('70%') + '</div></div>' +
+          '<div class="surface cw-ghr-dlg"><b>Send without a file?</b><span>You wrote “attached”, but nothing is attached.</span><span class="cw-ghr-acts"><span class="btn btn-secondary">Cancel</span><span class="btn btn-primary">Send anyway</span></span></div></div>',
+        alt: 'A new email that says the draft is attached, with no file. A dialog asks Send without a file? with Cancel and Send anyway.',
+        cap: 'Gmail: if a message mentions an attachment but has no file, Gmail asks before sending. It catches the slip at the last moment it can still be fixed. Heuristic 5, error prevention.' },
+      macos: { html: hs('6 · Recognition rather than recall', '7 · Flexibility and efficiency') + '<div class="cw-ghr-mac"><div class="cw-ghr-mbar"><span>File</span><span class="on">Edit</span><span>View</span><span>Window</span></div>' +
+          '<div class="surface cw-ghr-menu">' + item('Undo', '⌘Z') + item('Redo', '⇧⌘Z') + '<hr>' + item('Cut', '⌘X') + item('Copy', '⌘C', true) + item('Paste', '⌘V') + item('Select All', '⌘A') + '</div></div>',
+        alt: 'A menu bar with the Edit menu open: Undo, Redo, Cut, Copy, Paste and Select All, each with its keyboard shortcut on the right.',
+        cap: 'macOS: menus list every command by name with its shortcut beside it. People find a command by looking instead of remembering, and pick up the faster key along the way. Heuristics 6 and 7.' },
+      search: { html: hs('9 · Recover from errors') + '<div class="cw-ghr-win cw-ghr-serp"><div class="cw-ghr-q"><svg class="icon sm"><use href="#i-search"/></svg>recipie for pancakes</div>' +
+          '<span class="cw-ghr-fix">Showing results for <b><i>recipe</i> for pancakes</b></span><span class="cw-ghr-alt">Search instead for <u>recipie for pancakes</u></span>' +
+          '<div class="cw-ghr-res">' + L('55%', 't') + L('92%') + L('76%') + '</div></div>',
+        alt: 'A search for recipie for pancakes. Below: Showing results for recipe for pancakes, and a link to search instead for the original spelling.',
+        cap: 'Google Search: a misspelled query gets results for the likely spelling, with a link to search for exactly what you typed. Heuristic 9, help users recognize, diagnose and recover from errors.' }
+    };
+    const render = k => { view.innerHTML = S[k].html; view.setAttribute('aria-label', 'Sketch: ' + S[k].alt); cap.textContent = S[k].cap; };
+    wrap.querySelectorAll('input[name="cw-good-heuristic-review-w"]').forEach(r => r.addEventListener('change', () => render(r.value)));
+    render('uber');
+  })();
+  </script>
+</div>

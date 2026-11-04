@@ -1,0 +1,52 @@
+<div class="note comfy cw-wrap">
+      <div class="seg cw-seg" role="radiogroup" aria-label="Example">
+        <input type="radio" name="cw-pat-presets-w" id="cw-pat-presets-w-1" value="photoshop" checked><label for="cw-pat-presets-w-1">Photoshop</label>
+        <input type="radio" name="cw-pat-presets-w" id="cw-pat-presets-w-2" value="youtube"><label for="cw-pat-presets-w-2">YouTube</label>
+        <input type="radio" name="cw-pat-presets-w" id="cw-pat-presets-w-3" value="instagram"><label for="cw-pat-presets-w-3">Instagram</label>
+        <input type="radio" name="cw-pat-presets-w" id="cw-pat-presets-w-4" value="gdocs"><label for="cw-pat-presets-w-4">Google Docs</label>
+      </div>
+      <div class="cw" data-cw-view role="img" aria-label=""></div>
+      <p class="cw-cap" data-cw-cap aria-live="polite"></p>
+      
+      <script>
+      (() => {
+        const wrap = document.currentScript.closest('.cw-wrap');
+        const view = wrap.querySelector('[data-cw-view]'), cap = wrap.querySelector('[data-cw-cap]');
+        const ic = id => '<svg class="icon sm"><use href="#i-' + id + '"/></svg>';
+        const down = '<svg class="icon sm" viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"/></svg>';
+        const right = '<svg class="icon sm" viewBox="0 0 24 24"><path d="M9 6l6 6-6 6"/></svg>';
+        const save = '<svg class="icon sm" viewBox="0 0 24 24"><path d="M5 4h11l3 3v13H5z"/><path d="M8 4v5h7V4M8 20v-6h8v6"/></svg>';
+        const line = w => '<i class="cw-line" style="width:' + w + '%"></i>';
+        const card = (name, size, on) => '<span class="cw-pset-card' + (on ? ' on' : '') + '"><i></i><b>' + name + '</b>' + size + '</span>';
+        const kv = (k, v) => '<span class="cw-pset-kv">' + k + '<em>' + v + '</em></span>';
+        const opt = (name, note, on, more) => '<span class="cw-pset-opt' + (on ? ' on' : '') + '"><span>' + name + (note ? '<small>' + note + '</small>' : '') + '</span>' + (more ? right : '<i></i>') + '</span>';
+        const f = (name, cls) => '<span class="cw-pset-f ' + cls + '"><i></i>' + name + '</span>';
+        const S = {
+          photoshop: { html: '<div class="cw-pset-win"><div class="cw-pset-tabs"><span>Photo</span><span>Print</span><span class="on">Web</span><span>Mobile</span></div>' +
+              '<div class="cw-pset-body"><div class="cw-pset-grid">' + card('Large', '1920 × 1080', true) + card('Medium', '1280 × 800') + card('Small', '1024 × 768') + card('Banner', '1200 × 400') + '</div>' +
+              '<div class="cw-pset-det"><b>Preset details' + save + '</b>' + kv('Width', '1920 px') + kv('Height', '1080 px') + kv('Resolution', '72') + kv('Color', 'RGB') + '</div></div>' +
+              '<div class="cw-pset-acts"><span class="btn btn-primary">Create</span></div></div>',
+            alt: 'A new document dialog with tabs Photo, Print, Web and Mobile. Web is open and the Large preset is picked. Next to it, its details: width 1920, height 1080, resolution 72, color RGB, with a save icon.',
+            cap: 'Photoshop: a new document starts from presets grouped by use, like Print or Web. Picking one fills in the size, resolution and color mode, which stay editable, and a custom setup can be saved as a new preset.' },
+          youtube: { html: '<div class="cw-pset-phone"><div class="thumb cw-pset-video">' + ic('play') + '</div>' +
+              '<div class="cw-pset-sheet"><b>Quality</b>' + opt('Auto', 'Adjusts to your connection') + opt('Higher quality', 'Uses more data', true) + opt('Data saver', 'Lower quality') + opt('Advanced', 'Pick a resolution', false, true) + '</div></div>',
+            alt: 'A phone playing a video, with a quality sheet: Auto, Higher quality (picked), Data saver, and Advanced with an arrow for picking a resolution.',
+            cap: 'YouTube: on phones, video quality offers choices named by outcome, like higher quality or data saver. Exact resolutions are still there under Advanced.' },
+          instagram: { html: '<div class="cw-pset-phone"><div class="thumb cw-pset-photo warm"></div>' +
+              '<div class="cw-pset-strip">' + f('Normal', '') + f('Warm', 'warm on') + f('Fade', 'fade') + f('Mono', 'mono') + '</div>' +
+              '<div class="cw-pset-str"><i></i><b>70</b><small>Tap Warm again to set its strength</small></div></div>',
+            alt: 'A phone editing a photo. A strip of filters, Normal, Warm, Fade and Mono, shows the photo in each. Warm is picked, and a strength slider below is set to 70.',
+            cap: 'Instagram: one tap on a filter changes several adjustments at once. Tapping it again shows a strength slider, so the look can be softened without starting over.' },
+          gdocs: { html: '<div class="cw-pset-win"><div class="cw-pset-tb"><span class="cw-pset-sty">Heading 1' + down + '</span><b>B</b><i>I</i><u>U</u></div>' +
+              '<div class="cw-pset-docw"><div class="cw-pset-text" aria-hidden="true">' + line(50) + line(94) + line(88) + line(70) + line(92) + line(60) + line(84) + line(76) + '</div>' +
+              '<div class="cw-pset-menus"><div class="cw-pset-menu"><span>Normal text</span><span class="tt">Title</span><span class="h1 on">Heading 1' + right + '</span><span>Heading 2</span></div>' +
+              '<div class="cw-pset-menu cw-pset-sub"><span>Apply Heading 1</span><span class="go">Update Heading 1 to match</span></div></div></div></div>',
+            alt: 'A document toolbar with the style menu open: Normal text, Title, Heading 1 and Heading 2. Heading 1 has a submenu with Apply Heading 1 and Update Heading 1 to match, which is highlighted.',
+            cap: 'Google Docs: styles like Heading 1 set size, weight and spacing together. After restyling one heading by hand, “Update Heading 1 to match” gives every Heading 1 that look.' }
+        };
+        const render = k => { view.innerHTML = S[k].html; view.setAttribute('aria-label', 'Sketch: ' + S[k].alt); cap.textContent = S[k].cap; };
+        wrap.querySelectorAll('input[name="cw-pat-presets-w"]').forEach(r => r.addEventListener('change', () => render(r.value)));
+        render('photoshop');
+      })();
+      </script>
+    </div>

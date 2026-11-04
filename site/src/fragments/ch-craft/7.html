@@ -1,0 +1,23 @@
+<div class="stage tall" data-demo="good-edge-cases">
+      <div class="seg" role="radiogroup" aria-label="Version">
+        <input type="radio" name="p22-ec-mode" id="p22-ec-before" value="before"><label for="p22-ec-before">Before</label>
+        <input type="radio" name="p22-ec-mode" id="p22-ec-after" value="after" checked><label for="p22-ec-after">After</label>
+      </div>
+      <div class="surface p22-flags" role="group" aria-labelledby="p22-ec-legend">
+        <p class="p22-cap" id="p22-ec-legend">Make the data messy</p>
+        <div class="p22-flag-grid">
+          <label class="check"><input type="checkbox" data-flag="long"> Very long name</label>
+          <label class="check"><input type="checkbox" data-flag="nothumb"> Missing thumbnail</label>
+          <label class="check"><input type="checkbox" data-flag="huge"> 1,234,567 plays</label>
+          <label class="check"><input type="checkbox" data-flag="nodesc"> Empty description</label>
+          <label class="check"><input type="checkbox" data-flag="narrow"> Narrow container</label>
+        </div>
+        <div class="p22-flag-actions">
+          <button class="btn btn-secondary" type="button" id="p22-ec-all">Turn all on</button>
+          <button class="btn btn-ghost" type="button" id="p22-ec-reload">Reload card</button>
+        </div>
+      </div>
+      <div class="p22-ec-box" id="p22-ec-box"></div>
+      <p class="state-caption" id="p22-ec-cap"></p>
+      <p class="try"><b>Try it:</b> in Before, turn on all five and count what breaks. Switch to After and look at how each one is handled. Then press Reload card in both versions and watch whether the text jumps.</p>
+    </div>

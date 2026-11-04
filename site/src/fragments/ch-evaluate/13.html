@@ -1,0 +1,53 @@
+<div class="note comfy cw-wrap"><p>Notice that each team counts a number that moves only when people get what they came for, and some add one that must not get worse.</p>
+      <div class="seg cw-seg" role="radiogroup" aria-label="Example">
+        <input type="radio" name="cw-eff-measure-w" id="cw-eff-measure-w-1" value="youtube" checked><label for="cw-eff-measure-w-1">YouTube</label>
+        <input type="radio" name="cw-eff-measure-w" id="cw-eff-measure-w-2" value="heart"><label for="cw-eff-measure-w-2">Google</label>
+        <input type="radio" name="cw-eff-measure-w" id="cw-eff-measure-w-3" value="msft"><label for="cw-eff-measure-w-3">Microsoft</label>
+        <input type="radio" name="cw-eff-measure-w" id="cw-eff-measure-w-4" value="psi"><label for="cw-eff-measure-w-4">PageSpeed Insights</label>
+      </div>
+      <div class="cw" data-cw-view role="img" aria-label=""></div>
+      <p class="cw-cap" data-cw-cap aria-live="polite"></p>
+      
+      <script>
+      (() => {
+        const wrap = document.currentScript.closest('.cw-wrap');
+        const view = wrap.querySelector('[data-cw-view]'), cap = wrap.querySelector('[data-cw-cap]');
+        const ic = id => '<svg class="icon sm" aria-hidden="true"><use href="#i-' + id + '"/></svg>';
+        const meter = (name, w, on) => '<span class="cw-ems-meter' + (on ? ' on' : '') + '"><span>' + name + '</span><i style="--w:' + w + '%"></i></span>';
+        const vid = (name, thumb, clicks, watch, pill, win) => '<div class="cw-ems-vid' + (win ? ' win' : '') + '"><i class="thumb ' + thumb + ' cw-ems-th"></i><div class="cw-ems-vm">' +
+          '<span class="cw-ems-vt">' + name + pill + '</span>' + meter('Clicks', clicks) + meter('Watch time', watch, true) + '</div></div>';
+        const step = (k, text, last) => '<div class="cw-ems-step' + (last ? ' last' : '') + '"><span class="cw-ems-k">' + k + '</span><b>' + text + '</b></div>';
+        const row = (k, name, pill, cls) => '<div class="cw-ems-row ' + (cls || '') + '"><span><span class="cw-ems-k">' + k + '</span><b>' + name + '</b></span>' + pill + '</div>';
+        const tile = (name, at, pill) => '<div class="cw-ems-tile"><b>' + name + '</b><span class="cw-ems-scale"><i></i><i></i><i></i><em style="--at:' + at + '%"></em></span>' + pill + '</div>';
+        const S = {
+          youtube: { html: '<div class="cw-ems-card"><span class="cw-ems-ttl">Which video gets recommended?</span>' +
+              vid('Video A', '', 90, 18, '<span class="cw-ems-pill bad">Most leave early</span>') +
+              vid('Video B', 'b', 55, 82, '<span class="cw-ems-pill ok">Shown more</span>', true) + '</div>',
+            alt: 'Two videos. Video A gets many clicks but little watch time, and most people leave early. Video B gets fewer clicks but much more watch time, and is shown more.',
+            cap: 'YouTube: recommendations count watch time, not just clicks. A misleading thumbnail wins the click, but people leave early, so watch time shows whether they found what they wanted.' },
+          heart: { html: '<div class="cw-ems-card"><div class="cw-ems-letters"><span>H</span><span>E</span><span>A</span><span>R</span><span class="on">T · Task success</span></div>' +
+              '<div class="cw-ems-gsm">' + step('Goal', 'People find the file they need, fast.') + step('Signal', 'They search, then open a result.') + step('Metric', 'Time from search to opening a file.', true) + '</div>' +
+              '<span class="cw-ems-skip">H, E, A, R: left out, they don’t fit this goal.</span></div>',
+            alt: 'A HEART worksheet. Of the letters H, E, A, R and T, only T, task success, is picked. Goal: people find the file they need, fast. Signal: they search, then open a result. Metric: time from search to opening a file. The other letters are left out.',
+            cap: 'Google: the HEART framework starts from a goal, then names the signal that shows it, then the metric. It has a slot each for happiness, engagement, adoption, retention and task success, and teams fill only the ones that fit the goal.' },
+          msft: { html: '<div class="cw-ems-card"><div class="cw-ems-top"><span class="cw-ems-ttl">Experiment: new results page</span><span class="cw-ems-pill">B vs A</span></div>' +
+              row('Main measure', 'Sessions per user', '<span class="cw-ems-pill ok">Better</span>', 'main') +
+              row('Guardrail', 'Page load time', '<span class="cw-ems-pill bad">Worse</span>', 'broke') +
+              row('Guardrail', 'Errors', '<span class="cw-ems-pill">No change</span>') +
+              '<span class="cw-ems-verdict">' + ic('warn') + 'Not ready: a guardrail got worse</span></div>',
+            alt: 'An experiment scorecard. Main measure, sessions per user: better. Guardrail, page load time: worse. Guardrail, errors: no change. Verdict: not ready, a guardrail got worse.',
+            cap: 'Microsoft: experiments are judged on one main measure agreed before the test, plus guardrails like page load time. A win on the main number isn’t enough if a guardrail slips.' },
+          psi: { html: '<div class="cw-ems-card"><span class="cw-ems-ttl">Real visits to this page</span><div class="cw-ems-tiles">' +
+              tile('Main content shown', 28, '<span class="cw-ems-pill ok">Good</span>') +
+              tile('Response to a tap', 20, '<span class="cw-ems-pill ok">Good</span>') +
+              tile('Layout jumps', 62, '<span class="cw-ems-pill">Needs work</span>') + '</div>' +
+              '<span class="cw-ems-not">' + ic('x') + 'Not the measure: <s>load event fired</s></span></div>',
+            alt: 'Three measures from real visits: main content shown, good; response to a tap, good; layout jumps, needs work. A note says when the load event fires is not the measure.',
+            cap: 'PageSpeed Insights: speed is measured the way people feel it: when the main content appears, how fast a tap gets a response, and whether the layout jumps. A page can fire its load event early and still look blank.' }
+        };
+        const render = k => { view.innerHTML = S[k].html; view.setAttribute('aria-label', 'Sketch: ' + S[k].alt); cap.textContent = S[k].cap; };
+        wrap.querySelectorAll('input[name="cw-eff-measure-w"]').forEach(r => r.addEventListener('change', () => render(r.value)));
+        render('youtube');
+      })();
+      </script>
+    </div>

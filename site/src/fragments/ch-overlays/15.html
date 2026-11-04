@@ -1,0 +1,46 @@
+<div class="note comfy cw-wrap">
+      <div class="seg cw-seg" role="radiogroup" aria-label="Example">
+        <input type="radio" name="cw-popover-w" id="cw-popover-w-1" value="figma" checked><label for="cw-popover-w-1">Figma</label>
+        <input type="radio" name="cw-popover-w" id="cw-popover-w-2" value="docs"><label for="cw-popover-w-2">Google Docs</label>
+        <input type="radio" name="cw-popover-w" id="cw-popover-w-3" value="airbnb"><label for="cw-popover-w-3">Airbnb</label>
+        <input type="radio" name="cw-popover-w" id="cw-popover-w-4" value="youtube"><label for="cw-popover-w-4">YouTube</label>
+      </div>
+      <div class="cw" data-cw-view role="img" aria-label=""></div>
+      <p class="cw-cap" data-cw-cap aria-live="polite"></p>
+      
+      <script>
+      (() => {
+        const wrap = document.currentScript.closest('.cw-wrap');
+        const view = wrap.querySelector('[data-cw-view]'), cap = wrap.querySelector('[data-cw-cap]');
+        const ic = id => '<svg class="icon sm"><use href="#i-' + id + '"/></svg>';
+        const ln = w => '<i class="cw-popw-ln"' + (w ? ' style="width:' + w + '"' : '') + '></i>';
+        const guest = (name, n) => '<div class="cw-popw-g">' + name + '<span class="cw-popw-step"><span class="cw-popw-pm' + (n ? '' : ' off') + '">' + ic('minus') + '</span><span class="cw-popw-n">' + n + '</span><span class="cw-popw-pm">' + ic('plus') + '</span></span></div>';
+        const li = (a, b, cls) => '<span class="cw-popw-li' + (cls ? ' ' + cls : '') + '">' + a + (b ? '<em>' + b + '</em>' : '') + '</span>';
+        const player = list => '<div class="cw-popw-pl"><div class="cw-popw-pop cw-popw-list">' + list + '</div><div class="cw-popw-ctl">' + ic('play') + ln() + '<span class="cw-popw-gear">' + ic('gear') + '</span></div></div>';
+        const S = {
+          figma: { html: '<div class="cw-popw-win cw-popw-fig"><div class="cw-popw-cv"><div class="cw-popw-shape"></div>' +
+              '<div class="cw-popw-pop cw-popw-picker"><div class="cw-popw-field"></div><div class="cw-popw-hue"></div><span class="cw-popw-hex">Hex' + ln() + '</span></div></div>' +
+              '<div class="cw-popw-side"><b>Layer</b>' + ln('80%') + '<b>Fill</b><span class="cw-popw-row"><span class="cw-popw-sw on"></span>' + ln() + '</span><b>Stroke</b><span class="cw-popw-row">' + ln() + ic('plus') + '</span></div></div>',
+            alt: 'A selected shape on a canvas. Its Fill swatch in the right-hand panel is active, and a small color picker opens just left of the panel, leaving the shape in view.',
+            cap: 'Figma: clicking a fill swatch opens a small color picker beside the properties panel. The selected shape updates as you drag, and clicking away just closes the picker.' },
+          docs: { html: '<div class="cw-popw-win cw-popw-doc">' + ln('92%') + ln('70%') +
+              '<p class="cw-popw-txt">See the <span class="cw-popw-link">project br<span class="cw-popw-caret"></span>ief</span> for the details.</p>' +
+              '<div class="cw-popw-pop cw-popw-card"><span class="cw-popw-url"><i></i>example.com/brief</span><span class="cw-popw-acts"><span class="cw-popw-act">Copy</span><span class="cw-popw-act">Edit</span><span class="cw-popw-act">Remove</span></span></div>' +
+              ln('86%') + ln('60%') + '</div>',
+            alt: 'A document with the text cursor inside a link. A small card right under the link shows its address with Copy, Edit and Remove buttons.',
+            cap: 'Google Docs: putting the cursor in a link shows a small card under it, with the address and buttons to copy, edit or remove the link. The page around it doesn’t change.' },
+          airbnb: { html: '<div class="cw-popw-air"><div class="cw-popw-bar"><span class="cw-popw-seg"><b>Where</b><i>Lisbon</i></span><span class="cw-popw-seg"><b>Dates</b><i>Add dates</i></span><span class="cw-popw-seg on"><b>Guests</b><i>3 guests</i></span><span class="cw-popw-go">' + ic('search') + '</span></div>' +
+              '<div class="cw-popw-pop cw-popw-guests">' + guest('Adults', 2) + guest('Children', 1) + guest('Infants', 0) + guest('Pets', 0) + '</div></div>',
+            alt: 'A search bar with Where, Dates and Guests. Guests is active and reads 3 guests. A small panel under it has minus and plus steppers for adults, children, infants and pets.',
+            cap: 'Airbnb: the guests field opens a small panel of plus and minus steppers. Each change shows up in the search bar right away, so there’s nothing to confirm before closing it.' },
+          youtube: { html: '<div class="cw-popw-yt">' + player(li('Speed', 'Normal ›', 'hi') + li('Quality', 'Auto ›') + li('Captions', 'Off ›')) + '<span class="cw-popw-to" aria-hidden="true">→</span>' +
+              player(li('‹ Speed', '', 'hd') + li('0.75') + li('Normal', '', 'hi') + li('1.25') + li('1.5')) + '</div>',
+            alt: 'Two video players. In the first, the settings panel lists Speed, Quality and Captions. In the second, the same panel now shows a list of speeds with a back arrow at the top.',
+            cap: 'YouTube: in the player’s settings panel, picking playback speed swaps the list for the speeds, with a back arrow, instead of stacking a second layer. The new speed applies at once.' }
+        };
+        const render = k => { view.innerHTML = S[k].html; view.setAttribute('aria-label', 'Sketch: ' + S[k].alt); cap.textContent = S[k].cap; };
+        wrap.querySelectorAll('input[name="cw-popover-w"]').forEach(r => r.addEventListener('change', () => render(r.value)));
+        render('figma');
+      })();
+      </script>
+    </div>

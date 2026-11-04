@@ -1,0 +1,139 @@
+<script>
+(() => {
+  const cs = document.currentScript.closest('.cs');
+  const D = (k, html, wire) => csDemo(cs.querySelector('[data-d="' + k + '"]'), html, wire);
+  const st = document.createElement('style');
+  st.textContent = [
+    '#eff-ux-calls p.cs-meta{font:500 13.5px/1.45 var(--font-body)}',
+    '#eff-ux-calls .ux-col{width:min(380px,100%);display:flex;flex-direction:column;gap:10px;text-align:left}',
+    '#eff-ux-calls .ux-acts{display:flex;flex-wrap:wrap;gap:8px}',
+    '#eff-ux-calls .ux-out{font-size:14px;font-weight:600}',
+    '#eff-ux-calls .ux-out:empty{display:none}',
+    '#eff-ux-calls .ux-out.bad{color:var(--ui-danger)}',
+    '#eff-ux-calls .ux-out.ok{color:var(--ui-ok)}',
+    '#eff-ux-calls .ux-team .app-body{gap:0;padding:4px 14px}',
+    '#eff-ux-calls .ux-team .btn-ghost{font-size:13px;padding:4px 8px}',
+    '#eff-ux-calls .ux-dec{padding:10px 12px;display:flex;flex-direction:column;gap:8px;width:100%}',
+    '#eff-ux-calls .ux-k{font:600 11px var(--font-mono);letter-spacing:.06em;text-transform:uppercase;color:var(--ui-muted)}',
+    '#eff-ux-calls .ux-ch{display:flex;flex-wrap:wrap;align-items:center;gap:6px 8px;font-size:13.5px;padding-bottom:8px;border-bottom:1px solid var(--ui-border)}',
+    '#eff-ux-calls .ux-ch:last-child{border-bottom:0;padding-bottom:0}',
+    '#eff-ux-calls .ux-ch .grow{flex:1 1 100%;min-width:0}',
+    '#eff-ux-calls .ux-ch .ux-sm{font-size:12.5px;padding:4px 9px}',
+    '#eff-ux-calls .ux-ch.done .grow::after{content:" ✓";color:var(--ui-ok);font-weight:700}',
+    '#eff-ux-calls .ux-pr{padding:12px 14px;display:flex;flex-direction:column;gap:6px;width:100%;font-size:14px;line-height:1.45}',
+    '#eff-ux-calls .ux-pr b.t{font-size:15px}',
+    '#eff-ux-calls .ux-pr ul{margin:0;padding-left:18px;display:flex;flex-direction:column;gap:3px}',
+    '#eff-ux-calls .ux-pr code{font:500 12.5px var(--font-mono);overflow-wrap:anywhere}',
+    '#eff-ux-calls .ux-pr .ux-flag{border-left:3px solid var(--ui-danger);background:var(--ui-danger-soft);border-radius:0 8px 8px 0;padding:6px 10px}',
+    '#eff-ux-calls .ux-pr .ux-lead{font-weight:600}',
+    '#eff-ux-calls .ux-side{display:flex;gap:0;border:1px solid var(--ui-border);border-radius:10px;overflow:hidden;background:var(--ui-surface)}',
+    '#eff-ux-calls .ux-side nav{display:flex;flex-direction:column;gap:2px;padding:8px;border-right:1px solid var(--ui-border);background:var(--ui-bg);font-weight:600}',
+    '#eff-ux-calls .ux-side nav span{padding:3px 6px;border-radius:5px}',
+    '#eff-ux-calls .ux-side nav.small{font-size:11.5px}',
+    '#eff-ux-calls .ux-side nav:not(.small){font-size:14px}',
+    '#eff-ux-calls .ux-side .ux-main{flex:1;padding:10px;display:flex;flex-direction:column;gap:7px}',
+    '#eff-ux-calls .ux-seg{display:flex;gap:6px}',
+    '#eff-ux-calls .ux-seg button[aria-pressed="true"]{background:var(--ui-primary);color:var(--ui-on-primary)}',
+    '#eff-ux-calls .ux-dlg{padding:14px;display:flex;flex-direction:column;gap:8px;width:100%}',
+    '#eff-ux-calls .ux-dlg .ux-bts{display:flex;justify-content:flex-end;gap:8px;margin-top:4px}',
+    '#eff-ux-calls .ux-dlg .ux-bts span{cursor:default;font-size:14px;padding:9px 16px;border-radius:10px}',
+    '#eff-ux-calls .ux-dlg.after .ux-bts span{padding:7px 14px;border-radius:8px}',
+    '#eff-ux-calls .ux-dlg.after .ux-bts .btn-primary{background:var(--ui-sel);color:var(--ui-on-sel)}',
+    '#eff-ux-calls .ux-strike{text-decoration:line-through;color:var(--ui-muted)}'
+  ].join('\n');
+  cs.appendChild(st);
+  const btn = (attr, label, cls) => '<button class="btn ' + (cls || 'btn-primary') + ' cs-sm" type="button" ' + attr + '>' + label + '</button>';
+  const line = w => '<div class="line" style="width:' + w + '%;height:8px"></div>';
+
+  /* 1. Decide on each visible choice */
+  const CHOICES = [['title', 'Title', 'Are you sure?', 'Remove Ana from the team?'], ['body', 'Text', 'This action cannot be undone.', 'Ana loses access to the team’s shared files. You can invite her again later.'], ['ok', 'Button', 'OK', 'Remove Ana']];
+  const team = '<div class="app-frame ux-team" style="width:100%"><div class="app-bar"><span>Team</span></div><div class="app-body">' +
+    [['Ana Lee', 'Editor'], ['Ben Cho', 'Viewer']].map((m, i) => '<div class="cs-row"><span class="grow"><b>' + m[0] + '</b><br><span class="cs-meta">' + m[1] + '</span></span>' + (i === 0 ? btn('data-rm aria-label="Remove Ana Lee"', 'Remove', 'btn-ghost') : '<span class="cs-meta">You</span>') + '</div>').join('') + '</div></div>';
+  const openDlg = (d, text, onOk) => {
+    const m = document.createElement('div'); m.className = 'cs-modal';
+    m.innerHTML = '<div class="cs-dlg" role="dialog" aria-modal="true" aria-label="' + text.title + '"><b>' + text.title + '</b><p>' + text.body + '</p><div class="acts">' + btn('data-no', 'Cancel', 'btn-secondary') + btn('data-yes', text.ok, 'btn-danger') + '</div></div>';
+    d.appendChild(m);
+    const close = () => { m.remove(); const r = d.querySelector('[data-rm]'); if (r) r.focus(); };
+    m.querySelector('[data-no]').addEventListener('click', close);
+    m.querySelector('[data-yes]').addEventListener('click', () => { m.remove(); onOk(); });
+    m.addEventListener('keydown', e => { if (e.key === 'Escape') close(); });
+    m.querySelector('[data-no]').focus();
+  };
+  D('eff-ux-calls-1b', '<div class="ux-col"><p class="cs-meta">The agent’s version, as it ships</p>' + team + '<p class="ux-out" data-out role="status"></p></div>', d => {
+    d.querySelector('[data-rm]').addEventListener('click', () => openDlg(d, { title: CHOICES[0][2], body: CHOICES[1][2], ok: CHOICES[2][2] }, () => {
+      d.querySelector('[data-out]').className = 'ux-out bad';
+      d.querySelector('[data-out]').textContent = 'Nobody chose “Are you sure?” or “OK”. They were the agent’s defaults.';
+    }));
+  });
+  D('eff-ux-calls-1f', '<div class="ux-col"><div class="ux-dec surface"><span class="ux-k">Choices people will see</span>' +
+    CHOICES.map(c => '<div class="ux-ch" data-ch="' + c[0] + '"><span class="grow"><span class="cs-meta">' + c[1] + ':</span> <span data-txt>“' + c[2] + '”</span></span>' +
+      btn('data-keep', 'Keep', 'btn-secondary ux-sm') + btn('data-change', 'Change', 'btn-secondary ux-sm') + '</div>').join('') + '</div>' + team + '<p class="ux-out" data-out role="status"></p></div>', d => {
+    const cur = {}, decided = new Set(), out = d.querySelector('[data-out]');
+    CHOICES.forEach(c => { cur[c[0]] = c[2]; });
+    const tick = () => { out.className = 'ux-out' + (decided.size === 3 ? ' ok' : ''); out.textContent = 'Decided: ' + decided.size + ' of 3'; };
+    d.querySelectorAll('[data-ch]').forEach(r => {
+      const c = CHOICES.find(x => x[0] === r.dataset.ch);
+      const fin = () => { decided.add(c[0]); r.classList.add('done'); r.querySelectorAll('button').forEach(b => { b.disabled = true; }); tick(); };
+      r.querySelector('[data-keep]').addEventListener('click', fin);
+      r.querySelector('[data-change]').addEventListener('click', () => { cur[c[0]] = c[3]; r.querySelector('[data-txt]').textContent = '“' + c[3] + '”'; fin(); });
+    });
+    d.querySelector('[data-rm]').addEventListener('click', () => openDlg(d, cur, () => { out.className = 'ux-out ok'; out.textContent = 'Ana was removed. Every word in that dialog was a decision.'; }));
+    tick();
+  });
+
+  /* 2. Keep side changes out */
+  const side = small => '<div class="ux-side"><nav class="' + (small ? 'small' : '') + '"><span>General</span><span>Account</span><span>Privacy</span></nav><div class="ux-main">' + line(70) + line(90) + line(55) + '</div></div>';
+  const pr2 = flagged => '<div class="ux-pr surface"><span class="ux-k">Pull request</span><b class="t">Add search to Settings</b><span>A search box at the top of Settings finds any setting by name.</span>' +
+    '<span class="ux-k">Files</span><ul><li><code>SettingsSearch.vue</code> (new)</li><li><code>settings.ts</code></li><li' + (flagged ? ' class="ux-flag" data-flag' : '') + '><code>Sidebar.css</code>: font size 14px → 12px' + (flagged ? '<br><b>Not part of this change.</b>' : '') + '</li></ul></div>';
+  D('eff-ux-calls-2b', '<div class="ux-col">' + pr2(false) + '<div class="ux-acts">' + btn('data-ok', 'Approve') + '</div><div data-app></div><p class="ux-out bad" data-out role="status"></p></div>', d => {
+    d.querySelector('[data-ok]').addEventListener('click', e => {
+      e.target.disabled = true;
+      d.querySelector('[data-app]').innerHTML = '<p class="cs-meta">The app after release</p>' + side(true);
+      d.querySelector('[data-out]').textContent = 'The sidebar text is smaller on every page. Nobody reviewed it, because the description didn’t mention it.';
+    });
+  });
+  D('eff-ux-calls-2f', '<div class="ux-col"><div data-pr>' + pr2(true) + '</div><div class="ux-acts" data-acts>' + btn('data-move', 'Move to its own pull request') + btn('data-drop', 'Drop it', 'btn-secondary') + '</div><div data-new></div><p class="ux-out ok" data-out role="status"></p></div>', d => {
+    const acts = d.querySelector('[data-acts]'), out = d.querySelector('[data-out]');
+    const strip = () => { const f = d.querySelector('[data-flag]'); if (f) f.remove(); acts.hidden = true; };
+    d.querySelector('[data-move]').addEventListener('click', () => {
+      strip();
+      d.querySelector('[data-new]').innerHTML = '<div class="ux-pr surface"><span class="ux-k">New pull request</span><b class="t">Smaller sidebar text</b><span>Sidebar labels go from 14px to 12px so long names fit. Screenshots before and after attached.</span></div>';
+      out.textContent = 'Each pull request now says what it changes. Reviewers can decide on the font size on its own.';
+    });
+    d.querySelector('[data-drop]').addEventListener('click', () => { strip(); out.textContent = 'Dropped. The sidebar stays as it is, and the pull request does only what it says.'; });
+  });
+
+  /* 3. Lead with what people will notice */
+  D('eff-ux-calls-3b', '<div class="ux-col"><div class="ux-pr surface"><span class="ux-k">Pull request</span><b class="t">Notification settings refactor</b><ul>' +
+    '<li>Split <code>NotificationPrefs.vue</code> into 3 components.</li><li>Add <code>digestFrequency</code> to the user settings schema.</li><li>Remove the <code>emailOnMention</code> flag.</li><li>Migrate old values in <code>migrateUserSettings()</code>.</li></ul></div></div>', () => {});
+  D('eff-ux-calls-3f', '<div class="ux-col"><div class="ux-pr surface"><span class="ux-k">Pull request</span><b class="t">One daily email instead of one per mention</b><span class="ux-lead">What people will notice</span><ul>' +
+    '<li>You can get one email a day instead of one per mention.</li><li>The Mention emails switch is gone. Under Email, choose Each mention or Once a day.</li><li>If mention emails were on, you get Each mention, so nothing changes until you choose.</li></ul>' +
+    '<span class="ux-lead">Code notes</span><ul><li>Split <code>NotificationPrefs.vue</code> into 3 components.</li><li>Replace <code>emailOnMention</code> with <code>digestFrequency</code> and migrate old values.</li></ul></div></div>', () => {});
+
+  /* 4. Check before saying "no visible change" */
+  const dlg = after => '<div class="ux-dlg surface' + (after ? ' after' : '') + '"><b>Export</b>' + line(85) + line(60) + '<div class="ux-bts"><span class="btn btn-secondary">Cancel</span><span class="btn btn-primary">Export</span></div></div>';
+  const pr4 = '<div class="ux-pr surface"><span class="ux-k">Pull request</span><b class="t">Use the shared Button in the export dialog</b><span data-claim>No visible change.</span></div>';
+  D('eff-ux-calls-4b', '<div class="ux-col">' + pr4 + '<div class="ux-acts">' + btn('data-ok', 'Approve') + '</div><p class="ux-out bad" data-out role="status"></p></div>', d => {
+    d.querySelector('[data-ok]').addEventListener('click', e => {
+      e.target.disabled = true;
+      d.querySelector('[data-out]').textContent = 'Approved. After release, the dialog’s buttons are shorter and Export has a new color. Nobody was told.';
+    });
+  });
+  D('eff-ux-calls-4f', '<div class="ux-col">' + pr4 + '<div class="ux-seg" role="group" aria-label="Screenshot">' + btn('aria-pressed="true" data-v="b"', 'Before', 'btn-secondary') + btn('aria-pressed="false" data-v="a"', 'After', 'btn-secondary') + '</div>' +
+    '<div data-shot></div><p class="ux-out" data-out role="status"></p></div>', d => {
+    const out = d.querySelector('[data-out]'), claim = d.querySelector('[data-claim]');
+    const show = v => {
+      d.querySelector('[data-shot]').innerHTML = '<span class="ux-k">' + (v === 'a' ? 'After' : 'Before') + '</span>' + dlg(v === 'a');
+      d.querySelectorAll('[data-v]').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.v === v)));
+      if (v === 'a') {
+        claim.innerHTML = '<span class="ux-strike">No visible change.</span> <b>Visible change:</b> the export dialog’s buttons are 4px shorter, and Export uses the shared button color.';
+        out.className = 'ux-out bad'; out.textContent = 'The screenshots differ, so the description now says what changed.';
+      }
+    };
+    d.querySelectorAll('[data-v]').forEach(b => b.addEventListener('click', () => show(b.dataset.v)));
+    show('b');
+  });
+  csInit(cs);
+})();
+
+</script>

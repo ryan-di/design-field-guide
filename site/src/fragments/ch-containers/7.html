@@ -1,0 +1,48 @@
+<div class="note comfy cw-wrap"><p>Notice when products use tabs, and what they do instead when there are too many.</p>
+  <div class="seg cw-seg" role="radiogroup" aria-label="Example">
+    <input type="radio" name="cw-tabs-w" id="cw-tabs-w-1" value="figma" checked><label for="cw-tabs-w-1">Figma</label>
+    <input type="radio" name="cw-tabs-w" id="cw-tabs-w-2" value="ig"><label for="cw-tabs-w-2">Instagram</label>
+    <input type="radio" name="cw-tabs-w" id="cw-tabs-w-3" value="gh"><label for="cw-tabs-w-3">GitHub</label>
+    <input type="radio" name="cw-tabs-w" id="cw-tabs-w-4" value="slack"><label for="cw-tabs-w-4">Slack</label>
+  </div>
+  <div class="cw" data-cw-view role="img" aria-label=""></div>
+  <p class="cw-cap" data-cw-cap aria-live="polite"></p>
+  
+  <script>
+  (() => {
+    const wrap = document.currentScript.closest('.cw-wrap');
+    const view = wrap.querySelector('[data-cw-view]'), cap = wrap.querySelector('[data-cw-cap]');
+    const svg = inner => '<svg class="icon sm" viewBox="0 0 24 24">' + inner + '</svg>';
+    const gridI = svg('<rect x="4" y="4" width="16" height="16" rx="1"/><path d="M9.3 4v16M14.7 4v16M4 9.3h16M4 14.7h16"/>');
+    const reelI = svg('<rect x="4" y="4" width="16" height="16" rx="4"/><path d="M10 9v6l5-3z"/>');
+    const tagI = svg('<rect x="4" y="4" width="16" height="16" rx="3"/><circle cx="12" cy="10" r="2.5"/><path d="M7.5 18c1-2.5 2.5-3.5 4.5-3.5s3.5 1 4.5 3.5"/>');
+    const dots = svg('<circle cx="6" cy="12" r="1"/><circle cx="12" cy="12" r="1"/><circle cx="18" cy="12" r="1"/>');
+    const t = (label, on, n) => '<span class="cw-wtb-t' + (on ? ' on' : '') + '">' + label + (n ? '<small>' + n + '</small>' : '') + '</span>';
+    const opt = (on, w) => '<span class="cw-wtb-opt"><i' + (on ? ' class="on"' : '') + '></i><i class="cw-line" style="max-width:' + w + '%"></i></span>';
+    const S = {
+      figma: { html: '<div class="cw-wtb-win"><div class="cw-wtb-canvas"><i class="cw-wtb-frame"></i></div><div class="cw-wtb-panel"><div class="cw-wtb-tl">' + t('Design', true) + t('Prototype') + '</div>'
+          + '<div class="cw-wtb-sec"><b>Position</b><span class="cw-wtb-flds"><span>X 120</span><span>Y 48</span></span></div>'
+          + '<div class="cw-wtb-sec"><b>Layout</b><span class="cw-wtb-flds"><span>W 240</span><span>H 180</span></span></div>'
+          + '<div class="cw-wtb-sec" style="border:0"><b>Fill</b><span class="cw-wtb-fill"><i></i>C9D6EC</span></div></div></div>',
+        alt: 'A design tool with a selected frame on the canvas. The panel on the right has two tabs, Design and Prototype. Design is open and shows position, size and fill for the selection.',
+        cap: 'Figma: the right panel splits into Design and Prototype tabs. Both describe the same selection, and people work in one at a time.' },
+      ig: { html: '<div class="cw-wtb-pane" style="width:min(250px,100%)"><div class="cw-wtb-prof"><i class="cw-wtb-av"></i><span class="cw-wtb-stats"><span><b>48</b><i class="cw-line"></i></span><span><b>312</b><i class="cw-line"></i></span><span><b>190</b><i class="cw-line"></i></span></span></div>'
+          + '<i class="cw-line" style="width:45%"></i><div class="cw-wtb-itabs"><span class="on">' + gridI + '</span><span>' + reelI + '</span><span>' + tagI + '</span></div>'
+          + '<div class="cw-wtb-grid"><i></i><i></i><i></i><i></i><i></i><i></i></div></div>',
+        alt: 'A profile with a picture and three counts. Below, a row of three icon tabs: a grid for posts, a play icon for reels and a person icon for tagged photos. The posts tab is selected and shows a grid of pictures.',
+        cap: 'Instagram: a profile has a row of icon tabs for posts, reels and tagged photos, each a different collection from the same person.' },
+      gh: { html: '<div class="cw-wtb-pane"><span class="cw-wtb-repo"><span>ana /</span> <b>portrait-tools</b></span><div class="cw-wtb-gtl">' + t('Code', true) + t('Issues', false, '12') + t('Pull requests', false, '3') + '<span class="cw-wtb-more">' + dots + '</span></div>'
+          + '<div class="cw-wtb-menu"><span>Actions</span><span>Wiki</span><span>Security</span><span>Insights</span><span>Settings</span></div></div>',
+        alt: 'A repository in a narrow window. The tab row shows Code, Issues with 12 and Pull requests with 3. A menu button at the end of the row is open and lists the tabs that did not fit.',
+        cap: 'GitHub: a repository’s tabs show counts, like open issues. When the window is narrow, the tabs that don’t fit move into a menu at the end of the row instead of being cut off.' },
+      slack: { html: '<div class="cw-wtb-dlg"><b>Preferences</b><div class="cw-wtb-split"><div class="cw-wtb-nav"><span class="on">Notifications</span><span>Navigation</span><span>Home</span><span>Appearance</span><span>Messages &amp; media</span><span>Language &amp; region</span><span>Accessibility</span><span>Mark as read</span><span>Audio &amp; video</span><span>Advanced</span></div>'
+          + '<div class="cw-wtb-body"><b>Notify me about</b>' + opt(true, 80) + opt(false, 65) + opt(false, 40) + '<b>Sound</b><i class="cw-line" style="width:85%"></i><i class="cw-line" style="width:60%"></i></div></div></div>',
+        alt: 'A Preferences window. Ten sections are listed down the left side, with Notifications selected. Its settings fill the right side.',
+        cap: 'Slack: preferences have many sections, so they’re a list down the side instead of tabs.' }
+    };
+    const render = k => { view.innerHTML = S[k].html; view.setAttribute('aria-label', 'Sketch: ' + S[k].alt); cap.textContent = S[k].cap; };
+    wrap.querySelectorAll('input[name="cw-tabs-w"]').forEach(r => r.addEventListener('change', () => render(r.value)));
+    render('figma');
+  })();
+  </script>
+</div>

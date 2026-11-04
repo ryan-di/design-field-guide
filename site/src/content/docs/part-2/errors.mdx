@@ -1,0 +1,322 @@
+---
+title: "Prevent, explain, recover"
+description: "An error is most frustrating when the product could have prevented it."
+eyebrow: "Chapter 13"
+sidebar:
+  label: "Errors"
+---
+
+import Raw from '../../../components/Raw.astro';
+import Learned from '../../../components/Learned.astro';
+import Runtime from '../../../components/Runtime.astro';
+import F0 from '../../../fragments/ch-errors/0.html?raw';
+import F1 from '../../../fragments/ch-errors/1.html?raw';
+import F2 from '../../../fragments/ch-errors/2.html?raw';
+import F3 from '../../../fragments/ch-errors/3.html?raw';
+import F4 from '../../../fragments/ch-errors/4.html?raw';
+import F5 from '../../../fragments/ch-errors/5.html?raw';
+import F6 from '../../../fragments/ch-errors/6.html?raw';
+import F7 from '../../../fragments/ch-errors/7.html?raw';
+import F8 from '../../../fragments/ch-errors/8.html?raw';
+import F9 from '../../../fragments/ch-errors/9.html?raw';
+import F10 from '../../../fragments/ch-errors/10.html?raw';
+import F11 from '../../../fragments/ch-errors/11.html?raw';
+import F12 from '../../../fragments/ch-errors/12.html?raw';
+import F13 from '../../../fragments/ch-errors/13.html?raw';
+import F14 from '../../../fragments/ch-errors/14.html?raw';
+import F15 from '../../../fragments/ch-errors/15.html?raw';
+import F16 from '../../../fragments/ch-errors/16.html?raw';
+import F17 from '../../../fragments/ch-errors/17.html?raw';
+import F18 from '../../../fragments/ch-errors/18.html?raw';
+import F19 from '../../../fragments/ch-errors/19.html?raw';
+import F20 from '../../../fragments/ch-errors/20.html?raw';
+import F21 from '../../../fragments/ch-errors/21.html?raw';
+import F22 from '../../../fragments/ch-errors/22.html?raw';
+import F23 from '../../../fragments/ch-errors/23.html?raw';
+
+<Runtime at="start" />
+
+<section class="dfg-chapter" id="ch-errors">
+
+An error is most frustrating when the product could have prevented it. The best error is the one that can’t happen, and the next best explains itself in plain words and loses nothing. Part 3 covers the parts that show errors, the [inline message](/part-3/feedback/#inline-message) and the [error state](/part-3/states/#error-state); the patterns below work around them, so fewer errors happen and the ones that do cost less.
+
+<article class="entry essay" id="pat-constraints" data-entry data-name="Constraints">
+
+<div class="entry-head">
+
+## Constraints that prevent errors \{#pat-constraints-h\}
+
+<Learned id="pat-constraints" />
+
+</div>
+
+A constraint makes a wrong value impossible to enter. Instead of a free text field and an error afterwards, people pick from options that all work, or set a number that stops at its limits. There is nothing to refuse, because every choice is valid.
+
+Validation works the other way round: it lets people type anything, then checks it and explains the mistake. Use a constraint when the valid values are few or follow a clear rule, and keep validation for values too varied to offer as choices.
+
+<Raw html={F0} />
+
+### Ways to do it \{#pat-constraints-ways\}
+
+Constraints come in a few shapes. A list offers only the values that work. A number with limits stops at its smallest and largest value. Options that don’t apply right now stay visible but turned off. Split fields take one part of a value at a time, so its shape can’t go wrong.
+
+<Raw html={F1} />
+
+### Rules \{#pat-constraints-rules\}
+
+Four rules keep constraints useful.
+
+<div class="cs essay-cs">
+
+<section class="rule" id="pat-constraints-rule-1">
+
+#### 1. Leave a way out for odd cases \{#pat-constraints-rule-1-h\}
+
+A short list covers most people, but not everyone. Someone with an odd-sized window has no way to enter the width they really need, so they give up or pick something wrong. Add a “Custom…” choice for those cases, check what people type there, and [say so when you round it](#pat-forgiving-input).
+
+<Raw html={F2} />
+
+</section>
+
+<section class="rule" id="pat-constraints-rule-2">
+
+#### 2. Say why an option is off \{#pat-constraints-rule-2-h\}
+
+A grayed-out option with no reason looks broken: people click it, nothing happens, and they don’t know whether to upgrade, free up space or give up. Put the reason next to the option, in plain text: what it needs and how to get it. Leave out options that can never apply to this person.
+
+<Raw html={F3} />
+
+</section>
+
+<section class="rule" id="pat-constraints-rule-3">
+
+#### 3. Show the rule before people need it \{#pat-constraints-rule-3-h\}
+
+Some values follow a rule that can’t be built into the control, like which characters a username may use. If people only learn the rule from an error, they have to guess again. Write the rule in the label or the help text under the field, so people get it right on the first try.
+
+<Raw html={F4} />
+
+</section>
+
+<section class="rule" id="pat-constraints-rule-4">
+
+#### 4. Keep the rule in one place \{#pat-constraints-rule-4-h\}
+
+The list, the help text and the final check often get written at different times. When they disagree, people pick a value the list allows and get refused at the end. Write the rule once and build the list, the help text and the check from it, so they can’t drift apart.
+
+<Raw html={F5} />
+
+</section>
+
+<Raw html={F6} />
+
+</div>
+
+### In real products \{#pat-constraints-products\}
+
+<Raw html={F7} />
+
+</article>
+
+<article class="entry essay" id="pat-forgiving-input" data-entry data-name="Forgiving input">
+
+<div class="entry-head">
+
+## Forgiving input \{#pat-forgiving-input-h\}
+
+<Learned id="pat-forgiving-input" />
+
+</div>
+
+Forgiving input accepts a value in the ways people actually write it. “1024 x 768”, “1024×768” and “1024 by 768” all mean the same size, so the field reads all of them. It cleans up spaces, symbols and units on its own, and it shows how it read the input.
+
+Where a [constraint](#pat-constraints) limits what people can enter, forgiving input lets them enter a value their way and does the translating. Both prevent the same thing: an error about formatting that any person would have understood.
+
+<Raw html={F8} />
+
+### Ways to do it \{#pat-forgiving-input-ways\}
+
+A field can forgive in a few ways. It can accept several formats for the same value. It can clean up formatting, such as spaces and dashes. It can notice a likely typo and offer the fix. It can read plain words, like “tomorrow 9am”. Each way shows the result, so people can check it.
+
+<Raw html={F9} />
+
+### Rules \{#pat-forgiving-input-rules\}
+
+Four rules keep forgiving input useful.
+
+<div class="cs essay-cs">
+
+<section class="rule" id="pat-forgiving-input-rule-1">
+
+#### 1. Show how you read it \{#pat-forgiving-input-rule-1-h\}
+
+A field that guesses can guess wrong, and if it says nothing, people find out later, when the parcel costs seven times as much or the wrong thing arrives. Show the reading next to the field, in words, before the value is used, so a wrong guess is caught on sight.
+
+<Raw html={F10} />
+
+</section>
+
+<section class="rule" id="pat-forgiving-input-rule-2">
+
+#### 2. Ask only when it could mean two things \{#pat-forgiving-input-rule-2-h\}
+
+Most input has one obvious reading, and asking about it only slows people down. Some input really could mean two things, like “7” for a time, and a field that quietly picks one is sometimes wrong without anyone noticing. Take the obvious reading when there is one, and ask only in the real two-way cases, with each answer one click away.
+
+<Raw html={F11} />
+
+</section>
+
+<section class="rule" id="pat-forgiving-input-rule-3">
+
+#### 3. Forgive the same way everywhere \{#pat-forgiving-input-rule-3-h\}
+
+When one field accepts “12m 30s” and the next one rejects it, people can’t learn what works, so they fall back to the strictest format everywhere or give up on the shortcuts. Put the reading of times, sizes and amounts in one shared function and use it in every field, so a format that works once works everywhere.
+
+<Raw html={F12} />
+
+</section>
+
+<section class="rule" id="pat-forgiving-input-rule-4">
+
+#### 4. Say when the value itself changes \{#pat-forgiving-input-rule-4-h\}
+
+Cleaning up spaces or a “cm” is harmless, so do it without comment. Changing the number is different, because people get something they didn’t ask for. When you round to the nearest valid value, say so, and when the value is far outside what’s possible, refuse it and give the limit instead of picking one.
+
+<Raw html={F13} />
+
+</section>
+
+<Raw html={F14} />
+
+</div>
+
+### In real products \{#pat-forgiving-input-products\}
+
+<Raw html={F15} />
+
+</article>
+
+<article class="entry essay" id="pat-autosave" data-entry data-name="Autosave">
+
+<div class="entry-head">
+
+## Autosave and draft recovery \{#pat-autosave-h\}
+
+<Learned id="pat-autosave" />
+
+</div>
+
+Autosave keeps people’s work without them asking. Each change is saved a moment after it’s made, and a small status says so. If the app crashes or the tab closes, the work is waiting when people come back.
+
+Autosave keeps only the latest state, so it belongs together with [version history](/part-2/safety/#pat-version-history), which keeps the earlier ones.
+
+<Raw html={F16} />
+
+### Ways to do it \{#pat-autosave-ways\}
+
+Autosave takes a few forms. A document saves as people type and shows the save state. A settings page saves each change the moment it’s made. A message box keeps unsent text when people move somewhere else. After a crash, the app offers the work it kept on the device.
+
+<Raw html={F17} />
+
+### Rules \{#pat-autosave-rules\}
+
+Four rules keep autosave useful.
+
+<div class="cs essay-cs">
+
+<section class="rule" id="pat-autosave-rule-1">
+
+#### 1. Show that work is saved \{#pat-autosave-rule-1-h\}
+
+If people can’t see that their work is saved, they don’t trust it: they keep saving by hand, or they lose work when a save fails without a word. Show a [save status](/part-2/status/#pat-instant-feedback) where they already look. If a save fails, say so plainly, keep the work on the device and send it once the connection is back.
+
+<Raw html={F18} />
+
+</section>
+
+<section class="rule" id="pat-autosave-rule-2">
+
+#### 2. Keep earlier versions \{#pat-autosave-rule-2-h\}
+
+Autosave saves mistakes too: if someone deletes a paragraph by accident, the save goes through a second later and the old text is gone. Pair autosave with version history, so any earlier version is one step back. A recovered draft should also wait until people choose Restore or Discard.
+
+<Raw html={F19} />
+
+</section>
+
+<section class="rule" id="pat-autosave-rule-3">
+
+#### 3. Catch edits from another tab \{#pat-autosave-rule-3-h\}
+
+The same document can be open in two tabs or on two devices. Each copy saves its own text, so the last save replaces the other without a word, and people notice much later that what they added in the other place is gone. Detect the clash and ask before one copy replaces the other.
+
+<Raw html={F20} />
+
+</section>
+
+<section class="rule" id="pat-autosave-rule-4">
+
+#### 4. Offer recovery only when something was lost \{#pat-autosave-rule-4-h\}
+
+A recovery prompt that shows up every time teaches people to dismiss it, so the one time it matters, they press Discard without reading. Offer recovery only when the draft differs from what was saved. Clear old drafts after a while, and let Discard be undone for a moment.
+
+<Raw html={F21} />
+
+</section>
+
+<Raw html={F22} />
+
+</div>
+
+### In real products \{#pat-autosave-products\}
+
+<Raw html={F23} />
+
+</article>
+
+<aside class="in-short" id="ch-errors-in-short" aria-labelledby="ch-errors-in-short-h" data-pagefind-ignore>
+
+## In short \{#ch-errors-in-short-h\}
+
+<div class="is-grid">
+
+<div>
+
+<a class="is-e" href="#pat-constraints">Constraints that prevent errors</a>
+
+1. [Leave a way out for odd cases](#pat-constraints-rule-1)
+2. [Say why an option is off](#pat-constraints-rule-2)
+3. [Show the rule before people need it](#pat-constraints-rule-3)
+4. [Keep the rule in one place](#pat-constraints-rule-4)
+
+</div>
+
+<div>
+
+<a class="is-e" href="#pat-forgiving-input">Forgiving input</a>
+
+1. [Show how you read it](#pat-forgiving-input-rule-1)
+2. [Ask only when it could mean two things](#pat-forgiving-input-rule-2)
+3. [Forgive the same way everywhere](#pat-forgiving-input-rule-3)
+4. [Say when the value itself changes](#pat-forgiving-input-rule-4)
+
+</div>
+
+<div>
+
+<a class="is-e" href="#pat-autosave">Autosave and draft recovery</a>
+
+1. [Show that work is saved](#pat-autosave-rule-1)
+2. [Keep earlier versions](#pat-autosave-rule-2)
+3. [Catch edits from another tab](#pat-autosave-rule-3)
+4. [Offer recovery only when something was lost](#pat-autosave-rule-4)
+
+</div>
+
+</div>
+
+</aside>
+
+</section>
+
+<Runtime chapter="ch-errors" />

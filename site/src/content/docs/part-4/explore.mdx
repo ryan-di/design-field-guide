@@ -1,0 +1,304 @@
+---
+title: "Explore wide before you narrow"
+description: "Look at several different solutions before you pick one."
+eyebrow: "Chapter 27"
+sidebar:
+  label: "Explore wide"
+---
+
+import Raw from '../../../components/Raw.astro';
+import Learned from '../../../components/Learned.astro';
+import Runtime from '../../../components/Runtime.astro';
+import F0 from '../../../fragments/ch-explore/0.html?raw';
+import F1 from '../../../fragments/ch-explore/1.html?raw';
+import F2 from '../../../fragments/ch-explore/2.html?raw';
+import F3 from '../../../fragments/ch-explore/3.html?raw';
+import F4 from '../../../fragments/ch-explore/4.html?raw';
+import F5 from '../../../fragments/ch-explore/5.html?raw';
+import F6 from '../../../fragments/ch-explore/6.html?raw';
+import F7 from '../../../fragments/ch-explore/7.html?raw';
+import F8 from '../../../fragments/ch-explore/8.html?raw';
+import F9 from '../../../fragments/ch-explore/9.html?raw';
+import F10 from '../../../fragments/ch-explore/10.html?raw';
+import F11 from '../../../fragments/ch-explore/11.html?raw';
+import F12 from '../../../fragments/ch-explore/12.html?raw';
+import F13 from '../../../fragments/ch-explore/13.html?raw';
+import F14 from '../../../fragments/ch-explore/14.html?raw';
+import F15 from '../../../fragments/ch-explore/15.html?raw';
+import F16 from '../../../fragments/ch-explore/16.html?raw';
+import F17 from '../../../fragments/ch-explore/17.html?raw';
+import F18 from '../../../fragments/ch-explore/18.html?raw';
+import F19 from '../../../fragments/ch-explore/19.html?raw';
+import F20 from '../../../fragments/ch-explore/20.html?raw';
+import F21 from '../../../fragments/ch-explore/21.html?raw';
+
+<Runtime at="start" />
+
+<section class="dfg-chapter" id="ch-explore">
+
+Look at several different solutions before you pick one. Agents make each direction cheap to sketch, so spend that on range, not on polish.
+
+<article class="entry essay" id="eff-explore-wide" data-entry data-name="Explore wide">
+
+<div class="entry-head">
+
+## Get many directions cheaply \{#eff-explore-wide-h\}
+
+<Learned id="eff-explore-wide" />
+
+</div>
+
+Before you build one answer, ask for several different ones. Give each direction its own short brief and its own subagent (a helper agent that works alongside the others), then lay the results side by side and choose. With agents a rough direction costs minutes, so the first idea doesn’t have to be the one you build.
+
+How the directions should differ, so that each one teaches you something, is the subject of [Vary along named axes](#eff-axes).
+
+<Raw html={F0} />
+
+### Rules \{#eff-explore-wide-rules\}
+
+Four rules keep exploring wide useful.
+
+<div class="cs essay-cs">
+
+<section class="rule" id="eff-explore-wide-rule-1">
+
+#### 1. Ask for several at once \{#eff-explore-wide-rule-1-h\}
+
+If you ask one agent for one answer, you get the obvious idea, and every round of polish after that makes the same idea neater, not better. Ask for several directions at the same time instead: one subagent per direction, or one git worktree (a separate working copy of the code) each when a direction needs real code.
+
+<Raw html={F1} />
+
+</section>
+
+<section class="rule" id="eff-explore-wide-rule-2">
+
+#### 2. Give each one its own bet \{#eff-explore-wide-rule-2-h\}
+
+Agents given the same prompt tend to land on the same answer, so you get three versions of one idea, differing only in wording or layout, and think you’ve explored. Write each brief around a different bet about what people need, such as “never interrupt” or “make it fixable in one step”. If two results still differ only in layout, rewrite one brief with a different bet.
+
+<Raw html={F2} />
+
+</section>
+
+<section class="rule" id="eff-explore-wide-rule-3">
+
+#### 3. Keep them equally rough \{#eff-explore-wide-rule-3-h\}
+
+When one direction looks finished and the others are sketches, the finished one wins, and you end up choosing the polish, not the idea. Ask for every direction at the same level of detail, so the only difference left is the idea.
+
+<Raw html={F3} />
+
+</section>
+
+<section class="rule" id="eff-explore-wide-rule-4">
+
+#### 4. Set the number first \{#eff-explore-wide-rule-4-h\}
+
+Asking for “a few more” has no natural end. The pile grows, each new card adds less, and nothing gets chosen. Decide before you start how many directions to ask for, say three to six, then keep two or three and drop the rest.
+
+<Raw html={F4} />
+
+</section>
+
+<Raw html={F5} />
+
+</div>
+
+### In real products \{#eff-explore-wide-products\}
+
+<Raw html={F6} />
+
+</article>
+
+<article class="entry essay" id="eff-axes" data-entry data-name="Named axes">
+
+<div class="entry-head">
+
+## Vary along named axes \{#eff-axes-h\}
+
+<Learned id="eff-axes" />
+
+</div>
+
+When you ask for options, name what should change between them. An axis is one dimension with two ends, such as how loud a message is, from silent to blocking. Lay two axes out as a grid, one across and one down, and each cell becomes a direction. The options then differ in ways you chose, so each difference tells you something.
+
+Where [Get many directions cheaply](#eff-explore-wide) asks for many directions, this entry decides how they should differ.
+
+<Raw html={F7} />
+
+### Rules \{#eff-axes-rules\}
+
+Four rules keep axes useful.
+
+<div class="cs essay-cs">
+
+<section class="rule" id="eff-axes-rule-1">
+
+#### 1. Name the axis and its ends \{#eff-axes-rule-1-h\}
+
+“Make three versions” gives no direction, so you get the same idea three times with small changes. Name the dimension and its two ends instead, such as “how loud, from silent to blocking”, and ask for one direction per point along it.
+
+<Raw html={F8} />
+
+</section>
+
+<section class="rule" id="eff-axes-rule-2">
+
+#### 2. Vary what people notice or do \{#eff-axes-rule-2-h\}
+
+Color, label and corner radius are easy to vary, but people using the app barely notice them, so options that differ only there can’t teach you anything about the experience. Vary how loud it is, where it shows up and when it happens. If both ends of an axis would look the same to someone using the app, pick another axis.
+
+<Raw html={F9} />
+
+</section>
+
+<section class="rule" id="eff-axes-rule-3">
+
+#### 3. Change two things at a time \{#eff-axes-rule-3-h\}
+
+When every option differs in every way, a test shows a winner but not the reason. Vary two axes at a time and hold the rest fixed. Then two options that differ on only one axis, such as neighbors in the same row or column, show what that axis does.
+
+<Raw html={F10} />
+
+</section>
+
+<section class="rule" id="eff-axes-rule-4">
+
+#### 4. Look at the odd cells \{#eff-axes-rule-4-h\}
+
+Some cells look wrong at first, such as a blocking dialog after the fact, and it’s tempting to drop them unread. Look at each one before you drop it, because a strange corner often shows why its neighbor works.
+
+<Raw html={F11} />
+
+</section>
+
+<Raw html={F12} />
+
+</div>
+
+### In real products \{#eff-axes-products\}
+
+<Raw html={F13} />
+
+</article>
+
+<article class="entry essay" id="eff-prototype-in-code" data-entry data-name="Prototype in code">
+
+<div class="entry-head">
+
+## Prototype at the fidelity the question needs \{#eff-prototype-in-code-h\}
+
+<Learned id="eff-prototype-in-code" />
+
+</div>
+
+A prototype answers a question about a design. Build it in code, at the fidelity the question needs and no higher. A clickable artifact page answers questions about feel and timing, and a branch in the app answers questions about real storage, real data and real speed.
+
+Code also lets you try the prototype with a keyboard and a screen reader, which a static mock can’t. Do that before you pick a direction, not after it ships.
+
+<Raw html={F14} />
+
+### Rules \{#eff-prototype-in-code-rules\}
+
+Four rules keep prototypes useful.
+
+<div class="cs essay-cs">
+
+<section class="rule" id="eff-prototype-in-code-rule-1">
+
+#### 1. Make timing questions clickable \{#eff-prototype-in-code-rule-1-h\}
+
+Some questions are about time: is a toast up long enough, does a reply feel slow. A static mock can show a toast, but not how long it stays. Make a clickable page with a real timer and real keyboard behavior, and try it yourself.
+
+<Raw html={F15} />
+
+</section>
+
+<section class="rule" id="eff-prototype-in-code-rule-2">
+
+#### 2. Sketch before you branch \{#eff-prototype-in-code-rule-2-h\}
+
+A branch in the app takes days and is slow to throw away, so if you build one per direction just to compare them, most of that work goes in the bin. Compare directions as sketches first, and build in the app once the question is about the real thing.
+
+<Raw html={F16} />
+
+</section>
+
+<section class="rule" id="eff-prototype-in-code-rule-3">
+
+#### 3. Write the question at the top \{#eff-prototype-in-code-rule-3-h\}
+
+A prototype without a question has no point where it’s finished, so it keeps growing and nobody can say what it showed. Write the question at the top of the prototype, add only what helps answer it, and stop when it’s answered.
+
+<Raw html={F17} />
+
+</section>
+
+<section class="rule" id="eff-prototype-in-code-rule-4">
+
+#### 4. Decide what happens to the branch \{#eff-prototype-in-code-rule-4-h\}
+
+A prototype branch is built to answer a question fast, so it skips tests and takes shortcuts. If it ships as it is, those shortcuts reach people. Decide on purpose: rewrite it with tests, or keep it only after it passes the same review as any other change.
+
+<Raw html={F18} />
+
+</section>
+
+<Raw html={F19} />
+
+</div>
+
+### In real products \{#eff-prototype-in-code-products\}
+
+<Raw html={F20} />
+
+</article>
+
+<Raw html={F21} />
+
+<aside class="in-short" id="ch-explore-in-short" aria-labelledby="ch-explore-in-short-h" data-pagefind-ignore>
+
+## In short \{#ch-explore-in-short-h\}
+
+<div class="is-grid">
+
+<div>
+
+<a class="is-e" href="#eff-explore-wide">Get many directions cheaply</a>
+
+1. [Ask for several at once](#eff-explore-wide-rule-1)
+2. [Give each one its own bet](#eff-explore-wide-rule-2)
+3. [Keep them equally rough](#eff-explore-wide-rule-3)
+4. [Set the number first](#eff-explore-wide-rule-4)
+
+</div>
+
+<div>
+
+<a class="is-e" href="#eff-axes">Vary along named axes</a>
+
+1. [Name the axis and its ends](#eff-axes-rule-1)
+2. [Vary what people notice or do](#eff-axes-rule-2)
+3. [Change two things at a time](#eff-axes-rule-3)
+4. [Look at the odd cells](#eff-axes-rule-4)
+
+</div>
+
+<div>
+
+<a class="is-e" href="#eff-prototype-in-code">Prototype at the fidelity the question needs</a>
+
+1. [Make timing questions clickable](#eff-prototype-in-code-rule-1)
+2. [Sketch before you branch](#eff-prototype-in-code-rule-2)
+3. [Write the question at the top](#eff-prototype-in-code-rule-3)
+4. [Decide what happens to the branch](#eff-prototype-in-code-rule-4)
+
+</div>
+
+</div>
+
+</aside>
+
+</section>
+
+<Runtime chapter="ch-explore" />

@@ -1,0 +1,42 @@
+<div class="note comfy cw-wrap">
+  <div class="seg cw-seg" role="radiogroup" aria-label="Example">
+    <input type="radio" name="cw-good-real-material-w" id="cw-good-real-material-w-1" value="storybook" checked><label for="cw-good-real-material-w-1">Storybook</label>
+    <input type="radio" name="cw-good-real-material-w" id="cw-good-real-material-w-2" value="xcode"><label for="cw-good-real-material-w-2">Xcode</label>
+    <input type="radio" name="cw-good-real-material-w" id="cw-good-real-material-w-3" value="devtools"><label for="cw-good-real-material-w-3">Chrome DevTools</label>
+    <input type="radio" name="cw-good-real-material-w" id="cw-good-real-material-w-4" value="codepen"><label for="cw-good-real-material-w-4">CodePen</label>
+  </div>
+  <div class="cw" data-cw-view role="img" aria-label=""></div>
+  <p class="cw-cap" data-cw-cap aria-live="polite"></p>
+  
+  <script>
+  (() => {
+    const wrap = document.currentScript.closest('.cw-wrap');
+    const view = wrap.querySelector('[data-cw-view]'), cap = wrap.querySelector('[data-cw-cap]');
+    const L = w => '<i class="cw-line" style="width:' + w + '"></i>';
+    const ph = (lab, cls, lines) => '<div class="cw-grm-ph"><div class="cw-grm-scr' + (cls ? ' ' + cls : '') + '">' + lines.map(L).join('') + '</div>' + lab + '</div>';
+    const S = {
+      storybook: { html: '<div class="cw-grm-app cw-grm-sb"><div class="cw-grm-side"><b>Toast</b><span>Default</span><span class="on">Long text</span><span>With action</span><span>Error</span></div>' +
+          '<div class="cw-grm-main"><div class="cw-grm-stage"><div class="toast">Couldn’t export “Portrait study, final version 3”. Check the folder and try again.</div></div>' +
+          '<div class="cw-grm-ctrl"><b>Controls</b><span>message</span><em>Couldn’t export “Portrait study, final…</em><span>duration</span><em>4000</em></div></div></div>',
+        alt: 'A component workshop. The sidebar lists the states of a toast: Default, Long text (selected), With action, Error. The long-text toast is rendered in the middle, and controls below change its message and duration.',
+        cap: 'Storybook: each state of a component is a story you can open on its own, like Long text or Error, and the Controls panel changes its data live.' },
+      xcode: { html: '<div class="cw-grm-app cw-grm-xc"><div class="cw-grm-code"><span><b>struct</b> AlbumCard: View {</span><span>  var title: String</span><span>  var body: some View {</span><span>    Text(title)</span><span>  }</span><span>}</span></div>' +
+          '<div class="cw-grm-prev">' + ph('Default', '', ['80%', '60%', '70%']) + ph('Larger text', 'big', ['90%', '75%', '85%']) + ph('Landscape', 'land', ['70%', '50%']) + '</div></div>',
+        alt: 'Code for a small view on the left. On the right, live previews of the same view: default, with larger text, and in landscape.',
+        cap: 'Xcode: SwiftUI previews render the view next to its code and update as you type. Variants show it at several text sizes or orientations side by side.' },
+      devtools: { html: '<div class="cw-grm-app"><div class="cw-grm-tools"><span>Network <b>Slow</b></span><span>Width <b>360</b></span><span class="on">Reduced motion <b>On</b></span></div>' +
+          '<div class="cw-grm-vp"><span class="cw-grm-rule">← 360 →</span><div class="cw-grm-mini">' + L('60%') + '<i class="blk"></i><i class="blk"></i>' + L('80%') + '</div></div></div>',
+        alt: 'Browser tool settings: network set to slow, width 360, reduced motion on. Below, a narrow page still showing loading placeholders.',
+        cap: 'Chrome DevTools: slow the network, narrow the viewport and turn on reduced motion, so a prototype meets slow responses and small screens before people do.' },
+      codepen: { html: '<div class="cw-grm-app"><div class="cw-grm-eds"><div class="cw-grm-ed"><b>HTML</b>' + L('80%') + L('60%') + L('70%') + '</div>' +
+          '<div class="cw-grm-ed"><b>CSS</b><span>.toast {</span><span>  transition:</span><span>  opacity <mark>200ms</mark>;</span><span>}</span></div><div class="cw-grm-ed"><b>JS</b>' + L('70%') + L('85%') + L('50%') + '</div></div>' +
+          '<div class="cw-grm-res"><span class="cw-grm-lab">Result</span><span class="btn btn-secondary cw-grm-fork">Fork</span><div class="toast">Draft saved</div></div></div>',
+        alt: 'Three small editors for HTML, CSS and JS. The CSS sets the toast transition to 200 milliseconds. Below, the live result shows the toast, with a Fork button.',
+        cap: 'CodePen: code and result sit together and update as you type, so you can tune an animation’s timing by feel, then share a link others can fork.' }
+    };
+    const render = k => { view.innerHTML = S[k].html; view.setAttribute('aria-label', 'Sketch: ' + S[k].alt); cap.textContent = S[k].cap; };
+    wrap.querySelectorAll('input[name="cw-good-real-material-w"]').forEach(r => r.addEventListener('change', () => render(r.value)));
+    render('storybook');
+  })();
+  </script>
+</div>

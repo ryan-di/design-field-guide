@@ -1,0 +1,37 @@
+<div class="note comfy cw-wrap">
+      <div class="seg cw-seg" role="radiogroup" aria-label="Example">
+        <input type="radio" name="cw-spinner-w" id="cw-spinner-w-1" value="chrome" checked><label for="cw-spinner-w-1">Chrome</label>
+        <input type="radio" name="cw-spinner-w" id="cw-spinner-w-2" value="stripe"><label for="cw-spinner-w-2">Stripe Checkout</label>
+        <input type="radio" name="cw-spinner-w" id="cw-spinner-w-3" value="mail"><label for="cw-spinner-w-3">iOS Mail</label>
+      </div>
+      <div class="cw" data-cw-view role="img" aria-label=""></div>
+      <p class="cw-cap" data-cw-cap aria-live="polite"></p>
+      
+      <script>
+      (() => {
+        const wrap = document.currentScript.closest('.cw-wrap');
+        const view = wrap.querySelector('[data-cw-view]'), cap = wrap.querySelector('[data-cw-cap]');
+        const line = w => '<i class="cw-line" style="width:' + w + '%"></i>';
+        const spin = '<span class="spinner" aria-hidden="true"></span>';
+        const tab = (icon, name, on) => '<span class="cw-spinw-tab' + (on ? ' on' : '') + '">' + icon + '<span>' + name + '</span></span>';
+        const mail = (a, b, c) => '<div class="cw-spinw-mail">' + line(a) + line(b) + line(c) + '</div>';
+        const S = {
+          chrome: { html: '<div class="cw-spinw-win"><div class="cw-spinw-tabs">' + tab('<i class="cw-spinw-fav"></i>', 'Recipes', true) + tab(spin, 'Weather') + tab('<i class="cw-spinw-fav b"></i>', 'Maps') + '</div>' +
+              '<div class="cw-spinw-url">recipes.example</div><div class="cw-spinw-page"><b>Lemon pasta</b>' + line(95) + line(85) + line(60) + '</div></div>',
+            alt: 'A browser with three tabs. The middle tab, Weather, shows a small spinner in place of its icon. The open tab, Recipes, shows a readable page.',
+            cap: 'Chrome: a loading tab swaps its icon for a small spinner. Only that tab is busy, so you keep reading in the others.' },
+          stripe: { html: '<div class="cw-spinw-card"><span class="cw-spinw-total"><span>Total</span><span>$24.00</span></span><span class="cw-spinw-lab">Card information</span>' +
+              '<span class="cw-spinw-in">•••• •••• •••• 4821</span><span class="cw-spinw-lab">Email</span><span class="cw-spinw-in">mia@example.com</span>' +
+              '<span class="btn btn-primary cw-spinw-pay">' + spin + '</span></div>',
+            alt: 'A payment form, filled in. The Pay button shows only a spinner, at the same size as before.',
+            cap: 'Stripe Checkout: after you press Pay, the button itself shows a spinner, then a check mark. The feedback sits where you clicked, so you know the press landed.' },
+          mail: { html: '<div class="cw-spinw-phone"><b>Inbox</b><div class="cw-spinw-pull">' + spin + '</div>' + mail(40, 85, 70) + mail(55, 75, 90) + mail(35, 80, 60) + '</div>',
+            alt: 'A phone inbox pulled down a little. A spinner shows above the list, and the messages below stay in place.',
+            cap: 'iOS Mail: pull the inbox down and a spinner shows above it while it checks for new mail. The messages already there stay put and readable.' }
+        };
+        const render = k => { view.innerHTML = S[k].html; view.setAttribute('aria-label', 'Sketch: ' + S[k].alt); cap.textContent = S[k].cap; };
+        wrap.querySelectorAll('input[name="cw-spinner-w"]').forEach(r => r.addEventListener('change', () => render(r.value)));
+        render('chrome');
+      })();
+      </script>
+    </div>

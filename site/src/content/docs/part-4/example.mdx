@@ -1,0 +1,214 @@
+---
+title: "One problem, start to finish"
+description: "Here the running example goes through every stage, with the small artifact each stage leaves behind."
+eyebrow: "Chapter 31"
+sidebar:
+  label: "Worked example"
+---
+
+import Raw from '../../../components/Raw.astro';
+import Learned from '../../../components/Learned.astro';
+import Runtime from '../../../components/Runtime.astro';
+import F0 from '../../../fragments/ch-example/0.html?raw';
+import F1 from '../../../fragments/ch-example/1.html?raw';
+import F2 from '../../../fragments/ch-example/2.html?raw';
+import F3 from '../../../fragments/ch-example/3.html?raw';
+import F4 from '../../../fragments/ch-example/4.html?raw';
+import F5 from '../../../fragments/ch-example/5.html?raw';
+import F6 from '../../../fragments/ch-example/6.html?raw';
+import F7 from '../../../fragments/ch-example/7.html?raw';
+import F8 from '../../../fragments/ch-example/8.html?raw';
+import F9 from '../../../fragments/ch-example/9.html?raw';
+import F10 from '../../../fragments/ch-example/10.html?raw';
+import F11 from '../../../fragments/ch-example/11.html?raw';
+import F12 from '../../../fragments/ch-example/12.html?raw';
+import F13 from '../../../fragments/ch-example/13.html?raw';
+import F14 from '../../../fragments/ch-example/14.html?raw';
+
+<Runtime at="start" />
+
+<section class="dfg-chapter" id="ch-example">
+
+Here the running example goes through every stage, with the small artifact each stage leaves behind. Then a map shows which tool fits which job.
+
+<article class="entry essay" id="eff-worked-example" data-entry data-name="Worked example">
+
+<div class="entry-head">
+
+## Follow one problem through \{#eff-worked-example-h\}
+
+<Learned id="eff-worked-example" />
+
+</div>
+
+This entry follows one problem from brief to release: people lose unsaved work when they close a workflow tab. Each stage ends with one small thing someone else can read: a brief, a context pack, directions, a decision, a plan, checks and a note on what you learned. The stages follow [the loop](/part-4/loop/#eff-loop), with Problem folded into the brief and the context pack as a step of its own.
+
+With those artifacts, anyone can pick up the problem at any stage and see why it went the way it did, including you a month later. The rule demos below use smaller problems of their own.
+
+<Raw html={F0} />
+
+### Rules \{#eff-worked-example-rules\}
+
+Four rules keep the stages useful.
+
+<div class="cs essay-cs">
+
+<section class="rule" id="eff-worked-example-rule-1">
+
+#### 1. Explore directions before you build \{#eff-worked-example-rule-1-h\}
+
+An agent builds fast, so it’s tempting to go from the brief straight to code. Then the first idea is the only idea, and a better one turns up in review, after the work is done. Spend that speed on [directions](/part-4/explore/#eff-explore-wide) instead: ask for three different ones, and pick one before anything is built for real.
+
+<Raw html={F1} />
+
+</section>
+
+<section class="rule" id="eff-worked-example-rule-2">
+
+#### 2. Leave one artifact per stage \{#eff-worked-example-rule-2-h\}
+
+If each stage lives in your head or in a long chat, nobody else can follow it: when someone asks why you chose this design, the answer is somewhere in hundreds of messages. Leave one small artifact per stage: the brief in the ticket, the directions on a page, the decision and checks in the pull request.
+
+<Raw html={F2} />
+
+</section>
+
+<section class="rule" id="eff-worked-example-rule-3">
+
+#### 3. Scale the stages to the problem \{#eff-worked-example-rule-3-h\}
+
+Agents make every stage cheap, so it’s tempting to run all of them at full size. For a typo, three directions and a scoring table waste a day and bury a one-word change. Ask what each stage is for, and if its artifact wouldn’t change a decision, keep it to a line.
+
+<Raw html={F3} />
+
+</section>
+
+<section class="rule" id="eff-worked-example-rule-4">
+
+#### 4. Check the result after release \{#eff-worked-example-rule-4-h\}
+
+[Merged isn’t done](/part-4/loop/#eff-loop): the evaluation plan only helps if someone reads it after release. Go back to it once people have used the change, check each line, and write down one thing you learned.
+
+<Raw html={F4} />
+
+</section>
+
+<Raw html={F5} />
+
+</div>
+
+### In real products \{#eff-worked-example-products\}
+
+<Raw html={F6} />
+
+</article>
+
+<article class="entry essay" id="eff-toolkit" data-entry data-name="Toolkit">
+
+<div class="entry-head">
+
+## Pick the tool for the job \{#eff-toolkit-h\}
+
+<Learned id="eff-toolkit" />
+
+</div>
+
+Design work has separate jobs: frame the problem, gather context, explore, decide, build, check and share. Each job has a tool that fits it, and splitting the work by job keeps each step small enough to check, with a result the next step can use.
+
+One long chat can do all of it, but then the decisions are buried and nobody can check them. Whatever the agents make, the brief, the decision and the pull request’s list of behaviors should read as yours, because you’re the one answering for them.
+
+<Raw html={F7} />
+
+### Rules \{#eff-toolkit-rules\}
+
+Four rules keep the tools working for you.
+
+<div class="cs essay-cs">
+
+<section class="rule" id="eff-toolkit-rule-1">
+
+#### 1. Split the work by job \{#eff-toolkit-rule-1-h\}
+
+One chat asked to explore, decide and build does all three at once: it builds the first idea, and the choice between directions is never made in the open. Explore with parallel subagents, decide on a shared page, then build in a worktree with tests, so each step leaves something you can check.
+
+<Raw html={F8} />
+
+</section>
+
+<section class="rule" id="eff-toolkit-rule-2">
+
+#### 2. Read the real design values \{#eff-toolkit-rule-2-h\}
+
+A screenshot shows how a design looks, not the values behind it. An agent that rebuilds from one guesses the colors, spacing and corner radius, and each guess is a little off. Read the frames and tokens through the Figma connector instead, so the build uses the same values as the design.
+
+<Raw html={F9} />
+
+</section>
+
+<section class="rule" id="eff-toolkit-rule-3">
+
+#### 3. Ask for a test that fails first \{#eff-toolkit-rule-3-h\}
+
+An agent says “done” when the code runs, not when the behavior works, so if you take that on trust, the bug turns up when someone uses it. Ask for a test that fails before the change and passes after, then run the Playwright specs that touch the changed screens.
+
+<Raw html={F10} />
+
+</section>
+
+<section class="rule" id="eff-toolkit-rule-4">
+
+#### 4. Share a link people can click \{#eff-toolkit-rule-4-h\}
+
+A screen recording shows one path, at the pace of whoever made it. People can’t try the other buttons, so their questions stay open. Publish the prototype as an artifact link people can click through, and link it from the ticket so it’s still there next week.
+
+<Raw html={F11} />
+
+</section>
+
+<Raw html={F12} />
+
+</div>
+
+### In real products \{#eff-toolkit-products\}
+
+<Raw html={F13} />
+
+</article>
+
+<Raw html={F14} />
+
+<aside class="in-short" id="ch-example-in-short" aria-labelledby="ch-example-in-short-h" data-pagefind-ignore>
+
+## In short \{#ch-example-in-short-h\}
+
+<div class="is-grid">
+
+<div>
+
+<a class="is-e" href="#eff-worked-example">Follow one problem through</a>
+
+1. [Explore directions before you build](#eff-worked-example-rule-1)
+2. [Leave one artifact per stage](#eff-worked-example-rule-2)
+3. [Scale the stages to the problem](#eff-worked-example-rule-3)
+4. [Check the result after release](#eff-worked-example-rule-4)
+
+</div>
+
+<div>
+
+<a class="is-e" href="#eff-toolkit">Pick the tool for the job</a>
+
+1. [Split the work by job](#eff-toolkit-rule-1)
+2. [Read the real design values](#eff-toolkit-rule-2)
+3. [Ask for a test that fails first](#eff-toolkit-rule-3)
+4. [Share a link people can click](#eff-toolkit-rule-4)
+
+</div>
+
+</div>
+
+</aside>
+
+</section>
+
+<Runtime chapter="ch-example" />

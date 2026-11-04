@@ -1,0 +1,87 @@
+<div class="fm" data-fm>
+  
+  <div class="seg fm-seg" role="radiogroup" aria-label="Form">
+    <input type="radio" name="fm-checkbox" id="fm-checkbox-1" value="single" checked><label for="fm-checkbox-1">Single</label>
+    <input type="radio" name="fm-checkbox" id="fm-checkbox-2" value="group"><label for="fm-checkbox-2">Group</label>
+    <input type="radio" name="fm-checkbox" id="fm-checkbox-3" value="card"><label for="fm-checkbox-3">Card</label>
+    <input type="radio" name="fm-checkbox" id="fm-checkbox-4" value="list"><label for="fm-checkbox-4">In a list</label>
+  </div>
+  <div class="fm-stage" data-fm-stage></div>
+  <p class="fig-cap" data-fm-when aria-live="polite"></p>
+  <script>
+  (() => {
+    const fm = document.currentScript.closest('[data-fm]'), stage = fm.querySelector('[data-fm-stage]'), when = fm.querySelector('[data-fm-when]');
+    const check = (label, on) => '<label class="check"><input type="checkbox"' + (on ? ' checked' : '') + '> ' + label + '</label>';
+    const card = (t, d, p, on) => '<label class="fmc-card"><input type="checkbox" data-p="' + p + '"' + (on ? ' checked' : '') + '><span class="fmc-txt"><b>' + t + '</b><small>' + d + '</small></span><span class="fmc-price">+$' + p + '</span></label>';
+    const FILES = [['Boarding pass', 'PDF'], ['Hotel booking', 'PDF'], ['Trip budget', 'Sheet'], ['Packing list', 'Doc'], ['Lisbon map', 'Image']];
+    const F = {
+      single: {
+        html: '<div class="cs-form fmc-box"><b>Your order</b><div class="fmc-sum"><span>Trail runners, size 42</span><b>$89</b></div>' + check('Email me when my order ships', false) +
+          '<button type="button" class="btn btn-primary cs-sm" data-go>Place order</button><p class="cs-meta" data-out></p></div>',
+        use: 'Use it for one yes or no question, like getting emails about an order.',
+        more: 'Checked means yes, and nothing is sent until they place the order.',
+        wire: s => {
+          const cb = s.querySelector('.check input'), out = s.querySelector('[data-out]');
+          s.querySelector('[data-go]').addEventListener('click', () => { out.textContent = cb.checked ? 'Order placed. We’ll email you when it ships.' : 'Order placed. No shipping emails.'; });
+        }
+      },
+      group: {
+        html: '<div class="cs-form fmc-box" role="group" aria-label="Email me about"><b>Email me about</b>' + check('Orders and delivery', true) + check('Offers and sales', false) + check('Account security', true) +
+          '<button type="button" class="btn btn-primary cs-sm" data-go>Save</button><p class="cs-meta" data-out></p></div>',
+        use: 'Use it when people can pick any number of options from a short list.',
+        more: 'A heading says what the options are for, and Save applies them.',
+        wire: s => {
+          const out = s.querySelector('[data-out]'), boxes = Array.from(s.querySelectorAll('.check'));
+          boxes.forEach(b => b.querySelector('input').addEventListener('change', () => { out.textContent = ''; }));
+          s.querySelector('[data-go]').addEventListener('click', () => {
+            const on = boxes.filter(b => b.querySelector('input').checked).map(b => b.textContent.trim());
+            out.textContent = on.length ? 'Saved: ' + on.join(', ') + '.' : 'Saved: no emails.';
+          });
+        }
+      },
+      card: {
+        html: '<div class="fmc-cards" role="group" aria-label="Add extras"><b>Add extras</b>' + card('Checked bag', 'Up to 23 kg', 35, false) + card('Choose your seat', 'Window or aisle', 12, true) + card('Travel insurance', 'Cancel for any reason', 19, false) +
+          '<div class="fmc-total"><span>Flight to Lisbon $189</span><b data-total>Total $201</b></div></div>',
+        use: 'Use it for extras that need a price or a short detail, like add-ons for a flight.',
+        more: 'The whole card can be clicked, not just the box.',
+        wire: s => {
+          const boxes = Array.from(s.querySelectorAll('[data-p]')), total = s.querySelector('[data-total]');
+          const sum = () => { total.textContent = 'Total $' + boxes.reduce((n, b) => n + (b.checked ? +b.dataset.p : 0), 189); };
+          boxes.forEach(b => b.addEventListener('change', sum));
+        }
+      },
+      list: {
+        html: '<div class="app-frame fm-frame"><div class="app-bar fmc-bar"><span class="fmc-left"><label class="check"><input type="checkbox" aria-label="Select all" data-all></label><span data-count>Downloads</span></span>' +
+          '<span class="fmc-acts" data-acts hidden><button type="button" class="btn btn-secondary cs-sm" data-do="moved to Trip">Move to Trip</button><button type="button" class="btn btn-secondary cs-sm" data-do="deleted">Delete</button></span></div>' +
+          '<div class="app-body fmc-list">' + FILES.map(f => '<label class="check fmc-row"><input type="checkbox" data-row><span><b>' + f[0] + '</b> <i>· ' + f[1] + '</i></span></label>').join('') + '<p class="cs-meta" data-out></p></div></div>',
+        use: 'Use it to pick items for one action, like moving or deleting files.',
+        more: 'The actions appear once something is checked, and the top box selects or clears them all.',
+        wire: s => {
+          const all = s.querySelector('[data-all]'), acts = s.querySelector('[data-acts]'), count = s.querySelector('[data-count]'), out = s.querySelector('[data-out]');
+          const rows = () => Array.from(s.querySelectorAll('[data-row]'));
+          const sync = () => {
+            const r = rows(), n = r.filter(b => b.checked).length;
+            all.checked = r.length > 0 && n === r.length; all.indeterminate = n > 0 && n < r.length; all.disabled = !r.length;
+            acts.hidden = !n; count.textContent = n ? n + ' selected' : 'Downloads';
+          };
+          s.querySelector('.fmc-list').addEventListener('change', e => { if (e.target.matches('[data-row]')) { out.textContent = ''; sync(); } });
+          all.addEventListener('change', () => { rows().forEach(b => { b.checked = all.checked; }); out.textContent = ''; sync(); });
+          acts.querySelectorAll('[data-do]').forEach(b => b.addEventListener('click', () => {
+            const gone = rows().filter(x => x.checked);
+            gone.forEach(x => x.closest('.fmc-row').remove());
+            out.textContent = gone.length + (gone.length === 1 ? ' file ' : ' files ') + b.dataset.do + '.';
+            sync(); if (!all.disabled) all.focus({ preventScroll: true });
+          }));
+          sync();
+        }
+      }
+    };
+    const show = k => {
+      stage.innerHTML = F[k].html; F[k].wire(stage);
+      when.innerHTML = '<b>' + fm.querySelector('.fm-seg input:checked + label').textContent + '.</b> ' + F[k].use + ' ' + F[k].more;
+    };
+    fm.querySelectorAll('.fm-seg input').forEach(i => i.addEventListener('change', () => show(i.value)));
+    show('single');
+  })();
+  </script>
+</div>

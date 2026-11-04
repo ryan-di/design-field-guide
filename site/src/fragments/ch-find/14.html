@@ -1,0 +1,168 @@
+<script>
+(() => {
+  const cs = document.currentScript.closest('.cs');
+  const run = () => {
+  const D = (k, html, wire) => csDemo(cs.querySelector('[data-d="' + k + '"]'), html, wire);
+  const css = document.createElement('style');
+  css.textContent = [
+    '.sf-app{width:min(360px,100%)}',
+    '.sf-q{position:relative}',
+    '.sf-q .icon{position:absolute;left:10px;top:50%;transform:translateY(-50%);color:var(--ui-muted)}',
+    '.sf-q .input{padding:8px 10px 8px 34px;font-size:14px}',
+    '.sf-chips{display:flex;flex-wrap:wrap;gap:6px}',
+    '.sf-chip{all:unset;cursor:pointer;display:inline-flex;align-items:center;gap:5px;padding:5px 11px;border-radius:999px;border:1.5px solid var(--ui-border);background:var(--ui-surface);font:600 13px var(--font-body);color:var(--ui-text)}',
+    '.sf-chip[aria-pressed="true"]{background:var(--ui-sel-soft);border-color:var(--ui-sel)}',
+    '.sf-chip[aria-pressed="true"]::before{content:"✓";color:var(--ui-sel);font-weight:700}',
+    '.sf-chip:focus-visible{outline:2px solid var(--ui-sel);outline-offset:2px}',
+    '.sf-count{font:500 12.5px var(--font-mono);color:var(--ui-muted)}',
+    '.sf-count:empty{display:none}',
+    '.sf-res{display:flex;flex-direction:column}',
+    '.sf-res .cs-row b{font-weight:600}',
+    '.sf-item{all:unset;cursor:pointer;display:flex;justify-content:space-between;align-items:center;gap:8px;padding:7px 4px;border-bottom:1px solid var(--ui-border);font-size:14px}',
+    '.sf-item:hover{background:var(--ui-hover)}',
+    '.sf-item:focus-visible{outline:2px solid var(--ui-sel)}',
+    '.sf-item small{color:var(--ui-muted);font-size:12.5px}',
+    '.sf-sec{font:600 11.5px var(--font-body);color:var(--ui-muted);padding:6px 0 2px}',
+    '.sf-none{display:flex;flex-direction:column;gap:6px;padding:10px 0;font-size:14px}',
+    '.sf-none b{font-size:14.5px}',
+    '.sf-none .row{display:flex;flex-wrap:wrap;gap:6px}',
+    '.sf-pop{display:flex;flex-direction:column;gap:4px;padding:8px 10px;border:1px solid var(--ui-border);border-radius:8px;background:var(--ui-surface)}',
+    '.sf-pop[hidden]{display:none}',
+    '.sf-scroll{max-height:290px;overflow:auto}',
+    '.sf-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:4px 10px}',
+    '.sf-grid .check{font-size:13px;gap:6px}',
+    '.sf-grid .check input{width:15px;height:15px}',
+    '.app-body > .btn{align-self:flex-start}'
+  ].map(r => '#pat-search-filters ' + r).join('\n');
+  cs.appendChild(css);
+  const icon = n => '<svg class="icon sm" aria-hidden="true"><use href="#i-' + n + '"/></svg>';
+  const esc = s => s.replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+  const norm = s => s.toLowerCase().replace(/[,]/g, '').replace(/\s+/g, ' ').trim();
+  const qbox = ph => '<div class="sf-q">' + icon('search') + '<input class="input" type="search" aria-label="' + ph + '" placeholder="' + ph + '" autocomplete="off" spellcheck="false" data-q></div>';
+  const frame = (title, body, cls) => '<div class="app-frame sf-app"><div class="app-bar"><span>' + title + '</span></div><div class="app-body' + (cls ? ' ' + cls : '') + '">' + body + '</div></div>';
+
+  /* 1. Hidden filter */
+  const JACKETS = [['Rain jacket, navy', '€89', ['S', 'L']], ['Rain jacket, yellow', '€79', ['L', 'XL']], ['Light rain jacket', '€59', ['S', 'XL']], ['Wool coat', '€149', ['M']], ['Denim jacket', '€69', ['M', 'L']]];
+  const shopHtml = fixed => frame('Shop · Jackets', qbox('Search jackets') +
+    (fixed ? '<div class="sf-chips"><button type="button" class="sf-chip" aria-pressed="true" data-size>Size M</button></div>'
+      : '<button class="btn btn-ghost cs-sm" type="button" aria-expanded="false" data-fbtn>Filters</button><div class="sf-pop" data-fpop hidden><b>Size</b><label class="check"><input type="checkbox" checked data-size> M</label></div>') +
+    '<p class="sf-count" aria-live="polite" data-count></p><div class="sf-res" data-res></div>');
+  const shopWire = fixed => d => {
+    const q = d.querySelector('[data-q]'), res = d.querySelector('[data-res]'), count = d.querySelector('[data-count]'), size = d.querySelector('[data-size]');
+    const on = () => (fixed ? size.getAttribute('aria-pressed') === 'true' : size.checked);
+    const render = () => {
+      const raw = q.value.trim(), s = norm(raw);
+      const hits = JACKETS.filter(j => !s || norm(j[0]).includes(s)), shown = hits.filter(j => !on() || j[2].includes('M')), hidden = hits.length - shown.length;
+      res.innerHTML = shown.map(j => '<div class="cs-row"><span class="grow"><b>' + j[0] + '</b><br><span class="cs-meta">Sizes ' + j[2].join(', ') + '</span></span><span>' + j[1] + '</span></div>').join('');
+      if (!fixed) { count.textContent = !shown.length ? 'No results for “' + raw + '”.' : shown.length + (shown.length === 1 ? ' result' : ' results'); return; }
+      count.textContent = shown.length + (shown.length === 1 ? ' result' : ' results') + (raw ? ' for “' + raw + '”' : '') + (on() ? ' in size M' : '') + (hidden ? ' · ' + hidden + ' in other sizes' : '');
+      if (hidden) {
+        res.insertAdjacentHTML('beforeend', '<button class="btn btn-secondary cs-sm" type="button" data-all>Show ' + hidden + ' in all sizes</button>');
+        res.querySelector('[data-all]').addEventListener('click', () => { size.setAttribute('aria-pressed', 'false'); render(); q.focus({ preventScroll: true }); });
+      }
+    };
+    q.addEventListener('input', render);
+    if (fixed) size.addEventListener('click', () => { size.setAttribute('aria-pressed', String(!on())); render(); });
+    else {
+      const fb = d.querySelector('[data-fbtn]'), pop = d.querySelector('[data-fpop]');
+      fb.addEventListener('click', () => { pop.hidden = !pop.hidden; fb.setAttribute('aria-expanded', String(!pop.hidden)); });
+      size.addEventListener('change', render);
+    }
+    render();
+  };
+  D('pat-search-filters-1b', shopHtml(false), shopWire(false));
+  D('pat-search-filters-1f', shopHtml(true), shopWire(true));
+
+  /* 2. Dead-end "No results" */
+  const RECIPES = [['Vegetable lasagna', 60], ['Spinach lasagna', 45], ['Quick tomato pasta', 20], ['Lemon risotto', 35], ['Pea soup', 25], ['Egg fried rice', 15]];
+  const WORDS = Array.from(new Set(RECIPES.flatMap(r => norm(r[0]).split(' ')).filter(w => w.length >= 4)));
+  const dist = (a, b) => {
+    const m = Array.from({ length: a.length + 1 }, (_, i) => [i]);
+    for (let j = 1; j <= b.length; j++) m[0][j] = j;
+    for (let i = 1; i <= a.length; i++) for (let j = 1; j <= b.length; j++) m[i][j] = Math.min(m[i - 1][j] + 1, m[i][j - 1] + 1, m[i - 1][j - 1] + (a[i - 1] === b[j - 1] ? 0 : 1));
+    return m[a.length][b.length];
+  };
+  const recHtml = frame('Recipes', qbox('Search recipes') + '<div class="sf-chips"><button type="button" class="sf-chip" aria-pressed="true" data-quick>Under 30 min</button></div><div class="sf-res" aria-live="polite" data-res></div>');
+  const recWire = fixed => d => {
+    const q = d.querySelector('[data-q]'), res = d.querySelector('[data-res]'), quick = d.querySelector('[data-quick]');
+    const on = () => quick.getAttribute('aria-pressed') === 'true';
+    const render = () => {
+      const raw = q.value.trim(), s = norm(raw);
+      const hits = RECIPES.filter(r => !s || norm(r[0]).includes(s)), shown = hits.filter(r => !on() || r[1] < 30), hidden = hits.length - shown.length;
+      if (shown.length) { res.innerHTML = shown.map(r => '<div class="cs-row"><span class="grow"><b>' + r[0] + '</b></span><span class="cs-meta">' + r[1] + ' min</span></div>').join(''); return; }
+      if (!fixed) { res.innerHTML = '<p class="sf-none">No results.</p>'; return; }
+      let sug = null;
+      if (!hits.length) { let best = 3; WORDS.forEach(w => { const k = dist(s, w); if (k < best) { best = k; sug = w; } }); }
+      res.innerHTML = '<div class="sf-none"><b>No ' + (on() ? 'quick recipes' : 'recipes') + ' match “' + esc(raw) + '”</b><span>' +
+        (hidden ? hidden + (hidden === 1 ? ' recipe takes' : ' recipes take') + ' longer than 30 minutes.' : sug ? 'Did you mean “' + sug + '”?' : 'Check the spelling, or search for one ingredient.') + '</span><span class="row">' +
+        (sug ? '<button class="btn btn-secondary cs-sm" type="button" data-sug>Search for “' + sug + '”</button>' : '') +
+        (hidden ? '<button class="btn btn-secondary cs-sm" type="button" data-clear>Show ' + hidden + ' that take longer</button>' : '') + '</span></div>';
+      const sb = res.querySelector('[data-sug]'), cb = res.querySelector('[data-clear]');
+      if (sb) sb.addEventListener('click', () => { q.value = sug; render(); const n = res.querySelector('button') || q; n.focus({ preventScroll: true }); });
+      if (cb) cb.addEventListener('click', () => { quick.setAttribute('aria-pressed', 'false'); render(); q.focus({ preventScroll: true }); });
+    };
+    q.addEventListener('input', render);
+    quick.addEventListener('click', () => { quick.setAttribute('aria-pressed', String(!on())); render(); });
+    render();
+  };
+  D('pat-search-filters-2b', recHtml, recWire(false));
+  D('pat-search-filters-2f', recHtml, recWire(true));
+
+  /* 3. Too many filters */
+  const HOTELS = [['Casa Azul', 98, 8.6, ['breakfast', 'cancel', 'bar', 'desk']], ['Hotel Miradouro', 145, 9.1, ['breakfast', 'cancel', 'pool', 'spa', 'view']],
+    ['Rio Guesthouse', 72, 7.8, ['cancel', 'kitchen']], ['Lisboa Central', 115, 8.2, ['breakfast', 'gym', 'desk', 'access']], ['Alfama Rooms', 89, 8.9, ['kitchen', 'pets']]];
+  const ALL = [['pool', 'Pool'], ['gym', 'Gym'], ['spa', 'Spa'], ['parking', 'Parking'], ['pets', 'Pets allowed'], ['shuttle', 'Airport shuttle'], ['view', 'Sea view'], ['kitchen', 'Kitchen'],
+    ['breakfast', 'Breakfast included'], ['cancel', 'Free cancellation'], ['access', 'Step-free access'], ['desk', '24-hour desk'], ['bar', 'Bar'], ['r8', 'Rating 8+'], ['u120', 'Under €120']];
+  const FEW = [['u120', 'Under €120'], ['breakfast', 'Breakfast'], ['cancel', 'Free cancellation'], ['r8', 'Rating 8+']];
+  const fits = (h, k) => k === 'u120' ? h[1] < 120 : k === 'r8' ? h[2] >= 8 : h[3].includes(k);
+  const hotelHtml = fixed => frame('Hotels in Lisbon · 12–16 Nov', fixed
+    ? '<div class="sf-chips">' + FEW.map(f => '<button type="button" class="sf-chip" aria-pressed="false" data-k="' + f[0] + '">' + f[1] + '</button>').join('') + '<button type="button" class="btn btn-ghost cs-sm" data-more>More filters</button></div><p class="sf-count" data-count></p><div class="sf-res" data-res></div><p class="cs-meta" data-out></p>'
+    : '<b>Filters</b><div class="sf-grid">' + ALL.map(f => '<label class="check"><input type="checkbox" data-k="' + f[0] + '">' + f[1] + '</label>').join('') + '</div><p class="sf-count" data-count></p><div class="sf-res" data-res></div>', fixed ? '' : 'sf-scroll');
+  const hotelWire = fixed => d => {
+    const res = d.querySelector('[data-res]'), count = d.querySelector('[data-count]'), ctl = Array.from(d.querySelectorAll('[data-k]'));
+    const keys = () => ctl.filter(c => (fixed ? c.getAttribute('aria-pressed') === 'true' : c.checked)).map(c => c.dataset.k);
+    const render = () => {
+      const k = keys(), shown = HOTELS.filter(h => k.every(x => fits(h, x)));
+      count.textContent = shown.length + (shown.length === 1 ? ' hotel' : ' hotels');
+      res.innerHTML = shown.map(h => '<div class="cs-row"><span class="grow"><b>' + h[0] + '</b><br><span class="cs-meta">' + h[2] + ' · ' + (h[3].includes('breakfast') ? 'Breakfast included' : 'No breakfast') + '</span></span><span>€' + h[1] + '</span></div>').join('');
+    };
+    ctl.forEach(c => c.addEventListener(fixed ? 'click' : 'change', () => { if (fixed) c.setAttribute('aria-pressed', String(c.getAttribute('aria-pressed') !== 'true')); render(); }));
+    if (fixed) d.querySelector('[data-more]').addEventListener('click', () => { d.querySelector('[data-out]').textContent = 'Pool, parking, pets and 8 more would open in a panel.'; });
+    render();
+  };
+  D('pat-search-filters-3b', hotelHtml(false), hotelWire(false));
+  D('pat-search-filters-3f', hotelHtml(true), hotelWire(true));
+
+  /* 4. Empty box shows nothing */
+  const SONGS = [['Glass house', 'Mira Sol'], ['Gold rush', 'The Avenues'], ['Golden hour', 'June Lake'], ['Night drive', 'The Avenues'], ['Coastline', 'Mira Sol'], ['Paper planes', 'Kite Club'], ['Slow wave', 'June Lake'], ['Blue room', 'Otto Bell'], ['Morning light', 'Kite Club']];
+  const RECENT = ['Golden hour', 'Coastline', 'Blue room'];
+  const musicHtml = frame('Music · Search', qbox('Songs or artists') + '<div class="sf-res" data-res></div><p class="cs-ok" data-out></p>');
+  const musicWire = fixed => d => {
+    const q = d.querySelector('[data-q]'), res = d.querySelector('[data-res]'), out = d.querySelector('[data-out]');
+    const row = s => '<button type="button" class="sf-item" data-song="' + s[0] + '"><span><b>' + s[0] + '</b> <small>' + s[1] + '</small></span>' + icon('play') + '</button>';
+    const render = () => {
+      const s = norm(q.value);
+      if (!s) {
+        if (!fixed || document.activeElement !== q && !res.contains(document.activeElement)) { res.innerHTML = ''; return; }
+        res.innerHTML = '<p class="sf-sec">Recently played</p>' + RECENT.map(n => row(SONGS.find(x => x[0] === n))).join('') +
+          '<p class="sf-sec">Recent searches</p><div class="sf-chips"><button type="button" class="sf-chip" data-term="june lake">june lake</button><button type="button" class="sf-chip" data-term="night">night</button></div>';
+      } else {
+        const hits = SONGS.filter(x => norm(x[0] + ' ' + x[1]).includes(s));
+        res.innerHTML = hits.length ? hits.map(row).join('') : '<p class="sf-sec">No songs match “' + esc(q.value.trim()) + '”.</p>';
+      }
+      res.querySelectorAll('[data-song]').forEach(b => b.addEventListener('click', () => { out.textContent = 'Playing “' + b.dataset.song + '”.'; }));
+      res.querySelectorAll('[data-term]').forEach(b => b.addEventListener('click', () => { q.value = b.dataset.term; render(); q.focus({ preventScroll: true }); }));
+    };
+    q.addEventListener('input', render);
+    q.addEventListener('focus', render);
+    render();
+  };
+  D('pat-search-filters-4b', musicHtml, musicWire(false));
+  D('pat-search-filters-4f', musicHtml, musicWire(true));
+
+  csInit(cs);
+  };
+  if (window.csDemo) run(); else document.addEventListener('DOMContentLoaded', run);
+})();
+
+</script>

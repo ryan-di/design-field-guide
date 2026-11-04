@@ -1,0 +1,174 @@
+<script>
+(() => {
+  const cs = document.currentScript.closest('.cs');
+  const D = (k, html, wire) => csDemo(cs.querySelector('[data-d="' + k + '"]'), html, wire);
+  const P = '#eff-definition-of-done ';
+  const st = document.createElement('style');
+  st.textContent = [
+    '.dd-doc{width:min(400px,100%);background:var(--ui-surface);border:1px solid var(--ui-border);border-radius:12px;box-shadow:var(--ui-shadow);text-align:left;display:flex;flex-direction:column;color:var(--ui-text)}',
+    '.dd-h{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:10px 14px;border-bottom:1px solid var(--ui-border);font:600 14px var(--font-body)}',
+    '.dd-b{padding:12px 14px;display:flex;flex-direction:column;gap:10px;font-size:14px;line-height:1.45}',
+    '.dd-who{font:500 12px var(--font-mono);color:var(--ui-muted);font-weight:500}',
+    '.dd-k{font:600 11px var(--font-mono);letter-spacing:.08em;text-transform:uppercase;color:var(--ui-muted)}',
+    '.dd-list{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:7px}',
+    '.dd-li{display:grid;grid-template-columns:18px minmax(0,1fr);gap:8px;align-items:start}',
+    '.dd-li .icon{margin-top:2px}',
+    '.dd-ev{display:block;font:500 12px var(--font-mono);color:var(--ui-muted)}',
+    '.dd-ok{color:var(--ui-ok)}',
+    '.dd-bad{color:var(--ui-danger)}',
+    '.dd-you{color:var(--ui-sel)}',
+    '.dd-run{font:500 12px/1.6 var(--font-mono);background:var(--ui-hover);border-radius:8px;padding:8px 10px;white-space:pre-wrap;margin:0}',
+    '.dd-shots{display:flex;gap:6px;margin-top:4px}',
+    '.dd-shot{width:46px;height:30px;border-radius:5px;border:1px solid var(--ui-border);background:var(--ui-bg);display:flex;flex-direction:column;gap:4px;padding:6px 5px}',
+    '.dd-shot i{display:block;height:4px;border-radius:2px;background:var(--ui-skel)}',
+    '.dd-shot.dark{background:var(--ui-text)}',
+    '.dd-shot.dark i{background:var(--ui-muted)}',
+    '.dd-shot.narrow{width:24px}',
+    '.dd-acts{display:flex;flex-wrap:wrap;gap:8px;align-items:center}',
+    '.dd-out{font-size:13.5px;line-height:1.45;color:var(--ui-text);width:min(400px,100%);text-align:left;margin:0}',
+    '.dd-out:empty{display:none}',
+    '.dd-crit{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px;align-items:center;padding:7px 0;border-bottom:1px solid var(--ui-border)}',
+    '.dd-crit:last-child{border-bottom:0}',
+    '.dd-res{grid-column:1/-1;font-size:13px;display:flex;gap:6px;align-items:flex-start}',
+    '.dd-res:empty{display:none}',
+    '.dd-res .icon{margin-top:1px}',
+    '.dd-tag{font:600 11px var(--font-mono);color:var(--ui-sel);margin-right:4px}',
+    '.dd-states{display:flex;flex-wrap:wrap;gap:6px;width:min(400px,100%)}',
+    '.dd-st{all:unset;cursor:pointer;font:600 13px var(--font-body);padding:6px 10px;border-radius:999px;border:1px solid var(--ui-border);background:var(--ui-surface);color:var(--ui-text)}',
+    '.dd-st[aria-pressed="true"]{background:var(--ui-sel);border-color:var(--ui-sel);color:var(--ui-on-sel)}',
+    '.dd-st:focus-visible{outline:2px solid var(--ui-sel);outline-offset:2px}',
+    '.dd-on{background:var(--ui-sel-soft);border-radius:6px}',
+    '.dd-miss{color:var(--ui-muted);font-style:italic}',
+    '.dd-outcome{width:min(400px,100%);display:flex;gap:8px;align-items:flex-start;padding:10px 12px;border-radius:10px;border:1px solid var(--ui-border);background:var(--ui-surface);font-size:13.5px;line-height:1.45;text-align:left}',
+    '.dd-outcome.bad{border-color:var(--ui-danger);background:var(--ui-danger-soft)}',
+    '.dd-outcome .icon{margin-top:2px;flex:none}',
+    '.dd-later{display:flex;flex-direction:column;gap:6px}'
+  ].map(r => P + r.replace(/\}(?=.)/g, '} ' + P).replace(/,(?=[^{}]*\{)/g, ',' + P)).join('\n');
+  cs.appendChild(st);
+
+  const ic = (n, cls) => '<svg class="icon sm' + (cls ? ' ' + cls : '') + '" aria-hidden="true"><use href="#i-' + n + '"/></svg>';
+  const btn = (label, attr, kind) => '<button class="btn ' + (kind || 'btn-secondary') + ' cs-sm" type="button" ' + attr + '>' + label + '</button>';
+
+  /* 1. Proof, not a report */
+  const pr = fixed => '<div class="dd-doc"><div class="dd-h"><span>Rename a workflow from its tab</span><span class="dd-who">by agent</span></div><div class="dd-b">' +
+    (fixed
+      ? '<span class="dd-k">Checks</span><ul class="dd-list">' +
+        '<li class="dd-li">' + ic('check', 'dd-ok') + '<span>Double-click a tab to rename it.<span class="dd-ev">Playwright: passed</span></span></li>' +
+        '<li class="dd-li">' + ic('check', 'dd-ok') + '<span>Enter saves, Escape cancels.<span class="dd-ev">Playwright: passed</span></span></li>' +
+        '<li class="dd-li">' + ic('check', 'dd-ok') + '<span>An empty name is refused and the old name stays.<span class="dd-ev">Playwright: passed</span></span></li>' +
+        '<li class="dd-li">' + ic('image', 'dd-ok') + '<span>Screenshots: light, dark, narrow.<span class="dd-shots"><span class="dd-shot"><i></i><i></i></span><span class="dd-shot dark"><i></i><i></i></span><span class="dd-shot narrow"><i></i><i></i></span></span></span></li>' +
+        '<li class="dd-li">' + ic('info', 'dd-you') + '<span>The rename hint reads well.<span class="dd-ev dd-you">Yours to check</span></span></li></ul>' +
+        '<pre class="dd-run" data-run hidden>tab-rename.spec.ts\n  ✓ renames on double-click\n  ✓ Enter saves\n  ✓ Escape cancels\n  ✓ empty name keeps the old name\n4 passed (6.2 s)</pre>' +
+        '<div class="dd-acts">' + btn('Open the test run', 'aria-expanded="false" data-open', 'btn-ghost') + btn('Approve', 'data-ok') + '</div>'
+      : '<p>Done! You can now double-click a tab to rename it. Everything works and is tested.</p><div class="dd-acts">' + btn('Approve', 'data-ok') + '</div>') +
+    '</div></div><p class="dd-out" role="status" data-out></p>';
+  const prWire = fixed => (d, t) => {
+    const out = d.querySelector('[data-out]'), ok = d.querySelector('[data-ok]');
+    const open = d.querySelector('[data-open]');
+    let seen = false;
+    if (open) open.addEventListener('click', () => {
+      const run = d.querySelector('[data-run]'); run.hidden = !run.hidden; seen = true;
+      open.setAttribute('aria-expanded', String(!run.hidden)); open.textContent = run.hidden ? 'Open the test run' : 'Hide the test run';
+    });
+    ok.addEventListener('click', () => {
+      ok.disabled = true; ok.textContent = 'Approved';
+      if (fixed) { out.textContent = (seen ? 'Approved. You saw four tests pass and three screenshots.' : 'Approved. The run and the screenshots were right there.') + ' The hint was yours to read.'; return; }
+      out.textContent = 'Approved. You haven’t seen a test run or a screenshot.';
+      t.after(() => { out.innerHTML = 'Approved. You haven’t seen a test run or a screenshot.<br><b class="dd-bad">Next day:</b> a report comes in. Renaming a tab to an empty name leaves a blank tab.'; }, 900);
+    });
+  };
+  D('eff-definition-of-done-1b', pr(false), prWire(false));
+  D('eff-definition-of-done-1f', pr(true), prWire(true));
+
+  /* 2. Name what you'd see */
+  const C2B = [
+    ['Search feels intuitive.', null],
+    ['Results are relevant.', null],
+    ['It works well.', null]
+  ];
+  const C2F = [
+    ['Typing “dark” shows Theme as the first result.', 'Passed. Playwright found Theme first.'],
+    ['No match shows “No settings match” and a Clear button.', 'Passed. Screenshot attached.'],
+    ['Results update as you type, with no Search button.', 'Passed. Playwright typed and checked the list.'],
+    ['The order of results makes sense.', 'you']
+  ];
+  const critHtml = (rows, fixed) => '<div class="dd-doc"><div class="dd-h"><span>Done when: search in Settings</span></div><div class="dd-b" style="gap:0">' +
+    rows.map((r, i) => '<div class="dd-crit"><span>' + (r[1] === 'you' ? '<span class="dd-tag">YOURS</span>' : '') + r[0] + '</span>' + btn('Check', 'data-c="' + i + '"') + '<div class="dd-res" role="status" data-r="' + i + '"></div></div>').join('') +
+    '</div></div>';
+  const critWire = rows => d => {
+    d.querySelectorAll('[data-c]').forEach(b => b.addEventListener('click', () => {
+      const r = rows[+b.dataset.c], res = d.querySelector('[data-r="' + b.dataset.c + '"]');
+      b.disabled = true;
+      if (r[1] === null) res.innerHTML = ic('warn', 'dd-bad') + '<span>Can’t check. What would you look for? It gets marked done anyway.</span>';
+      else if (r[1] === 'you') res.innerHTML = ic('info', 'dd-you') + '<span>Not for the agent. Try a few searches yourself.</span>';
+      else res.innerHTML = ic('check', 'dd-ok') + '<span>' + r[1] + '</span>';
+    }));
+  };
+  D('eff-definition-of-done-2b', critHtml(C2B), critWire(C2B));
+  D('eff-definition-of-done-2f', critHtml(C2F), critWire(C2F));
+
+  /* 3. Other states */
+  const STATES = [
+    ['one', 'One unsaved tab'], ['many', 'Several unsaved'], ['fail', 'Save fails'], ['kbd', 'Keyboard only'], ['narrow', 'Narrow window']
+  ];
+  const CRIT3 = {
+    one: ['Closing an unsaved tab asks first: Save, Don’t save or Cancel.', 'The prompt appears. Nothing is lost.'],
+    many: ['Close all with several unsaved tabs asks once and lists them all.', 'One prompt lists both tabs: Save all, Don’t save, Cancel.'],
+    fail: ['If saving fails, the tab stays open and says why.', 'The tab stays open: “Couldn’t save. The disk is full.”'],
+    kbd: ['Tab reaches every button. Escape cancels and focus returns to the tab.', 'Every button can be reached. Escape keeps the tab open.'],
+    narrow: ['At 360 px the buttons stack and all three stay visible.', 'The buttons stack. Cancel is still there.']
+  };
+  const BAD3 = {
+    many: 'Close all asked about the first tab only. The second tab closed with its changes.',
+    fail: 'The save failed and the tab closed anyway. The changes are gone.',
+    kbd: 'Tab skips the prompt. Escape closes the tab without saving.',
+    narrow: 'The Cancel button is cut off. People can only save or lose the changes.'
+  };
+  const stHtml = fixed => '<div class="dd-doc"><div class="dd-h"><span>Done when: closing tabs</span></div><div class="dd-b" style="gap:0">' +
+    (fixed ? STATES.map(s => '<div class="dd-crit" data-k="' + s[0] + '"><span>' + CRIT3[s[0]][0] + '</span></div>').join('')
+      : '<div class="dd-crit" data-k="one"><span>' + CRIT3.one[0] + '</span></div>') +
+    '</div></div><div class="dd-states" role="group" aria-label="State">' + STATES.map(s => '<button class="dd-st" type="button" aria-pressed="false" data-s="' + s[0] + '">' + s[1] + '</button>').join('') + '</div>' +
+    '<div class="dd-outcome" role="status" data-o>' + ic('info') + '<span>Pick a state to see what happens.</span></div>';
+  const stWire = fixed => d => {
+    const o = d.querySelector('[data-o]');
+    d.querySelectorAll('[data-s]').forEach(b => b.addEventListener('click', () => {
+      const k = b.dataset.s;
+      d.querySelectorAll('[data-s]').forEach(x => x.setAttribute('aria-pressed', String(x === b)));
+      d.querySelectorAll('.dd-crit').forEach(c => c.classList.toggle('dd-on', c.dataset.k === k));
+      const good = fixed || k === 'one';
+      o.className = 'dd-outcome' + (good ? '' : ' bad');
+      o.innerHTML = good ? ic('check', 'dd-ok') + '<span><b>Checked.</b> ' + CRIT3[k][1] + '</span>'
+        : ic('x', 'dd-bad') + '<span><b>Not in the criteria, so nobody checked.</b> ' + BAD3[k] + '</span>';
+    }));
+  };
+  D('eff-definition-of-done-3b', stHtml(false), stWire(false));
+  D('eff-definition-of-done-3f', stHtml(true), stWire(true));
+
+  /* 4. Tests in the brief */
+  const brief = fixed => '<div class="dd-doc"><div class="dd-h"><span>Brief: add Duplicate to the workflow menu</span></div><div class="dd-b">' +
+    '<p>Add Duplicate to the workflow menu. It opens a copy named “Copy of” plus the original name.</p>' +
+    '<span class="dd-k">Tests</span>' +
+    (fixed ? '<p>Add <code>duplicate-workflow.spec.ts</code>: Duplicate opens “Copy of Logo ideas” in a new tab. Run the existing menu specs too.</p>'
+      : '<p class="dd-miss">We’ll add tests later.</p>') +
+    '<div class="dd-acts">' + btn('Ship', 'data-ship') + btn('Two weeks later', 'data-later disabled') + '</div></div></div>' +
+    '<div class="dd-out dd-later" role="status" data-out></div>';
+  const briefWire = fixed => d => {
+    const out = d.querySelector('[data-out]'), ship = d.querySelector('[data-ship]'), later = d.querySelector('[data-later]');
+    ship.addEventListener('click', () => {
+      ship.disabled = true; later.disabled = false;
+      out.innerHTML = '<span>' + ic('check', 'dd-ok') + ' Shipped' + (fixed ? ' with one new test.' : ' with no new tests.') + '</span>';
+    });
+    later.addEventListener('click', () => {
+      later.disabled = true;
+      out.insertAdjacentHTML('beforeend', fixed
+        ? '<span>' + ic('check', 'dd-ok') + ' A menu clean-up removed Duplicate by mistake. <code>duplicate-workflow.spec.ts</code> failed in CI, so it was fixed before merge.</span>'
+        : '<span>' + ic('x', 'dd-bad') + ' A menu clean-up removed Duplicate by mistake. CI passed. People reported it three days later.</span>');
+    });
+  };
+  D('eff-definition-of-done-4b', brief(false), briefWire(false));
+  D('eff-definition-of-done-4f', brief(true), briefWire(true));
+
+  csInit(cs);
+})();
+
+</script>

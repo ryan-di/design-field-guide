@@ -1,0 +1,54 @@
+<div class="note comfy cw-wrap"><p>Notice that every state has its own shape or word. Each sketch is shown twice, the second time without color.</p>
+  <div class="seg cw-seg" role="radiogroup" aria-label="Example">
+    <input type="radio" name="cw-good-contrast-w" id="cw-good-contrast-w-1" value="linear" checked><label for="cw-good-contrast-w-1">Linear</label>
+    <input type="radio" name="cw-good-contrast-w" id="cw-good-contrast-w-2" value="gh"><label for="cw-good-contrast-w-2">GitHub</label>
+    <input type="radio" name="cw-good-contrast-w" id="cw-good-contrast-w-3" value="slack"><label for="cw-good-contrast-w-3">Slack</label>
+    <input type="radio" name="cw-good-contrast-w" id="cw-good-contrast-w-4" value="duo"><label for="cw-good-contrast-w-4">Duolingo</label>
+  </div>
+  <div class="cw cw-gct-view" data-cw-view role="img" aria-label=""></div>
+  <p class="cw-cap" data-cw-cap aria-live="polite"></p>
+  
+  <script>
+  (() => {
+    const wrap = document.currentScript.closest('.cw-wrap');
+    const view = wrap.querySelector('[data-cw-view]'), cap = wrap.querySelector('[data-cw-cap]');
+    const sv = (body, cls) => '<svg class="' + (cls || 'icon sm') + '" viewBox="0 0 24 24" aria-hidden="true">' + body + '</svg>';
+    const pair = inner => '<div class="cw-gct-pair"><div class="cw-gct-col"><b>In color</b>' + inner + '</div><div class="cw-gct-col"><b>Without color</b><div class="cw-gct-grey">' + inner + '</div></div></div>';
+    const st = (body, color) => '<svg class="cw-gct-st" viewBox="0 0 16 16" aria-hidden="true" style="color:var(' + color + ')">' + body + '</svg>';
+    const LIN = {
+      backlog: st('<circle cx="8" cy="8" r="6" fill="none" stroke="currentColor" stroke-width="1.8" stroke-dasharray="2.4 2"/>', '--ui-muted'),
+      todo: st('<circle cx="8" cy="8" r="6" fill="none" stroke="currentColor" stroke-width="1.8"/>', '--ui-muted'),
+      prog: st('<circle cx="8" cy="8" r="6" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M8 4.2a3.8 3.8 0 0 1 0 7.6z" fill="currentColor"/>', '--accent'),
+      done: st('<circle cx="8" cy="8" r="7" fill="currentColor"/><path d="M5 8.2l2 2 4-4.2" fill="none" stroke="var(--ui-surface)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>', '--ui-sel'),
+      cancel: st('<circle cx="8" cy="8" r="7" fill="currentColor"/><path d="M5.6 5.6l4.8 4.8M10.4 5.6l-4.8 4.8" stroke="var(--ui-surface)" stroke-width="1.8" stroke-linecap="round"/>', '--ui-muted')
+    };
+    const lin = (k, id, t) => '<div class="cw-gct-row">' + LIN[k] + '<small>' + id + '</small><span>' + t + '</span></div>';
+    const prIc = {
+      open: sv('<circle cx="6" cy="6" r="2"/><circle cx="6" cy="18" r="2"/><path d="M6 8v8"/><circle cx="18" cy="18" r="2"/><path d="M18 16V9a3 3 0 0 0-3-3h-4"/><path d="M13 3.5L10.5 6 13 8.5"/>'),
+      merged: sv('<circle cx="6" cy="5" r="2"/><circle cx="6" cy="19" r="2"/><circle cx="18" cy="12" r="2"/><path d="M6 7v10"/><path d="M6 7c0 3 3 5 10 5"/>'),
+      closed: sv('<circle cx="6" cy="6" r="2"/><circle cx="6" cy="18" r="2"/><path d="M6 8v8"/><circle cx="18" cy="18" r="2"/><path d="M15.5 4.5l5 5M20.5 4.5l-5 5"/>'),
+      draft: sv('<circle cx="6" cy="6" r="2"/><circle cx="6" cy="18" r="2"/><path d="M6 8v8"/><circle cx="18" cy="18" r="2"/><path d="M18 8v1M18 12v1"/>')
+    };
+    const pr = (k, word, t) => '<div class="cw-gct-row"><span class="cw-gct-pill ' + k + '">' + prIc[k] + word + '</span><span>' + t + '</span></div>';
+    const dm = (on, name) => '<div class="cw-gct-row"><i class="cw-gct-pres' + (on ? ' on' : '') + '"></i><span>' + name + '</span></div>';
+    const S = {
+      linear: { html: pair('<div class="cw-gct-card">' + lin('backlog', 'ABC-51', 'Old prototype ideas') + lin('todo', 'ABC-48', 'Add dark mode') + lin('prog', 'ABC-42', 'Export fails on large files') + lin('done', 'ABC-39', 'Fix login redirect') + lin('cancel', 'ABC-33', 'Drop old browsers') + '</div>'),
+        alt: 'An issue list shown twice, in color and in gray. Each status has its own icon: a dashed circle, an empty circle, a half-filled circle, a filled circle with a check, and a filled circle with a cross. In gray they are still easy to tell apart.',
+        cap: 'Linear: each issue status has its own icon shape, from a dashed circle for backlog to a half-filled one in progress and a check for done. Without color, the shapes still tell them apart.' },
+      gh: { html: pair('<div class="cw-gct-card">' + pr('open', 'Open', 'Add export presets') + pr('merged', 'Merged', 'Faster thumbnails') + pr('closed', 'Closed', 'Old settings page') + pr('draft', 'Draft', 'New sidebar') + '</div>'),
+        alt: 'Pull requests shown twice, in color and in gray. Each has a label with an icon and a word: Open, Merged, Closed, Draft. In gray the colors are gone, but the words and icons still say it.',
+        cap: 'GitHub: a pull request’s state is a colored label with an icon and a word: Open, Merged, Closed or Draft. Without color, the word and the icon still say it.' },
+      slack: { html: pair('<div class="cw-gct-card cw-gct-dm"><b>Direct messages</b>' + dm(true, 'Ana') + dm(false, 'Ben') + dm(true, 'Cy') + dm(false, 'Dee') + '</div>'),
+        alt: 'A list of people shown twice, in color and in gray. Active people have a filled dot, away people an empty ring. In gray, filled and empty still differ.',
+        cap: 'Slack: an active person gets a filled dot and an away person an empty ring. Filled versus hollow carries the meaning, not just green versus gray.' },
+      duo: { html: pair('<div class="cw-gct-card"><div class="cw-gct-ans ok"><span><i class="cw-gct-badge">' + sv('<path d="M5 12.5l4.5 4.5L19 7.5"/>') + '</i>Nicely done!</span></div>' +
+          '<div class="cw-gct-ans bad"><span><i class="cw-gct-badge">' + sv('<path d="M6 6l12 12M18 6L6 18"/>') + '</i>Correct answer:</span><small>The cat is sleeping.</small></div></div>'),
+        alt: 'Two answer panels shown twice, in color and in gray. The right answer has a check and praise. The wrong answer has a cross and the correct answer written out. In gray, the icons and words still tell them apart.',
+        cap: 'Duolingo: after you check an answer, the panel turns green with a check and praise, or red with a cross and the right answer written out. The icon, the words and a sound carry the meaning too, so color is never alone.' }
+    };
+    const render = k => { view.innerHTML = S[k].html; view.setAttribute('aria-label', 'Sketch: ' + S[k].alt); cap.textContent = S[k].cap; };
+    wrap.querySelectorAll('input[name="cw-good-contrast-w"]').forEach(r => r.addEventListener('change', () => render(r.value)));
+    render('linear');
+  })();
+  </script>
+</div>

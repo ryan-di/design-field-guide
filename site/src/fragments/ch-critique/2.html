@@ -1,0 +1,53 @@
+<div class="fm" data-fm>
+  <div class="seg fm-seg" role="radiogroup" aria-label="Kind of critique">
+    <input type="radio" name="fm-good-critique" id="fm-good-critique-1" value="direction" checked><label for="fm-good-critique-1">Direction</label>
+    <input type="radio" name="fm-good-critique" id="fm-good-critique-2" value="flow"><label for="fm-good-critique-2">Flow</label>
+    <input type="radio" name="fm-good-critique" id="fm-good-critique-3" value="polish"><label for="fm-good-critique-3">Polish</label>
+  </div>
+  <div class="fm-stage" data-fm-stage></div>
+  <p class="fig-cap" data-fm-when aria-live="polite"></p>
+  
+  <script>
+  (() => {
+    const fm = document.currentScript.closest('[data-fm]'), stage = fm.querySelector('[data-fm-stage]'), when = fm.querySelector('[data-fm-when]');
+    const L = w => '<div class="line" style="width:' + w + '"></div>';
+    const cmts = list => '<div class="fc-cmts">' + list.map((c, i) => '<button class="fc-cmt" type="button" aria-pressed="false" data-c="' + (i + 1) + '"><span class="fc-n">' + (i + 1) + '</span><span>' + c + '</span></button>').join('') + '</div>';
+    const F = {
+      direction: {
+        html: '<div class="fc-wrap"><div class="fc-art">' +
+          '<div class="fc-box fc-sketch fc-spot" data-s="1"><b>A · One shared list</b>' + L('80%') + L('64%') + L('72%') + '<span class="fc-q">all recipes → one list</span></div>' +
+          '<div class="fc-box fc-sketch fc-spot" data-s="2"><b>B · A list per recipe</b>' + L('70%') + L('50%') + '<span class="fc-q">pasta · curry · soup</span></div></div>' +
+          cmts(['Do people shop for one recipe or for the whole week? If it’s the week, A fits better.', 'With B, someone cooking three recipes walks the shop three times.']) + '</div>',
+        use: 'Two early sketches of a shopping list.'
+      },
+      flow: {
+        html: '<div class="fc-wrap"><div class="fc-art">' +
+          '<div class="fc-box fc-spot" data-s="2"><b>1 · Recipe</b>' + L('80%') + L('60%') + '<span class="fc-q">Serves 4</span></div><span class="fc-arrow">→</span>' +
+          '<div class="fc-box fc-spot" data-s="1"><b>2 · Add to list</b>' + L('70%') + '<span class="fc-q">Serves? [ 2 ]</span></div><span class="fc-arrow">→</span>' +
+          '<div class="fc-box"><b>3 · List</b>' + L('75%') + L('55%') + '</div></div>' +
+          cmts(['Step 2 asks for servings again. People already set that on the recipe.', 'After adding, people stay on the recipe with no sign it worked, so they add it twice.']) + '</div>',
+        use: 'Three rough screens, from a recipe to the list.'
+      },
+      polish: {
+        html: '<div class="fc-wrap"><div class="fc-box" style="flex:none"><b>Shopping list</b>' +
+          '<div class="fc-item"><span>Spaghetti</span><span>500 g</span></div><div class="fc-item fc-spot" data-s="2"><span>Tomatoes</span><span style="margin-right:14px">6</span></div>' +
+          '<div class="fc-item"><span>Garlic</span><span>1 bulb</span></div><div class="fc-item done fc-spot" data-s="1"><span>Olive oil</span><span>1 bottle</span></div></div>' +
+          cmts(['Ticked items are light gray on white. They’re hard to read in a bright shop.', 'One quantity is out of line with the rest, so the column is slower to scan.']) + '</div>',
+        use: 'A shopping list that’s close to done.'
+      }
+    };
+    const show = k => {
+      stage.innerHTML = F[k].html;
+      stage.querySelectorAll('.fc-cmt').forEach(b => b.addEventListener('click', () => {
+        const on = b.getAttribute('aria-pressed') !== 'true';
+        stage.querySelectorAll('.fc-cmt').forEach(x => x.setAttribute('aria-pressed', 'false'));
+        stage.querySelectorAll('.fc-spot').forEach(s => s.classList.toggle('on', on && s.dataset.s === b.dataset.c));
+        b.setAttribute('aria-pressed', String(on));
+      }));
+      when.innerHTML = '<b>' + fm.querySelector('.fm-seg input:checked + label').textContent + '.</b> ' + F[k].use + ' <b>Try:</b> click a comment to see what it points at.';
+    };
+    fm.querySelectorAll('.fm-seg input').forEach(i => i.addEventListener('change', () => show(i.value)));
+    show('direction');
+  })();
+  </script>
+</div>

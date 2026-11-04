@@ -1,0 +1,112 @@
+<div class="fm" data-fm>
+  
+  <div class="seg fm-seg" role="radiogroup" aria-label="Form">
+    <input type="radio" name="fm-text-field" id="fm-text-field-1" value="single" checked><label for="fm-text-field-1">Single line</label>
+    <input type="radio" name="fm-text-field" id="fm-text-field-2" value="multi"><label for="fm-text-field-2">Multi-line</label>
+    <input type="radio" name="fm-text-field" id="fm-text-field-3" value="search"><label for="fm-text-field-3">Search</label>
+    <input type="radio" name="fm-text-field" id="fm-text-field-4" value="password"><label for="fm-text-field-4">Password</label>
+  </div>
+  <div class="fm-stage" data-fm-stage></div>
+  <p class="fig-cap" data-fm-when aria-live="polite"></p>
+  <script>
+  (() => {
+    const fm = document.currentScript.closest('[data-fm]'), stage = fm.querySelector('[data-fm-stage]'), when = fm.querySelector('[data-fm-when]');
+    const icon = n => '<svg class="icon"><use href="#i-' + n + '"/></svg>';
+    const esc = t => t.replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[c]);
+    const frame = (title, body) => '<div class="app-frame fm-frame"><div class="app-bar"><span>' + title + '</span></div><div class="app-body tfm-body">' + body + '</div></div>';
+    const MAIL = [['Lisbon Air', 'Your boarding pass for Friday'], ['Sofia (host)', 'Late check-in is fine'], ['City Bank', 'Your October statement is ready'], ['Ana Ruiz', 'Photos from the weekend'], ['Book club', 'Next book: pick by Sunday']];
+    const F = {
+      single: {
+        html: frame('Checkout', '<span class="tfm-h">Contact details</span>' +
+          '<div class="field tfm-field"><label class="tfm-lab"><span class="field-label">Full name</span><input class="input" value="Ana Ruiz" autocomplete="off"></label></div>' +
+          '<div class="field tfm-field"><label class="tfm-lab"><span class="field-label">Email</span><span class="field-help">We’ll send the receipt here.</span><input class="input" data-mail aria-label="Email" value="ana.ruiz@mail" autocomplete="off" spellcheck="false"></label><p class="field-msg" data-msg aria-live="polite"></p></div>' +
+          '<div class="tfm-acts"><span class="cs-meta" data-out aria-live="polite"></span><button class="btn btn-primary cs-sm" type="button" data-go>Continue</button></div>'),
+        use: 'Use it for a short value, like a name or an email.',
+        more: 'Check the value when people leave the field, not while they’re still typing.',
+        wire: s => {
+          const inp = s.querySelector('[data-mail]'), msg = s.querySelector('[data-msg]'), out = s.querySelector('[data-out]');
+          const ok = () => /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(inp.value.trim());
+          const check = () => {
+            const bad = inp.value.trim() !== '' && !ok();
+            inp.setAttribute('aria-invalid', bad);
+            msg.innerHTML = bad ? icon('warn') + '<span>Enter the full address, like ana@example.com.</span>' : '';
+            return !bad && inp.value.trim() !== '';
+          };
+          inp.addEventListener('blur', check);
+          inp.addEventListener('input', () => { out.textContent = ''; if (inp.getAttribute('aria-invalid') === 'true' && ok()) check(); });
+          s.querySelector('[data-go]').addEventListener('click', () => {
+            if (!inp.value.trim()) { msg.innerHTML = icon('warn') + '<span>Enter your email so we can send the receipt.</span>'; inp.setAttribute('aria-invalid', 'true'); inp.focus(); return; }
+            if (check()) out.textContent = 'Saved. Next: delivery.'; else inp.focus();
+          });
+        }
+      },
+      multi: {
+        html: frame('Message your host', '<div class="tfm-thread" data-thread><p class="tfm-bub">Hi! What time will you arrive?</p></div>' +
+          '<label class="tfm-lab"><span class="field-label">Message</span><textarea class="input tfm-grow" data-ta rows="1" aria-label="Message to Sofia">We land at 9 pm and should be there by 10.\nIs late check-in okay?</textarea></label>' +
+          '<div class="tfm-acts"><span class="tfm-hint">Enter starts a new line.</span><button class="btn btn-primary cs-sm" type="button" data-send>Send</button></div>'),
+        use: 'Use it for text that runs past a sentence, like a message.',
+        more: 'Enter starts a new line here, so a separate button sends it.',
+        wire: s => {
+          const ta = s.querySelector('[data-ta]'), th = s.querySelector('[data-thread]');
+          const fit = () => { ta.style.height = 'auto'; const h = Math.min(ta.scrollHeight + 3, 140); ta.style.height = h + 'px'; ta.style.overflowY = ta.scrollHeight + 3 > 140 ? 'auto' : 'hidden'; };
+          ta.addEventListener('input', fit); fit();
+          s.querySelector('[data-send]').addEventListener('click', () => {
+            const t = ta.value.trim();
+            if (!t) { ta.focus(); return; }
+            const p = document.createElement('p'); p.className = 'tfm-bub me'; p.textContent = t; th.appendChild(p); th.scrollTop = th.scrollHeight;
+            ta.value = ''; fit(); ta.focus();
+          });
+        }
+      },
+      search: {
+        html: frame('Mail', '<div class="tfm-search">' + icon('search') + '<input class="input" data-q role="searchbox" aria-label="Search mail" placeholder="Search mail" autocomplete="off" spellcheck="false"><button class="icon-btn tfm-clear" type="button" data-clear aria-label="Clear search" hidden>' + icon('x') + '</button></div>' +
+          '<div class="tfm-list" data-list></div><p class="tfm-none" data-none aria-live="polite"></p>'),
+        use: 'Use it to find things in a list or a whole app.',
+        more: 'The magnifier says what it’s for, so a hint inside the box can stand in for the label.',
+        wire: s => {
+          const q = s.querySelector('[data-q]'), list = s.querySelector('[data-list]'), none = s.querySelector('[data-none]'), clr = s.querySelector('[data-clear]');
+          const hi = (t, v) => { if (!v) return esc(t); const i = t.toLowerCase().indexOf(v.toLowerCase()); return i < 0 ? esc(t) : esc(t.slice(0, i)) + '<mark>' + esc(t.slice(i, i + v.length)) + '</mark>' + esc(t.slice(i + v.length)); };
+          const draw = () => {
+            const v = q.value.trim(), hits = MAIL.filter(m => (m[0] + ' ' + m[1]).toLowerCase().includes(v.toLowerCase()));
+            list.innerHTML = hits.map(m => '<div class="tfm-mail"><b>' + hi(m[0], v) + '</b><span>' + hi(m[1], v) + '</span></div>').join('');
+            none.textContent = !v ? '' : hits.length ? hits.length + (hits.length === 1 ? ' message' : ' messages') + ' found.' : 'No mail matches “' + v + '”.';
+            clr.hidden = !q.value;
+          };
+          q.addEventListener('input', draw);
+          q.addEventListener('keydown', e => { if (e.key === 'Escape' && q.value) { e.stopPropagation(); q.value = ''; draw(); } });
+          clr.addEventListener('click', () => { q.value = ''; draw(); q.focus(); });
+          draw();
+        }
+      },
+      password: {
+        html: frame('Account', '<span class="tfm-h">Change password</span>' +
+          '<div class="field tfm-field"><div class="tfm-pw"><label class="tfm-lab"><span class="field-label">New password</span><input class="input" data-pw type="password" aria-label="New password" value="harbor-lights" autocomplete="off" spellcheck="false"></label><button class="btn btn-ghost tfm-show" type="button" data-show>Show</button></div>' +
+          '<p class="tfm-rule" data-rule></p><p class="field-msg" data-msg aria-live="polite"></p></div>' +
+          '<div class="tfm-acts"><span class="cs-meta" data-out aria-live="polite"></span><button class="btn btn-primary cs-sm" type="button" data-save>Save password</button></div>'),
+        use: 'Use it for a secret that shouldn’t show on screen, like a password or a PIN.',
+        more: 'A Show button lets people check what they typed before they save it.',
+        wire: s => {
+          const pw = s.querySelector('[data-pw]'), btn = s.querySelector('[data-show]'), rule = s.querySelector('[data-rule]'), msg = s.querySelector('[data-msg]'), out = s.querySelector('[data-out]');
+          const long = () => pw.value.length >= 8;
+          const draw = () => { rule.className = 'tfm-rule' + (long() ? ' ok' : ''); rule.innerHTML = icon(long() ? 'check' : 'info') + '<span>At least 8 characters</span>'; };
+          pw.addEventListener('input', () => { draw(); out.textContent = ''; if (long()) { msg.innerHTML = ''; pw.removeAttribute('aria-invalid'); } });
+          btn.addEventListener('click', () => { const show = pw.type === 'password'; pw.type = show ? 'text' : 'password'; btn.textContent = show ? 'Hide' : 'Show'; });
+          s.querySelector('[data-save]').addEventListener('click', () => {
+            if (!long()) { msg.innerHTML = icon('warn') + '<span>Add ' + (8 - pw.value.length) + ' more ' + (8 - pw.value.length === 1 ? 'character' : 'characters') + '.</span>'; pw.setAttribute('aria-invalid', 'true'); pw.focus(); return; }
+            out.textContent = 'Password saved.';
+          });
+          draw();
+        }
+      }
+    };
+    let gen = 0;
+    const show = k => {
+      gen++;
+      stage.innerHTML = F[k].html; F[k].wire(stage);
+      when.innerHTML = '<b>' + fm.querySelector('.fm-seg input:checked + label').textContent + '.</b> ' + F[k].use + ' ' + F[k].more;
+    };
+    fm.querySelectorAll('.fm-seg input').forEach(i => i.addEventListener('change', () => show(i.value)));
+    show('single');
+  })();
+  </script>
+</div>

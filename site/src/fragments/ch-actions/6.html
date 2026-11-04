@@ -1,0 +1,130 @@
+<script>
+(() => {
+  const cs = document.currentScript.closest('.cs');
+  const D = (k, html, wire) => csDemo(cs.querySelector('[data-d="' + k + '"]'), html, wire);
+  const icon = n => '<svg class="icon sm"><use href="#i-' + n + '"/></svg>';
+  const msg = text => '<p class="field-msg">' + icon('warn') + '<span>' + text + '</span></p>';
+  const frame = (title, body, foot) => '<div class="app-frame bt-frame">' +
+    '<div class="app-bar"><span>' + title + '</span></div><div class="app-body" data-body>' + body + '</div>' +
+    (foot ? '<div class="bt-foot" data-foot>' + foot + '</div>' : '') + '</div>';
+
+  /* 1. Two primaries: cart */
+  const cartHtml = fixed => frame('Your cart',
+    '<div class="cs-row"><span class="grow">Linen shirt</span><span>€49</span></div>' +
+    '<div class="cs-row"><span class="grow">Canvas tote</span><span>€18</span></div>' +
+    '<div class="bt-promo"><input class="input" placeholder="Promo code" aria-label="Promo code" data-code><button class="btn btn-secondary cs-sm" type="button" data-apply>Apply</button></div>' +
+    '<div class="cs-row bt-total"><span class="grow">Total</span><span>€67</span></div><p class="cs-meta" data-out aria-live="polite"></p>',
+    '<button class="btn ' + (fixed ? 'btn-ghost' : 'btn-primary') + '" type="button" data-shop>Continue shopping</button>' +
+    '<button class="btn btn-primary" type="button" data-pay>Check out</button>');
+  const cartWire = d => {
+    const out = d.querySelector('[data-out]'), code = d.querySelector('[data-code]');
+    d.querySelector('[data-apply]').addEventListener('click', () => { out.textContent = code.value.trim() ? 'That code has expired.' : 'Enter a code first.'; });
+    d.querySelector('[data-shop]').addEventListener('click', () => { out.textContent = 'Back to the shop…'; });
+    d.querySelector('[data-pay]').addEventListener('click', () => { out.textContent = 'Going to checkout…'; });
+  };
+  D('buttons-1b', cartHtml(false), cartWire);
+  D('buttons-1f', cartHtml(true), cartWire);
+
+  /* 2. Vague labels: stopping an upload */
+  const PH = ['IMG_301.jpg', 'IMG_302.jpg', 'IMG_303.jpg'];
+  const upHtml = frame('Upload to “Lisbon trip”',
+    PH.map((p, i) => '<div class="cs-row"><span class="grow">' + p + '</span><span class="cs-meta" data-st="' + i + '">Waiting</span></div>').join('') +
+    '<div class="bar" aria-hidden="true"><span data-bar></span></div><p class="cs-meta" data-out aria-live="polite">Ready to upload 3 photos.</p>',
+    '<button class="btn btn-primary" type="button" data-go>Upload 3 photos</button><button class="btn btn-secondary" type="button" data-stop hidden></button>');
+  const upWire = fixed => (d, t) => {
+    const L = fixed
+      ? { stop: 'Stop upload', title: 'Stop uploading?', no: 'Keep uploading', yes: 'Stop upload' }
+      : { stop: 'Cancel', title: 'Cancel upload?', no: 'Cancel', yes: 'OK' };
+    const box = d.querySelector('.app-frame'), bar = d.querySelector('[data-bar]'), out = d.querySelector('[data-out]'), go = d.querySelector('[data-go]'), stop = d.querySelector('[data-stop]');
+    const st = Array.from(d.querySelectorAll('[data-st]'));
+    let p = 0, timer = null, paused = false;
+    stop.textContent = L.stop;
+    const done = () => PH.filter((x, i) => p >= (i + 1) * 100 / 3 - 0.01).length;
+    const draw = () => {
+      bar.style.width = p + '%';
+      st.forEach((s, i) => { const lo = i * 100 / 3, hi = (i + 1) * 100 / 3 - 0.01; s.textContent = p >= hi ? 'Uploaded' : p > lo ? 'Uploading…' : 'Waiting'; s.className = p >= hi ? 'cs-ok' : 'cs-meta'; });
+      out.textContent = 'Uploading 3 photos · ' + Math.round(p) + '%';
+    };
+    const end = text => { t.clear(); timer = null; stop.hidden = true; out.textContent = text; };
+    go.addEventListener('click', () => {
+      go.hidden = true; stop.hidden = false; draw();
+      timer = t.every(() => {
+        if (paused) return;
+        p = Math.min(100, p + 2.5); draw();
+        if (p >= 100) end('3 photos uploaded.');
+      }, 250);
+    });
+    stop.addEventListener('click', () => {
+      if (!timer) return;
+      paused = true;
+      const left = 3 - done();
+      const m = document.createElement('div'); m.className = 'cs-modal';
+      m.innerHTML = '<div class="cs-dlg" role="dialog" aria-modal="true" aria-label="' + L.title + '"><b>' + L.title + '</b><p>' + left + (left === 1 ? ' photo hasn’t' : ' photos haven’t') + ' finished.</p>' +
+        '<div class="acts"><button class="btn btn-secondary cs-sm" type="button" data-no>' + L.no + '</button><button class="btn btn-primary cs-sm" type="button" data-yes>' + L.yes + '</button></div></div>';
+      box.appendChild(m);
+      const close = () => { m.remove(); paused = false; stop.focus(); };
+      m.querySelector('[data-no]').addEventListener('click', close);
+      m.querySelector('[data-yes]').addEventListener('click', () => { m.remove(); paused = false; const n = done(); end('Upload stopped. ' + n + ' of 3 photos uploaded.'); st.forEach((s, i) => { if (i >= n) { s.textContent = 'Not uploaded'; s.className = 'cs-meta'; } }); });
+      m.addEventListener('keydown', e => { if (e.key === 'Escape') close(); });
+      m.querySelector('[data-no]').focus();
+    });
+  };
+  D('buttons-2b', upHtml, upWire(false));
+  D('buttons-2f', upHtml, upWire(true));
+
+  /* 3. Look-alike danger: folder settings */
+  const folderBody = '<div class="app-body bt-form" data-form><label class="cs-f">Folder name<input class="input" data-name value="Q3 reports"></label>' +
+    '<p class="cs-meta">24 files · shared with 5 people</p><p class="cs-ok" data-out aria-live="polite"></p></div><div class="bt-gone" data-gone hidden></div>';
+  const folderHtml = fixed => '<div class="app-frame bt-frame"><div class="app-bar"><span>Folder settings</span></div>' + folderBody + '<div class="bt-foot" data-foot>' + (fixed
+    ? '<button class="btn bt-del" type="button" data-del>' + icon('trash') + 'Delete folder</button><span class="bt-sp"></span><button class="btn btn-primary" type="button" data-save>Save</button>'
+    : '<span class="bt-sp"></span><button class="btn btn-primary" type="button" data-save>Save</button><button class="btn btn-primary" type="button" data-del>Delete folder</button>') + '</div></div>';
+  const folderWire = fixed => (d, t) => {
+    const form = d.querySelector('[data-form]'), gone = d.querySelector('[data-gone]'), foot = d.querySelector('[data-foot]'), name = d.querySelector('[data-name]'), out = d.querySelector('[data-out]');
+    const label = () => (name.value.trim() || 'Untitled').replace(/[<&]/g, '');
+    d.querySelector('[data-save]').addEventListener('click', () => { out.textContent = 'Saved as “' + label() + '”.'; });
+    name.addEventListener('input', () => { out.textContent = ''; });
+    const show = on => { form.hidden = !on; foot.hidden = !on; gone.hidden = on; };
+    d.querySelector('[data-del]').addEventListener('click', () => {
+      show(false);
+      if (!fixed) { gone.innerHTML = icon('trash') + '<span>“' + label() + '” and its 24 files were deleted.</span>'; return; }
+      gone.innerHTML = icon('trash') + '<span>“' + label() + '” moved to Trash.</span>';
+      csToast(d, t, 'Folder moved to Trash', { ms: 6000, replace: true, action: { label: 'Undo', run: () => {
+        show(true); out.textContent = 'Folder restored.'; d.querySelector('[data-del]').focus();
+      } } });
+    });
+  };
+  D('buttons-3b', folderHtml(false), folderWire(false));
+  D('buttons-3f', folderHtml(true), folderWire(true));
+
+  /* 4. Silent disabled: table booking */
+  const bookHtml = '<div class="cs-form"><span class="bt-h">Book a table</span><span class="cs-meta">Fri 30 Oct · 19:30 · 2 people</span>' +
+    '<label class="cs-f">Name<input class="input" value="Maya Lee"></label>' +
+    '<label class="cs-f">Phone<input class="input" data-ph value="+351 912 345 67" inputmode="tel"></label><div class="cs-msgs" data-m></div>' +
+    '<button class="btn btn-primary" type="button" data-book>Book table</button><p class="cs-ok" data-ok aria-live="polite"></p></div>';
+  const digits = v => v.replace(/\D/g, '').replace(/^351/, '').length;
+  const bookWire = fixed => d => {
+    const ph = d.querySelector('[data-ph]'), m = d.querySelector('[data-m]'), ok = d.querySelector('[data-ok]'), btn = d.querySelector('[data-book]');
+    const valid = () => digits(ph.value) === 9;
+    const book = () => { ok.textContent = 'Booked. See you Friday at 19:30.'; };
+    if (!fixed) {
+      const sync = () => { btn.disabled = !valid(); ok.textContent = ''; };
+      ph.addEventListener('input', sync); sync();
+      btn.addEventListener('click', book);
+      return;
+    }
+    btn.addEventListener('click', () => {
+      if (valid()) { book(); return; }
+      const n = digits(ph.value);
+      ph.setAttribute('aria-invalid', 'true');
+      m.innerHTML = msg('Phone number needs 9 digits after +351. This one has ' + n + '.');
+      ph.focus(); ph.setSelectionRange(ph.value.length, ph.value.length);
+    });
+    ph.addEventListener('input', () => { ok.textContent = ''; if (valid()) { ph.setAttribute('aria-invalid', 'false'); m.innerHTML = ''; } });
+  };
+  D('buttons-4b', bookHtml, bookWire(false));
+  D('buttons-4f', bookHtml, bookWire(true));
+
+  csInit(cs);
+})();
+
+  </script>

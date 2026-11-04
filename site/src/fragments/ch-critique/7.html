@@ -1,0 +1,98 @@
+<script>
+(() => {
+  const cs = document.currentScript.closest('.cs');
+  const go = () => {
+  const D = (k, html, wire) => csDemo(cs.querySelector('[data-d="' + k + '"]'), html, wire);
+  const css = document.createElement('style');
+  css.textContent = [
+    '#good-critique .cr-col{width:min(360px,100%);display:flex;flex-direction:column;gap:10px;text-align:left}',
+    '#good-critique .cr-app{background:var(--ui-bg);border:1px solid var(--ui-border);border-radius:12px;overflow:hidden}',
+    '#good-critique .cr-bar{display:flex;justify-content:space-between;align-items:center;padding:8px 12px;border-bottom:1px solid var(--ui-border);background:var(--ui-surface);font:600 14px var(--font-body)}',
+    '#good-critique .cr-body{padding:12px;display:flex;flex-direction:column;gap:8px;font-size:13.5px}',
+    '#good-critique .cr-fld{display:flex;flex-direction:column;gap:3px;font:600 12.5px var(--font-body)}',
+    '#good-critique .cr-in{font:400 13.5px var(--font-body);border:1.5px solid var(--ui-border);border-radius:8px;padding:6px 9px;background:var(--ui-surface)}',
+    '#good-critique .cr-amt{font:700 28px/1.1 var(--font-body)}',
+    '#good-critique .cr-c{display:flex;gap:8px;align-items:flex-start;background:var(--ui-surface);border:1px solid var(--ui-border);border-radius:10px;padding:8px 10px;font-size:13.5px;line-height:1.4}',
+    '#good-critique .cr-av{flex:none;width:22px;height:22px;border-radius:50%;background:var(--ui-hover);font:700 11.5px/22px var(--font-body);text-align:center}',
+    '#good-critique .cr-c dl{margin:4px 0 0;display:flex;flex-direction:column;gap:3px}',
+    '#good-critique .cr-c dt{display:inline;font:600 11px var(--font-mono);text-transform:uppercase;letter-spacing:.06em;color:var(--ui-muted)}',
+    '#good-critique .cr-c dd{display:inline;margin:0 0 0 4px}',
+    '#good-critique .cr-cart{height:214px;overflow:auto}',
+    '#good-critique .cr-row{display:flex;justify-content:space-between;gap:8px;padding:5px 0;border-bottom:1px solid var(--ui-border)}',
+    '#good-critique .cr-sub{font:600 11.5px var(--font-mono);text-transform:uppercase;letter-spacing:.06em;color:var(--ui-muted);margin-top:4px}',
+    '#good-critique .cr-rec{display:flex;gap:8px;align-items:center;padding:4px 0}',
+    '#good-critique .cr-rec .thumb{width:34px;flex:none}',
+    '#good-critique .cr-co{justify-content:center;flex:none}',
+    '#good-critique .cr-co.big{font-size:18px;padding:14px 18px}',
+    '#good-critique .cr-acts{display:flex;flex-wrap:wrap;gap:6px}',
+    '#good-critique .cr-sk{border:1.5px dashed var(--ui-muted);border-radius:8px;padding:7px 9px;color:var(--ui-muted);font-size:13px}',
+    '#good-critique .cr-note{border-left:3px solid var(--ui-sel);background:var(--ui-sel-soft);border-radius:0 8px 8px 0;padding:7px 10px;font-size:13.5px;line-height:1.4}'
+  ].join('\n');
+  cs.appendChild(css);
+  const C = (who, html) => '<div class="cr-c"><span class="cr-av">' + who[0] + '</span><span><b>' + who + '</b> ' + html + '</span></div>';
+
+  /* 1. Like / dislike */
+  const sendApp = '<div class="cr-app"><div class="cr-bar"><span>Send money</span><span class="cs-meta">Bank</span></div><div class="cr-body">' +
+    '<span class="cr-fld">To<span class="cr-in">Account 1234 5678 90</span></span><span class="cr-amt">€250.00</span>' +
+    '<span class="cr-fld">Reference<span class="cr-in">Rent, March</span></span><span class="btn btn-primary cs-sm" style="justify-content:center">Send</span></div></div>';
+  D('good-critique-1b', '<div class="cr-col">' + sendApp + C('Ana', 'I don’t like it.') + C('Ben', 'Feels cluttered to me.') + C('Kai', 'Thanks. What should I change?') + '</div>', () => {});
+  D('good-critique-1f', '<div class="cr-col">' + sendApp + C('Ana', '<dl><div><dt>Goal</dt><dd>Send money to a friend in under a minute, without mistakes.</dd></div>' +
+    '<div><dt>Works</dt><dd>The amount is the biggest thing on screen, so it’s hard to get wrong.</dd></div>' +
+    '<div><dt>Doesn’t serve it</dt><dd>Nothing checks the account number. One typo sends €250 to a stranger.</dd></div>' +
+    '<div><dt>Suggestion</dt><dd>Could we show the account holder’s name before Send?</dd></div></dl>') + C('Kai', 'Good catch. Adding a name check.') + '</div>', () => {});
+
+  /* 2. Fix without a problem */
+  const RECS = ['Wool socks', 'Canvas tote', 'Water bottle', 'Sunglasses', 'Phone case', 'Notebook'];
+  const cartHtml = fixed => '<div class="cr-col">' +
+    C('Ana', fixed ? 'People can’t find Checkout. It’s below six suggested items, so they scroll and give up.' : 'Make the Checkout button bigger.') +
+    '<div class="cr-app"><div class="cr-bar"><span>Your bag</span><span class="cs-meta">2 items · €78</span></div><div class="cr-body cr-cart" data-cart>' +
+    '<div class="cr-row"><span>Linen shirt</span><span>€39</span></div><div class="cr-row"><span>Linen shirt, white</span><span>€39</span></div><span data-slot></span>' +
+    '<span class="cr-sub">You may also like</span>' + RECS.map((r, i) => '<span class="cr-rec"><span class="thumb ' + ['', 'b', 'c'][i % 3] + '"></span>' + r + '</span>').join('') +
+    '<span data-end></span></div></div>' +
+    '<div class="cr-acts">' + (fixed ? '<button class="btn btn-secondary cs-sm" type="button" data-fix="big">Fix: make it bigger</button><button class="btn btn-secondary cs-sm" type="button" data-fix="move">Fix: move it under the bag</button>'
+      : '<button class="btn btn-secondary cs-sm" type="button" data-fix="big">Apply the suggestion</button>') + '</div><p class="cs-meta" data-out></p></div>';
+  const cartWire = fixed => d => {
+    const cart = d.querySelector('[data-cart]'), o = d.querySelector('[data-out]');
+    const place = how => {
+      cart.querySelectorAll('.cr-co').forEach(b => b.remove());
+      const btn = '<span class="btn btn-primary cs-sm cr-co' + (how === 'big' ? ' big' : '') + '">Checkout</span>';
+      cart.querySelector(how === 'move' ? '[data-slot]' : '[data-end]').insertAdjacentHTML('afterend', btn);
+      cart.scrollTop = 0;
+    };
+    place('start');
+    d.querySelectorAll('[data-fix]').forEach(b => b.addEventListener('click', () => {
+      place(b.dataset.fix);
+      o.textContent = b.dataset.fix === 'move' ? 'Checkout sits right under the bag. The problem is gone, and the button didn’t need to grow.'
+        : fixed ? 'Bigger, but still below the suggestions. The problem Ana named is still there.' : 'Done: it’s bigger. It’s still below six suggestions, so people still can’t find it.';
+    }));
+  };
+  D('good-critique-2b', cartHtml(false), cartWire(false));
+  D('good-critique-2f', cartHtml(true), cartWire(true));
+
+  /* 3. Pixel notes on a sketch */
+  const sketch = '<div class="cr-app"><div class="cr-bar"><span>Trip planner · sketch</span><span class="cs-meta">v0.1</span></div><div class="cr-body">' +
+    '<span class="cr-sk">When? · dates</span><span class="cr-sk">Where to? · city</span><span class="cr-sk">Who? · 2 adults</span><span class="cr-sk" style="text-align:center">Search</span></div></div>';
+  D('good-critique-3b', '<div class="cr-col">' + sketch + C('Ben', 'Padding looks like 12. Our grid says 16.') + C('Ana', 'Use the brand blue on Search.') + C('Lea', 'The corners are too round for us.') + '</div>', () => {});
+  D('good-critique-3f', '<div class="cr-col"><div class="cr-note"><b>Kai:</b> Early sketch. Feedback wanted on direction: should people pick dates before the city?</div>' + sketch +
+    C('Ben', 'Most people know where before they know when. Dates first may slow them down.') + C('Lea', 'Some people only know their dates and want ideas. Could “Anywhere” be a choice?') + '</div>', () => {});
+
+  /* 4. Reviewer first vs designer first */
+  const bookApp = '<div class="cr-app"><div class="cr-bar"><span>Book a table</span><span class="cs-meta">Sketch v2</span></div><div class="cr-body">' +
+    '<span class="cr-fld">Date<span class="cr-in">Today</span></span><span class="cr-fld">Time<span class="cr-acts">' +
+    ['18:00', '18:30', '19:00', '19:30'].map(t => '<span class="cr-in">' + t + '</span>').join('') + '</span></span>' +
+    '<span class="btn btn-primary cs-sm" style="justify-content:center">Book</span></div></div>';
+  const readBtn = label => '<div class="cr-acts"><button class="btn btn-secondary cs-sm" type="button" data-go>' + label + '</button></div><p class="cs-meta" data-out></p>';
+  const readWire = msg => d => { const o = d.querySelector('[data-out]'), g = d.querySelector('[data-go]'); g.addEventListener('click', () => { o.textContent = msg; g.disabled = true; }); };
+  D('good-critique-4b', '<div class="cr-col">' + bookApp + C('Ana', 'The time slots are tiny on a phone. Make them bigger.') + C('Kai', 'Good point, making them bigger.') + readBtn('Two weeks later') + '</div>',
+    readWire('People still book for the wrong day. Kai had wondered whether “Today” was easy to miss, but the review never got there.'));
+  D('good-critique-4f', '<div class="cr-col">' + bookApp + C('Ana', 'Before I start: what works for you, and what worries you?') +
+    C('Kai', 'The slots work. I’m not sure people notice the date is set to today.') +
+    C('Ana', 'I missed that. Agreed on the slots, and one more thing: they’re tiny on a phone.') + readBtn('Write down the next steps') + '</div>',
+    readWire('Two changes, both named: make the date stand out, and make the slots bigger on phones. One came from Kai, one from Ana.'));
+
+  csInit(cs);
+  };
+  if (window.csDemo) go(); else document.addEventListener('DOMContentLoaded', go);
+})();
+
+</script>

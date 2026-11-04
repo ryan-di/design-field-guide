@@ -1,0 +1,34 @@
+<div class="stage tall" data-demo="good-motion">
+      <div class="sliders surface p22-ctl">
+        <div class="slider-row"><label for="p22-mo-dur">Duration</label><input type="range" id="p22-mo-dur" min="0" max="1000" step="10" value="250"><output id="p22-mo-ms" for="p22-mo-dur">250 ms</output></div>
+        <div class="slider-row"><label for="p22-mo-ease">Easing</label>
+          <select class="select p22-span" id="p22-mo-ease">
+            <option value="linear">Linear</option>
+            <option value="out" selected>Ease-out</option>
+            <option value="in">Ease-in</option>
+            <option value="over">Gentle overshoot</option>
+          </select>
+        </div>
+      </div>
+      <div class="row">
+        <button class="btn btn-primary" type="button" id="p22-mo-play"><svg class="icon sm"><use href="#i-play"/></svg>Play</button>
+        <span class="p22-pill" id="p22-mo-pill">Feels snappy</span>
+      </div>
+      <p class="state-caption" id="p22-mo-why"></p>
+      <div class="p22-rm" id="p22-mo-rm" hidden>
+        <svg class="icon"><use href="#i-info"/></svg>
+        <div>
+          <p>Your device is set to reduce motion, so the panel below appears without sliding. That’s the behavior to build: the change still happens, only the movement goes.</p>
+          <label class="check"><input type="checkbox" id="p22-mo-force"> Show the motion anyway, in this demo only</label>
+        </div>
+      </div>
+      <div class="mini-app p22-app">
+        <div class="app-bar"><span>Photos</span><span class="p22-bar-note">Info panel</span></div>
+        <div class="mini-canvas"><span class="node">Beach.jpg</span><span class="node">Harbor.jpg</span><span class="node">Market.jpg</span></div>
+        <div class="p22-panel" id="p22-mo-panel" aria-hidden="true">
+          <p class="p22-ph">Harbor.jpg</p>
+          <div class="line"></div><div class="line"></div><div class="line"></div>
+        </div>
+      </div>
+      <p class="try"><b>Try it:</b> press Play at 250 ms with Ease-out. Then drag Duration to 800 ms and play again, and imagine opening that panel fifty times a day. Last, try each easing at the same duration.</p>
+    </div>

@@ -1,11 +1,13 @@
 ---
-// The book's shared helpers, then this chapter's demo code. Placed at the end of the page so the demos exist.
+// The book's runtime, split like the book loads it: `at="start"` puts the icon sprite and the rule-switch helpers
+// (csDemo, csInit) before any chapter markup, because inline demo scripts call them while the page parses. The end
+// part holds the shared helpers and this chapter's demo code, which need the demos to exist.
+import head from '../fragments/runtime-head.html?raw';
 import runtime from '../fragments/runtime.html?raw';
 
 const demos = import.meta.glob('../fragments/*/demos.html', { query: '?raw', import: 'default', eager: true });
-const { chapter } = Astro.props;
+const { chapter, at } = Astro.props;
 const own = demos[`../fragments/${chapter}/demos.html`] ?? '';
 ---
 
-<Fragment set:html={runtime} />
-<Fragment set:html={own} />
+{at === 'start' ? <Fragment set:html={head} /> : <Fragment set:html={runtime + own} />}

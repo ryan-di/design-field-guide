@@ -1,0 +1,304 @@
+---
+title: "Check it with evidence"
+description: "A change is done when you can show it solves the problem, not when it merges."
+eyebrow: "Chapter 30"
+sidebar:
+  label: "Check"
+---
+
+import Raw from '../../../components/Raw.astro';
+import Learned from '../../../components/Learned.astro';
+import Runtime from '../../../components/Runtime.astro';
+import F0 from '../../../fragments/ch-evaluate/0.html?raw';
+import F1 from '../../../fragments/ch-evaluate/1.html?raw';
+import F2 from '../../../fragments/ch-evaluate/2.html?raw';
+import F3 from '../../../fragments/ch-evaluate/3.html?raw';
+import F4 from '../../../fragments/ch-evaluate/4.html?raw';
+import F5 from '../../../fragments/ch-evaluate/5.html?raw';
+import F6 from '../../../fragments/ch-evaluate/6.html?raw';
+import F7 from '../../../fragments/ch-evaluate/7.html?raw';
+import F8 from '../../../fragments/ch-evaluate/8.html?raw';
+import F9 from '../../../fragments/ch-evaluate/9.html?raw';
+import F10 from '../../../fragments/ch-evaluate/10.html?raw';
+import F11 from '../../../fragments/ch-evaluate/11.html?raw';
+import F12 from '../../../fragments/ch-evaluate/12.html?raw';
+import F13 from '../../../fragments/ch-evaluate/13.html?raw';
+import F14 from '../../../fragments/ch-evaluate/14.html?raw';
+import F15 from '../../../fragments/ch-evaluate/15.html?raw';
+import F16 from '../../../fragments/ch-evaluate/16.html?raw';
+import F17 from '../../../fragments/ch-evaluate/17.html?raw';
+import F18 from '../../../fragments/ch-evaluate/18.html?raw';
+import F19 from '../../../fragments/ch-evaluate/19.html?raw';
+import F20 from '../../../fragments/ch-evaluate/20.html?raw';
+import F21 from '../../../fragments/ch-evaluate/21.html?raw';
+
+<Runtime at="start" />
+
+<section class="dfg-chapter" id="ch-evaluate">
+
+A change is done when you can show it solves the problem, [not when it merges](/part-4/loop/#eff-loop). Pick the evidence that fits the change: people using it, a number from the brief, or a design QA pass.
+
+<article class="entry essay" id="eff-quick-sessions" data-entry data-name="Watch people">
+
+<div class="entry-head">
+
+## Watch a few people use it \{#eff-quick-sessions-h\}
+
+<Learned id="eff-quick-sessions" />
+
+</div>
+
+Watching people use a design is the quickest way to see where it fails. Give a few real people a task, stay quiet while they try it, and note where they stall. Five people usually show the problems that matter, because the big ones come up again and again.
+
+Analytics are different: they show where many people drop off, but not why. A session shows the why, one person at a time. An agent’s review can’t stand in for one: it predicts what people might do, and a session shows what they do.
+
+<Raw html={F0} />
+
+### Rules \{#eff-quick-sessions-rules\}
+
+Four rules keep these sessions useful.
+
+<div class="cs essay-cs">
+
+<section class="rule" id="eff-quick-sessions-rule-1">
+
+#### 1. Watch what people do \{#eff-quick-sessions-rule-1-h\}
+
+Ask people whether they’d use something, and most will say yes, because they want to be kind and can’t know what they’ll do later. What they do with a real task is better evidence, so give them the task and watch where they go.
+
+<Raw html={F1} />
+
+</section>
+
+<section class="rule" id="eff-quick-sessions-rule-2">
+
+#### 2. Describe the goal, not the feature \{#eff-quick-sessions-rule-2-h\}
+
+If the task names the feature, people look for that word on screen and find it, so you learn that they can read, not that they’d find their way. Describe what they want to get done, in their own words, and you see where they look first.
+
+<Raw html={F2} />
+
+</section>
+
+<section class="rule" id="eff-quick-sessions-rule-3">
+
+#### 3. Stay quiet when they get stuck \{#eff-quick-sessions-rule-3-h\}
+
+Silence feels awkward, so you’ll want to help as soon as someone stalls. But the stall is the finding, and if you help, you never learn why it happened. Note where it happened and wait. Ask “What did you expect?” at the end, and only step in if they want to give up.
+
+<Raw html={F3} />
+
+</section>
+
+<section class="rule" id="eff-quick-sessions-rule-4">
+
+#### 4. Fix what repeats \{#eff-quick-sessions-rule-4-h\}
+
+One person’s trouble may be theirs alone. If you change the design after each session, every person sees a different version, and you can’t tell which problems repeat. Run all the sessions on the same version and tally what went wrong, then fix what more than one person hit.
+
+<Raw html={F4} />
+
+</section>
+
+<Raw html={F5} />
+
+</div>
+
+### In real products \{#eff-quick-sessions-products\}
+
+<Raw html={F6} />
+
+</article>
+
+<article class="entry essay" id="eff-measure" data-entry data-name="Measure">
+
+<div class="entry-head">
+
+## Measure against the brief \{#eff-measure-h\}
+
+<Learned id="eff-measure" />
+
+</div>
+
+Measuring against the brief means choosing, before you build, the numbers that will show whether the brief’s goal was met. Each success criterion gets one number that moves only if people got what they needed. You add one number that must not get worse, and read both next to what people say.
+
+Without this, teams count what is easy to count, and a banner can be seen a million times and still help nobody.
+
+<Raw html={F7} />
+
+### Rules \{#eff-measure-rules\}
+
+Four rules keep these numbers useful.
+
+<div class="cs essay-cs">
+
+<section class="rule" id="eff-measure-rule-1">
+
+#### 1. Count the outcome, not the activity \{#eff-measure-rule-1-h\}
+
+Views and clicks are easy to count, so they end up on the dashboard, but they rise with traffic whether or not anyone got what they came for. Count the outcome instead, as a share of the people who could have reached it, such as finished reorders out of everyone who opened a past order. Then more visitors alone can’t move the number.
+
+<Raw html={F8} />
+
+</section>
+
+<section class="rule" id="eff-measure-rule-2">
+
+#### 2. Add a number that must not get worse \{#eff-measure-rule-2-h\}
+
+A change can raise one number by hurting something else, so if you only watch the number you want to raise, you’ll pick the version that does the most harm. Add a guardrail: one number that must not get worse, with a limit you set before looking. In an A/B test, where each group of people gets a different version, a version that crosses the limit is out, however good the main number looks.
+
+<Raw html={F9} />
+
+</section>
+
+<section class="rule" id="eff-measure-rule-3">
+
+#### 3. Pick the numbers before you build \{#eff-measure-rule-3-h\}
+
+If you choose the number after release, the event you need is often missing, so you can only look at what happens to be logged, and that rarely answers the brief. Write the numbers in the brief and add their events in the same pull request. An event only needs to record that something happened, such as a suggestion being picked, so never log what people typed or made.
+
+<Raw html={F10} />
+
+</section>
+
+<section class="rule" id="eff-measure-rule-4">
+
+#### 4. Read the number with what people say \{#eff-measure-rule-4-h\}
+
+A number tells you that something changed, not why. A drop can mean people stopped wanting a feature, or that they can’t find it anymore. Read it next to support threads and a few [watched sessions](#eff-quick-sessions), which usually explain the change.
+
+<Raw html={F11} />
+
+</section>
+
+<Raw html={F12} />
+
+</div>
+
+### In real products \{#eff-measure-products\}
+
+<Raw html={F13} />
+
+</article>
+
+<article class="entry essay" id="eff-design-qa" data-entry data-name="Design QA">
+
+<div class="entry-head">
+
+## Let an agent run design QA \{#eff-design-qa-h\}
+
+<Learned id="eff-design-qa" />
+
+</div>
+
+Design QA means checking a change everywhere people will see it before it ships: in light and dark, on narrow and wide screens, and in every state it can be in. An agent can render all of those and list what looks wrong much faster than you can. You still read the list, open the important findings yourself and decide what to fix.
+
+The agent does the looking, which is slow and easy to skip, and you keep the judgment that tools lack: what matters to people, and what is a false alarm.
+
+<Raw html={F14} />
+
+### Rules \{#eff-design-qa-rules\}
+
+Four rules keep design QA useful.
+
+<div class="cs essay-cs">
+
+<section class="rule" id="eff-design-qa-rule-1">
+
+#### 1. Check every theme and width \{#eff-design-qa-rule-1-h\}
+
+You build in your own theme on your own screen, so that’s where the change looks right. Other people use dark mode and phones, and that’s where text goes faint and buttons get cut off. Have the agent take screenshots in light and dark, at 360px and at a desktop width, every time. It takes the agent seconds.
+
+<Raw html={F15} />
+
+</section>
+
+<section class="rule" id="eff-design-qa-rule-2">
+
+#### 2. Render every state \{#eff-design-qa-rule-2-h\}
+
+The state you designed is usually the one that works. Problems hide in the others: while it loads, when it fails, when a name is long. List every state the change can be in, and have the agent render each one with [real, messy data](/part-1/craft/#good-edge-cases), because it is longer than the sample.
+
+<Raw html={F16} />
+
+</section>
+
+<section class="rule" id="eff-design-qa-rule-3">
+
+#### 3. Open the findings yourself \{#eff-design-qa-rule-3-h\}
+
+An agent can misread a screenshot, or flag something that is meant to look that way. If you apply every finding without looking, you can break what was right. Open at least two findings yourself and check them against the brief. Dismiss the wrong ones and say why.
+
+<Raw html={F17} />
+
+</section>
+
+<section class="rule" id="eff-design-qa-rule-4">
+
+#### 4. Test with the keyboard yourself \{#eff-design-qa-rule-4-h\}
+
+An automated scan checks things like contrast and missing labels, but it can’t tell whether the focus moves in a sensible order, or whether a screen reader reads the page in a useful way. Tab through the change once and try a screen reader once. Only then call it accessible.
+
+<Raw html={F18} />
+
+</section>
+
+<Raw html={F19} />
+
+</div>
+
+### In real products \{#eff-design-qa-products\}
+
+<Raw html={F20} />
+
+</article>
+
+<Raw html={F21} />
+
+<aside class="in-short" id="ch-evaluate-in-short" aria-labelledby="ch-evaluate-in-short-h" data-pagefind-ignore>
+
+## In short \{#ch-evaluate-in-short-h\}
+
+<div class="is-grid">
+
+<div>
+
+<a class="is-e" href="#eff-quick-sessions">Watch a few people use it</a>
+
+1. [Watch what people do](#eff-quick-sessions-rule-1)
+2. [Describe the goal, not the feature](#eff-quick-sessions-rule-2)
+3. [Stay quiet when they get stuck](#eff-quick-sessions-rule-3)
+4. [Fix what repeats](#eff-quick-sessions-rule-4)
+
+</div>
+
+<div>
+
+<a class="is-e" href="#eff-measure">Measure against the brief</a>
+
+1. [Count the outcome, not the activity](#eff-measure-rule-1)
+2. [Add a number that must not get worse](#eff-measure-rule-2)
+3. [Pick the numbers before you build](#eff-measure-rule-3)
+4. [Read the number with what people say](#eff-measure-rule-4)
+
+</div>
+
+<div>
+
+<a class="is-e" href="#eff-design-qa">Let an agent run design QA</a>
+
+1. [Check every theme and width](#eff-design-qa-rule-1)
+2. [Render every state](#eff-design-qa-rule-2)
+3. [Open the findings yourself](#eff-design-qa-rule-3)
+4. [Test with the keyboard yourself](#eff-design-qa-rule-4)
+
+</div>
+
+</div>
+
+</aside>
+
+</section>
+
+<Runtime chapter="ch-evaluate" />

@@ -1,0 +1,200 @@
+<script>
+(() => {
+  const cs = document.currentScript.closest('.cs');
+  const D = (k, html, wire) => csDemo(cs.querySelector('[data-d="' + k + '"]'), html, wire);
+  const P = '#eff-loop ';
+  const st = document.createElement('style');
+  st.textContent = [
+    '.lp-card{width:min(400px,100%);display:flex;flex-direction:column;gap:10px;text-align:left;background:var(--ui-surface);border:1px solid var(--ui-border);border-radius:12px;padding:14px;box-shadow:var(--ui-shadow);color:var(--ui-text);font-size:14px;line-height:1.45}',
+    '.lp-k{font:600 11px var(--font-mono);letter-spacing:.08em;text-transform:uppercase;color:var(--ui-muted)}',
+    '.lp-doc{display:flex;flex-direction:column;gap:4px;border:1px solid var(--ui-border);border-radius:9px;padding:9px 11px;background:var(--ui-bg)}',
+    '.lp-doc b{font-weight:600}',
+    '.lp-acts{display:flex;gap:8px;flex-wrap:wrap;align-items:center}',
+    '.lp-say{display:flex;flex-direction:column;gap:4px;border-left:3px solid var(--ui-sel);padding:2px 0 2px 10px}',
+    '.lp-say:empty,.lp-res:empty{display:none}',
+    '.lp-res{display:flex;flex-direction:column;gap:4px}',
+    '.lp-bad{color:var(--ui-danger)}',
+    '.lp-good{color:var(--ui-ok)}',
+    '.lp-pill{align-self:flex-start;font:600 12px var(--font-mono);padding:3px 9px;border-radius:999px;background:var(--ui-hover);color:var(--ui-text)}',
+    '.lp-pill.done{background:color-mix(in srgb,var(--ui-ok) 18%,var(--ui-surface));color:var(--ui-ok)}',
+    '.lp-pill.ev{background:var(--ui-sel-soft);color:var(--ui-sel)}',
+    '.lp-rows{display:flex;flex-direction:column}',
+    '.lp-row{display:flex;justify-content:space-between;gap:10px;padding:6px 0;border-bottom:1px solid var(--ui-border)}',
+    '.lp-row:last-child{border-bottom:0}',
+    '.lp-row span:last-child{font:500 12.5px var(--font-mono);white-space:nowrap}',
+    '.lp-quote{font-style:italic;background:var(--ui-hover);border-radius:9px;padding:8px 10px}',
+    '.lp-opts{display:flex;flex-direction:column;gap:6px;border:0;padding:0;margin:0}',
+    '.lp-opts .check{font-size:14px;border:1px solid var(--ui-border);border-radius:9px;padding:7px 9px}',
+    '.lp-opts .check:has(input:checked){border-color:var(--ui-sel);background:var(--ui-sel-soft)}',
+    '.lp-why{font-size:14px;resize:vertical}',
+    '.lp-test{display:flex;gap:6px;align-items:center}',
+    '.lp-test .icon{color:var(--ui-ok);width:15px;height:15px}',
+    '.lp-phone{position:relative;width:190px;max-width:100%;height:270px;border:1.5px solid var(--ui-border);border-radius:18px;background:var(--ui-bg);overflow:hidden;display:flex;flex-direction:column;align-self:center}',
+    '.lp-phone[hidden]{display:none}',
+    '.lp-ph-bar{padding:8px 10px;border-bottom:1px solid var(--ui-border);font:600 12.5px var(--font-body);background:var(--ui-surface)}',
+    '.lp-ph-body{flex:1;padding:10px;display:flex;flex-direction:column;gap:7px}',
+    '.lp-ph-c{font-size:12px;background:var(--ui-hover);border-radius:8px;padding:5px 7px}',
+    '.lp-ph-in{display:flex;gap:6px;padding:8px;border-top:1px solid var(--ui-border);background:var(--ui-surface)}',
+    '.lp-ph-field{all:unset;cursor:text;flex:1;min-width:0;font-size:12px;color:var(--ui-muted);border:1px solid var(--ui-border);border-radius:7px;padding:5px 7px}',
+    '.lp-ph-field:focus-visible{outline:2px solid var(--ui-sel)}',
+    '.lp-ph-post{font:600 12px var(--font-body);background:var(--ui-primary);color:var(--ui-on-primary);border-radius:7px;padding:5px 8px}',
+    '.lp-kb{position:absolute;left:0;right:0;bottom:0;height:46%;background:var(--ui-skel);display:grid;grid-template-columns:repeat(6,1fr);gap:4px;padding:8px 6px;align-content:start}',
+    '.lp-kb[hidden]{display:none}',
+    '.lp-kb i{height:20px;border-radius:4px;background:var(--ui-surface)}'
+  ].map(r => r.replace(/^[^{]+/, s => s.split(',').map(x => P + x.trim()).join(','))).join('\n');
+  cs.appendChild(st);
+  const ok = '<svg class="icon"><use href="#i-check"/></svg>';
+
+  /* 1. Jumping to build */
+  const frameHtml = fixed => '<div class="lp-card"><span class="lp-k">Ticket</span><div class="lp-doc">' +
+    (fixed ? '<span><b>Problem:</b> people miss replies to their comments, so conversations stall.</span><span><b>Goal:</b> people notice a reply within a day.</span><span><b>Success:</b> 4 of 5 people notice a reply in a test.</span>'
+      : '<span>Add a red badge to the bell icon when someone replies.</span>') + '</div>' +
+    '<div class="lp-acts"><button class="btn btn-primary cs-sm" type="button" data-send>Send to agent</button><button class="btn btn-secondary cs-sm" type="button" data-check disabled>Check with people</button></div>' +
+    '<div class="lp-say" data-say aria-live="polite"></div><div class="lp-res" data-res aria-live="polite"></div></div>';
+  const frameWire = fixed => (d, t) => {
+    const say = d.querySelector('[data-say]'), res = d.querySelector('[data-res]'), check = d.querySelector('[data-check]');
+    d.querySelector('[data-send]').addEventListener('click', e => {
+      e.target.disabled = true; say.innerHTML = '<span class="cs-meta">Agent is working…</span>';
+      t.after(() => {
+        say.innerHTML = fixed
+          ? '<span class="lp-k">Agent</span><span>Three options: a badge on the bell, a highlight on the comment in the doc, a daily email of replies.</span><span>You chose the highlight in the doc.</span>'
+          : '<span class="lp-k">Agent</span><span>Built in 4 minutes. A red badge now shows on the bell when someone replies.</span>';
+        check.disabled = false;
+      }, 600);
+    });
+    check.addEventListener('click', () => {
+      check.disabled = true;
+      res.innerHTML = fixed
+        ? '<span class="lp-good">5 of 5 people noticed the reply. It showed up where they were already reading.</span>'
+        : '<span class="lp-bad">3 of 5 people still missed the reply. They don’t look at the bell while they write.</span>';
+    });
+  };
+  D('eff-loop-1b', frameHtml(false), frameWire(false));
+  D('eff-loop-1f', frameHtml(true), frameWire(true));
+
+  /* 2. A line, not a loop */
+  const closeHtml = '<div class="lp-card"><span class="lp-k">Ticket</span><div class="lp-doc"><b>Search finds cities even when they’re misspelled</b><span class="cs-meta">Brief: “Lisbn” finds Lisbon, “Barcellona” finds Barcelona.</span></div>' +
+    '<span class="lp-pill" data-pill>In review</span><div class="lp-acts" data-acts><button class="btn btn-primary cs-sm" type="button" data-ship>Ship</button></div>' +
+    '<div class="lp-res" data-res aria-live="polite"></div></div>';
+  const closeWire = fixed => d => {
+    const pill = d.querySelector('[data-pill]'), acts = d.querySelector('[data-acts]'), res = d.querySelector('[data-res]');
+    const btn = (label, fn) => { acts.innerHTML = '<button class="btn btn-secondary cs-sm" type="button">' + label + '</button>'; const b = acts.firstChild; b.addEventListener('click', fn); b.focus(); };
+    d.querySelector('[data-ship]').addEventListener('click', () => {
+      if (!fixed) {
+        pill.textContent = 'Done'; pill.className = 'lp-pill done';
+        res.innerHTML = '<span>Shipped. The team moves on to the next ticket.</span>';
+        btn('Two weeks later', () => {
+          acts.innerHTML = '';
+          res.innerHTML = '<span class="lp-k">Support request</span><span class="lp-quote">“I typed Barcellona and got no results.”</span><span class="lp-bad">The problem is back, and nobody knows what the change missed.</span>';
+        });
+        return;
+      }
+      pill.textContent = 'Check'; pill.className = 'lp-pill ev';
+      res.innerHTML = '<span class="lp-k">Checked in the real app</span><div class="lp-rows">' +
+        '<div class="lp-row"><span>“Lisbn”</span><span class="lp-good">Lisbon ✓</span></div>' +
+        '<div class="lp-row"><span>“Barcellona”</span><span class="lp-bad">No results ✗</span></div></div>';
+      btn('Write down what we learned', () => {
+        res.insertAdjacentHTML('beforeend', '<span class="lp-k">Learned</span><span>Missing letters work. Doubled letters don’t.</span>');
+        btn('Start the next round', () => {
+          acts.innerHTML = ''; pill.textContent = 'Round 2: Problem'; pill.className = 'lp-pill';
+          res.insertAdjacentHTML('beforeend', '<span class="lp-good">New problem: search fails when a letter is doubled, as in “Barcellona”.</span>');
+        });
+      });
+    });
+  };
+  D('eff-loop-2b', closeHtml, closeWire(false));
+  D('eff-loop-2f', closeHtml, closeWire(true));
+
+  /* 3. Agent decides */
+  const OPTS = [['An error after people press Sign up', 'Fast to build. People fail once before they see the rules.'],
+    ['The rules listed under the field', 'Always visible. Takes space on a short form.'],
+    ['A checklist that ticks off as people type', 'Clear feedback. More work to build.']];
+  const decideHtml = fixed => '<div class="lp-card"><span class="lp-k">Task: show the password rules on sign-up</span>' +
+    (fixed ? '<span>The agent made three options:</span><div class="lp-opts" role="radiogroup" aria-label="Options">' + OPTS.map((o, i) => '<label class="check"><input type="radio" name="lp-opt" value="' + i + '"><span>' + o[0] + '<small>' + o[1] + '</small></span></label>').join('') + '</div>' +
+      '<label class="cs-f">Why this one?<textarea class="input lp-why" rows="2" placeholder="One line is enough" data-why></textarea></label>' +
+      '<div class="lp-acts"><button class="btn btn-primary cs-sm" type="button" data-rec disabled>Record the decision</button></div>'
+      : '<div class="lp-doc"><b>PR: Show password errors after Sign up</b><span class="cs-meta">Built by the agent · the first idea it had · 3 files</span></div>' +
+      '<div class="lp-acts" data-acts><button class="btn btn-primary cs-sm" type="button" data-merge>Merge</button></div>') +
+    '<div class="lp-res" data-res aria-live="polite"></div></div>';
+  const decideWire = fixed => d => {
+    const res = d.querySelector('[data-res]');
+    if (!fixed) {
+      const acts = d.querySelector('[data-acts]');
+      d.querySelector('[data-merge]').addEventListener('click', () => {
+        res.innerHTML = '<span>Merged.</span>';
+        acts.innerHTML = '<button class="btn btn-secondary cs-sm" type="button">Three weeks later</button>';
+        acts.firstChild.focus();
+        acts.firstChild.addEventListener('click', () => {
+          acts.innerHTML = '';
+          res.innerHTML = '<span class="lp-k">Comment on the PR</span><span class="lp-quote">“Why errors after Sign up, and not a checklist while typing?”</span><span class="lp-bad">Nobody knows. The agent picked it because it came first.</span>';
+        });
+      });
+      return;
+    }
+    const rec = d.querySelector('[data-rec]'), why = d.querySelector('[data-why]');
+    const upd = () => { rec.disabled = !(d.querySelector('input[name="lp-opt"]:checked') && why.value.trim().length > 2); };
+    d.querySelectorAll('input[name="lp-opt"]').forEach(r => r.addEventListener('change', upd));
+    why.addEventListener('input', upd);
+    rec.addEventListener('click', () => {
+      const o = OPTS[+d.querySelector('input[name="lp-opt"]:checked').value];
+      res.innerHTML = '<span class="lp-k">Recorded in the PR</span><span><b>Chose:</b> ' + o[0].toLowerCase() + '.</span>';
+      const s = document.createElement('span'); s.innerHTML = '<b>Why:</b> '; s.appendChild(document.createTextNode(why.value.trim()));
+      res.appendChild(s);
+      res.insertAdjacentHTML('beforeend', '<span class="lp-good">Anyone who asks later can read the reason.</span>');
+    });
+  };
+  D('eff-loop-3b', decideHtml(false), decideWire(false));
+  D('eff-loop-3f', decideHtml(true), decideWire(true));
+
+  /* 4. Only the agent's tests */
+  const TESTS = ['Posts a comment', 'Shows the new comment at the end', 'Rejects an empty comment'];
+  const evalHtml = fixed => '<div class="lp-card"><span class="lp-k">PR: Comments on shared notes</span><div class="lp-doc">' +
+    '<b>Agent’s tests: 12 passed</b>' + TESTS.map(x => '<span class="lp-test">' + ok + x + '</span>').join('') + '<span class="cs-meta">and 9 more</span></div>' +
+    (fixed ? '<span class="cs-meta">Brief: people can comment from their phone.</span>' : '') +
+    '<div class="lp-acts" data-acts>' + (fixed ? '<button class="btn btn-secondary cs-sm" type="button" data-try>Try it on a phone</button>' : '<button class="btn btn-primary cs-sm" type="button" data-merge>Merge</button>') + '</div>' +
+    (fixed ? '<div class="lp-phone" data-phone hidden><div class="lp-ph-bar">Trip notes · Comments</div><div class="lp-ph-body"><span class="lp-ph-c">Should we book the 9:40 train?</span><span class="lp-ph-c">Yes, I’ll buy the tickets.</span></div>' +
+      '<div class="lp-ph-in"><button class="lp-ph-field" type="button" data-field>Add a comment…</button><span class="lp-ph-post">Post</span></div><div class="lp-kb" data-kb hidden>' + '<i></i>'.repeat(18) + '</div></div>' : '') +
+    '<div class="lp-res" data-res aria-live="polite"></div></div>';
+  const evalWire = fixed => (d, t) => {
+    const res = d.querySelector('[data-res]'), acts = d.querySelector('[data-acts]');
+    if (!fixed) {
+      d.querySelector('[data-merge]').addEventListener('click', () => {
+        acts.innerHTML = ''; res.innerHTML = '<span>Merged.</span>';
+        t.after(() => { res.innerHTML = '<span>Merged.</span><span class="lp-k">Bug report, the next day</span><span class="lp-quote">“On my phone, the keyboard covers the Post button.”</span><span class="lp-bad">No test checked a phone, so all 12 passed.</span>'; }, 700);
+      });
+      return;
+    }
+    const phone = d.querySelector('[data-phone]');
+    d.querySelector('[data-try]').addEventListener('click', () => {
+      acts.innerHTML = ''; phone.hidden = false; d.querySelector('[data-field]').focus();
+      res.innerHTML = '<span class="cs-meta">Tap the comment field.</span>';
+    });
+    d.querySelector('[data-field]').addEventListener('click', () => {
+      d.querySelector('[data-kb]').hidden = false;
+      res.innerHTML = '<span class="lp-bad">The keyboard covers Post.</span><span class="lp-good">Found before the merge. Back to Build, with one more test to add.</span>';
+    });
+  };
+  D('eff-loop-4b', evalHtml(false), evalWire(false));
+  D('eff-loop-4f', evalHtml(true), evalWire(true));
+
+  /* 5. A hunch as a spec vs as a question */
+  const hunchHtml = fixed => '<div class="lp-card"><span class="lp-k">Brief · templates for new people</span><div class="lp-doc">' +
+    (fixed ? '<b>Do new people reach a first result faster from a template than from a blank canvas?</b><span>We think: yes, for their first workflow.</span><span>We’d change our minds if: people pick a template, then delete most of it.</span>'
+      : '<b>Build a template gallery for new people.</b><span>Done when: the gallery ships.</span>') + '</div>' +
+    (fixed ? '<span class="lp-pill ev">Round 1 · two days, five people</span>' : '') +
+    '<div class="lp-acts"><button class="btn btn-primary cs-sm" type="button" data-go>' + (fixed ? 'Finish round 1' : 'Ship it') + '</button></div><div class="lp-res" data-res></div></div>';
+  const hunchWire = fixed => d => {
+    const res = d.querySelector('[data-res]'), g = d.querySelector('[data-go]');
+    g.addEventListener('click', () => {
+      g.disabled = true;
+      res.innerHTML = fixed ? '<span class="lp-good">Learn: people kept the layout, but replaced most of the nodes.</span><span>New brief: would a starter with only the layout work better? Round 2, two days.</span>'
+        : '<span class="lp-bad">Two weeks later, the gallery ships. Few people open it, and nobody can say whether templates were the wrong idea or only in the wrong place.</span>';
+    });
+  };
+  D('eff-loop-5b', hunchHtml(false), hunchWire(false));
+  D('eff-loop-5f', hunchHtml(true), hunchWire(true));
+
+  csInit(cs);
+})();
+
+</script>

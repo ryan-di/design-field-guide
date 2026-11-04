@@ -1,0 +1,142 @@
+<div class="fm" data-fm>
+  
+  <div class="seg fm-seg" role="radiogroup" aria-label="Form">
+    <input type="radio" name="fm-picker" id="fm-picker-1" value="cal" checked><label for="fm-picker-1">Calendar</label>
+    <input type="radio" name="fm-picker" id="fm-picker-2" value="range"><label for="fm-picker-2">Date range</label>
+    <input type="radio" name="fm-picker" id="fm-picker-3" value="time"><label for="fm-picker-3">Time</label>
+    <input type="radio" name="fm-picker" id="fm-picker-4" value="swatch"><label for="fm-picker-4">Swatches</label>
+  </div>
+  <div class="fm-stage" data-fm-stage></div>
+  <p class="fig-cap" data-fm-when aria-live="polite"></p>
+  <script>
+  (() => {
+    const fm = document.currentScript.closest('[data-fm]'), stage = fm.querySelector('[data-fm-stage]'), when = fm.querySelector('[data-fm-when]');
+    const icon = n => '<svg class="icon"><use href="#i-' + n + '"/></svg>';
+    const frame = (title, body) => '<div class="app-frame fm-frame"><div class="app-bar"><span>' + title + '</span></div><div class="app-body pkm-body">' + body + '</div></div>';
+    const MON = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+    const MONL = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+    const DAYL = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+    const TODAY = new Date(2026, 9, 23);
+    const same = (a, b) => !!a && !!b && a.getFullYear() === b.getFullYear() && a.getMonth() === b.getMonth() && a.getDate() === b.getDate();
+    const long = dt => DAYL[dt.getDay()] + ', ' + dt.getDate() + ' ' + MONL[dt.getMonth()];
+    const short = dt => DAYL[dt.getDay()].slice(0, 3) + ' ' + dt.getDate() + ' ' + MON[dt.getMonth()];
+
+    /* Month calendar with arrow keys. st: {y, m, off(dt), pressed(dt), mid(dt), pick(dt)} */
+    const cal = (host, st) => {
+      const draw = focusDay => {
+        const lead = (new Date(st.y, st.m, 1).getDay() + 6) % 7, n = new Date(st.y, st.m + 1, 0).getDate();
+        let h = '<div class="pkm-head"><button type="button" class="icon-btn pkm-nav" data-nav="-1" aria-label="Previous month">‹</button><b aria-live="polite">' + MONL[st.m] + ' ' + st.y + '</b><button type="button" class="icon-btn pkm-nav" data-nav="1" aria-label="Next month">›</button></div>' +
+          '<div class="pkm-grid">' + ['Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa', 'Su'].map(x => '<span class="pkm-wd" aria-hidden="true">' + x + '</span>').join('') + '<span></span>'.repeat(lead);
+        for (let d = 1; d <= n; d++) {
+          const dt = new Date(st.y, st.m, d), t = same(dt, TODAY);
+          h += '<button type="button" tabindex="-1" class="pkm-day' + (t ? ' today' : '') + (st.mid && st.mid(dt) ? ' mid' : '') + '" data-day="' + d + '" aria-label="' + long(dt) + (t ? ', today' : '') + '" aria-pressed="' + st.pressed(dt) + '"' + (st.off(dt) ? ' disabled' : '') + '>' + d + '</button>';
+        }
+        host.innerHTML = h + '</div>';
+        const days = [...host.querySelectorAll('.pkm-day:not(:disabled)')];
+        const tab = days.find(b => +b.dataset.day === focusDay) || days.find(b => b.getAttribute('aria-pressed') === 'true') || days.find(b => b.classList.contains('today')) || days[0];
+        if (tab) { tab.tabIndex = 0; if (focusDay) tab.focus(); }
+        host.querySelectorAll('[data-nav]').forEach(b => b.addEventListener('click', () => {
+          const k = new Date(st.y, st.m + +b.dataset.nav, 1); st.y = k.getFullYear(); st.m = k.getMonth();
+          draw(); host.querySelector('[data-nav="' + b.dataset.nav + '"]').focus();
+        }));
+        host.querySelectorAll('.pkm-day').forEach(b => {
+          b.addEventListener('click', () => { st.pick(new Date(st.y, st.m, +b.dataset.day)); draw(+b.dataset.day); });
+          b.addEventListener('keydown', e => {
+            const step = { ArrowLeft: -1, ArrowRight: 1, ArrowUp: -7, ArrowDown: 7 }[e.key];
+            if (!step) return;
+            e.preventDefault();
+            let dt = new Date(st.y, st.m, +b.dataset.day);
+            for (let i = 0; i < 40; i++) { dt = new Date(dt.getFullYear(), dt.getMonth(), dt.getDate() + step); if (!st.off(dt)) break; }
+            if (st.off(dt)) return;
+            st.y = dt.getFullYear(); st.m = dt.getMonth(); draw(dt.getDate());
+          });
+        });
+      };
+      st.draw = draw; draw();
+    };
+
+    const COLORS = [['Slate', '--thumb-a'], ['Blue', '--ui-sel'], ['Orange', '--ui-danger'], ['Clay', '--thumb-b'], ['Ochre', '--thumb-d'], ['Sage', '--thumb-c'], ['Green', '--ui-ok'], ['Grey', '--ui-muted']];
+    const TIMES = [['6:00 PM', 0], ['6:30 PM', 0], ['7:00 PM', 1], ['7:30 PM', 1], ['8:00 PM', 0], ['8:30 PM', 1], ['9:00 PM', 0], ['9:30 PM', 0]];
+
+    const F = {
+      cal: {
+        html: frame('Checkout', '<span class="pkm-h">Choose a delivery day</span><p class="pkm-read" data-read aria-live="polite"></p><div data-cal></div><p class="pkm-note">No deliveries on Sundays.</p>'),
+        use: 'Use it for one date in the near future, like a delivery day.',
+        more: 'Mark today, and gray out the days that can’t be picked.',
+        wire: s => {
+          const read = s.querySelector('[data-read]');
+          const first = new Date(2026, 9, 26);
+          let sel = new Date(2026, 9, 27);
+          const say = () => { read.innerHTML = icon('check') + '<span>Arrives ' + long(sel) + '.</span>'; };
+          cal(s.querySelector('[data-cal]'), { y: 2026, m: 9, off: dt => dt < first || dt.getDay() === 0, pressed: dt => same(dt, sel), pick: dt => { sel = dt; say(); } });
+          say();
+        }
+      },
+      range: {
+        html: frame('Hotel stay', '<div class="pkm-trip"><span class="pkm-box" data-a><small>Check-in</small><span></span></span><span class="pkm-box" data-b><small>Check-out</small><span></span></span></div><p class="pkm-read" data-read aria-live="polite"></p><div data-cal></div>'),
+        use: 'Use it when the value has a start and an end, like a hotel stay.',
+        more: 'The first click sets the start, the second sets the end, and the length shows as you go.',
+        wire: s => {
+          const read = s.querySelector('[data-read]'), boxA = s.querySelector('[data-a]'), boxB = s.querySelector('[data-b]');
+          let a = new Date(2026, 10, 13), b = new Date(2026, 10, 16), next = 'a';
+          const say = () => {
+            boxA.lastChild.textContent = a ? short(a) : 'Add date'; boxB.lastChild.textContent = b ? short(b) : 'Add date';
+            boxA.classList.toggle('on', next === 'a'); boxB.classList.toggle('on', next === 'b');
+            if (a && b) { const n = Math.round((b - a) / 864e5); read.className = 'pkm-read'; read.innerHTML = icon('check') + '<span>' + n + (n === 1 ? ' night' : ' nights') + ', ' + short(a) + ' to ' + short(b) + '.</span>'; }
+            else { read.className = 'pkm-read quiet'; read.textContent = 'Now pick your check-out day.'; }
+          };
+          const st = { y: 2026, m: 10, off: dt => dt < TODAY, pressed: dt => same(dt, a) || same(dt, b), mid: dt => !!(a && b && dt > a && dt < b),
+            pick: dt => { if (next === 'a' || !a || dt <= a) { a = dt; b = null; next = 'b'; } else { b = dt; next = 'a'; } say(); } };
+          cal(s.querySelector('[data-cal]'), st);
+          say();
+        }
+      },
+      time: {
+        html: frame('Book a table', '<span class="pkm-h">Saturday, 24 October · 2 people</span><div class="pkm-slots" role="group" aria-label="Times">' +
+          TIMES.map(t => '<button type="button" class="btn btn-secondary pkm-slot" aria-pressed="false"' + (t[1] ? ' disabled aria-label="' + t[0] + ', taken"' : '') + '>' + t[0] + '</button>').join('') +
+          '</div><p class="pkm-read quiet" data-read aria-live="polite">Pick a time.</p>'),
+        use: 'Use it when only some times work, like table bookings every 30 minutes.',
+        more: 'Lay the times out as buttons, so people see what’s free at a glance.',
+        wire: s => {
+          const read = s.querySelector('[data-read]'), slots = [...s.querySelectorAll('.pkm-slot')];
+          slots.forEach(b => b.addEventListener('click', () => {
+            slots.forEach(x => x.setAttribute('aria-pressed', x === b));
+            read.className = 'pkm-read'; read.innerHTML = icon('check') + '<span>Table for 2 at ' + b.textContent + ' on Saturday.</span>';
+          }));
+        }
+      },
+      swatch: {
+        html: frame('Mail', '<span class="pkm-h">Label color <span class="pkm-name" data-name></span></span><div class="pkm-sw" role="radiogroup" aria-label="Label color">' +
+          COLORS.map((c, i) => '<button type="button" role="radio" aria-checked="' + (i === 5) + '" tabindex="' + (i === 5 ? 0 : -1) + '" aria-label="' + c[0] + '" data-i="' + i + '" style="background:var(' + c[1] + ')"></button>').join('') +
+          '</div><span class="pkm-note">How it will look:</span><div class="pkm-mail"><span>Your boarding pass for Friday</span><span class="pkm-chip"><i data-dot></i>Travel</span></div>'),
+        use: 'Use them when only a few colors are allowed, like label colors in a mail app.',
+        more: 'Show the name of the picked color too, for people who can’t tell some colors apart.',
+        wire: s => {
+          const sw = [...s.querySelectorAll('.pkm-sw button')], name = s.querySelector('[data-name]'), dot = s.querySelector('[data-dot]');
+          const set = (i, focus) => {
+            sw.forEach((b, j) => { b.setAttribute('aria-checked', j === i); b.tabIndex = j === i ? 0 : -1; });
+            name.textContent = '· ' + COLORS[i][0]; dot.style.background = 'var(' + COLORS[i][1] + ')';
+            if (focus) sw[i].focus();
+          };
+          sw.forEach((b, i) => {
+            b.addEventListener('click', () => set(i));
+            b.addEventListener('keydown', e => {
+              const d = { ArrowRight: 1, ArrowDown: 1, ArrowLeft: -1, ArrowUp: -1 }[e.key];
+              if (d) { e.preventDefault(); set((i + d + sw.length) % sw.length, true); }
+            });
+          });
+          set(5);
+        }
+      }
+    };
+    let gen = 0;
+    const show = k => {
+      gen++;
+      stage.innerHTML = F[k].html; F[k].wire(stage);
+      when.innerHTML = '<b>' + fm.querySelector('.fm-seg input:checked + label').textContent + '.</b> ' + F[k].use + ' ' + F[k].more;
+    };
+    fm.querySelectorAll('.fm-seg input').forEach(i => i.addEventListener('change', () => show(i.value)));
+    show('cal');
+  })();
+  </script>
+</div>

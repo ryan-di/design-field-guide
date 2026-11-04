@@ -1,0 +1,87 @@
+<div class="fm" data-fm>
+  <div class="seg fm-seg" role="radiogroup" aria-label="Form">
+    <input type="radio" name="fm-error-state" id="fm-error-state-1" value="load" checked><label for="fm-error-state-1">Couldn’t load</label>
+    <input type="radio" name="fm-error-state" id="fm-error-state-2" value="send"><label for="fm-error-state-2">Couldn’t send</label>
+    <input type="radio" name="fm-error-state" id="fm-error-state-3" value="gone"><label for="fm-error-state-3">Not found</label>
+    <input type="radio" name="fm-error-state" id="fm-error-state-4" value="access"><label for="fm-error-state-4">No access</label>
+  </div>
+  <div class="fm-stage" data-fm-stage></div>
+  <p class="fig-cap" data-fm-when aria-live="polite"></p>
+  
+  <script>
+  (() => {
+    const fm = document.currentScript.closest('[data-fm]'), stage = fm.querySelector('[data-fm-stage]'), when = fm.querySelector('[data-fm-when]');
+    const icon = n => '<svg class="icon"><use href="#i-' + n + '"/></svg>';
+    const frame = (title, body, cls) => '<div class="app-frame fm-frame"><div class="app-bar"><span>' + title + '</span></div><div class="app-body erf-body ' + (cls || '') + '" data-body>' + body + '</div></div>';
+    const err = (ic, h, p, acts) => '<div class="empty" tabindex="-1">' + icon(ic) + '<h5>' + h + '</h5><p>' + p + '</p>' + (acts ? '<div class="erf-acts">' + acts + '</div>' : '') + '<p class="cs-meta" data-out aria-live="polite"></p></div>';
+    const loadErr = () => err('cloud-off', 'Couldn’t load your transactions', 'Check your connection and try again. Your balance above is up to date.', '<button class="btn btn-secondary cs-sm" type="button" data-retry>Try again</button>');
+    const draft = '<div class="erf-f"><span>To</span><span>dana@example.com</span></div><div class="erf-f"><span>Subject</span><span>Flight times</span></div><p class="erf-msg">Hi Dana, we land at 6:40 on Friday. See you at the gate.</p>';
+    let gen = 0;
+    const F = {
+      load: {
+        html: frame('Accounts', '<div class="erf-bal"><span>Everyday account</span><b>$2,140.56</b></div><p class="erf-sec">Recent transactions</p><div class="erf-panel" data-panel>' + loadErr() + '</div>', 'top'),
+        use: 'Use it when part of a page can’t get its content, often because of the connection.',
+        more: 'Keep everything that did load, and put Try again where the missing content goes.',
+        wire: s => s.querySelector('[data-retry]').addEventListener('click', () => {
+          const g = gen, panel = s.querySelector('[data-panel]');
+          panel.innerHTML = '<p class="erf-load" role="status"><span class="spinner"></span>Loading…</p>';
+          setTimeout(() => {
+            if (g !== gen) return;
+            panel.innerHTML = '<div class="erf-row"><span>Corner Market</span><span>−$23.40</span></div><div class="erf-row"><span>Salary</span><span>+$1,900.00</span></div><div class="erf-row"><span>City Transit</span><span>−$2.75</span></div>';
+          }, 900);
+        })
+      },
+      send: {
+        html: frame('Draft', draft + '<div class="erf-fail" data-fail><span class="grow">' + icon('warn') + '<span>Not sent. The connection dropped. Your message is saved in Drafts.</span></span><button class="btn btn-primary cs-sm" type="button" data-retry>Try again</button></div>', 'top'),
+        use: 'Use it when something people did didn’t go through, like sending an email.',
+        more: 'Keep what they wrote, say where it’s saved, and let them retry with one press.',
+        wire: s => {
+          const b = s.querySelector('[data-retry]');
+          b.addEventListener('click', () => {
+            if (b.getAttribute('aria-busy')) return;
+            const g = gen;
+            b.setAttribute('aria-busy', 'true'); b.innerHTML = '<span class="spinner"></span>Sending…';
+            setTimeout(() => {
+              if (g !== gen) return;
+              const body = s.querySelector('[data-body]');
+              body.classList.remove('top');
+              body.innerHTML = '<div class="empty" tabindex="-1">' + icon('check').replace('class="icon"', 'class="icon" style="color:var(--ui-ok)"') + '<h5>Message sent</h5><p>It left Drafts and is in Sent.</p></div>';
+              body.querySelector('.empty').focus();
+            }, 1200);
+          });
+        }
+      },
+      gone: {
+        html: frame('Docs', err('search', 'This document doesn’t exist', 'The link may be wrong, or the document was deleted.', '<button class="btn btn-primary cs-sm" type="button" data-go>Go to your documents</button>')),
+        use: 'Use it when a link leads to something that was deleted or never existed.',
+        more: 'Trying again won’t help, so offer a way to a page that works.',
+        wire: s => s.querySelector('[data-go]').addEventListener('click', () => {
+          const body = s.querySelector('[data-body]');
+          body.classList.add('top');
+          body.innerHTML = '<div class="erf-row"><span>Trip budget</span><span>Edited today</span></div><div class="erf-row"><span>Packing list</span><span>Edited Monday</span></div><div class="erf-row"><span>Reading notes</span><span>Edited 2 June</span></div>';
+        })
+      },
+      access: {
+        html: frame('Docs', err('info', 'You need access to “Q3 budget”', 'Maya Lee owns this file. Ask her for access, or switch to an account that has it.', '<button class="btn btn-primary cs-sm" type="button" data-req>Request access</button>')),
+        use: 'Use it when the thing exists but people aren’t allowed to open it.',
+        more: 'Say who can give access, and let people ask from right there.',
+        wire: s => {
+          const b = s.querySelector('[data-req]');
+          b.addEventListener('click', () => {
+            if (b.getAttribute('aria-disabled')) return;
+            b.setAttribute('aria-disabled', 'true'); b.textContent = 'Request sent';
+            s.querySelector('[data-out]').textContent = 'You’ll get an email when Maya responds.';
+          });
+        }
+      }
+    };
+    const show = k => {
+      gen++;
+      stage.innerHTML = F[k].html; F[k].wire(stage);
+      when.innerHTML = '<b>' + fm.querySelector('.fm-seg input:checked + label').textContent + '.</b> ' + F[k].use + ' ' + F[k].more;
+    };
+    fm.querySelectorAll('.fm-seg input').forEach(i => i.addEventListener('change', () => show(i.value)));
+    show('load');
+  })();
+  </script>
+</div>

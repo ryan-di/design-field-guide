@@ -1,0 +1,45 @@
+<div class="note comfy cw-wrap"><p>Each one serves a principle by leaving something out, or by caring about a detail most people never notice.</p>
+  <div class="seg cw-seg" role="radiogroup" aria-label="Example">
+    <input type="radio" name="cw-good-rams-principles-w" id="cw-good-rams-principles-w-1" value="notion" checked><label for="cw-good-rams-principles-w-1">Notion</label>
+    <input type="radio" name="cw-good-rams-principles-w" id="cw-good-rams-principles-w-2" value="photoshop"><label for="cw-good-rams-principles-w-2">Photoshop</label>
+    <input type="radio" name="cw-good-rams-principles-w" id="cw-good-rams-principles-w-3" value="appstore"><label for="cw-good-rams-principles-w-3">App Store</label>
+    <input type="radio" name="cw-good-rams-principles-w" id="cw-good-rams-principles-w-4" value="ios"><label for="cw-good-rams-principles-w-4">iOS</label>
+  </div>
+  <div class="cw" data-cw-view role="img" aria-label=""></div>
+  <p class="cw-cap" data-cw-cap aria-live="polite"></p>
+  
+  <script>
+  (() => {
+    const wrap = document.currentScript.closest('.cw-wrap');
+    const view = wrap.querySelector('[data-cw-view]'), cap = wrap.querySelector('[data-cw-cap]');
+    const L = w => '<i class="cw-line" style="width:' + w + '"></i>';
+    const h = t => '<span class="cw-grp-h">' + t + '</span>';
+    const pane = (lab, body) => '<div class="cw-grp-pane"><span class="cw-grp-lab">' + lab + '</span>' + body + '</div>';
+    const ps = full => '<div class="cw-grp-ps">' + (full ? '' : '<div class="cw-grp-opts"></div>') + '<div class="cw-grp-psb">' +
+      (full ? '' : '<div class="cw-grp-tools"><i></i><i></i><i></i><i></i><i></i><i></i></div>') + '<div class="cw-grp-img"></div>' + (full ? '' : '<div class="cw-grp-panels"><i></i><i></i><i></i></div>') + '</div></div>';
+    const card = (title, ...items) => '<div><b>' + title + '</b>' + items.map(t => '<span>' + t + '</span>').join('') + '</div>';
+    const S = {
+      notion: { html: h('As little design as possible') + '<div class="cw-grp-pair">' +
+          pane('New page', '<div class="cw-grp-page"><span class="cw-grp-title">Untitled</span><span class="cw-grp-hint">Type / for blocks</span></div>') +
+          pane('After typing /', '<div class="cw-grp-page"><span>/<span class="cw-grp-caret"></span></span><div class="surface cw-grp-menu"><span class="on"><i></i>Text</span><span><i></i>Heading</span><span><i></i>To-do list</span><span><i></i>Table</span></div></div>') + '</div>',
+        alt: 'Two states of a page. New page: only a faded title and a hint, Type / for blocks. After typing a slash: a small menu of block types such as Text, Heading, To-do list and Table.',
+        cap: 'Notion: a new page is a title and an empty line. Every kind of block waits behind the / key, so the page stays plain until you need more. As little design as possible.' },
+      photoshop: { html: h('Unobtrusive') + '<div class="cw-grp-pair">' + pane('Editing', ps(false)) + pane('<kbd>Tab</kbd> pressed', ps(true)) + '</div>',
+        alt: 'Two states of an image editor. Editing: toolbar, options bar and panels around the image. After pressing Tab: only the image.',
+        cap: 'Photoshop: press Tab and the panels hide, leaving only the image. Press it again and they come back. The tool steps aside for the work. Unobtrusive.' },
+      appstore: { html: h('Honest') + '<div class="cw-grp-app"><div class="cw-grp-ahead"><span class="cw-grp-icon"></span><span class="cw-grp-aname">' + L('70%') + L('45%') + '</span><span class="cw-grp-get">Get</span></div>' +
+          '<b class="cw-grp-sub">App privacy</b><div class="cw-grp-cards">' + card('Used to track you', 'Location') + card('Linked to you', 'Contact info', 'Purchases') + card('Not linked to you', 'Diagnostics') + '</div></div>',
+        alt: 'An app page with a Get button and an App privacy section listing data used to track you, linked to you, and not linked to you.',
+        cap: 'App Store: each app’s page shows a privacy summary of the data it collects, before you download it. People see the cost up front. Honest.' },
+      ios: { html: h('Thorough down to the last detail') + '<div class="cw-grp-ios"><div class="cw-grp-phone"><div class="cw-grp-nav">' + L('60%') + '</div><div class="cw-grp-gap">↓</div><div class="cw-grp-rows">' +
+          ['70%', '55%', '64%', '48%'].map(w => '<span><i></i>' + L(w) + '</span>').join('') + '</div></div>' +
+          '<div class="cw-grp-steps"><span><b>1</b>Drag past the top of the list</span><span><b>2</b>It moves a little, with resistance</span><span><b>3</b>Let go and it springs back</span></div></div>',
+        alt: 'A phone list pulled down past its top, leaving a gap above the first row. Steps: drag past the top, it moves a little with resistance, let go and it springs back.',
+        cap: 'iOS: drag past the top or bottom of a list and the content moves a little further, then springs back when you let go. It tells you that you reached the end, not that the app froze. Thorough down to the last detail.' }
+    };
+    const render = k => { view.innerHTML = S[k].html; view.setAttribute('aria-label', 'Sketch: ' + S[k].alt); cap.textContent = S[k].cap; };
+    wrap.querySelectorAll('input[name="cw-good-rams-principles-w"]').forEach(r => r.addEventListener('change', () => render(r.value)));
+    render('notion');
+  })();
+  </script>
+</div>

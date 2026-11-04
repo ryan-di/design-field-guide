@@ -1,0 +1,43 @@
+<div class="note comfy cw-wrap"><p>Notice what each product kept familiar.</p>
+  <div class="seg cw-seg" role="radiogroup" aria-label="Example">
+    <input type="radio" name="cw-pat-jakobs-law-w" id="cw-pat-jakobs-law-w-1" value="docs" checked><label for="cw-pat-jakobs-law-w-1">Google Docs</label>
+    <input type="radio" name="cw-pat-jakobs-law-w" id="cw-pat-jakobs-law-w-2" value="blender"><label for="cw-pat-jakobs-law-w-2">Blender</label>
+    <input type="radio" name="cw-pat-jakobs-law-w" id="cw-pat-jakobs-law-w-3" value="ig"><label for="cw-pat-jakobs-law-w-3">Instagram</label>
+  </div>
+  <div class="cw cw-jakob-view" data-cw-view role="img" aria-label=""></div>
+  <p class="cw-cap" data-cw-cap aria-live="polite"></p>
+  
+  <script>
+  (() => {
+    const wrap = document.currentScript.closest('.cw-wrap');
+    const view = wrap.querySelector('[data-cw-view]'), cap = wrap.querySelector('[data-cw-cap]');
+    const L = w => '<i class="cw-line" style="width:' + w + '%"></i>';
+    const t = (x, cls) => '<span class="cw-jakob-t' + (cls ? ' ' + cls : '') + '">' + x + '</span>';
+    const sep = '<i class="cw-jakob-sep"></i>';
+    const undo = '<svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 4L4 8l4 4"/><path d="M4 8h10a6 6 0 0 1 0 12h-3"/></svg>';
+    const redo = '<svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M16 4l4 4-4 4"/><path d="M20 8H10a6 6 0 0 0 0 12h3"/></svg>';
+    const S = {
+      docs: { html: '<div class="cw-jakob-win"><div class="cw-jakob-bar"><span class="cw-jakob-doc"></span>Trip notes</div>' +
+          '<div class="cw-jakob-chrome cw-jakob-hl"><div class="cw-jakob-menus"><span>File</span><span>Edit</span><span>View</span><span>Insert</span><span>Format</span><span>Tools</span></div>' +
+          '<div class="cw-jakob-tools">' + t(undo) + t(redo) + sep + t('Arial ▾', 'sel') + t('11') + sep + t('<b>B</b>') + t('<i>I</i>') + t('<u>U</u>') + sep + t('≡') + '</div></div>' +
+          '<div class="cw-jakob-body">' + L(92) + L(86) + L(95) + L(58) + '</div></div>',
+        alt: 'A document editor with a familiar menu bar, File, Edit, View, Insert, Format, Tools, and a toolbar with undo, redo, font, size, bold, italic, underline and alignment.',
+        cap: 'Google Docs: menus, toolbar and shortcuts like Ctrl+B and Ctrl+Z (⌘B and ⌘Z on Mac) work like a desktop word processor.' },
+      blender: { html: '<div class="cw-jakob-win"><div class="cw-jakob-bar">Preferences</div><div class="cw-jakob-split">' +
+          '<div class="cw-jakob-nav"><span>Interface</span><span>Viewport</span><span>Input</span><span class="on">Keymap</span><span>System</span></div>' +
+          '<div class="cw-jakob-pane"><span class="cw-jakob-lab">Preset</span><span class="cw-jakob-dd"><span>Blender</span><span>▾</span></span>' +
+          '<span class="cw-jakob-list"><span class="on">Blender</span><span>Industry Compatible</span></span>' +
+          '<span class="cw-jakob-lab">Select with</span><span class="cw-jakob-segs ring"><span class="on">Left</span><span>Right</span></span></div></div></div>',
+        alt: 'Keymap preferences. The preset menu is open, offering Blender or Industry Compatible. Below, Select with is set to Left rather than Right.',
+        cap: 'Blender: selects with the left mouse button by default, like most software, and offers an Industry Compatible keymap for people coming from other 3D tools.' },
+      ig: { html: '<div class="cw-jakob-phone"><div class="cw-jakob-prog"><i class="full"></i><i class="half"></i><i></i></div><span class="cw-jakob-who"><i></i>maya</span>' +
+          '<span class="cw-jakob-zone l"><span>‹ Back</span></span><span class="cw-jakob-zone r"><span>Next ›</span></span><span class="cw-jakob-hold">Hold to pause</span></div>',
+        alt: 'A phone showing a story, with progress bars at the top. Dashed areas mark the tap zones: the left third goes back, the rest goes to the next story. A label at the bottom says hold to pause.',
+        cap: 'Instagram: stories work like stories in other apps. Tap right for next, tap left to go back, hold to pause.' }
+    };
+    const render = k => { view.innerHTML = S[k].html; view.setAttribute('aria-label', 'Sketch: ' + S[k].alt); cap.textContent = S[k].cap; };
+    wrap.querySelectorAll('input[name="cw-pat-jakobs-law-w"]').forEach(r => r.addEventListener('change', () => render(r.value)));
+    render('docs');
+  })();
+  </script>
+</div>

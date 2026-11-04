@@ -1,0 +1,106 @@
+<div class="fm" data-fm>
+  <div class="seg fm-seg" role="radiogroup" aria-label="Form">
+    <input type="radio" name="fm-spinner" id="fm-spinner-1" value="button" checked><label for="fm-spinner-1">Button</label>
+    <input type="radio" name="fm-spinner" id="fm-spinner-2" value="inline"><label for="fm-spinner-2">Inline</label>
+    <input type="radio" name="fm-spinner" id="fm-spinner-3" value="section"><label for="fm-spinner-3">Section</label>
+    <input type="radio" name="fm-spinner" id="fm-spinner-4" value="page"><label for="fm-spinner-4">Full page</label>
+  </div>
+  <div class="fm-stage" data-fm-stage></div>
+  <p class="fig-cap" data-fm-when aria-live="polite"></p>
+  
+  <script>
+  (() => {
+    const fm = document.currentScript.closest('[data-fm]'), stage = fm.querySelector('[data-fm-stage]'), when = fm.querySelector('[data-fm-when]');
+    const icon = n => '<svg class="icon"><use href="#i-' + n + '"/></svg>';
+    const frame = (title, body) => '<div class="app-frame fm-frame"><div class="app-bar"><span>' + title + '</span></div><div class="app-body">' + body + '</div></div>';
+    const later = (ms, fn) => { const g = gen; return setTimeout(() => { if (g === gen) fn(); }, ms); };
+    const pays = list => list.map(p => '<div class="fs-row"><span class="grow">' + p[0] + '</span><small>' + p[1] + '</small></div>').join('');
+    const payList = [['Corner Café', '−$4.20'], ['City Transit', '−$2.75'], ['Bookshop', '−$18.00']];
+    const balance = '<div class="fs-card"><div class="fs-ch"><b>Everyday account</b><span class="cs-meta">•• 4821</span></div><div class="fs-big">$2,140.50</div></div>';
+    const F = {
+      button: {
+        name: 'In a button',
+        html: frame('New message', '<div class="fs-hd">To <b>sam@example.com</b></div><div class="fs-hd">Subject <b>Photos from Saturday</b></div><div class="line" style="width:86%"></div><div class="line" style="width:70%"></div><div class="fs-acts"><button class="btn btn-primary cs-sm fs-send" type="button" data-send>Send</button><span class="cs-meta" data-out aria-live="polite"></span></div>'),
+        use: 'Use it when one action is waiting, like sending an email.',
+        more: 'Keep the button the same width, and ignore extra presses until it’s done.',
+        wire: s => {
+          const b = s.querySelector('[data-send]'), out = s.querySelector('[data-out]');
+          b.addEventListener('click', () => {
+            if (b.classList.contains('busy')) return;
+            out.textContent = '';
+            b.classList.add('busy'); b.setAttribute('aria-disabled', 'true');
+            b.innerHTML = '<span class="spinner" aria-hidden="true"></span>Sending…';
+            later(1600, () => { b.classList.remove('busy'); b.removeAttribute('aria-disabled'); b.textContent = 'Send'; out.textContent = 'Sent.'; });
+          });
+        }
+      },
+      inline: {
+        name: 'Inline',
+        html: frame('Music', '<label class="fs-search">' + icon('search') + '<input class="input" value="jazz" aria-label="Search songs" autocomplete="off" spellcheck="false"><span class="spinner" aria-hidden="true" hidden data-spin></span></label><div class="fs-list" data-res aria-live="polite"></div>'),
+        use: 'Use it next to a field or a line that’s updating, like a search box.',
+        more: 'People can keep typing while it spins.',
+        wire: s => {
+          const inp = s.querySelector('input'), spin = s.querySelector('[data-spin]'), res = s.querySelector('[data-res]');
+          let tok = 0, t1, t2, t3;
+          const render = q => {
+            const w = q.trim() || 'music', cap = w.charAt(0).toUpperCase() + w.slice(1);
+            res.innerHTML = '';
+            [[cap + ' essentials', '50 songs'], [cap + ' for a rainy day', '32 songs'], ['Best of ' + w, '24 songs']].forEach((r, i) => {
+              const d = document.createElement('div'); d.className = 'fs-row';
+              d.innerHTML = '<div class="thumb' + ['', ' b', ' c'][i] + '"></div><span class="grow"></span><small></small>';
+              d.querySelector('.grow').textContent = r[0]; d.querySelector('small').textContent = r[1];
+              res.appendChild(d);
+            });
+          };
+          render(inp.value);
+          inp.addEventListener('input', () => {
+            const t = ++tok; clearTimeout(t1); clearTimeout(t2); clearTimeout(t3);
+            t1 = later(250, () => {
+              if (t !== tok) return;
+              t2 = later(400, () => { if (t === tok) spin.hidden = false; });
+              t3 = later(1300, () => { if (t !== tok) return; spin.hidden = true; render(inp.value); });
+            });
+          });
+        }
+      },
+      section: {
+        name: 'In a section',
+        html: frame('Bank', balance + '<div class="fs-card"><div class="fs-ch"><b>Recent payments</b><button class="btn btn-ghost cs-sm" type="button" data-ref>Refresh</button></div><div class="fs-pays" data-pays aria-live="polite">' + pays(payList) + '</div></div><div class="fs-acts"><button class="btn btn-secondary cs-sm" type="button" data-move>Move money</button><span class="cs-meta" data-out></span></div>'),
+        use: 'Use it when one part of the page is reloading.',
+        more: 'That part keeps its size, and the rest of the page keeps working.',
+        wire: s => {
+          const box = s.querySelector('[data-pays]'), r = s.querySelector('[data-ref]'), out = s.querySelector('[data-out]');
+          let busy = false, n = 0;
+          r.addEventListener('click', () => {
+            if (busy) return; busy = true; out.textContent = ''; r.setAttribute('aria-disabled', 'true');
+            const spin = later(400, () => { box.innerHTML = '<span class="spinner fs-lg" role="img" aria-label="Loading payments"></span>'; });
+            later(1700, () => { clearTimeout(spin); n++; box.innerHTML = pays([['Grocer’s Market', '−$' + (23.4 + n).toFixed(2)]].concat(payList.slice(0, 2))); busy = false; r.removeAttribute('aria-disabled'); });
+          });
+          s.querySelector('[data-move]').addEventListener('click', () => { out.textContent = busy ? 'Still works while payments load.' : 'Move money opened.'; });
+        }
+      },
+      page: {
+        name: 'Full page',
+        html: '<div class="fs-col"><div class="app-frame fm-frame"><div class="app-bar"><span>Bank</span></div><div class="fs-load" data-load><span class="spinner fs-lg" role="img" aria-label="Opening the app"></span></div><div class="app-body fs-ready" data-ready hidden>' + balance + '<div class="line" style="width:80%"></div><div class="line" style="width:60%"></div></div></div><button class="btn btn-secondary cs-sm" type="button" data-again>Open the app again</button></div>',
+        use: 'Use it only when there’s nothing to show yet, like while an app first opens.',
+        more: 'Once the page is up, spin only the part that’s loading.',
+        wire: s => {
+          const load = s.querySelector('[data-load]'), ready = s.querySelector('[data-ready]');
+          let t;
+          const open = () => { clearTimeout(t); load.hidden = false; ready.hidden = true; t = later(1500, () => { load.hidden = true; ready.hidden = false; }); };
+          s.querySelector('[data-again]').addEventListener('click', open);
+          open();
+        }
+      }
+    };
+    let gen = 0;
+    const show = k => {
+      gen++;
+      stage.innerHTML = F[k].html; F[k].wire(stage);
+      when.innerHTML = '<b>' + F[k].name + '.</b> ' + F[k].use + ' ' + F[k].more;
+    };
+    fm.querySelectorAll('.fm-seg input').forEach(i => i.addEventListener('change', () => show(i.value)));
+    show('button');
+  })();
+  </script>
+</div>

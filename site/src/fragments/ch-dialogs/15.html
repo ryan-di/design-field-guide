@@ -1,0 +1,161 @@
+<script>
+(() => {
+  const cs = document.currentScript.closest('.cs');
+  const D = (k, html, wire) => csDemo(cs.querySelector('[data-d="' + k + '"]'), html, wire);
+  const icon = n => '<svg class="icon sm"><use href="#i-' + n + '"/></svg>';
+  const xBtn = label => '<button type="button" class="icon-btn sp-x" data-x aria-label="' + label + '">' + icon('x') + '</button>';
+  const el = html => { const w = document.createElement('div'); w.innerHTML = html; return w.firstChild; };
+  const endFocus = ta => { ta.focus({ preventScroll: true }); ta.setSelectionRange(ta.value.length, ta.value.length); };
+
+  /* 1. Main task */
+  const DRAFT = 'Hi Sam, thanks for the notes. I went through the draft and have a few thoughts on the intro, the budget table and the timeline. The intro works, but it’s long. Could we cut the second paragraph? For the budget, I’d split travel and hotels into two rows so they’re easier to compare.';
+  const mailHtml = '<div class="app-frame sp-app" style="width:min(500px,100%);height:320px"><div class="app-bar"><span>Inbox</span></div>' +
+    '<div class="sp-row" data-row><div class="sp-main"><b>Notes on the trip plan</b><span class="cs-meta">From Sam</span>' +
+    '<p>I’ve left a few notes on the draft. Have a look when you can and tell me what you think.</p>' +
+    '<button type="button" class="btn btn-secondary cs-sm" data-reply>Reply</button><p class="cs-ok" data-ok></p></div></div></div>';
+  D('side-panel-1b', mailHtml, d => {
+    const row = d.querySelector('[data-row]'), reply = d.querySelector('[data-reply]'), ok = d.querySelector('[data-ok]');
+    reply.addEventListener('click', () => {
+      let p = row.querySelector('.sp-side');
+      if (!p) {
+        p = el('<aside class="sp-side" aria-label="Reply to Sam" style="flex:0 0 160px"><div class="sp-hd"><span>Reply to Sam</span>' + xBtn('Close reply') + '</div>' +
+          '<textarea class="input sp-ta" aria-label="Reply"></textarea><button type="button" class="btn btn-primary cs-sm" data-send style="align-self:flex-start">Send</button></aside>');
+        p.querySelector('textarea').value = DRAFT; row.appendChild(p); ok.textContent = '';
+        p.querySelector('[data-x]').addEventListener('click', () => { p.remove(); reply.focus({ preventScroll: true }); });
+        p.querySelector('[data-send]').addEventListener('click', () => { p.remove(); ok.textContent = 'Reply sent.'; reply.focus({ preventScroll: true }); });
+      }
+      endFocus(p.querySelector('textarea'));
+    });
+  });
+  D('side-panel-1f', mailHtml, d => {
+    const app = d.querySelector('.sp-app'), row = d.querySelector('[data-row]'), reply = d.querySelector('[data-reply]'), ok = d.querySelector('[data-ok]');
+    let draft = DRAFT;
+    reply.addEventListener('click', () => {
+      const c = el('<div class="sp-compose"><div class="sp-hd" style="justify-content:flex-start"><button type="button" class="btn btn-ghost cs-sm sp-ghost" data-back>← Inbox</button><span>Reply to Sam</span></div>' +
+        '<textarea class="input sp-ta" aria-label="Reply"></textarea><button type="button" class="btn btn-primary cs-sm" data-send style="align-self:flex-start">Send</button></div>');
+      const ta = c.querySelector('textarea'); ta.value = draft;
+      row.hidden = true; app.appendChild(c); ok.textContent = '';
+      const back = msg => { draft = msg ? DRAFT : ta.value; c.remove(); row.hidden = false; if (msg) ok.textContent = msg; reply.focus({ preventScroll: true }); };
+      c.querySelector('[data-back]').addEventListener('click', () => back());
+      c.querySelector('[data-send]').addEventListener('click', () => back('Reply sent.'));
+      endFocus(ta);
+    });
+  });
+
+  /* 2. Narrow screen */
+  const SHOES = [['Runner', '$89', 'SM', ''], ['Trail', '$120', 'ML', ' b'], ['Court', '$75', 'S', ' c'], ['Walker', '$95', 'M', ''], ['Classic', '$65', 'L', ' b'], ['Slip-on', '$55', 'SML', ' c']];
+  const shopHtml = '<div class="sp-phone"><div class="app-bar"><span>Shoes</span><button type="button" class="btn btn-secondary cs-sm" data-filt>' + icon('sliders') + 'Filters</button></div>' +
+    '<p class="sp-active" data-active></p><div class="sp-row" data-row><div class="sp-grid" data-grid></div></div></div>';
+  const chips = size => '<span class="sp-lab">Size</span><div class="sp-chips">' + ['S', 'M', 'L'].map(s => '<button type="button" class="sp-chip" data-size="' + s + '" aria-pressed="' + (size === s) + '">' + s + '</button>').join('') + '</div>';
+  const matches = size => SHOES.filter(s => !size || s[2].includes(size));
+  const results = n => n + (n === 1 ? ' result' : ' results');
+  const shopWire = fixed => d => {
+    const phone = d.querySelector('.sp-phone'), row = d.querySelector('[data-row]'), grid = d.querySelector('[data-grid]'), active = d.querySelector('[data-active]'), filt = d.querySelector('[data-filt]');
+    let size = null;
+    const render = () => {
+      grid.innerHTML = matches(size).map(s => '<div class="sp-shoe"><div class="thumb' + s[3] + '"></div><b>' + s[0] + '</b><span>' + s[1] + '</span></div>').join('');
+      active.innerHTML = size ? 'Size ' + size + ' · ' + results(matches(size).length) + ' <button type="button" class="btn btn-ghost cs-sm" data-clear style="padding:2px 6px">Clear</button>' : '';
+      const c = active.querySelector('[data-clear]'); if (c) c.addEventListener('click', () => { size = null; render(); const p = row.querySelector('.sp-side'); if (p) p.querySelectorAll('.sp-chip').forEach(b => b.setAttribute('aria-pressed', 'false')); filt.focus({ preventScroll: true }); });
+    };
+    const bindChips = (box, pick) => box.querySelectorAll('.sp-chip').forEach(b => b.addEventListener('click', () => {
+      const s = b.getAttribute('aria-pressed') === 'true' ? null : b.dataset.size;
+      box.querySelectorAll('.sp-chip').forEach(o => o.setAttribute('aria-pressed', String(o === b && !!s)));
+      pick(s);
+    }));
+    render();
+    filt.addEventListener('click', () => {
+      if (!fixed) {
+        if (row.querySelector('.sp-side')) return;
+        const p = el('<aside class="sp-side" aria-label="Filters" style="flex:0 0 140px"><div class="sp-hd"><span>Filters</span>' + xBtn('Close filters') + '</div>' + chips(size) + '</aside>');
+        row.appendChild(p);
+        bindChips(p, s => { size = s; render(); });
+        p.querySelector('[data-x]').addEventListener('click', () => { p.remove(); filt.focus({ preventScroll: true }); });
+        p.querySelector('.sp-chip').focus({ preventScroll: true });
+        return;
+      }
+      let pending = size;
+      const sh = el('<div class="sp-sheet" role="dialog" aria-label="Filters"><div class="sp-hd" style="justify-content:flex-start;gap:8px">' + xBtn('Close filters') + '<span>Filters</span></div>' + chips(size) +
+        '<span class="grow"></span><button type="button" class="btn btn-primary" data-show style="justify-content:center"></button></div>');
+      const show = sh.querySelector('[data-show]');
+      const label = () => { show.textContent = 'Show ' + results(matches(pending).length); };
+      label(); phone.appendChild(sh);
+      const close = () => { sh.remove(); filt.focus({ preventScroll: true }); };
+      bindChips(sh, s => { pending = s; label(); });
+      sh.querySelector('[data-x]').addEventListener('click', close);
+      show.addEventListener('click', () => { size = pending; render(); close(); });
+      sh.querySelector('[data-x]').focus({ preventScroll: true });
+    });
+  };
+  D('side-panel-2b', shopHtml, shopWire(false));
+  D('side-panel-2f', shopHtml, shopWire(true));
+
+  /* 3. Too many */
+  const PANELS = { Outline: ['Day 1', 'Day 2', 'Day 3', 'Packing list'], Comments: ['Sam: Can we leave later on Day 2?', 'Mia: Add the museum café.'], History: ['Today 10:42 · You', 'Yesterday · Sam', 'Monday · Mia'] };
+  const KEYS = Object.keys(PANELS);
+  const items = k => PANELS[k].map(x => '<div class="sp-item">' + x + '</div>').join('');
+  const docHtml = '<div class="app-frame sp-app" style="width:min(580px,100%);height:310px"><div class="app-bar"><span>Docs</span></div>' +
+    '<div class="sp-tool">' + KEYS.map(k => '<button type="button" class="cs-tab" data-k="' + k + '" aria-pressed="false">' + k + '</button>').join('') + '</div>' +
+    '<div class="sp-row" data-row><div class="sp-doc"><b>Trip plan</b><p>Day 1: arrive in Lisbon, check in, dinner by the river.</p><p>Day 2: tram 28 up to the castle, then the tile museum.</p><p>Day 3: day trip to Sintra. Pack walking shoes.</p></div></div></div>';
+  const press = (b, on) => { b.setAttribute('aria-pressed', String(on)); b.classList.toggle('on', on); };
+  D('side-panel-3b', docHtml, d => {
+    const row = d.querySelector('[data-row]');
+    const toggle = b => {
+      const k = b.dataset.k, open = row.querySelector('[data-p="' + k + '"]');
+      if (open) { open.remove(); press(b, false); return; }
+      const p = el('<aside class="sp-side sp-p" data-p="' + k + '" aria-label="' + k + '"><div class="sp-hd"><span>' + k + '</span>' + xBtn('Close ' + k) + '</div>' + items(k) + '</aside>');
+      p.querySelector('[data-x]').addEventListener('click', () => { p.remove(); press(b, false); b.focus({ preventScroll: true }); });
+      row.appendChild(p); press(b, true);
+    };
+    d.querySelectorAll('.sp-tool .cs-tab').forEach(b => b.addEventListener('click', () => toggle(b)));
+    toggle(d.querySelector('.sp-tool .cs-tab'));
+  });
+  D('side-panel-3f', docHtml, d => {
+    const row = d.querySelector('[data-row]'), tools = Array.from(d.querySelectorAll('.sp-tool .cs-tab'));
+    const p = el('<aside class="sp-side sp-one"><div class="sp-hd"><span data-name></span>' + xBtn('Close panel') + '</div><div data-items></div></aside>');
+    const box = p.querySelector('[data-items]');
+    let cur = null;
+    const show = k => {
+      cur = k;
+      if (!k) { p.remove(); } else { if (!p.isConnected) row.appendChild(p); p.setAttribute('aria-label', k); p.querySelector('[data-name]').textContent = k; box.innerHTML = items(k); }
+      tools.forEach(b => press(b, b.dataset.k === k));
+    };
+    tools.forEach(b => b.addEventListener('click', () => show(cur === b.dataset.k ? null : b.dataset.k)));
+    p.querySelector('[data-x]').addEventListener('click', () => { show(null); tools[0].focus({ preventScroll: true }); });
+    show('Outline');
+  });
+
+  /* 4. Dimmed page */
+  const PH = [['IMG_201', '3.1 MB', '12 Aug', ''], ['IMG_202', '2.4 MB', '12 Aug', ' b'], ['IMG_203', '4.0 MB', '13 Aug', ' c'], ['IMG_204', '2.9 MB', '14 Aug', ' b'], ['IMG_205', '3.6 MB', '14 Aug', ' c'], ['IMG_206', '1.8 MB', '15 Aug', '']];
+  const phHtml = '<div class="app-frame sp-app" style="width:min(500px,100%)"><div class="app-bar"><span>Photos</span><button type="button" class="btn btn-secondary cs-sm" data-info aria-expanded="false">' + icon('info') + 'Info</button></div>' +
+    '<div class="sp-row" data-row><div class="sp-photos" data-grid>' + PH.map((p, i) => '<button type="button" class="thumb sp-ph' + p[3] + '" data-i="' + i + '" aria-label="' + p[0] + '" aria-pressed="' + (i === 0) + '"></button>').join('') + '</div>' +
+    '<aside class="sp-side sp-info" aria-label="Info" hidden></aside></div></div>';
+  const phWire = fixed => d => {
+    const grid = d.querySelector('[data-grid]'), panel = d.querySelector('.sp-info'), info = d.querySelector('[data-info]'), thumbs = Array.from(grid.querySelectorAll('.sp-ph'));
+    let sel = 0;
+    const fill = () => {
+      const p = PH[sel];
+      panel.innerHTML = '<div class="sp-hd"><span>Info</span>' + xBtn('Close info') + '</div><div class="sp-kv"><span>Name</span>' + p[0] + '.jpg</div><div class="sp-kv"><span>Size</span>' + p[1] + '</div><div class="sp-kv"><span>Taken</span>' + p[2] + '</div>';
+      panel.querySelector('[data-x]').addEventListener('click', () => { open(false); info.focus({ preventScroll: true }); });
+    };
+    const open = on => {
+      panel.hidden = !on; info.setAttribute('aria-expanded', String(on));
+      if (on) fill();
+      if (fixed) return;
+      const old = grid.querySelector('.sp-scrim'); if (old) old.remove();
+      thumbs.forEach(b => { b.inert = on; });
+      if (on) { const s = el('<div class="sp-scrim" aria-hidden="true"></div>'); s.addEventListener('click', () => open(false)); grid.appendChild(s); }
+    };
+    thumbs.forEach((b, i) => b.addEventListener('click', () => {
+      sel = i; thumbs.forEach((o, k) => o.setAttribute('aria-pressed', String(k === i)));
+      if (!panel.hidden) fill();
+    }));
+    info.addEventListener('click', () => open(panel.hidden));
+    open(true);
+  };
+  D('side-panel-4b', phHtml, phWire(false));
+  D('side-panel-4f', phHtml, phWire(true));
+
+  csInit(cs);
+})();
+
+  </script>

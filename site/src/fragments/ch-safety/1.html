@@ -1,0 +1,125 @@
+<div class="fm" data-fm>
+  <div class="seg fm-seg" role="radiogroup" aria-label="Form">
+    <input type="radio" name="fm-pat-undo" id="fm-pat-undo-1" value="toast" checked><label for="fm-pat-undo-1">Undo toast</label>
+    <input type="radio" name="fm-pat-undo" id="fm-pat-undo-2" value="history"><label for="fm-pat-undo-2">Undo history</label>
+    <input type="radio" name="fm-pat-undo" id="fm-pat-undo-3" value="trash"><label for="fm-pat-undo-3">Trash</label>
+    <input type="radio" name="fm-pat-undo" id="fm-pat-undo-4" value="delay"><label for="fm-pat-undo-4">Delay</label>
+  </div>
+  <div class="fm-stage" data-fm-stage></div>
+  <p class="fig-cap" data-fm-when aria-live="polite"></p>
+  
+  <script>
+  (() => {
+    const fm = document.currentScript.closest('[data-fm]'), stage = fm.querySelector('[data-fm-stage]'), when = fm.querySelector('[data-fm-when]');
+    const icon = n => '<svg class="icon sm"><use href="#i-' + n + '"/></svg>';
+    let gen = 0;
+    const later = (fn, ms) => { const g = gen; setTimeout(() => { if (g === gen) fn(); }, ms); };
+    const toast = (text, undo, ms) => {
+      let box = stage.querySelector('.cs-toasts');
+      if (!box) { box = document.createElement('div'); box.className = 'cs-toasts'; box.setAttribute('role', 'status'); stage.appendChild(box); }
+      box.innerHTML = '';
+      const el = document.createElement('div'); el.className = 'toast';
+      const sp = document.createElement('span'); sp.textContent = text; el.appendChild(sp);
+      if (undo) { const b = document.createElement('button'); b.type = 'button'; b.className = 'toast-action'; b.textContent = 'Undo'; b.addEventListener('click', () => { el.remove(); undo(); }); el.appendChild(b); }
+      box.appendChild(el);
+      later(() => el.remove(), ms || 6000);
+    };
+    const F = {
+      toast: {
+        html: () => '<div class="app-frame fu-app"><div class="app-bar"><span>Playlist · Road trip</span></div><div class="app-body" data-list>' +
+          [['Here Comes the Sun', 'The Beatles'], ['Dreams', 'Fleetwood Mac'], ['Africa', 'Toto'], ['Holocene', 'Bon Iver']].map(s => '<div class="fu-row" data-s="' + s[0] + '"><span class="grow"><b>' + s[0] + '</b><span class="cs-meta">' + s[1] + '</span></span><button class="icon-btn" type="button" aria-label="Remove ' + s[0] + '">' + icon('x') + '</button></div>').join('') + '</div></div>',
+        use: 'Use it right after a single action, such as removing a song. A toast offers Undo for a few seconds, then leaves.',
+        wire: s => {
+          const list = s.querySelector('[data-list]');
+          list.addEventListener('click', e => {
+            const b = e.target.closest('button'); if (!b) return;
+            const row = b.closest('.fu-row'), idx = Array.from(list.children).indexOf(row), next = row.nextElementSibling || row.previousElementSibling;
+            row.remove(); if (next) next.querySelector('button').focus();
+            toast('Removed “' + row.dataset.s + '”', () => { list.insertBefore(row, list.children[idx] || null); row.querySelector('button').focus(); });
+          });
+        }
+      },
+      history: {
+        html: () => '<div class="app-frame fu-app"><div class="app-bar"><span>Packing list</span></div><div class="app-body" data-list>' +
+          ['Passport', 'Phone charger', 'Sunscreen', 'Swimsuit'].map((n, i) => '<label class="check fu-row" data-i="' + i + '"><input type="checkbox"><span>' + n + '</span></label>').join('') + '</div>' +
+          '<div class="fu-tools"><button class="btn btn-secondary cs-sm" type="button" data-undo disabled>Undo</button><button class="btn btn-secondary cs-sm" type="button" data-redo disabled>Redo</button></div></div>',
+        use: 'Use it in editors where people make many small changes. Each Undo steps back one change, in order. Redo steps forward again, and the buttons name the step.',
+        wire: s => {
+          const boxes = Array.from(s.querySelectorAll('input[type="checkbox"]')), names = boxes.map(b => b.nextElementSibling.textContent);
+          const undoB = s.querySelector('[data-undo]'), redoB = s.querySelector('[data-redo]');
+          const past = [], future = [];
+          const label = st => (st.v ? 'pack ' : 'unpack ') + names[st.i];
+          const sync = () => {
+            boxes.forEach(b => b.closest('.fu-row').classList.toggle('done', b.checked));
+            undoB.disabled = !past.length; redoB.disabled = !future.length;
+            undoB.textContent = past.length ? 'Undo ' + label(past[past.length - 1]) : 'Undo';
+            redoB.textContent = future.length ? 'Redo ' + label(future[future.length - 1]) : 'Redo';
+          };
+          boxes.forEach((b, i) => b.addEventListener('change', () => { past.push({ i, v: b.checked }); future.length = 0; sync(); }));
+          undoB.addEventListener('click', () => { const st = past.pop(); if (!st) return; boxes[st.i].checked = !st.v; future.push(st); sync(); (undoB.disabled ? redoB : undoB).focus(); });
+          redoB.addEventListener('click', () => { const st = future.pop(); if (!st) return; boxes[st.i].checked = st.v; past.push(st); sync(); (redoB.disabled ? undoB : redoB).focus(); });
+          sync();
+        }
+      },
+      trash: {
+        html: () => '<div class="app-frame fu-app"><div class="fu-tabs" role="tablist"><button class="cs-tab on" type="button" role="tab" aria-selected="true" data-tab="docs">Documents</button><button class="cs-tab" type="button" role="tab" aria-selected="false" data-tab="trash">Trash <span class="badge" data-n>0</span></button></div><div class="app-body" data-list></div></div>',
+        use: 'Use it when people may notice a mistake days later. Deleted items wait in the trash for a set time, and people can put them back from there.',
+        wire: s => {
+          const docs = ['Lease agreement', 'Wedding speech', 'Budget 2026'], trash = [];
+          const list = s.querySelector('[data-list]'), n = s.querySelector('[data-n]'), tabs = Array.from(s.querySelectorAll('[data-tab]'));
+          let tab = 'docs';
+          const draw = () => {
+            tabs.forEach(b => { const on = b.dataset.tab === tab; b.classList.toggle('on', on); b.setAttribute('aria-selected', String(on)); });
+            n.textContent = String(trash.length);
+            const items = tab === 'docs' ? docs : trash;
+            list.innerHTML = items.length ? items.map(d => '<div class="fu-row"><span class="grow"><b>' + d + '</b>' + (tab === 'trash' ? '<span class="cs-meta">30 days left</span>' : '') + '</span>' +
+              (tab === 'docs' ? '<button class="icon-btn" type="button" aria-label="Delete ' + d + '" data-x="' + d + '">' + icon('trash') + '</button>' : '<button class="btn btn-secondary cs-sm" type="button" aria-label="Restore ' + d + '" data-x="' + d + '">Restore</button>') + '</div>').join('')
+              : '<div class="fu-empty">' + (tab === 'docs' ? 'No documents.' : 'Trash is empty. Deleted items stay here for 30 days.') + '</div>';
+          };
+          tabs.forEach(b => b.addEventListener('click', () => { tab = b.dataset.tab; draw(); b.focus(); }));
+          list.addEventListener('click', e => {
+            const b = e.target.closest('[data-x]'); if (!b) return;
+            const name = b.dataset.x, from = tab === 'docs' ? docs : trash, to = tab === 'docs' ? trash : docs;
+            from.splice(from.indexOf(name), 1); to.push(name); draw();
+            const nb = list.querySelector('[data-x]'); (nb || tabs[tab === 'docs' ? 1 : 0]).focus();
+          });
+          draw();
+        }
+      },
+      delay: {
+        html: () => '<div class="app-frame fu-app"><div class="app-bar"><span>Sam</span></div><div class="fu-chat" data-chat><span class="fu-b in">Are we still on for 6?</span></div>' +
+          '<div class="fu-send"><input class="input" value="Running 10 minutes late" aria-label="Message" data-in><button class="btn btn-primary cs-sm" type="button" data-send>Send</button></div></div>',
+        use: 'Use it for actions that can’t be taken back once they happen, such as sending. The app waits a few seconds before it really acts, and Undo cancels it.',
+        wire: s => {
+          const chat = s.querySelector('[data-chat]'), input = s.querySelector('[data-in]'), send = s.querySelector('[data-send]');
+          let job = 0;
+          send.addEventListener('click', () => {
+            const text = input.value.trim(); if (!text) return;
+            const my = ++job;
+            const b = document.createElement('span'); b.className = 'fu-b out wait'; b.textContent = text;
+            const st = document.createElement('span'); st.className = 'fu-st';
+            st.innerHTML = '<span data-c></span><button class="btn btn-ghost cs-sm" type="button" data-u>Undo</button>';
+            chat.append(b, st); input.value = '';
+            let left = 5;
+            const tick = () => {
+              if (!st.isConnected) return;
+              if (left === 0) { b.classList.remove('wait'); st.innerHTML = 'Sent'; return; }
+              st.querySelector('[data-c]').textContent = 'Sending in ' + left + '…'; left--; later(tick, 1000);
+            };
+            st.querySelector('[data-u]').addEventListener('click', () => { b.remove(); st.remove(); input.value = text; input.focus(); });
+            tick();
+            st.querySelector('[data-u]').focus();
+          });
+        }
+      }
+    };
+    const show = k => {
+      gen++;
+      stage.innerHTML = F[k].html(); F[k].wire(stage);
+      when.innerHTML = '<b>' + fm.querySelector('.fm-seg input:checked + label').textContent + '.</b> ' + F[k].use;
+    };
+    fm.querySelectorAll('.fm-seg input').forEach(i => i.addEventListener('change', () => show(i.value)));
+    show('toast');
+  })();
+  </script>
+</div>

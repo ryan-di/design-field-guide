@@ -1,0 +1,69 @@
+<div class="fm" data-fm>
+  
+  <div class="seg fm-seg" role="radiogroup" aria-label="Form">
+    <input type="radio" name="fm-segmented" id="fm-segmented-1" value="text" checked><label for="fm-segmented-1">Text</label>
+    <input type="radio" name="fm-segmented" id="fm-segmented-2" value="icons"><label for="fm-segmented-2">Icons</label>
+    <input type="radio" name="fm-segmented" id="fm-segmented-3" value="full"><label for="fm-segmented-3">Full width</label>
+    <input type="radio" name="fm-segmented" id="fm-segmented-4" value="two"><label for="fm-segmented-4">Two options</label>
+  </div>
+  <div class="fm-stage" data-fm-stage></div>
+  <p class="fig-cap" data-fm-when aria-live="polite"></p>
+  <script>
+  (() => {
+    const fm = document.currentScript.closest('[data-fm]'), stage = fm.querySelector('[data-fm-stage]'), when = fm.querySelector('[data-fm-when]');
+    const sg = (name, label, items, on, cls) => '<div class="sf-seg ' + (cls || '') + '" role="radiogroup" aria-label="' + label + '">' + items.map(([v, t, aria]) => '<label' + (aria ? ' title="' + aria + '"' : '') + '><input type="radio" name="' + name + '" value="' + v + '"' + (v === on ? ' checked' : '') + (aria ? ' aria-label="' + aria + '"' : '') + '><span>' + t + '</span></label>').join('') + '</div>';
+    const svg = d => '<svg class="icon sm" viewBox="0 0 24 24" aria-hidden="true">' + d + '</svg>';
+    const LIST = svg('<path d="M9 6h11M9 12h11M9 18h11"/><path d="M4.5 6h.01M4.5 12h.01M4.5 18h.01"/>');
+    const GRID = svg('<rect x="4" y="4" width="6.5" height="6.5" rx="1"/><rect x="13.5" y="4" width="6.5" height="6.5" rx="1"/><rect x="4" y="13.5" width="6.5" height="6.5" rx="1"/><rect x="13.5" y="13.5" width="6.5" height="6.5" rx="1"/>');
+    const frame = (bar, cls) => '<div class="app-frame fm-frame ' + (cls || '') + '"><div class="app-bar sf-bar">' + bar + '</div><div class="app-body sf-body" data-body></div></div>';
+    const onChange = (s, fn) => { s.querySelectorAll('.sf-seg input').forEach(i => i.addEventListener('change', () => fn(i.value))); fn(s.querySelector('.sf-seg input:checked').value); };
+    const th = (n, o = 0) => Array.from({ length: n }, (_, i) => '<div class="thumb' + ['', ' b', ' c', ' b', '', ' c'][(i + o) % 6] + '"></div>').join('');
+    const LIB = {
+      years: '<div class="sf-yr"><div class="thumb b"></div><b>2026</b></div><div class="sf-yr"><div class="thumb c"></div><b>2025</b></div>',
+      months: '<div class="sf-mo">June 2026</div><div class="sf-row4">' + th(4) + '</div><div class="sf-mo">May 2026</div><div class="sf-row4">' + th(4, 3) + '</div>',
+      all: '<div class="sf-all">' + th(18) + '</div>'
+    };
+    const PHOTOS = [['IMG_2041', '2.4 MB', ''], ['IMG_2042', '3.1 MB', ' b'], ['IMG_2047', '1.8 MB', ' c'], ['IMG_2050', '2.2 MB', ''], ['IMG_2053', '2.9 MB', ' c'], ['IMG_2058', '2.0 MB', ' b']];
+    const MAIL = [['Maya Lee', 'Photos from the weekend', 1], ['Bank of Oak', 'Your June statement is ready', 0], ['Sam Ortiz', 'Lunch on Friday?', 1], ['Air Lisboa', 'Your boarding pass', 0]];
+    const F = {
+      text: {
+        html: frame('<span>Library</span>' + sg('fm-segmented-x1', 'Library view', [['years', 'Years'], ['months', 'Months'], ['all', 'All']], 'months')),
+        use: 'Use it for two to five views of the same thing, like Years, Months and All in a photo library. Keep each label to one short word so the row fits on one line.',
+        wire: s => { const b = s.querySelector('[data-body]'); onChange(s, v => { b.innerHTML = LIB[v]; }); }
+      },
+      icons: {
+        html: frame('<span>Lisbon trip · 6 photos</span>' + sg('fm-segmented-x2', 'Layout', [['list', LIST, 'List'], ['grid', GRID, 'Grid']], 'grid', 'ic')),
+        use: 'Use it when the icons are well known, like list and grid. Give each segment a name that shows on hover and is read out by screen readers.',
+        wire: s => {
+          const b = s.querySelector('[data-body]');
+          onChange(s, v => { b.innerHTML = v === 'grid' ? '<div class="sf-grid">' + PHOTOS.map(p => '<div class="thumb' + p[2] + '"></div>').join('') + '</div>' : PHOTOS.slice(0, 4).map(p => '<div class="sf-item"><div class="thumb' + p[2] + '"></div><span>' + p[0] + '.jpg</span><span class="cs-meta">' + p[1] + '</span></div>').join(''); });
+        }
+      },
+      full: {
+        html: frame('<span>Inbox</span>', 'sf-phone'),
+        use: 'Use it on a phone, where a row of small segments is hard to tap. The segments share the width equally, so each one is a big target.',
+        wire: s => {
+          const b = s.querySelector('[data-body]');
+          b.insertAdjacentHTML('beforebegin', '<div style="padding:10px 12px 0">' + sg('fm-segmented-x3', 'Show', [['all', 'All'], ['unread', 'Unread']], 'all', 'full') + '</div>');
+          b.style.paddingTop = '6px';
+          onChange(s, v => { b.innerHTML = MAIL.filter(m => v === 'all' || m[2]).map(m => '<div class="sf-mail' + (m[2] ? ' u' : '') + '"><b>' + m[0] + '</b><span>' + m[1] + '</span></div>').join(''); });
+        }
+      },
+      two: {
+        html: '<div class="app-frame fm-frame" style="width:min(320px,100%)"><div class="app-body sf-price">' + sg('fm-segmented-x4', 'Billing', [['month', 'Monthly'], ['year', 'Yearly']], 'month') + '<b style="font-size:15px;margin-top:8px">Family plan</b><div class="sf-amt" data-amt></div><div class="sf-save" data-save></div><button class="btn btn-primary" type="button">Start free trial</button></div></div>',
+        use: 'Use it for a pair of choices, like monthly and yearly billing. People can read both, so they know what they’ll get before they switch.',
+        wire: s => {
+          const a = s.querySelector('[data-amt]'), sv = s.querySelector('[data-save]');
+          onChange(s, v => { a.innerHTML = v === 'year' ? '$169.99 <small>a year</small>' : '$16.99 <small>a month</small>'; sv.textContent = v === 'year' ? 'You save $33.89 a year' : ''; });
+        }
+      }
+    };
+    const show = k => {
+      stage.innerHTML = F[k].html; F[k].wire(stage);
+      when.innerHTML = '<b>' + fm.querySelector('.fm-seg input:checked + label').textContent + '.</b> ' + F[k].use;
+    };
+    fm.querySelectorAll('.fm-seg input').forEach(i => i.addEventListener('change', () => show(i.value)));
+    show('text');
+  })();
+  </script>
+</div>

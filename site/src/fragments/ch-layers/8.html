@@ -1,0 +1,42 @@
+<div class="note comfy cw-wrap">
+  <div class="seg cw-seg" role="radiogroup" aria-label="Example">
+    <input type="radio" name="cw-pat-layered-ui-w" id="cw-pat-layered-ui-w-1" value="gmail" checked><label for="cw-pat-layered-ui-w-1">Gmail</label>
+    <input type="radio" name="cw-pat-layered-ui-w" id="cw-pat-layered-ui-w-2" value="code"><label for="cw-pat-layered-ui-w-2">VS Code</label>
+    <input type="radio" name="cw-pat-layered-ui-w" id="cw-pat-layered-ui-w-3" value="airbnb"><label for="cw-pat-layered-ui-w-3">Airbnb</label>
+  </div>
+  <div class="cw cw-layered-view" data-cw-view role="img" aria-label=""></div>
+  <p class="cw-cap" data-cw-cap aria-live="polite"></p>
+  
+  <script>
+  (() => {
+    const wrap = document.currentScript.closest('.cw-wrap');
+    const view = wrap.querySelector('[data-cw-view]'), cap = wrap.querySelector('[data-cw-cap]');
+    const ic = id => '<svg class="icon sm" aria-hidden="true"><use href="#i-' + id + '"/></svg>';
+    const field = (label, value) => '<span class="cw-layered-f"><span>' + label + '</span><span class="cw-layered-in">' + value + '</span></span>';
+    const S = {
+      gmail: { html: '<div class="cw-layered-win"><div class="cw-layered-search">' + ic('search') + '<span class="cw-layered-q">from:ana subject:invoice</span><span class="cw-layered-ib cw-layered-hl">' + ic('sliders') + '</span></div>' +
+          '<div class="cw-layered-panel">' + field('From', 'ana') + field('To', '') + field('Subject', 'invoice') + field('Date within', '1 week') +
+          '<span class="cw-layered-acts"><span class="btn btn-primary">Search</span></span></div></div>',
+        alt: 'A search box reading from:ana subject:invoice, with an options button at its right end. Below it, an open panel with From, To, Subject and Date within fields and a Search button.',
+        cap: 'Gmail: the search options button opens fields like From, Subject and Date, and turns them into a query in the same search box.' },
+      code: { html: '<div class="cw-layered-win"><div class="cw-layered-bar"><span>Settings</span><span class="cw-layered-ib cw-layered-hl">{ }</span></div>' +
+          '<div class="cw-layered-body"><span class="cw-layered-find">font</span>' +
+          '<span class="cw-layered-set"><b>Editor: Font Size</b><span>14</span></span>' +
+          '<span class="cw-layered-set"><b>Editor: Font Family</b><span>Menlo</span></span></div>' +
+          '<div class="cw-layered-json"><small>settings.json</small>{<br>&nbsp;&nbsp;<em>"editor.fontSize"</em>: 14<br>}</div></div>',
+        alt: 'A Settings window with a search box and two font settings, Font Size 14 and Font Family. An icon in the corner opens settings.json, shown below with the same font size line.',
+        cap: 'VS Code: the searchable settings form and the JSON file that experts open from the corner icon edit one file.' },
+      airbnb: { html: '<div class="cw-layered-win"><div class="cw-layered-row"><span class="cw-layered-pill"><span>Where</span><span>When</span><span>Who</span><span class="cw-layered-go">' + ic('search') + '</span></span>' +
+          '<span class="cw-layered-fbtn cw-layered-hl">' + ic('sliders') + 'Filters</span></div>' +
+          '<div class="cw-layered-panel"><span class="cw-layered-sec"><b>Type of place</b><span class="cw-layered-segs"><span class="on">Any type</span><span>Room</span><span>Entire home</span></span></span>' +
+          '<span class="cw-layered-sec"><b>Price range</b><span class="cw-layered-range"><i style="left:18%"></i><i style="left:65%"></i></span></span>' +
+          '<span class="cw-layered-sec"><b>Amenities</b><span class="cw-layered-chips"><span>Wifi</span><span>Kitchen</span><span>Washer</span><span>+ more</span></span></span></div></div>',
+        alt: 'A search bar with Where, When and Who, and a Filters button beside it. Below, the open Filters panel with Type of place, Price range and Amenities.',
+        cap: 'Airbnb: the search bar asks only where, when and who. Price, type of place and amenities wait behind Filters for the people who care.' }
+    };
+    const render = k => { view.innerHTML = S[k].html; view.setAttribute('aria-label', 'Sketch: ' + S[k].alt); cap.textContent = S[k].cap; };
+    wrap.querySelectorAll('input[name="cw-pat-layered-ui-w"]').forEach(r => r.addEventListener('change', () => render(r.value)));
+    render('gmail');
+  })();
+  </script>
+</div>

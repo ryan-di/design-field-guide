@@ -1,0 +1,140 @@
+<script>
+(() => {
+  const cs = document.currentScript.closest('.cs');
+  const go = () => {
+  const D = (k, html, wire) => csDemo(cs.querySelector('[data-d="' + k + '"]'), html, wire);
+  const css = document.createElement('style');
+  css.textContent = [
+    '#good-train-your-eye .te-col{width:min(380px,100%);display:flex;flex-direction:column;gap:10px;text-align:left}',
+    '#good-train-your-eye .te-box{background:var(--ui-surface);border:1px solid var(--ui-border);border-radius:12px;padding:10px 12px;display:flex;flex-direction:column;gap:6px;font-size:13.5px;line-height:1.4}',
+    '#good-train-your-eye .te-h{font:600 11.5px var(--font-mono);text-transform:uppercase;letter-spacing:.06em;color:var(--ui-muted)}',
+    '#good-train-your-eye .te-file{display:flex;gap:8px;align-items:center;padding:3px 0;min-width:0}',
+    '#good-train-your-eye .te-file .thumb{width:30px;flex:none;border-radius:4px}',
+    '#good-train-your-eye .te-file .grow{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}',
+    '#good-train-your-eye .te-tag{flex:none;font:500 11.5px var(--font-mono);background:var(--ui-hover);border-radius:5px;padding:1px 6px}',
+    '#good-train-your-eye .te-search{padding:7px 10px;font-size:14px}',
+    '#good-train-your-eye .te-row{display:flex;justify-content:space-between;gap:8px;padding:6px 0;border-bottom:1px solid var(--ui-border);font-size:13.5px}',
+    '#good-train-your-eye .te-row:last-child{border-bottom:0}',
+    '#good-train-your-eye .te-row b{font-weight:700;color:var(--ui-text)}',
+    '#good-train-your-eye .te-row .m{color:var(--ui-muted)}',
+    '#good-train-your-eye .te-row .p-dark{color:var(--ui-text);font-weight:700}',
+    '#good-train-your-eye .te-row .p-grey{color:var(--ui-muted)}',
+    '#good-train-your-eye .te-note{border-left:3px solid var(--ui-sel);background:var(--ui-sel-soft);border-radius:0 8px 8px 0;padding:7px 10px;font-size:13.5px}',
+    '#good-train-your-eye .te-acts{display:flex;flex-wrap:wrap;gap:6px;align-items:center}',
+    '#good-train-your-eye .te-out{font-size:13.5px;line-height:1.45}',
+    '#good-train-your-eye .te-out:empty{display:none}',
+    '#good-train-your-eye .te-tabs{display:flex;flex-wrap:wrap;gap:2px}',
+    '#good-train-your-eye .te-tabs .cs-tab{padding:5px 8px;font-size:13px}',
+    '#good-train-your-eye .te-st{min-height:150px;display:flex;flex-direction:column;gap:8px;justify-content:center}',
+    '#good-train-your-eye .te-none{border:1.5px dashed var(--ui-border);border-radius:10px;padding:18px 12px;text-align:center;color:var(--ui-muted)}',
+    '#good-train-your-eye .te-trip{display:flex;gap:8px;align-items:center}',
+    '#good-train-your-eye .te-trip .thumb{width:44px;flex:none}',
+    '#good-train-your-eye .te-cards{display:flex;gap:10px;width:min(380px,100%)}',
+    '#good-train-your-eye .te-ev{flex:1;min-width:0;background:var(--ui-surface);border:1px solid var(--ui-border);display:flex;flex-direction:column;gap:4px;text-align:left;position:relative}',
+    '#good-train-your-eye .te-ev .thumb{border-radius:inherit;aspect-ratio:16/9}',
+    '#good-train-your-eye .te-ev .t{font-size:14.5px;color:var(--ui-text)}',
+    '#good-train-your-eye .te-ev .m{font-size:12.5px}',
+    '#good-train-your-eye .te-ev.A{padding:14px;border-radius:12px}',
+    '#good-train-your-eye .te-ev.A .t{font-weight:700}',
+    '#good-train-your-eye .te-ev.A .m{color:var(--ui-muted)}',
+    '#good-train-your-eye .te-ev.B{padding:10px;border-radius:6px}',
+    '#good-train-your-eye .te-ev.B .t{font-weight:500}',
+    '#good-train-your-eye .te-ev.B .m{color:color-mix(in srgb,var(--ui-muted) 55%,var(--ui-surface))}',
+    '#good-train-your-eye .te-cards.sp .te-ev{box-shadow:inset 0 0 0 var(--pad) color-mix(in srgb,var(--ui-sel) 22%,transparent)}',
+    '#good-train-your-eye .te-cards.sp .te-ev.A{--pad:14px}#good-train-your-eye .te-cards.sp .te-ev.B{--pad:10px}',
+    '#good-train-your-eye .te-cards.wt .t,#good-train-your-eye .te-cards.co .m{outline:2px solid var(--ui-sel);outline-offset:2px;border-radius:3px}',
+    '#good-train-your-eye .te-cards.rd .te-ev{outline:2px solid var(--ui-sel);outline-offset:3px}',
+    '#good-train-your-eye .te-lab{font:600 11px var(--font-mono);color:var(--ui-muted);text-align:center}',
+    '#good-train-your-eye .te-cmp{font:500 12.5px var(--font-mono);color:var(--ui-text);width:min(380px,100%);text-align:center}',
+    '#good-train-your-eye .te-cmp:empty{display:none}'
+  ].join('\n');
+  cs.appendChild(css);
+  const th = i => '<span class="thumb ' + ['', 'b', 'c'][i % 3] + '"></span>';
+
+  /* 1. Untagged folder */
+  const SHOTS = [['checkout', 'error'], ['inbox', 'empty state'], ['playlist', 'long names'], ['photos', 'bulk delete'], ['search', 'empty state'], ['settings', 'toggle'], ['trips', 'empty state'], ['files', 'bulk delete'], ['sign up', 'error']];
+  const folderHtml = fixed => '<div class="te-col"><div class="te-box"><span class="te-h">Inspiration · ' + SHOTS.length + ' files</span>' +
+    '<input class="input te-search" type="search" placeholder="Search" aria-label="Search files" data-q><div data-list></div></div><p class="cs-meta" data-out></p></div>';
+  const folderWire = fixed => d => {
+    const list = d.querySelector('[data-list]'), q = d.querySelector('[data-q]'), o = d.querySelector('[data-out]');
+    const name = (s, i) => fixed ? s[0] + ' screen' : 'Screenshot 2026-0' + (i % 9 + 1) + '-1' + i + ' at 10.' + (10 + i * 7) + '.png';
+    const draw = () => {
+      const v = q.value.trim().toLowerCase();
+      const hits = SHOTS.map((s, i) => [s, i]).filter(([s, i]) => !v || (name(s, i) + (fixed ? ' ' + s[1] : '')).toLowerCase().includes(v));
+      list.innerHTML = hits.map(([s, i]) => '<div class="te-file">' + th(i) + '<span class="grow">' + name(s, i) + '</span>' + (fixed ? '<span class="te-tag">' + s[1] + '</span>' : '') + '</div>').join('') || '<p class="cs-meta">No files match.</p>';
+      o.textContent = v ? hits.length + (hits.length === 1 ? ' match' : ' matches') + ' for “' + v + '”' : '';
+    };
+    q.addEventListener('input', draw); draw();
+  };
+  D('good-train-your-eye-1b', folderHtml(false), folderWire(false));
+  D('good-train-your-eye-1f', folderHtml(true), folderWire(true));
+
+  /* 2. No note */
+  const ROWS = [['Morning yoga', 'Mon 7:00 · 60 min'], ['Spin class', 'Wed 18:30 · 45 min'], ['Pilates', 'Sat 10:00 · 50 min']];
+  const noteHtml = fixed => '<div class="te-col"><div class="te-box"><span class="te-h">Saved: gym class list</span><div data-rows></div></div>' +
+    '<div class="te-note">' + (fixed ? '<b>Why it works:</b> only the title is dark. Everything else is gray, so the eye finds titles fast.' : '<b>Note:</b> nice list, copy this.') + '</div>' +
+    '<div class="te-acts"><span>New price column:</span><button class="btn btn-secondary cs-sm" type="button" data-c="dark">Dark</button><button class="btn btn-secondary cs-sm" type="button" data-c="grey">Gray</button></div>' +
+    '<p class="te-out" data-out></p></div>';
+  const noteWire = fixed => d => {
+    const rows = d.querySelector('[data-rows]'), o = d.querySelector('[data-out]');
+    const draw = c => { rows.innerHTML = ROWS.map((r, i) => '<div class="te-row"><span><b>' + r[0] + '</b><br><span class="m">' + r[1] + '</span></span>' + (c ? '<span class="p-' + c + '">€' + (4 + i) + '.00</span>' : '') + '</div>').join(''); };
+    draw();
+    d.querySelectorAll('[data-c]').forEach(b => b.addEventListener('click', () => {
+      draw(b.dataset.c);
+      o.textContent = !fixed ? 'You picked ' + b.dataset.c + '. Was that right? The note doesn’t say, so you’re guessing.'
+        : b.dataset.c === 'grey' ? 'Grey keeps the reason true: titles are still the only dark text.' : 'Dark breaks the reason in the note: now two things per row compete for the eye.';
+    }));
+  };
+  D('good-train-your-eye-2b', noteHtml(false), noteWire(false));
+  D('good-train-your-eye-2f', noteHtml(true), noteWire(true));
+
+  /* 3. Showcase only */
+  const ST = {
+    Showcase: '<span class="te-trip">' + th(0) + '<span><b>Lisbon</b><br><span class="cs-meta">12–16 Nov</span></span></span><span class="te-trip">' + th(1) + '<span><b>Kyoto</b><br><span class="cs-meta">3–10 Apr</span></span></span><span class="te-trip">' + th(2) + '<span><b>Oslo</b><br><span class="cs-meta">1–4 Jun</span></span></span>',
+    Empty: '<b>No trips yet</b><span class="cs-meta">Trips you plan show up here.</span><span class="btn btn-primary cs-sm" style="align-self:flex-start">Plan a trip</span>',
+    Loading: '<div class="line" style="width:80%"></div><div class="line" style="width:60%"></div><div class="line" style="width:72%"></div><span class="cs-meta">Rows keep their size while loading.</span>',
+    Error: '<b>Couldn’t load your trips</b><span class="cs-meta">Check your connection. Your trips are safe.</span><span class="btn btn-secondary cs-sm" style="align-self:flex-start">Try again</span>',
+    Keyboard: '<span>Tab order: Search → New trip → first trip.</span><span>Enter opens a trip. Focus ring: 2px, blue, on every row.</span><span class="cs-meta">Screen reader: “Lisbon, 12 to 16 November, link”.</span>'
+  };
+  const flowHtml = fixed => '<div class="te-col"><div class="te-box"><span class="te-h">Captured: travel app, Trips</span><div class="te-tabs" role="group" aria-label="State">' +
+    Object.keys(ST).map((k, i) => '<button class="cs-tab' + (i ? '' : ' on') + '" type="button" aria-pressed="' + !i + '" data-k="' + k + '">' + k + '</button>').join('') +
+    '</div><div class="te-st" data-st aria-live="polite"></div></div><p class="cs-meta" data-out></p></div>';
+  const flowWire = fixed => d => {
+    const st = d.querySelector('[data-st]'), o = d.querySelector('[data-out]'), seen = new Set();
+    const show = k => {
+      d.querySelectorAll('[data-k]').forEach(b => { const on = b.dataset.k === k; b.classList.toggle('on', on); b.setAttribute('aria-pressed', String(on)); });
+      st.innerHTML = fixed || k === 'Showcase' ? ST[k] : '<div class="te-none">Not captured. You don’t know how they handled it.</div>';
+      seen.add(k);
+      o.textContent = fixed ? 'States studied: ' + seen.size + ' of 5' : 'States studied: 1 of 5';
+    };
+    d.querySelectorAll('[data-k]').forEach(b => b.addEventListener('click', () => show(b.dataset.k)));
+    show('Showcase');
+  };
+  D('good-train-your-eye-3b', flowHtml(false), flowWire(false));
+  D('good-train-your-eye-3f', flowHtml(true), flowWire(true));
+
+  /* 4. Whole vs one property */
+  const ev = cls => '<div class="te-ev ' + cls + '">' + th(1) + '<span class="t">Jazz night</span><span class="m">Fri 20:00 · €18</span></div>';
+  const cards = '<div class="te-cards" data-cards>' + ev('A') + ev('B') + '</div>';
+  const PROPS = { sp: ['Spacing', 'Padding: left 14px, right 10px.'], wt: ['Weight', 'Title: left 700, right 500.'], co: ['Color', 'Date line: left has more contrast than right.'], rd: ['Corners', 'Radius: left 12px, right 6px.'] };
+  D('good-train-your-eye-4b', '<div class="te-col" style="align-items:center">' + cards + '<p class="te-cmp" style="font-family:var(--font-body)">Which one feels nicer, and why?</p>' +
+    '<button class="btn btn-secondary cs-sm" type="button" data-show>Show the differences</button><p class="te-out" data-out></p></div>', d => {
+    d.querySelector('[data-show]').addEventListener('click', () => { d.querySelector('[data-out]').textContent = 'Four differences: padding, title weight, date color and corners. How many did you name?'; });
+  });
+  D('good-train-your-eye-4f', '<div class="te-col" style="align-items:center">' + cards + '<div class="te-tabs" role="group" aria-label="Property">' +
+    Object.keys(PROPS).map(k => '<button class="cs-tab" type="button" aria-pressed="false" data-p="' + k + '">' + PROPS[k][0] + '</button>').join('') +
+    '</div><p class="te-cmp" data-cmp></p></div>', d => {
+    const c = d.querySelector('[data-cards]'), cmp = d.querySelector('[data-cmp]');
+    d.querySelectorAll('[data-p]').forEach(b => b.addEventListener('click', () => {
+      const k = b.dataset.p;
+      d.querySelectorAll('[data-p]').forEach(x => { x.classList.toggle('on', x === b); x.setAttribute('aria-pressed', String(x === b)); });
+      c.className = 'te-cards ' + k; cmp.textContent = PROPS[k][1];
+    }));
+  });
+
+  csInit(cs);
+  };
+  if (window.csDemo) go(); else document.addEventListener('DOMContentLoaded', go);
+})();
+
+</script>

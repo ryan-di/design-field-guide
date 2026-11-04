@@ -1,0 +1,45 @@
+<div class="note comfy cw-wrap"><p>Notice how each one makes the target bigger, or puts it where the pointer or thumb already is.</p>
+  <div class="seg cw-seg" role="radiogroup" aria-label="Example">
+    <input type="radio" name="cw-pat-fitts-law-w" id="cw-pat-fitts-law-w-1" value="mac" checked><label for="cw-pat-fitts-law-w-1">macOS</label>
+    <input type="radio" name="cw-pat-fitts-law-w" id="cw-pat-fitts-law-w-2" value="blender"><label for="cw-pat-fitts-law-w-2">Blender</label>
+    <input type="radio" name="cw-pat-fitts-law-w" id="cw-pat-fitts-law-w-3" value="yt"><label for="cw-pat-fitts-law-w-3">YouTube</label>
+    <input type="radio" name="cw-pat-fitts-law-w" id="cw-pat-fitts-law-w-4" value="gmail"><label for="cw-pat-fitts-law-w-4">Gmail</label>
+  </div>
+  <div class="cw cw-fitts-view" data-cw-view role="img" aria-label=""></div>
+  <p class="cw-cap" data-cw-cap aria-live="polite"></p>
+  
+  <script>
+  (() => {
+    const wrap = document.currentScript.closest('.cw-wrap');
+    const view = wrap.querySelector('[data-cw-view]'), cap = wrap.querySelector('[data-cw-cap]');
+    const L = w => '<i class="cw-line" style="width:' + w + '%"></i>';
+    const pencil = '<svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20l1-4.5L15.5 5a2 2 0 0 1 3 0l.5.5a2 2 0 0 1 0 3L8.5 19z"/><path d="M13.5 7l3.5 3.5"/></svg>';
+    const mail = (a, b) => '<div class="cw-fitts-mail"><i class="cw-fitts-av"></i><span>' + L(a) + L(b) + '</span></div>';
+    const opt = (x, y, name, on) => '<span class="cw-fitts-opt' + (on ? ' on' : '') + '" style="left:' + x + ';top:' + y + '">' + name + '</span>';
+    const S = {
+      mac: { html: '<div class="cw-fitts-screen"><div class="cw-fitts-menubar cw-fitts-hl"><span>Finder</span><span>File</span><span>Edit</span><span>View</span><span>Go</span><span>Window</span></div>' +
+          '<div class="cw-fitts-wnd">' + L(80) + L(64) + L(72) + '</div>' +
+          '<svg class="cw-fitts-svg" viewBox="0 0 320 190" preserveAspectRatio="none" aria-hidden="true"><path class="cw-fitts-trail" d="M70 176 Q 150 120 196 26"/></svg>' +
+          '<svg style="position:absolute;left:58%;top:13px" width="13" height="19" viewBox="0 0 16 23" aria-hidden="true"><path class="cw-fitts-ptr" d="M1 1v17l4.4-4.1 3 6.7 2.7-1.2-3-6.5h6.2z"/></svg>' +
+          '<span class="cw-fitts-note">Stops at the edge</span></div>',
+        alt: 'A screen with the menu bar along its top edge. A dashed path shows the pointer flung upward; it stops at the edge, right on the menu bar.',
+        cap: 'macOS: the menu bar sits on the top edge of the screen. The pointer can’t overshoot it, so a quick flick up always lands on it.' },
+      blender: { html: '<div class="cw-fitts-pie"><span class="cw-fitts-ring"></span><span class="cw-fitts-dir"></span><span class="cw-fitts-dot"></span>' +
+          opt('50%', 'calc(50% - 68px)', 'Solid') + opt('calc(50% + 86px)', '50%', 'Rendered', true) + opt('50%', 'calc(50% + 68px)', 'Material') + opt('calc(50% - 86px)', '50%', 'Wireframe') + '</div>',
+        alt: 'A pie menu around the pointer with four options: Solid above, Rendered to the right, Material below, Wireframe to the left. The whole right-hand slice is shaded, and Rendered is picked.',
+        cap: 'Blender: pie menus open around the pointer. Every option is the same short move away, and you pick by direction, so each target is a whole slice.' },
+      yt: { html: '<div class="cw-fitts-phone"><div class="cw-fitts-video"><span class="cw-fitts-half on"><span>« 10 s</span></span><span class="cw-fitts-half"><span>10 s »</span></span></div>' +
+          '<div class="cw-fitts-meta">' + L(88) + L(60) + '<span style="height:6px"></span>' + L(94) + L(70) + L(82) + '</div></div>',
+        alt: 'A phone playing a video. A dashed line splits the video into halves. The left half is lit and shows back 10 seconds; the right half shows ahead 10 seconds.',
+        cap: 'YouTube: on phones, double-tap the left or right side of the video to jump back or ahead 10 seconds. Half the screen is the target.' },
+      gmail: { html: '<div class="cw-fitts-phone"><div class="cw-fitts-search"></div>' + mail(70, 92) + mail(55, 80) + mail(64, 88) + mail(48, 76) + mail(60, 84) +
+          '<span class="cw-fitts-fab">' + pencil + 'Compose</span></div>',
+        alt: 'A phone inbox. A large Compose button floats in the bottom right corner, near the thumb.',
+        cap: 'Gmail: on phones, Compose is a large button in the bottom corner, where the thumb already rests, not a small icon at the top.' }
+    };
+    const render = k => { view.innerHTML = S[k].html; view.setAttribute('aria-label', 'Sketch: ' + S[k].alt); cap.textContent = S[k].cap; };
+    wrap.querySelectorAll('input[name="cw-pat-fitts-law-w"]').forEach(r => r.addEventListener('change', () => render(r.value)));
+    render('mac');
+  })();
+  </script>
+</div>

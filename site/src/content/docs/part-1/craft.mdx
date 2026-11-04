@@ -1,0 +1,308 @@
+---
+title: "Sweat the states and the edges"
+description: "Craft is what happens in the last 10% of a design: the timing, the messy data and the keyboard path."
+eyebrow: "Chapter 5"
+sidebar:
+  label: "Craft"
+---
+
+import Raw from '../../../components/Raw.astro';
+import Learned from '../../../components/Learned.astro';
+import Runtime from '../../../components/Runtime.astro';
+import F0 from '../../../fragments/ch-craft/0.html?raw';
+import F1 from '../../../fragments/ch-craft/1.html?raw';
+import F2 from '../../../fragments/ch-craft/2.html?raw';
+import F3 from '../../../fragments/ch-craft/3.html?raw';
+import F4 from '../../../fragments/ch-craft/4.html?raw';
+import F5 from '../../../fragments/ch-craft/5.html?raw';
+import F6 from '../../../fragments/ch-craft/6.html?raw';
+import F7 from '../../../fragments/ch-craft/7.html?raw';
+import F8 from '../../../fragments/ch-craft/8.html?raw';
+import F9 from '../../../fragments/ch-craft/9.html?raw';
+import F10 from '../../../fragments/ch-craft/10.html?raw';
+import F11 from '../../../fragments/ch-craft/11.html?raw';
+import F12 from '../../../fragments/ch-craft/12.html?raw';
+import F13 from '../../../fragments/ch-craft/13.html?raw';
+import F14 from '../../../fragments/ch-craft/14.html?raw';
+import F15 from '../../../fragments/ch-craft/15.html?raw';
+import F16 from '../../../fragments/ch-craft/16.html?raw';
+import F17 from '../../../fragments/ch-craft/17.html?raw';
+import F18 from '../../../fragments/ch-craft/18.html?raw';
+import F19 from '../../../fragments/ch-craft/19.html?raw';
+import F20 from '../../../fragments/ch-craft/20.html?raw';
+import F21 from '../../../fragments/ch-craft/21.html?raw';
+
+<Runtime at="start" />
+
+<section class="dfg-chapter" id="ch-craft">
+
+Craft is what happens in the last 10% of a design: the timing, the messy data and the keyboard path. Mockups rarely show any of it, and people notice all of it. It lives in code, which is why it’s where a design engineer earns their keep. The entries below take those three edges one at a time. The looks a single control takes, from hover to loading, have their own entry: [Interaction states](/part-3/states/#interaction-states).
+
+<article class="entry essay" id="good-motion" data-entry data-name="Motion">
+
+<div class="entry-head">
+
+## Motion with a purpose \{#good-motion-h\}
+
+<Learned id="good-motion" />
+
+</div>
+
+Motion should explain a change, like where a panel came from or where a deleted item went, and then get out of the way fast. Motion that explains nothing only makes people wait.
+
+Two settings shape every animation: how long it takes, and its easing, which is how its speed changes along the way. The demo below lets you change both on the same panel.
+
+<Raw html={F0} />
+
+### Rules \{#good-motion-rules\}
+
+Four rules keep motion useful.
+
+<div class="cs essay-cs">
+
+<section class="rule" id="good-motion-rule-1">
+
+#### 1. Keep it short \{#good-motion-rule-1-h\}
+
+An animation that takes 600 ms looks smooth the first time, but by the tenth time people are waiting for it, and if it blocks clicks while it plays, the app feels broken. Keep most interface motion around 150–300 ms: small moves get less, big ones a little more, and nothing should block the next click.
+
+<Raw html={F1} />
+
+</section>
+
+<section class="rule" id="good-motion-rule-2">
+
+#### 2. Animate to explain, not to decorate \{#good-motion-rule-2-h\}
+
+When everything bounces, fades and slides, motion stops meaning anything, because people can’t tell which movement is about the thing they just did. Use motion to show a change, such as where something came from, where it went or what was added, and cut any animation that explains nothing.
+
+<Raw html={F2} />
+
+</section>
+
+<section class="rule" id="good-motion-rule-3">
+
+#### 3. Respect reduced motion \{#good-motion-rule-3-h\}
+
+Large movement on screen can make some people dizzy or sick, so they turn on the reduce motion setting on their device, and an app that ignores it keeps sliding and zooming anyway. Check `prefers-reduced-motion` and test with the setting on. Swap slides and zooms for an instant change or a short fade: the change still happens, only the movement goes.
+
+<Raw html={F3} />
+
+</section>
+
+<section class="rule" id="good-motion-rule-4">
+
+#### 4. Match the easing to the direction \{#good-motion-rule-4-h\}
+
+Linear motion looks mechanical. Ease-in starts slow, so something that arrives with it feels late, and something that leaves with ease-out seems to linger. Ease out for things that enter, so they arrive fast and settle, and ease in for things that leave. Keep overshoot for rare, playful moments.
+
+<Raw html={F4} />
+
+</section>
+
+<Raw html={F5} />
+
+</div>
+
+### In real products \{#good-motion-products\}
+
+<Raw html={F6} />
+
+</article>
+
+<article class="entry essay" id="good-edge-cases" data-entry data-name="Edge cases">
+
+<div class="entry-head">
+
+## Design with real, messy data \{#good-edge-cases-h\}
+
+<Learned id="good-edge-cases" />
+
+</div>
+
+Real data is long, missing, huge and empty. Names run past the edge, images fail to load, counts reach the millions, and fields come back blank. A design made only with tidy sample data breaks on the first day of real use, and people see those cases every day after that.
+
+For every field, decide what happens when it is very long, missing, very large, empty, or squeezed into a narrow space. [Checking more than the happy path](/part-1/problem/#good-needs-hierarchy) covers slow, empty and failed loads. This entry is about the data itself.
+
+<Raw html={F7} />
+
+### Rules \{#good-edge-cases-rules\}
+
+Four rules keep a design working with real data.
+
+<div class="cs essay-cs">
+
+<section class="rule" id="good-edge-cases-rule-1">
+
+#### 1. Test with the extremes from the start \{#good-edge-cases-rule-1-h\}
+
+A mockup filled with a short name, a perfect image and a tidy number always looks finished, so the problems show up only after launch, when real people bring real data. Put the extremes in the mockups, the stories and the test data from the start, so they get designed instead of discovered.
+
+<Raw html={F8} />
+
+</section>
+
+<section class="rule" id="good-edge-cases-rule-2">
+
+#### 2. Keep the part that tells items apart \{#good-edge-cases-rule-2-h\}
+
+When long names are cut at the end, items that differ only at the end look the same: three files all read “Quarterly report dra…”, and people pick the wrong one. Cut the middle to keep the end, or let the text wrap to two lines. Keep the full text in the page so screen readers read it, and show it on hover and on focus.
+
+<Raw html={F9} />
+
+</section>
+
+<section class="rule" id="good-edge-cases-rule-3">
+
+#### 3. Reserve space for what loads later \{#good-edge-cases-rule-3-h\}
+
+When something loads late, it pushes everything below it down, and a click aimed at a button lands on the wrong thing. Reserve the space before the content arrives: give images a fixed aspect ratio, and make [skeletons](/part-3/progress/#skeleton) the same size as the content they stand in for.
+
+<Raw html={F10} />
+
+</section>
+
+<section class="rule" id="good-edge-cases-rule-4">
+
+#### 4. Format values for people \{#good-edge-cases-rule-4-h\}
+
+Raw values like “1234567”, “null” and “undefined” show that nobody planned for this case: a long number is hard to read at a glance, and “null” looks like a bug. Format numbers and dates for reading, like “1.2M followers”, with the exact value one step away, and write a fallback for every field that can be empty.
+
+<Raw html={F11} />
+
+</section>
+
+<Raw html={F12} />
+
+</div>
+
+### In real products \{#good-edge-cases-products\}
+
+<Raw html={F13} />
+
+</article>
+
+<article class="entry essay" id="good-keyboard-focus" data-entry data-name="Keyboard and focus">
+
+<div class="entry-head">
+
+## Keyboard paths are craft \{#good-keyboard-focus-h\}
+
+<Learned id="good-keyboard-focus" />
+
+</div>
+
+Every control should work from the keyboard alone, focus should move in the order people read, and a visible ring should always show where it is. People who can’t use a mouse depend on this, and so do screen reader users and people who type fast.
+
+Focus is the keyboard’s pointer. Tab moves it, and Enter or Space act on what it points at. If people can’t see focus, or it jumps around, they can’t tell what the next key will do.
+
+<Raw html={F14} />
+
+### Ways to move with the keyboard \{#good-keyboard-focus-ways\}
+
+There are four main ways to move with the keyboard. Most apps need Tab and arrow keys, a skip link helps on long pages, and shortcuts help in apps people use all day.
+
+<Raw html={F15} />
+
+### Rules \{#good-keyboard-focus-rules\}
+
+Four rules keep the keyboard path usable.
+
+<div class="cs essay-cs">
+
+<section class="rule" id="good-keyboard-focus-rule-1">
+
+#### 1. Keep the focus ring visible \{#good-keyboard-focus-rule-1-h\}
+
+Focus rings are often removed because they look out of place, so keyboard users press Tab, see nothing change, and can’t tell which button Enter will press until it’s too late. Restyle the ring to fit the design instead of removing it. `:focus-visible` shows it for keyboard use and hides it on most mouse clicks.
+
+<Raw html={F16} />
+
+</section>
+
+<section class="rule" id="good-keyboard-focus-rule-2">
+
+#### 2. Make focus order match reading order \{#good-keyboard-focus-rule-2-h\}
+
+People expect Tab to follow the layout: left to right, top to bottom. When CSS moves things around, or a positive `tabindex` sets its own order, focus jumps to a field they haven’t reached yet, so they type into the wrong field or skip one. Put elements in the DOM in reading order, and use only `tabindex="0"` and `tabindex="-1"`.
+
+<Raw html={F17} />
+
+</section>
+
+<section class="rule" id="good-keyboard-focus-rule-3">
+
+#### 3. Use real buttons and links \{#good-keyboard-focus-rule-3-h\}
+
+A `div` or `span` with a click handler works with a mouse and nothing else: Tab skips it, Enter does nothing, and a screen reader doesn’t call it a button. Use a `button` for actions and a link for going somewhere, because they get focus, the keys and a role for free. See [Link vs button](/part-3/actions/#link-vs-button).
+
+<Raw html={F18} />
+
+</section>
+
+<section class="rule" id="good-keyboard-focus-rule-4">
+
+#### 4. Move focus with what opens and closes \{#good-keyboard-focus-rule-4-h\}
+
+When a [dialog](/part-3/dialogs/#dialog) opens and focus stays behind it, keyboard users keep tabbing through a page they can’t see. When it closes and focus goes back to the top, they have to find their place again. Move focus into the dialog when it opens, and when it closes, put focus back on the control that opened it.
+
+<Raw html={F19} />
+
+</section>
+
+<Raw html={F20} />
+
+</div>
+
+### In real products \{#good-keyboard-focus-products\}
+
+<Raw html={F21} />
+
+</article>
+
+<aside class="in-short" id="ch-craft-in-short" aria-labelledby="ch-craft-in-short-h" data-pagefind-ignore>
+
+## In short \{#ch-craft-in-short-h\}
+
+<div class="is-grid">
+
+<div>
+
+<a class="is-e" href="#good-motion">Motion with a purpose</a>
+
+1. [Keep it short](#good-motion-rule-1)
+2. [Animate to explain, not to decorate](#good-motion-rule-2)
+3. [Respect reduced motion](#good-motion-rule-3)
+4. [Match the easing to the direction](#good-motion-rule-4)
+
+</div>
+
+<div>
+
+<a class="is-e" href="#good-edge-cases">Design with real, messy data</a>
+
+1. [Test with the extremes from the start](#good-edge-cases-rule-1)
+2. [Keep the part that tells items apart](#good-edge-cases-rule-2)
+3. [Reserve space for what loads later](#good-edge-cases-rule-3)
+4. [Format values for people](#good-edge-cases-rule-4)
+
+</div>
+
+<div>
+
+<a class="is-e" href="#good-keyboard-focus">Keyboard paths are craft</a>
+
+1. [Keep the focus ring visible](#good-keyboard-focus-rule-1)
+2. [Make focus order match reading order](#good-keyboard-focus-rule-2)
+3. [Use real buttons and links](#good-keyboard-focus-rule-3)
+4. [Move focus with what opens and closes](#good-keyboard-focus-rule-4)
+
+</div>
+
+</div>
+
+</aside>
+
+</section>
+
+<Runtime chapter="ch-craft" />

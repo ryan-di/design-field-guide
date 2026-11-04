@@ -13,153 +13,96 @@
   "label": "Start here",
   "items": [
    {
-    "label": "Two definitions ↗",
-    "link": "https://ryan-di.github.io/design-field-guide/#ch-intro",
-    "attrs": {
-     "class": "dfg-live"
-    }
+    "label": "Two definitions",
+    "slug": "start-here/intro"
    }
   ],
-  "collapsed": true
+  "collapsed": false
  },
  {
   "label": "Part 1 · Good design",
   "items": [
    {
-    "label": "What good means ↗",
-    "link": "https://ryan-di.github.io/design-field-guide/#ch-good-start",
-    "attrs": {
-     "class": "dfg-live"
-    }
+    "label": "What good means",
+    "slug": "part-1/good-start"
    },
    {
     "label": "Start from the problem",
     "slug": "part-1/problem"
    },
    {
-    "label": "Make it clear ↗",
-    "link": "https://ryan-di.github.io/design-field-guide/#ch-clarity",
-    "attrs": {
-     "class": "dfg-live"
-    }
+    "label": "Make it clear",
+    "slug": "part-1/clarity"
    },
    {
-    "label": "Consistency ↗",
-    "link": "https://ryan-di.github.io/design-field-guide/#ch-consistency",
-    "attrs": {
-     "class": "dfg-live"
-    }
+    "label": "Consistency",
+    "slug": "part-1/consistency"
    },
    {
-    "label": "Words ↗",
-    "link": "https://ryan-di.github.io/design-field-guide/#ch-words",
-    "attrs": {
-     "class": "dfg-live"
-    }
+    "label": "Words",
+    "slug": "part-1/words"
    },
    {
-    "label": "Craft ↗",
-    "link": "https://ryan-di.github.io/design-field-guide/#ch-craft",
-    "attrs": {
-     "class": "dfg-live"
-    }
+    "label": "Craft",
+    "slug": "part-1/craft"
    },
    {
-    "label": "Judge the work ↗",
-    "link": "https://ryan-di.github.io/design-field-guide/#ch-critique",
-    "attrs": {
-     "class": "dfg-live"
-    }
+    "label": "Judge the work",
+    "slug": "part-1/critique"
    },
    {
-    "label": "Practice & your edge ↗",
-    "link": "https://ryan-di.github.io/design-field-guide/#ch-practice",
-    "attrs": {
-     "class": "dfg-live"
-    }
+    "label": "Practice & your edge",
+    "slug": "part-1/practice"
    },
    {
-    "label": "Before you ship ↗",
-    "link": "https://ryan-di.github.io/design-field-guide/#ch-good-checklist",
-    "attrs": {
-     "class": "dfg-live"
-    }
+    "label": "Before you ship",
+    "slug": "part-1/good-checklist"
    }
   ],
-  "collapsed": false
+  "collapsed": true
  },
  {
   "label": "Part 2 · Patterns",
   "items": [
    {
-    "label": "Reading a pattern ↗",
-    "link": "https://ryan-di.github.io/design-field-guide/#ch-patterns-start",
-    "attrs": {
-     "class": "dfg-live"
-    }
+    "label": "Reading a pattern",
+    "slug": "part-2/patterns-start"
    },
    {
-    "label": "Too much at once ↗",
-    "link": "https://ryan-di.github.io/design-field-guide/#ch-overload",
-    "attrs": {
-     "class": "dfg-live"
-    }
+    "label": "Too much at once",
+    "slug": "part-2/overload"
    },
    {
-    "label": "Scared to click ↗",
-    "link": "https://ryan-di.github.io/design-field-guide/#ch-safety",
-    "attrs": {
-     "class": "dfg-live"
-    }
+    "label": "Scared to click",
+    "slug": "part-2/safety"
    },
    {
-    "label": "Did it work? ↗",
-    "link": "https://ryan-di.github.io/design-field-guide/#ch-status",
-    "attrs": {
-     "class": "dfg-live"
-    }
+    "label": "Did it work?",
+    "slug": "part-2/status"
    },
    {
-    "label": "Can’t find it ↗",
-    "link": "https://ryan-di.github.io/design-field-guide/#ch-find",
-    "attrs": {
-     "class": "dfg-live"
-    }
+    "label": "Can’t find it",
+    "slug": "part-2/find"
    },
    {
-    "label": "Blank screen ↗",
-    "link": "https://ryan-di.github.io/design-field-guide/#ch-blank",
-    "attrs": {
-     "class": "dfg-live"
-    }
+    "label": "Blank screen",
+    "slug": "part-2/blank"
    },
    {
-    "label": "Errors ↗",
-    "link": "https://ryan-di.github.io/design-field-guide/#ch-errors",
-    "attrs": {
-     "class": "dfg-live"
-    }
+    "label": "Errors",
+    "slug": "part-2/errors"
    },
    {
-    "label": "Newcomers & experts ↗",
-    "link": "https://ryan-di.github.io/design-field-guide/#ch-layers",
-    "attrs": {
-     "class": "dfg-live"
-    }
+    "label": "Newcomers & experts",
+    "slug": "part-2/layers"
    },
    {
-    "label": "How people behave ↗",
-    "link": "https://ryan-di.github.io/design-field-guide/#ch-laws",
-    "attrs": {
-     "class": "dfg-live"
-    }
+    "label": "How people behave",
+    "slug": "part-2/laws"
    },
    {
-    "label": "Cheat sheet ↗",
-    "link": "https://ryan-di.github.io/design-field-guide/#ch-patterns-cheat",
-    "attrs": {
-     "class": "dfg-live"
-    }
+    "label": "Cheat sheet",
+    "slug": "part-2/patterns-cheat"
    }
   ],
   "collapsed": true
@@ -168,81 +111,48 @@
   "label": "Part 3 · Components",
   "items": [
    {
-    "label": "Before you start ↗",
-    "link": "https://ryan-di.github.io/design-field-guide/#ch-start",
-    "attrs": {
-     "class": "dfg-live"
-    }
+    "label": "Before you start",
+    "slug": "part-3/start"
    },
    {
-    "label": "Feedback & status ↗",
-    "link": "https://ryan-di.github.io/design-field-guide/#ch-feedback",
-    "attrs": {
-     "class": "dfg-live"
-    }
+    "label": "Feedback & status",
+    "slug": "part-3/feedback"
    },
    {
-    "label": "Loading & progress ↗",
-    "link": "https://ryan-di.github.io/design-field-guide/#ch-progress",
-    "attrs": {
-     "class": "dfg-live"
-    }
+    "label": "Loading & progress",
+    "slug": "part-3/progress"
    },
    {
-    "label": "Overlays ↗",
-    "link": "https://ryan-di.github.io/design-field-guide/#ch-overlays",
-    "attrs": {
-     "class": "dfg-live"
-    }
+    "label": "Overlays",
+    "slug": "part-3/overlays"
    },
    {
-    "label": "Dialogs & panels ↗",
-    "link": "https://ryan-di.github.io/design-field-guide/#ch-dialogs",
-    "attrs": {
-     "class": "dfg-live"
-    }
+    "label": "Dialogs & panels",
+    "slug": "part-3/dialogs"
    },
    {
-    "label": "Inputs ↗",
-    "link": "https://ryan-di.github.io/design-field-guide/#ch-inputs",
-    "attrs": {
-     "class": "dfg-live"
-    }
+    "label": "Inputs",
+    "slug": "part-3/inputs"
    },
    {
-    "label": "Actions ↗",
-    "link": "https://ryan-di.github.io/design-field-guide/#ch-actions",
-    "attrs": {
-     "class": "dfg-live"
-    }
+    "label": "Actions",
+    "slug": "part-3/actions"
    },
    {
-    "label": "Containers ↗",
-    "link": "https://ryan-di.github.io/design-field-guide/#ch-containers",
-    "attrs": {
-     "class": "dfg-live"
-    }
+    "label": "Containers",
+    "slug": "part-3/containers"
    },
    {
-    "label": "Navigation ↗",
-    "link": "https://ryan-di.github.io/design-field-guide/#ch-navigation",
-    "attrs": {
-     "class": "dfg-live"
-    }
+    "label": "Navigation",
+    "slug": "part-3/navigation"
    },
    {
-    "label": "States ↗",
-    "link": "https://ryan-di.github.io/design-field-guide/#ch-states",
-    "attrs": {
-     "class": "dfg-live"
-    }
+    "label": "States",
+    "slug": "part-3/states"
    },
    {
-    "label": "Cheat sheet ↗",
-    "link": "https://ryan-di.github.io/design-field-guide/#ch-choose",
-    "attrs": {
-     "class": "dfg-live"
-    }
+    "label": "Cheat sheet",
+    "slug": "part-3/choose"
    }
   ],
   "collapsed": true
@@ -251,67 +161,40 @@
   "label": "Part 4 · Effective design",
   "items": [
    {
-    "label": "The running example ↗",
-    "link": "https://ryan-di.github.io/design-field-guide/#ch-eff-start",
-    "attrs": {
-     "class": "dfg-live"
-    }
+    "label": "The running example",
+    "slug": "part-4/eff-start"
    },
    {
-    "label": "The loop ↗",
-    "link": "https://ryan-di.github.io/design-field-guide/#ch-loop",
-    "attrs": {
-     "class": "dfg-live"
-    }
+    "label": "The loop",
+    "slug": "part-4/loop"
    },
    {
-    "label": "The brief ↗",
-    "link": "https://ryan-di.github.io/design-field-guide/#ch-brief",
-    "attrs": {
-     "class": "dfg-live"
-    }
+    "label": "The brief",
+    "slug": "part-4/brief"
    },
    {
-    "label": "Explore wide ↗",
-    "link": "https://ryan-di.github.io/design-field-guide/#ch-explore",
-    "attrs": {
-     "class": "dfg-live"
-    }
+    "label": "Explore wide",
+    "slug": "part-4/explore"
    },
    {
-    "label": "Decide ↗",
-    "link": "https://ryan-di.github.io/design-field-guide/#ch-decide",
-    "attrs": {
-     "class": "dfg-live"
-    }
+    "label": "Decide",
+    "slug": "part-4/decide"
    },
    {
-    "label": "Build in steps ↗",
-    "link": "https://ryan-di.github.io/design-field-guide/#ch-build",
-    "attrs": {
-     "class": "dfg-live"
-    }
+    "label": "Build in steps",
+    "slug": "part-4/build"
    },
    {
-    "label": "Check ↗",
-    "link": "https://ryan-di.github.io/design-field-guide/#ch-evaluate",
-    "attrs": {
-     "class": "dfg-live"
-    }
+    "label": "Check",
+    "slug": "part-4/evaluate"
    },
    {
-    "label": "Worked example ↗",
-    "link": "https://ryan-di.github.io/design-field-guide/#ch-example",
-    "attrs": {
-     "class": "dfg-live"
-    }
+    "label": "Worked example",
+    "slug": "part-4/example"
    },
    {
-    "label": "Step by step ↗",
-    "link": "https://ryan-di.github.io/design-field-guide/#ch-eff-checklist",
-    "attrs": {
-     "class": "dfg-live"
-    }
+    "label": "Step by step",
+    "slug": "part-4/eff-checklist"
    }
   ],
   "collapsed": true
@@ -320,32 +203,20 @@
   "label": "Back matter",
   "items": [
    {
-    "label": "Afterword ↗",
-    "link": "https://ryan-di.github.io/design-field-guide/#ch-afterword",
-    "attrs": {
-     "class": "dfg-live"
-    }
+    "label": "Afterword",
+    "slug": "back-matter/afterword"
    },
    {
-    "label": "Glossary ↗",
-    "link": "https://ryan-di.github.io/design-field-guide/#ch-glossary",
-    "attrs": {
-     "class": "dfg-live"
-    }
+    "label": "Glossary",
+    "slug": "back-matter/glossary"
    },
    {
-    "label": "Sources ↗",
-    "link": "https://ryan-di.github.io/design-field-guide/#ch-sources",
-    "attrs": {
-     "class": "dfg-live"
-    }
+    "label": "Sources",
+    "slug": "back-matter/sources"
    },
    {
-    "label": "Colophon ↗",
-    "link": "https://ryan-di.github.io/design-field-guide/#ch-colophon",
-    "attrs": {
-     "class": "dfg-live"
-    }
+    "label": "Colophon",
+    "slug": "back-matter/colophon"
    }
   ],
   "collapsed": true

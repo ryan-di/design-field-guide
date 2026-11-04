@@ -1,0 +1,162 @@
+<script>
+(() => {
+  const cs = document.currentScript.closest('.cs');
+  const go = () => {
+  const D = (k, html, wire) => csDemo(cs.querySelector('[data-d="' + k + '"]'), html, wire);
+  const css = document.createElement('style');
+  css.textContent = [
+    '#good-keyboard-focus .kf-app{width:min(360px,100%);background:var(--ui-bg);border:1px solid var(--ui-border);border-radius:12px;overflow:hidden;text-align:left;position:relative}',
+    '#good-keyboard-focus .kf-bar{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:8px 12px;border-bottom:1px solid var(--ui-border);background:var(--ui-surface);font:600 14px var(--font-body)}',
+    '#good-keyboard-focus .kf-body{padding:12px;display:flex;flex-direction:column;gap:10px}',
+    '#good-keyboard-focus .kf-tbar{display:flex;flex-wrap:wrap;gap:2px;padding:6px 8px;border-bottom:1px solid var(--ui-border);background:var(--ui-surface)}',
+    '#good-keyboard-focus .kf-tb{all:unset;cursor:pointer;padding:6px 9px;border-radius:7px;font:600 13px var(--font-body);color:var(--ui-text)}',
+    '#good-keyboard-focus .kf-tb:hover{background:var(--ui-hover)}',
+    '#good-keyboard-focus .kf-off .kf-tb:focus,#good-keyboard-focus .kf-off .kf-tb:focus-visible{outline:none}',
+    '#good-keyboard-focus .kf-on .kf-tb:focus-visible{outline:none;background:var(--ui-sel-soft);box-shadow:0 0 0 2px var(--ui-sel)}',
+    '#good-keyboard-focus .kf-msg{font-size:14px;line-height:1.45}',
+    '#good-keyboard-focus .kf-msg b{display:block}',
+    '#good-keyboard-focus .kf-pay{display:grid;grid-template-columns:1fr 1fr;gap:10px}',
+    '#good-keyboard-focus .kf-pay label{display:flex;flex-direction:column;gap:4px;font:600 13px var(--font-body);min-width:0}',
+    '#good-keyboard-focus .kf-pay .input{font-weight:400;padding:7px 9px;font-size:14px;min-width:0;width:100%}',
+    '#good-keyboard-focus .kf-pay .input:focus-visible,#good-keyboard-focus .kf-prod .input:focus-visible{outline:3px solid var(--ui-sel);outline-offset:1px}',
+    '#good-keyboard-focus .kf-wide{grid-column:1 / -1}',
+    '#good-keyboard-focus .kf-o1{order:1}#good-keyboard-focus .kf-o2{order:2}#good-keyboard-focus .kf-o3{order:3}#good-keyboard-focus .kf-o4{order:4}#good-keyboard-focus .kf-o5{order:5}',
+    '#good-keyboard-focus .kf-path{font:500 12.5px/1.5 var(--font-mono);color:var(--ui-muted);width:min(360px,100%);text-align:left}',
+    '#good-keyboard-focus .kf-path b{color:var(--ui-danger)}',
+    '#good-keyboard-focus .kf-prod{display:grid;grid-template-columns:96px 1fr;gap:10px 12px;align-items:start}',
+    '#good-keyboard-focus .kf-prod .thumb{width:96px;grid-row:span 2}',
+    '#good-keyboard-focus .kf-prod label{display:flex;flex-direction:column;gap:4px;font:600 13px var(--font-body)}',
+    '#good-keyboard-focus .kf-prod .input{font-weight:400;padding:6px 8px;font-size:14px;width:100%}',
+    '#good-keyboard-focus .kf-opts{display:flex;gap:8px;grid-column:1 / -1}',
+    '#good-keyboard-focus .kf-opts label{flex:1}',
+    '#good-keyboard-focus .kf-add{grid-column:1 / -1;justify-content:center;user-select:none}',
+    '#good-keyboard-focus .kf-photo{height:96px;border-radius:8px}',
+    '#good-keyboard-focus .kf-acts{display:flex;flex-wrap:wrap;gap:6px}',
+    '#good-keyboard-focus .kf-app .cs-modal{z-index:3}',
+    '#good-keyboard-focus .kf-app .cs-dlg .btn:focus-visible{outline:3px solid var(--ui-sel);outline-offset:2px}'
+  ].join('\n');
+  cs.appendChild(css);
+  const readout = d => {
+    const o = d.querySelector('[data-out]');
+    d.addEventListener('focusin', e => {
+      const n = e.target.getAttribute('data-n') || e.target.textContent.trim();
+      const modal = d.querySelector('.cs-modal');
+      o.textContent = 'Focus: ' + n + (modal && !modal.contains(e.target) ? ' (behind the dialog)' : '');
+    });
+    d.addEventListener('focusout', e => { if (!e.relatedTarget || !d.contains(e.relatedTarget)) o.textContent = 'Focus: left the demo'; });
+  };
+
+  /* 1. Focus ring removed */
+  const mailHtml = on => '<div class="kf-app ' + (on ? 'kf-on' : 'kf-off') + '"><div class="kf-bar"><span>Inbox</span><span class="cs-meta">3 unread</span></div>' +
+    '<div class="kf-tbar" role="toolbar" aria-label="Message">' + ['Reply', 'Forward', 'Archive', 'Delete', 'Mark unread'].map(t => '<button class="kf-tb" type="button">' + t + '</button>').join('') + '</div>' +
+    '<div class="kf-body"><div class="kf-msg" data-msg><b>Sam · Dinner on Friday?</b>Are we still on for 7? I booked the place by the river.</div></div></div>' +
+    '<p class="cs-meta" data-out></p>';
+  const mailWire = (d, t) => {
+    const msg = d.querySelector('[data-msg]'), o = d.querySelector('[data-out]');
+    const SAY = { Reply: 'You pressed Reply. A reply opens.', Forward: 'You pressed Forward. A forward opens.', Archive: 'You pressed Archive. The message is gone from the inbox.', Delete: 'You pressed Delete. The message is in the trash.', 'Mark unread': 'You pressed Mark unread.' };
+    d.querySelectorAll('.kf-tb').forEach(b => b.addEventListener('click', () => {
+      o.textContent = SAY[b.textContent];
+      if (b.textContent === 'Archive' || b.textContent === 'Delete') msg.innerHTML = '<span class="cs-meta">No message selected.</span>';
+    }));
+  };
+  D('good-keyboard-focus-1b', mailHtml(false), mailWire);
+  D('good-keyboard-focus-1f', mailHtml(true), mailWire);
+
+  /* 2. Focus order */
+  const FIELDS = {
+    card: '<label class="kf-wide">Card number<input class="input" inputmode="numeric" value="4242 4242 4242 4242" data-n="Card number"></label>',
+    exp: '<label>Expiry<input class="input" value="08 / 28" data-n="Expiry"></label>',
+    cvc: '<label>CVC<input class="input" inputmode="numeric" value="123" data-n="CVC"></label>',
+    name: '<label class="kf-wide">Name on card<input class="input" value="Alex Kim" data-n="Name on card"></label>',
+    pay: '<button class="btn btn-primary cs-sm kf-wide" type="button" data-n="Pay €42">Pay €42</button>'
+  };
+  const ORDER = { card: 1, exp: 2, cvc: 3, name: 4, pay: 5 };
+  const payHtml = fixed => {
+    const keys = fixed ? ['card', 'exp', 'cvc', 'name', 'pay'] : ['card', 'name', 'cvc', 'exp', 'pay'];
+    return '<div class="kf-app"><div class="kf-bar"><span>Checkout</span><span class="cs-meta">€42.00</span></div><div class="kf-body"><div class="kf-pay">' +
+      keys.map(k => FIELDS[k].replace(/^<(label|button) class="/, '<$1 class="kf-o' + ORDER[k] + ' ').replace(/^<label>/, '<label class="kf-o' + ORDER[k] + '">')).join('') +
+      '</div></div></div><p class="kf-path" data-path>Path: </p>';
+  };
+  const payWire = d => {
+    const path = d.querySelector('[data-path]');
+    let steps = [], last = 0;
+    d.querySelectorAll('[data-n]').forEach(el => el.addEventListener('focus', () => {
+      const n = el.getAttribute('data-n'), pos = Number(el.closest('[class*="kf-o"]').className.match(/kf-o(\d)/)[1]);
+      steps.push(last && pos !== last + 1 ? '<b>' + n + '</b>' : n);
+      last = pos;
+      if (steps.length > 5) steps.shift();
+      path.innerHTML = 'Path: ' + steps.join(' → ');
+    }));
+    d.querySelector('[data-n="Pay €42"]').addEventListener('click', () => { path.innerHTML = 'Paid. Path: ' + steps.join(' → '); });
+  };
+  D('good-keyboard-focus-2b', payHtml(false), payWire);
+  D('good-keyboard-focus-2f', payHtml(true), payWire);
+
+  /* 3. Click-only control */
+  const prodHtml = fixed => '<div class="kf-app"><div class="kf-bar"><span>Shop</span><span class="cs-meta" data-bag>Bag (0)</span></div><div class="kf-body"><div class="kf-prod">' +
+    '<span class="thumb"></span><b>Linen shirt</b><span>€39</span>' +
+    '<div class="kf-opts"><label>Size<select class="input" data-n="Size"><option>S</option><option selected>M</option><option>L</option></select></label>' +
+    '<label>Quantity<input class="input" type="number" min="1" max="9" value="1" data-n="Quantity"></label></div>' +
+    (fixed ? '<button class="btn btn-primary cs-sm kf-add" type="button" data-add data-n="Add to cart">Add to cart</button>'
+      : '<div class="btn btn-primary cs-sm kf-add" data-add data-n="Add to cart">Add to cart</div>') +
+    '</div></div></div><p class="cs-meta" data-out>Focus: not in the demo yet</p>';
+  const prodWire = d => {
+    readout(d);
+    let n = 0;
+    d.querySelector('[data-add]').addEventListener('click', () => {
+      n += Number(d.querySelector('[data-n="Quantity"]').value) || 1;
+      d.querySelector('[data-bag]').textContent = 'Bag (' + n + ')';
+    });
+  };
+  D('good-keyboard-focus-3b', prodHtml(false), prodWire);
+  D('good-keyboard-focus-3f', prodHtml(true), prodWire);
+
+  /* 4. Focus lost on open and close */
+  const photoHtml = '<div class="kf-app"><div class="kf-bar"><button class="btn btn-ghost cs-sm" type="button" data-menu data-n="Menu, at the top of the page">Menu</button><span data-count>Photo 2 of 5</span></div>' +
+    '<div class="kf-body"><div class="thumb kf-photo" data-photo></div><div class="kf-acts">' +
+    '<button class="btn btn-secondary cs-sm" type="button" data-share>Share</button><button class="btn btn-secondary cs-sm" type="button" data-del>Delete photo</button>' +
+    '<button class="btn btn-ghost cs-sm" type="button">Add to album</button><button class="btn btn-ghost cs-sm" type="button">Details</button></div></div></div>' +
+    '<p class="cs-meta" data-out>Focus: not in the demo yet</p>';
+  const photoWire = fixed => d => {
+    readout(d);
+    const app = d.querySelector('.kf-app'), del = d.querySelector('[data-del]'), o = d.querySelector('[data-out]');
+    let left = 5, cur = 2;
+    const close = done => {
+      const m = d.querySelector('.cs-modal');
+      if (!m) return;
+      m.remove();
+      if (done) {
+        left--; cur = Math.min(cur, left);
+        d.querySelector('[data-count]').textContent = 'Photo ' + cur + ' of ' + left;
+        d.querySelector('[data-photo]').className = 'thumb kf-photo ' + ['b', 'c', ''][left % 3];
+      }
+      if (fixed) del.focus(); else d.querySelector('[data-menu]').focus();
+    };
+    d.querySelector('[data-share]').addEventListener('click', () => { o.textContent = 'Link copied.'; });
+    del.addEventListener('click', () => {
+      if (!left) return;
+      app.insertAdjacentHTML('afterbegin', '<div class="cs-modal"><div class="cs-dlg" role="dialog" aria-modal="true" aria-label="Delete this photo?"><b>Delete this photo?</b><p>It moves to Recently deleted for 30 days.</p>' +
+        '<div class="acts"><button class="btn btn-secondary cs-sm" type="button" data-no>Cancel</button><button class="btn btn-danger cs-sm" type="button" data-yes>Delete</button></div></div></div>');
+      const m = app.querySelector('.cs-modal');
+      m.querySelector('[data-no]').addEventListener('click', () => close(false));
+      m.querySelector('[data-yes]').addEventListener('click', () => close(true));
+      if (fixed) {
+        m.querySelector('[data-no]').focus();
+        m.addEventListener('keydown', e => {
+          if (e.key !== 'Tab') return;
+          const b = [...m.querySelectorAll('button')], i = b.indexOf(document.activeElement);
+          e.preventDefault(); b[(i + (e.shiftKey ? -1 : 1) + b.length) % b.length].focus();
+        });
+      }
+    });
+    d.addEventListener('keydown', e => { if (e.key === 'Escape' && d.querySelector('.cs-modal')) { e.preventDefault(); close(false); } });
+  };
+  D('good-keyboard-focus-4b', photoHtml, photoWire(false));
+  D('good-keyboard-focus-4f', photoHtml, photoWire(true));
+
+  csInit(cs);
+  };
+  if (window.csDemo) go(); else document.addEventListener('DOMContentLoaded', go);
+})();
+
+</script>

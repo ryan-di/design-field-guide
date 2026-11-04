@@ -1,0 +1,19 @@
+<div class="stage tall" data-demo="eff-ownership">
+      <div class="p25-own">
+        <div class="seg p25-own-seg" role="radiogroup" aria-label="Kind of work">
+          <input type="radio" name="p25-own-kind" id="p25-own-fix" value="fix"><label for="p25-own-fix">Small fix</label>
+          <input type="radio" name="p25-own-kind" id="p25-own-feature" value="feature" checked><label for="p25-own-feature">New feature</label>
+          <input type="radio" name="p25-own-kind" id="p25-own-explore" value="explore"><label for="p25-own-explore">Open exploration</label>
+        </div>
+        <div class="surface p25-own-card">
+          <div class="p25-legend" aria-hidden="true"><span><i class="p25-sw you"></i>You</span><span><i class="p25-sw agents"></i>Agents</span><span class="p25-legend-note">Rough split, not a measurement</span></div>
+          <ol class="p25-bars" id="p25-bars" aria-label="Who owns each stage"></ol>
+        </div>
+        <div class="p25-mistakes" role="group" aria-label="Try a mistake">
+          <label class="check"><input type="checkbox" id="p25-own-agentsdecide"> Let agents decide too</label>
+          <label class="check"><input type="checkbox" id="p25-own-nochecks"> Skip the checkpoints</label>
+        </div>
+        <p class="p25-own-cap" id="p25-own-cap" aria-live="polite"></p>
+      </div>
+      <p class="try"><b>Try it:</b> switch the kind of work and watch the split move. Decide stays yours in every case. Then tick the two mistakes to see what goes wrong.</p>
+    </div>

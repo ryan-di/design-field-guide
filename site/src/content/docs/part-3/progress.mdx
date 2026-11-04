@@ -1,0 +1,318 @@
+---
+title: "Loading & progress"
+description: "Pick the indicator by how long the wait is: under 400 ms, show nothing; up to about ten seconds, a spinner; longer, real progress."
+eyebrow: "Chapter 17"
+sidebar:
+  label: "Loading & progress"
+---
+
+import Raw from '../../../components/Raw.astro';
+import Learned from '../../../components/Learned.astro';
+import Runtime from '../../../components/Runtime.astro';
+import F0 from '../../../fragments/ch-progress/0.html?raw';
+import F1 from '../../../fragments/ch-progress/1.html?raw';
+import F2 from '../../../fragments/ch-progress/2.html?raw';
+import F3 from '../../../fragments/ch-progress/3.html?raw';
+import F4 from '../../../fragments/ch-progress/4.html?raw';
+import F5 from '../../../fragments/ch-progress/5.html?raw';
+import F6 from '../../../fragments/ch-progress/6.html?raw';
+import F7 from '../../../fragments/ch-progress/7.html?raw';
+import F8 from '../../../fragments/ch-progress/8.html?raw';
+import F9 from '../../../fragments/ch-progress/9.html?raw';
+import F10 from '../../../fragments/ch-progress/10.html?raw';
+import F11 from '../../../fragments/ch-progress/11.html?raw';
+import F12 from '../../../fragments/ch-progress/12.html?raw';
+import F13 from '../../../fragments/ch-progress/13.html?raw';
+import F14 from '../../../fragments/ch-progress/14.html?raw';
+import F15 from '../../../fragments/ch-progress/15.html?raw';
+import F16 from '../../../fragments/ch-progress/16.html?raw';
+import F17 from '../../../fragments/ch-progress/17.html?raw';
+import F18 from '../../../fragments/ch-progress/18.html?raw';
+import F19 from '../../../fragments/ch-progress/19.html?raw';
+import F20 from '../../../fragments/ch-progress/20.html?raw';
+import F21 from '../../../fragments/ch-progress/21.html?raw';
+import F22 from '../../../fragments/ch-progress/22.html?raw';
+import F23 from '../../../fragments/ch-progress/23.html?raw';
+
+<Runtime at="start" />
+
+<section class="dfg-chapter" id="ch-progress">
+
+Pick the indicator by how long the wait is: under 400 ms, show nothing; up to about ten seconds, a spinner; longer, real progress.
+
+<article class="entry essay" id="spinner" data-entry data-name="Spinner">
+
+<div class="entry-head">
+
+## Spinner \{#spinner-h\}
+
+<Learned id="spinner" />
+
+</div>
+
+A spinner is a small turning circle that says “working on it”. It’s for short waits, up to about ten seconds: sending a message, loading search results, saving a change. It sits on the thing that’s busy.
+
+Where a spinner says only that work is happening, a progress bar also shows how much is done, so it’s the better choice for longer waits.
+
+<Raw html={F0} />
+
+### Forms \{#spinner-forms\}
+
+Spinners come in four forms, set by how much is waiting: in a button, inline next to a field, in one section, and over the full page. Use the smallest one that covers what’s loading, so the rest of the page stays usable.
+
+<Raw html={F1} />
+
+### Rules \{#spinner-rules\}
+
+Four rules keep spinners useful.
+
+<div class="cs essay-cs">
+
+<section class="rule" id="spinner-rule-1">
+
+#### 1. Wait before showing it \{#spinner-rule-1-h\}
+
+When results come back in a fraction of a second, the spinner only blinks, which looks like a glitch and makes the app feel slower than it is. Hold it back for about 400 ms, so fast results just appear and a spinner means there’s a real wait.
+
+<Raw html={F2} />
+
+</section>
+
+<section class="rule" id="spinner-rule-2">
+
+#### 2. Use a progress bar for long waits \{#spinner-rule-2-h\}
+
+A spinner can’t say how much is done or how long is left, so after a while people wonder if it’s stuck, and they cancel or reload. Once a wait can run past about ten seconds, show a progress bar and what’s happening, so people can choose to wait or go do something else.
+
+<Raw html={F3} />
+
+</section>
+
+<section class="rule" id="spinner-rule-3">
+
+#### 3. Keep the rest of the app working \{#spinner-rule-3-h\}
+
+A spinner over the whole screen locks everything, even the parts that aren’t loading, so someone writing a reply has to stop and wait for a folder list. Put the spinner on the part that’s loading, so it shows what’s busy and everything else stays usable.
+
+<Raw html={F4} />
+
+</section>
+
+<section class="rule" id="spinner-rule-4">
+
+#### 4. Hold the content’s space \{#spinner-rule-4-h\}
+
+A spinner is usually smaller than the content that replaces it, so the page jumps when the content arrives, like any [content that loads late](/part-1/craft/#good-edge-cases). Show a skeleton in the shape of the coming content instead, so nothing below it moves.
+
+<Raw html={F5} />
+
+</section>
+
+<Raw html={F6} />
+
+</div>
+
+### In real products \{#spinner-products\}
+
+<Raw html={F7} />
+
+</article>
+
+<article class="entry essay" id="progress-bar" data-entry data-name="Progress bar">
+
+<div class="entry-head">
+
+## Progress bar \{#progress-bar-h\}
+
+<Learned id="progress-bar" />
+
+</div>
+
+A progress bar is a line that fills as long work gets done: an upload, a download, an export, a backup. It shows how far along the work is, and often what it’s doing and how much is left. Unlike a [spinner](#spinner), it lets people decide whether to wait or do something else.
+
+<Raw html={F8} />
+
+### Forms \{#progress-bar-forms\}
+
+Progress bars come in four forms. A bar of known length fills as work gets done, and a bar of unknown length moves without filling. A small ring sits on one item in a list, and a background strip tracks long work while people do something else.
+
+<Raw html={F9} />
+
+### Rules \{#progress-bar-rules\}
+
+Four rules keep progress bars useful.
+
+<div class="cs essay-cs">
+
+<section class="rule" id="progress-bar-rule-1">
+
+#### 1. Show stages when you can’t measure \{#progress-bar-rule-1-h\}
+
+Some work has nothing to count, so the bar sits at 0% and then jumps to done, and until then people can’t tell if it’s working or stuck. Use a moving bar to show it’s alive, with a label that names each stage as it starts, so people see it’s getting somewhere.
+
+<Raw html={F10} />
+
+</section>
+
+<section class="rule" id="progress-bar-rule-2">
+
+#### 2. Count real work \{#progress-bar-rule-2-h\}
+
+A bar that isn’t tied to real work often races ahead, then sits at 99% for most of the wait, so people think it froze and stop believing it. Move it by real units, like photos exported, and if one part can’t be counted, say so with a label like “Finishing up…”.
+
+<Raw html={F11} />
+
+</section>
+
+<section class="rule" id="progress-bar-rule-3">
+
+#### 3. Let people keep working \{#progress-bar-rule-3-h\}
+
+When an export locks the whole app, people can only sit and watch the bar, and if they change their mind, there’s no way to stop it. Run long work in a small strip, as [background work](/part-2/status/#pat-background-work), let people carry on, always offer Cancel, and tell them when it’s done.
+
+<Raw html={F12} />
+
+</section>
+
+<section class="rule" id="progress-bar-rule-4">
+
+#### 4. Put it on the item \{#progress-bar-rule-4-h\}
+
+A new file can look ready in the list while it’s still uploading, and a tiny bar in a corner goes unseen. Show progress on the item itself, where people are already looking, and add a summary, like an uploads count in the top bar.
+
+<Raw html={F13} />
+
+</section>
+
+<Raw html={F14} />
+
+</div>
+
+### In real products \{#progress-bar-products\}
+
+<Raw html={F15} />
+
+</article>
+
+<article class="entry essay" id="skeleton" data-entry data-name="Skeleton">
+
+<div class="entry-head">
+
+## Skeleton \{#skeleton-h\}
+
+<Learned id="skeleton" />
+
+</div>
+
+A skeleton is a gray outline of content that is still loading, with the same boxes and lines as the content that will replace it: a box for each photo, a bar for each line of text. When the content arrives, it drops into place and nothing moves. Unlike a [spinner](#spinner), which only says “wait”, it shows what is coming and where it will go.
+
+<Raw html={F16} />
+
+### Forms \{#skeleton-forms\}
+
+Skeletons take the shape of what they stand in for. The common forms are a grid of tiles, a list of rows and a block of text. A fourth, smaller form holds the place of one value on a page that has already loaded.
+
+<Raw html={F17} />
+
+### Rules \{#skeleton-rules\}
+
+Four rules keep skeletons useful.
+
+<div class="cs essay-cs">
+
+<section class="rule" id="skeleton-rule-1">
+
+#### 1. Match the real layout \{#skeleton-rule-1-h\}
+
+A skeleton is there to [hold the space of content that loads late](/part-1/craft/#good-edge-cases), so if its shape is wrong, the page still jumps when the content arrives. Give each placeholder the size and place of what will fill it, and if you can’t know the shape in advance, use a spinner instead.
+
+<Raw html={F18} />
+
+</section>
+
+<section class="rule" id="skeleton-rule-2">
+
+#### 2. Skip it when loading is quick \{#skeleton-rule-2-h\}
+
+When content arrives almost at once, a skeleton shows for only a split second, too short to read as loading, so people see a flicker and the app feels jumpy instead of fast. As with a [spinner](#spinner), wait about 400 ms before showing it, so fast content just appears.
+
+<Raw html={F19} />
+
+</section>
+
+<section class="rule" id="skeleton-rule-3">
+
+#### 3. Replace it if loading fails \{#skeleton-rule-3-h\}
+
+A skeleton tells people that content is on its way, so if loading fails and it stays, they keep waiting for something that will never come, then reload or give up without knowing why. As soon as loading fails, replace it with what went wrong and a way to try again.
+
+<Raw html={F20} />
+
+</section>
+
+<section class="rule" id="skeleton-rule-4">
+
+#### 4. Keep the motion calm \{#skeleton-rule-4-h\}
+
+Fast shimmer on every part of the screen is tiring to look at, and it covers parts that are already known, like the account name, so nothing can be read until everything arrives. Show what you have at once and load the most important part next. Give only the parts still loading a slow, soft pulse, and stop it for people who turn off motion.
+
+<Raw html={F21} />
+
+</section>
+
+<Raw html={F22} />
+
+</div>
+
+### In real products \{#skeleton-products\}
+
+<Raw html={F23} />
+
+</article>
+
+<aside class="in-short" id="ch-progress-in-short" aria-labelledby="ch-progress-in-short-h" data-pagefind-ignore>
+
+## In short \{#ch-progress-in-short-h\}
+
+<div class="is-grid">
+
+<div>
+
+<a class="is-e" href="#spinner">Spinner</a>
+
+1. [Wait before showing it](#spinner-rule-1)
+2. [Use a progress bar for long waits](#spinner-rule-2)
+3. [Keep the rest of the app working](#spinner-rule-3)
+4. [Hold the content’s space](#spinner-rule-4)
+
+</div>
+
+<div>
+
+<a class="is-e" href="#progress-bar">Progress bar</a>
+
+1. [Show stages when you can’t measure](#progress-bar-rule-1)
+2. [Count real work](#progress-bar-rule-2)
+3. [Let people keep working](#progress-bar-rule-3)
+4. [Put it on the item](#progress-bar-rule-4)
+
+</div>
+
+<div>
+
+<a class="is-e" href="#skeleton">Skeleton</a>
+
+1. [Match the real layout](#skeleton-rule-1)
+2. [Skip it when loading is quick](#skeleton-rule-2)
+3. [Replace it if loading fails](#skeleton-rule-3)
+4. [Keep the motion calm](#skeleton-rule-4)
+
+</div>
+
+</div>
+
+</aside>
+
+</section>
+
+<Runtime chapter="ch-progress" />

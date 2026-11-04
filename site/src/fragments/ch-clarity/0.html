@@ -1,0 +1,41 @@
+<div class="stage tall" data-demo="good-visual-hierarchy">
+      <div class="row">
+        <div class="seg" role="radiogroup" aria-label="Version">
+          <input type="radio" name="p19-vh-mode" id="p19-vh-before" value="before"><label for="p19-vh-before">Before</label>
+          <input type="radio" name="p19-vh-mode" id="p19-vh-after" value="after" checked><label for="p19-vh-after">After</label>
+        </div>
+        <label class="switch p19-inline"><span>Squint test</span><input type="checkbox" role="switch" id="p19-vh-squint"></label>
+      </div>
+      <div class="row p19-top">
+        <div class="surface p19-run" id="p19-vh-card" data-mode="after">
+          <div class="p19-run-top">
+            <h5 class="p19-run-title">Photo backup</h5>
+            <span class="p19-run-status"><svg class="icon sm" aria-hidden="true"><use href="#i-check"/></svg>Finished</span>
+          </div>
+          <p class="p19-run-meta">Backup 18 · started 14:02</p>
+          <dl class="p19-run-stats">
+            <div><dt>Photos</dt><dd>24</dd></div>
+            <div><dt>Time</dt><dd>3m 12s</dd></div>
+            <div><dt>Errors</dt><dd>0</dd></div>
+          </dl>
+          <div class="p19-run-actions">
+            <button class="btn btn-primary" type="button" data-act="open">Open photos</button>
+            <button class="btn btn-secondary" type="button" data-act="again">Back up again</button>
+          </div>
+        </div>
+        <div class="surface p19-ctl" id="p19-vh-ctl" role="group" aria-labelledby="p19-vh-cap">
+          <p class="p19-ctl-cap" id="p19-vh-cap">Title emphasis</p>
+          <div class="p19-range"><label for="p19-vh-size">Size</label><output id="p19-vh-size-out" for="p19-vh-size">24 px</output><input type="range" id="p19-vh-size" min="14" max="28" step="1" value="24"></div>
+          <div class="p19-range"><label for="p19-vh-weight">Weight</label><output id="p19-vh-weight-out" for="p19-vh-weight">Bold</output><input type="range" id="p19-vh-weight" min="400" max="700" step="100" value="700"></div>
+          <div class="p19-range"><span id="p19-vh-color-l">Color</span>
+            <div class="seg p19-seg-sm" role="radiogroup" aria-labelledby="p19-vh-color-l">
+              <input type="radio" name="p19-vh-color" id="p19-vh-quiet" value="quiet"><label for="p19-vh-quiet">Quiet</label>
+              <input type="radio" name="p19-vh-color" id="p19-vh-strong" value="strong" checked><label for="p19-vh-strong">Strong</label>
+              <input type="radio" name="p19-vh-color" id="p19-vh-accent" value="accent"><label for="p19-vh-accent">Accent</label>
+            </div>
+          </div>
+        </div>
+      </div>
+      <p class="p19-hint" id="p19-vh-hint" aria-live="polite"></p>
+      <p class="try"><b>Try it:</b> turn on the squint test and notice what you see first. Then set the title to 15 px, Regular and Accent: only color sets it apart, and the bolder numbers take over. Switch to Before to see a card where everything is bold.</p>
+    </div>

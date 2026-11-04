@@ -1,0 +1,141 @@
+<div class="fm" data-fm>
+  <div class="seg fm-seg" role="radiogroup" aria-label="Form">
+    <input type="radio" name="fm-progress-bar" id="fm-progress-bar-1" value="known" checked><label for="fm-progress-bar-1">Known</label>
+    <input type="radio" name="fm-progress-bar" id="fm-progress-bar-2" value="unknown"><label for="fm-progress-bar-2">Unknown</label>
+    <input type="radio" name="fm-progress-bar" id="fm-progress-bar-3" value="item"><label for="fm-progress-bar-3">Ring</label>
+    <input type="radio" name="fm-progress-bar" id="fm-progress-bar-4" value="bg"><label for="fm-progress-bar-4">Background</label>
+  </div>
+  <div class="fm-stage" data-fm-stage></div>
+  <p class="fig-cap" data-fm-when aria-live="polite"></p>
+  
+  <script>
+  (() => {
+    const fm = document.currentScript.closest('[data-fm]'), stage = fm.querySelector('[data-fm-stage]'), when = fm.querySelector('[data-fm-when]');
+    const icon = n => '<svg class="icon"><use href="#i-' + n + '"/></svg>';
+    const frame = (title, body, cls) => '<div class="app-frame fm-frame"><div class="app-bar"><span>' + title + '</span></div><div class="app-body' + (cls ? ' ' + cls : '') + '">' + body + '</div></div>';
+    const later = (ms, fn) => { const g = gen; return setTimeout(() => { if (g === gen) fn(); }, ms); };
+    const bar = (label, max, ind) => '<div class="bar' + (ind ? ' indeterminate' : '') + '" role="progressbar" aria-label="' + label + '"' + (max ? ' aria-valuemin="0" aria-valuemax="' + max + '" aria-valuenow="0"' : '') + '><span></span></div>';
+    const setBar = (b, n, max) => { b.querySelector('span').style.width = (100 * n / max) + '%'; b.setAttribute('aria-valuenow', n); };
+    const down = '<svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4v11M7 10.5l5 5 5-5M5 20h14"/></svg>';
+    const C = 2 * Math.PI * 13;
+    const F = {
+      known: {
+        name: 'Known length',
+        html: frame('Music', '<div class="fp-row"><div class="thumb fp-cover"></div><span class="grow"><b>Summer Mix</b><small>24 songs · 96 MB</small></span><button class="btn btn-primary cs-sm" type="button" data-go>Download</button></div><div class="fp-prog" data-prog aria-live="polite"><span class="fp-meta">Not downloaded</span></div>'),
+        use: 'Use it when the work can be counted, like songs in an album.',
+        more: 'Count real items, and give a rough time left.',
+        wire: s => {
+          const go = s.querySelector('[data-go]'), prog = s.querySelector('[data-prog]');
+          let t, n = 0, run = 0;
+          const stop = msg => { clearTimeout(t); run++; go.hidden = false; prog.innerHTML = msg; };
+          const tick = r => {
+            if (r !== run) return;
+            setBar(prog.querySelector('.bar'), n, 24);
+            prog.querySelector('[data-n]').textContent = n + ' of 24 songs';
+            prog.querySelector('[data-left]').textContent = 'About ' + Math.max(1, Math.ceil((24 - n) * 0.18)) + ' s left';
+            if (n === 24) return stop('<span class="fp-ok">' + icon('check') + 'Downloaded. You can listen offline.</span>');
+            n++; t = later(180, () => tick(r));
+          };
+          go.addEventListener('click', () => {
+            n = 0; const r = ++run; go.hidden = true;
+            prog.innerHTML = bar('Downloading Summer Mix', 24) + '<div class="fp-meta"><span data-n></span><span data-left></span></div><div class="fp-acts"><button class="btn btn-ghost cs-sm" type="button" data-cancel>Cancel</button></div>';
+            prog.querySelector('[data-cancel]').addEventListener('click', () => { stop('<span class="fp-meta">Stopped at ' + n + ' of 24 songs.</span>'); go.focus(); });
+            tick(r);
+          });
+        }
+      },
+      unknown: {
+        name: 'Unknown length',
+        html: frame('Flights', '<div class="fp-row"><span class="fp-route"><b>London → Lisbon</b><small>Fri 6 Nov · 1 adult</small></span><button class="btn btn-primary cs-sm" type="button" data-go>Search</button></div><div class="fp-res" data-res aria-live="polite"><span class="fp-stage">No search yet.</span></div>'),
+        use: 'Use it when the total isn’t known yet, like a search across many airlines.',
+        more: 'The bar moves without filling, and a label names each stage.',
+        wire: s => {
+          const go = s.querySelector('[data-go]'), res = s.querySelector('[data-res]');
+          let run = 0;
+          go.addEventListener('click', () => {
+            if (go.getAttribute('aria-disabled') === 'true') return;
+            const r = ++run; go.setAttribute('aria-disabled', 'true');
+            res.innerHTML = bar('Searching flights', 0, true) + '<span class="fp-stage" data-st></span>';
+            const st = res.querySelector('[data-st]'), steps = ['Asking 400 airlines…', 'Comparing prices…', 'Sorting by price…'];
+            steps.forEach((x, i) => later(i * 1100, () => { if (r === run) st.textContent = x; }));
+            later(steps.length * 1100, () => {
+              if (r !== run) return; go.removeAttribute('aria-disabled');
+              res.innerHTML = [['07:10 → 09:55', 'Direct', '$89'], ['12:40 → 15:30', 'Direct', '$104'], ['06:05 → 11:20', '1 stop', '$76']].map(f => '<div class="fp-fl"><span><b>' + f[0] + '</b> · ' + f[1] + '</span><span>' + f[2] + '</span></div>').join('');
+            });
+          });
+        }
+      },
+      item: {
+        name: 'Ring',
+        html: frame('Podcasts', '<div class="fp-eps">' + [['Why we sleep less in summer', '42 min', 24], ['A short history of maps', '31 min', 16], ['The best cheap pasta', '18 min', 10]].map((e, i) =>
+          '<div class="fp-row"><span class="grow"><span><b>' + e[0] + '</b></span><small data-sub>' + e[1] + '</small></span><button class="fp-ring" type="button" data-ep="' + i + '" data-steps="' + e[2] + '" aria-label="Download ' + e[0] + '">' + down + '</button></div>').join('') + '</div>'),
+        use: 'Use it when several things download at once, like podcast episodes.',
+        more: 'It sits on each item, and pressing it cancels that download.',
+        wire: s => s.querySelectorAll('[data-ep]').forEach(b => {
+          const name = b.getAttribute('aria-label').replace('Download ', ''), steps = +b.dataset.steps, sub = b.parentNode.querySelector('[data-sub]'), len = sub.textContent;
+          let run = 0;
+          const idle = () => { run++; b.innerHTML = down; b.setAttribute('aria-label', 'Download ' + name); sub.textContent = len; };
+          b.addEventListener('click', () => {
+            if (b.getAttribute('aria-disabled') === 'true') return;
+            if (b.dataset.on) { delete b.dataset.on; idle(); return; }
+            b.dataset.on = '1'; const r = ++run; let n = 0;
+            b.innerHTML = '<svg class="fp-arc" viewBox="0 0 30 30" aria-hidden="true"><circle class="fp-trk" cx="15" cy="15" r="13"/><circle class="fp-val" cx="15" cy="15" r="13" stroke-dasharray="' + C + '" stroke-dashoffset="' + C + '"/></svg><span class="fp-stop"></span>';
+            const step = () => {
+              if (r !== run) return;
+              const pct = Math.round(100 * n / steps);
+              b.querySelector('.fp-val').setAttribute('stroke-dashoffset', C * (1 - n / steps));
+              b.setAttribute('aria-label', 'Stop downloading ' + name + ', ' + pct + '%');
+              sub.textContent = len + ' · ' + pct + '%';
+              if (n === steps) { delete b.dataset.on; b.innerHTML = icon('check'); b.setAttribute('aria-disabled', 'true'); b.setAttribute('aria-label', name + ', downloaded'); sub.textContent = len + ' · Downloaded'; return; }
+              n++; later(260, step);
+            };
+            step();
+          });
+        })
+      },
+      bg: {
+        name: 'Background',
+        html: '<div class="app-frame fm-frame"><div class="app-bar"><span>Photos</span><span class="cs-meta" data-sel></span></div><div class="fp-grid">' + ['', ' b', ' c', ' b', ' c', '', ' b', ' c'].map((c, i) => '<button class="fp-ph" type="button" aria-pressed="false" aria-label="Photo ' + (i + 1) + '"><span class="thumb' + c + '"></span></button>').join('') + '</div><div class="fp-strip" data-strip aria-live="polite"></div></div>',
+        use: 'Use it for long work people don’t need to watch, like a photo backup.',
+        more: 'Keep it small, let them carry on, and always offer a way to stop.',
+        wire: s => {
+          const strip = s.querySelector('[data-strip]'), sel = s.querySelector('[data-sel]');
+          s.querySelectorAll('.fp-ph').forEach(p => p.addEventListener('click', () => {
+            p.setAttribute('aria-pressed', p.getAttribute('aria-pressed') !== 'true');
+            const k = s.querySelectorAll('.fp-ph[aria-pressed="true"]').length;
+            sel.textContent = k ? k + ' selected' : '';
+          }));
+          let run = 0, n = 0;
+          const rest = (html, btn) => {
+            run++;
+            strip.innerHTML = '<span class="grow">' + html + '</span><button class="btn btn-ghost cs-sm" type="button" data-again>' + btn + '</button>';
+            strip.querySelector('[data-again]').addEventListener('click', () => start(btn === 'Resume' ? n : 0));
+          };
+          const start = from => {
+            const r = ++run; n = from;
+            strip.innerHTML = '<span class="grow"><span data-t></span>' + bar('Backing up photos', 120) + '</span><button class="icon-btn" type="button" aria-label="Stop backup" data-x>' + icon('x') + '</button>';
+            const t = strip.querySelector('[data-t]'), b = strip.querySelector('.bar');
+            strip.querySelector('[data-x]').addEventListener('click', () => rest('Backup paused. ' + n + ' of 120 photos saved.', 'Resume'));
+            const step = () => {
+              if (r !== run) return;
+              setBar(b, n, 120); t.textContent = 'Backing up ' + n + ' of 120 photos';
+              if (n >= 120) return rest('<span class="fp-ok">' + icon('check') + 'All 120 photos backed up.</span>', 'Back up again');
+              n = Math.min(120, n + 3); later(110, step);
+            };
+            step();
+          };
+          start(0);
+        }
+      }
+    };
+    let gen = 0;
+    const show = k => {
+      gen++;
+      stage.innerHTML = F[k].html; F[k].wire(stage);
+      when.innerHTML = '<b>' + F[k].name + '.</b> ' + F[k].use + ' ' + F[k].more;
+    };
+    fm.querySelectorAll('.fm-seg input').forEach(i => i.addEventListener('change', () => show(i.value)));
+    show('known');
+  })();
+  </script>
+</div>

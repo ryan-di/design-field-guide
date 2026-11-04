@@ -1,0 +1,129 @@
+<script>
+(() => {
+  const cs = document.currentScript.closest('.cs');
+  /* The shared case helpers are defined later in the book, so wait for them. */
+  const start = () => {
+  const D = (k, html, wire) => csDemo(cs.querySelector('[data-d="' + k + '"]'), html, wire);
+  const css = document.createElement('style');
+  css.textContent = `
+#good-proximity .px-album{width:min(260px,100%)}
+#good-proximity .px-album .app-body{padding:12px 14px;gap:0}
+#good-proximity .px-photo{all:unset;cursor:pointer;display:block;height:46px;border-radius:7px;background:linear-gradient(135deg,var(--thumb-a),var(--thumb-b))}
+#good-proximity .px-photo.b{background:linear-gradient(135deg,var(--thumb-c),var(--thumb-a))}
+#good-proximity .px-photo.c{background:linear-gradient(135deg,var(--thumb-b),var(--thumb-c))}
+#good-proximity .px-photo:focus-visible{outline:3px solid var(--ui-sel);outline-offset:2px}
+#good-proximity .px-photo[aria-pressed="true"]{box-shadow:0 0 0 3px var(--ui-sel)}
+#good-proximity .px-cap{font-size:13.5px;color:var(--ui-text);margin:0}
+#good-proximity .px-even .px-cap{margin:12px 0}
+#good-proximity .px-tight .px-cap{margin:4px 0 20px}
+#good-proximity .px-tight .px-cap:last-child{margin-bottom:0}
+#good-proximity .px-out{font-size:13.5px;text-align:center;max-width:min(300px,100%)}
+#good-proximity .px-out:empty{display:none}
+#good-proximity .px-acct{width:min(300px,100%)}
+#good-proximity .px-acct .app-body{padding:12px 14px;gap:0}
+#good-proximity .px-h{font:600 12px var(--font-mono);letter-spacing:.06em;text-transform:uppercase;color:var(--ui-muted)}
+#good-proximity .px-r{display:flex;justify-content:space-between;gap:8px;font-size:13.5px}
+#good-proximity .px-r span:last-child{color:var(--ui-muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;min-width:0}
+#good-proximity .px-boxed .px-sec{border:1px solid var(--ui-border);border-radius:8px;padding:6px 8px;display:flex;flex-direction:column;gap:5px}
+#good-proximity .px-boxed .px-h{padding-bottom:4px;border-bottom:1px solid var(--ui-border)}
+#good-proximity .px-boxed .px-r{border:1px solid var(--ui-border);border-radius:6px;padding:5px 7px}
+#good-proximity .px-boxed hr{border:0;border-top:1px solid var(--ui-border);margin:10px 0}
+#good-proximity .px-spaced .px-sec{display:flex;flex-direction:column;gap:7px}
+#good-proximity .px-spaced .px-sec + .px-sec{margin-top:20px}
+#good-proximity .px-spaced .px-h{margin-bottom:1px}
+#good-proximity .px-hl [data-line]{border-color:var(--ui-danger)!important;border-width:2px!important}
+#good-proximity .px-edit{width:min(320px,100%)}
+#good-proximity .px-edit .app-body{padding:10px 14px;gap:8px}
+#good-proximity .px-img{height:64px;border-radius:8px;background:radial-gradient(circle at 78% 30%,color-mix(in srgb,var(--ui-surface) 70%,var(--ui-sel)) 0 9px,transparent 10px),linear-gradient(160deg,var(--ui-sel),color-mix(in srgb,var(--ui-ok) 60%,var(--ui-text)));filter:brightness(var(--px-b,1))}
+#good-proximity .px-panel{height:150px;overflow:auto;display:flex;flex-direction:column;gap:12px;padding:4px 2px 8px;border-top:1px solid var(--ui-border)}
+#good-proximity .px-panel:focus-visible{outline:2px solid var(--ui-sel)}
+#good-proximity .px-opt{display:flex;flex-direction:column;gap:5px;font:600 13px var(--font-body);color:var(--ui-text)}
+#good-proximity .px-opt input[type="range"]{width:100%;accent-color:var(--ui-sel)}
+#good-proximity .px-btns{display:flex;gap:5px;flex-wrap:wrap}
+#good-proximity .px-btns span{font:500 12.5px var(--font-body);padding:4px 9px;border:1px solid var(--ui-border);border-radius:7px;color:var(--ui-muted)}
+#good-proximity .px-apply{align-self:flex-start}
+#good-proximity .px-form{width:min(300px,100%);display:flex;flex-direction:column;text-align:left;background:var(--ui-surface);border:1px solid var(--ui-border);border-radius:12px;padding:14px;box-shadow:var(--ui-shadow)}
+#good-proximity .px-fld{display:flex;flex-direction:column;gap:5px;font:600 13.5px var(--font-body);color:var(--ui-text)}
+#good-proximity .px-fld .input{font-weight:400}
+#good-proximity .px-fld + .px-fld,#good-proximity .px-err + .px-fld{margin-top:16px}
+#good-proximity .px-err{margin:0}
+#good-proximity .px-err[hidden]{display:none}
+#good-proximity .px-far .px-err{margin-top:22px}
+#good-proximity .px-far .px-err:not([hidden]) + .px-fld{margin-top:3px}
+#good-proximity .px-near .px-err{margin-top:5px}
+#good-proximity .px-near .px-err:not([hidden]) + .px-fld{margin-top:20px}
+#good-proximity .px-form .btn{margin-top:16px;align-self:flex-start}
+`;
+  cs.appendChild(css);
+
+  /* 1. Same gap everywhere */
+  const PH = [['', 'Beach, May'], [' b', 'Lake, June'], [' c', 'Forest, July']];
+  const albumHtml = cls => '<div class="app-frame px-album"><div class="app-bar"><span>Summer album</span></div><div class="app-body ' + cls + '">' +
+    PH.map((p, i) => '<button class="px-photo' + p[0] + '" type="button" aria-pressed="false" aria-label="Photo ' + (i + 1) + '" data-i="' + i + '"></button><p class="px-cap">' + p[1] + '</p>').join('') + '</div></div><p class="px-out" data-out aria-live="polite"></p>';
+  const albumWire = d => d.querySelectorAll('[data-i]').forEach(b => b.addEventListener('click', () => {
+    d.querySelectorAll('[data-i]').forEach(x => x.setAttribute('aria-pressed', String(x === b)));
+    const i = Number(b.dataset.i);
+    d.querySelector('[data-out]').textContent = i === 1 ? 'Photo 2. Right: “Lake, June” belongs to the photo above it.' : 'Photo ' + (i + 1) + '. “Lake, June” belongs to photo 2, the one above it.';
+  }));
+  D('good-proximity-1b', albumHtml('px-even'), albumWire);
+  D('good-proximity-1f', albumHtml('px-tight'), albumWire);
+
+  /* 2. Lines everywhere */
+  const acctHtml = boxed => {
+    const L = boxed ? ' data-line' : '';
+    const sec = (h, rows) => '<div class="px-sec"' + L + '><span class="px-h"' + L + '>' + h + '</span>' + rows.map(r => '<div class="px-r"' + L + '><span>' + r[0] + '</span><span>' + r[1] + '</span></div>').join('') + '</div>';
+    return '<div class="app-frame px-acct"><div class="app-bar"><span>Account</span></div><div class="app-body ' + (boxed ? 'px-boxed' : 'px-spaced') + '" data-body>' +
+      sec('Profile', [['Name', 'Maya Chen'], ['Email', 'maya@example.com'], ['Phone', 'Not added']]) + (boxed ? '<hr data-line>' : '') +
+      sec('Privacy', [['Show my profile', 'On'], ['Share activity', 'Off']]) + '</div></div>' +
+      '<label class="switch"><span>Show lines</span><input type="checkbox" role="switch" data-hl></label><p class="cs-meta" data-out aria-live="polite"></p>';
+  };
+  const acctWire = d => d.querySelector('[data-hl]').addEventListener('change', e => {
+    d.querySelector('[data-body]').classList.toggle('px-hl', e.target.checked);
+    const n = d.querySelectorAll('[data-line]').length;
+    d.querySelector('[data-out]').textContent = e.target.checked ? (n ? n + ' lines and boxes' : 'No lines. Space does the grouping.') : '';
+  });
+  D('good-proximity-2b', acctHtml(true), acctWire);
+  D('good-proximity-2f', acctHtml(false), acctWire);
+
+  /* 3. Control far from its action */
+  const slider = '<label class="px-opt">Brightness <input type="range" min="-50" max="50" step="5" value="0" data-r></label>';
+  const apply = '<button class="btn btn-primary cs-sm px-apply" type="button" data-apply>Apply brightness</button>';
+  const opts = ['<div class="px-opt">Crop<div class="px-btns"><span>Original</span><span>Square</span><span>4:5</span></div></div>',
+    '<div class="px-opt">Rotate<div class="px-btns"><span>Left</span><span>Right</span></div></div>',
+    '<div class="px-opt">Filter<div class="px-btns"><span>None</span><span>Warm</span><span>Cool</span><span>Mono</span></div></div>',
+    '<div class="px-opt">Frame<div class="px-btns"><span>None</span><span>Thin</span><span>Wide</span></div></div>'].join('');
+  const editHtml = near => '<div class="app-frame px-edit"><div class="app-bar"><span>Edit photo</span><span class="cs-meta" data-val>Brightness 0</span></div><div class="app-body"><div class="px-img" data-img></div>' +
+    '<div class="px-panel" tabindex="0" role="group" aria-label="Edit options">' + slider + (near ? apply + opts : opts + apply) + '</div></div></div>';
+  const editWire = d => {
+    const r = d.querySelector('[data-r]');
+    d.querySelector('[data-apply]').addEventListener('click', () => {
+      const v = Number(r.value);
+      d.querySelector('[data-img]').style.setProperty('--px-b', String(1 + v / 100));
+      d.querySelector('[data-val]').textContent = 'Brightness ' + (v > 0 ? '+' : '') + v;
+    });
+  };
+  D('good-proximity-3b', editHtml(false), editWire);
+  D('good-proximity-3f', editHtml(true), editWire);
+
+  /* 4. Error far from its field */
+  const formHtml = cls => '<form class="px-form ' + cls + '" novalidate><label class="px-fld">Phone<input class="input" value="+44 7700 900 12a" autocomplete="off" data-phone></label>' +
+    '<p class="field-msg px-err" data-err hidden><svg class="icon sm" aria-hidden="true"><use href="#i-warn"/></svg><span>Use numbers only.</span></p>' +
+    '<label class="px-fld">Postcode<input class="input" value="SW1A 1AA" autocomplete="off"></label><button class="btn btn-primary cs-sm" type="submit">Create account</button></form>';
+  const formWire = d => {
+    const f = d.querySelector('form'), err = d.querySelector('[data-err]'), ph = d.querySelector('[data-phone]');
+    if ('ariaDescribedByElements' in ph) ph.ariaDescribedByElements = [err];
+    f.addEventListener('submit', e => {
+      e.preventDefault();
+      const bad = /[^\d\s+]/.test(ph.value);
+      err.hidden = !bad; ph.setAttribute('aria-invalid', String(bad));
+    });
+  };
+  D('good-proximity-4b', formHtml('px-far'), formWire);
+  D('good-proximity-4f', formHtml('px-near'), formWire);
+
+  csInit(cs);
+  };
+  if (window.csDemo) start(); else document.addEventListener('DOMContentLoaded', start);
+})();
+
+</script>

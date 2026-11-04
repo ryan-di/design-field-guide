@@ -1,0 +1,20 @@
+<div class="stage tall" data-demo="pat-presets">
+      <div class="seg p10-seg" role="radiogroup" aria-label="Preset">
+        <input type="radio" name="p10-pr" id="p10-pr-fast" value="fast"><label for="p10-pr-fast">Fast</label>
+        <input type="radio" name="p10-pr" id="p10-pr-balanced" value="balanced" checked><label for="p10-pr-balanced">Balanced</label>
+        <input type="radio" name="p10-pr" id="p10-pr-quality" value="quality"><label for="p10-pr-quality">Quality</label>
+        <input type="radio" name="p10-pr" id="p10-pr-custom" value="custom" hidden><label for="p10-pr-custom" hidden>Custom</label>
+      </div>
+      <div class="surface p10-tblwrap">
+        <p class="p10-cap" id="p10-pr-cap">What “Balanced” sets</p>
+        <table aria-labelledby="p10-pr-cap">
+          <tbody>
+            <tr><th scope="row"><label for="p10-pr-steps">Bitrate (Mbps)</label> <span class="p10-mark" data-mark="steps" hidden>Edited</span></th><td><input class="input" id="p10-pr-steps" type="number" min="1" max="150" value="25"></td></tr>
+            <tr><th scope="row"><label for="p10-pr-res">Resolution</label> <span class="p10-mark" data-mark="res" hidden>Edited</span></th><td><select class="select" id="p10-pr-res"><option value="512">720p</option><option value="768" selected>1080p</option><option value="1024">4K</option></select></td></tr>
+            <tr><th scope="row"><label for="p10-pr-sampler">Codec</label> <span class="p10-mark" data-mark="sampler" hidden>Edited</span></th><td><select class="select" id="p10-pr-sampler"><option value="euler">H.264</option><option value="dpm2m" selected>HEVC</option><option value="dpm2m-sde">HEVC, two-pass</option></select></td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="result" id="p10-pr-out" aria-live="polite">About 14 s to export</p>
+      <p class="try"><b>Try it:</b> pick each preset and watch the values it sets. Then change Bitrate by hand: the picker switches to Custom and marks the edit. Pick a preset again to leave Custom, then press Undo on the toast to get your edits back.</p>
+    </div>

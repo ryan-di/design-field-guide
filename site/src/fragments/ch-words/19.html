@@ -1,0 +1,126 @@
+<script>
+(() => {
+  const cs = document.currentScript.closest('.cs');
+  /* This entry sits before the shared case helpers in the book, so start once they exist. */
+  const go = () => {
+  const D = (k, html, wire) => csDemo(cs.querySelector('[data-d="' + k + '"]'), html, wire);
+  const css = document.createElement('style');
+  css.textContent = [
+    '#good-plain-language .gp-help{font-size:14px;line-height:1.45}',
+    '#good-plain-language .gp-mail{font-size:13px;line-height:1.45;padding:8px 10px;border:1px dashed var(--ui-border);border-radius:8px;color:var(--ui-muted)}',
+    '#good-plain-language .gp-mail b{color:var(--ui-text);font-weight:600}',
+    '#good-plain-language .gp-hint{font-weight:400;font-size:12.5px;color:var(--ui-muted)}',
+    '#good-plain-language .gp-two{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}',
+    '#good-plain-language .gp-two .input{padding:7px 9px;font-size:14px}',
+    '#good-plain-language .gp-phone{width:min(280px,100%);border-radius:22px;padding:20px 12px 26px;background:linear-gradient(160deg,var(--thumb-d),var(--thumb-b));display:flex;flex-direction:column;align-items:center;gap:4px}',
+    '#good-plain-language .gp-time{font:300 40px/1 var(--font-body);color:var(--ui-text)}',
+    '#good-plain-language .gp-date{font:600 13px var(--font-body);color:var(--ui-text);margin-bottom:14px}',
+    '#good-plain-language .gp-noti{all:unset;box-sizing:border-box;cursor:pointer;width:100%;display:flex;flex-direction:column;gap:3px;padding:10px 12px;border-radius:14px;background:color-mix(in srgb,var(--ui-surface) 88%,transparent);color:var(--ui-text);font-size:13.5px;line-height:1.4;box-shadow:var(--ui-shadow)}',
+    '#good-plain-language .gp-noti:focus-visible{outline:3px solid var(--ui-sel);outline-offset:2px}',
+    '#good-plain-language .gp-nh{display:flex;align-items:center;gap:6px;font-size:12.5px}',
+    '#good-plain-language .gp-nh .grow{flex:1}',
+    '#good-plain-language .gp-app{width:16px;height:16px;border-radius:4px;background:var(--ui-ok)}',
+    '#good-plain-language .gp-noti[aria-expanded="false"] .gp-nt{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}',
+    '#good-plain-language .gp-text{font-size:14px;line-height:1.5}',
+    '#good-plain-language .gp-ask{font-weight:600;font-size:14px}',
+    '#good-plain-language .gp-opts{display:flex;gap:8px;flex-wrap:wrap}',
+    '#good-plain-language .gp-bad{font:500 13px var(--font-mono);color:var(--ui-danger)}',
+    '#good-plain-language .gp-bad:empty{display:none}',
+    '#good-plain-language .gp-frame{width:min(340px,100%)}',
+    '#good-plain-language .gp-frame .app-body{min-height:190px}',
+    '#good-plain-language .gp-prod{display:flex;gap:12px;align-items:center}',
+    '#good-plain-language .gp-img{width:72px;flex:none}'
+  ].join('\n');
+  cs.prepend(css);
+  const words = s => (s.match(/[\p{L}\p{N}’'-]+/gu) || []).length;
+  const longest = s => s.split(/(?<=[.!?])\s+/).reduce((n, x) => Math.max(n, words(x)), 0);
+
+  /* 1. Jargon */
+  const returnHtml = fixed => '<div class="cs-form"><b>Returns</b>' +
+    '<p class="gp-help">' + (fixed ? 'Use this form to start a return. Enter your return number and the item code.' : 'Utilize the form to initiate a return. Input your RMA and the SKU of each item.') + '</p>' +
+    '<p class="gp-mail">From the shop’s email: “Your return number is <b>R-4417</b>. Running shoes, item code <b>SH-42</b>.”</p>' +
+    '<div class="gp-two"><label class="cs-f">' + (fixed ? 'Return number <span class="gp-hint">In the email we sent you</span>' : 'RMA') + '<input class="input" autocomplete="off" spellcheck="false" data-a></label>' +
+    '<label class="cs-f">' + (fixed ? 'Item code <span class="gp-hint">On the label of the box</span>' : 'SKU') + '<input class="input" autocomplete="off" spellcheck="false" data-b></label></div>' +
+    '<button class="btn btn-primary cs-sm" type="button" data-go style="align-self:flex-start">' + (fixed ? 'Start return' : 'Initiate return') + '</button>' +
+    '<p class="cs-ok" aria-live="polite" data-ok></p><p class="gp-bad" aria-live="polite" data-bad></p></div>';
+  const returnWire = d => {
+    const a = d.querySelector('[data-a]'), b = d.querySelector('[data-b]'), ok = d.querySelector('[data-ok]'), bad = d.querySelector('[data-bad]');
+    d.querySelector('[data-go]').addEventListener('click', () => {
+      const good = a.value.trim().toUpperCase() === 'R-4417' && b.value.trim().toUpperCase() === 'SH-42';
+      ok.textContent = good ? 'Return started for the running shoes.' : '';
+      bad.textContent = good ? '' : 'Those numbers don’t match a return. Check the email.';
+    });
+  };
+  D('good-plain-language-1b', returnHtml(false), returnWire);
+  D('good-plain-language-1f', returnHtml(true), returnWire);
+
+  /* 2. Point first */
+  const NOTE = {
+    b: 'Due to scheduled maintenance of our systems, and as part of our ongoing work to improve service quality, card payments and transfers will not be available between 01:00 and 05:00 on Sunday 16 November.',
+    f: 'Card payments and transfers won’t work this Sunday, 1 to 5 am. We’re updating our systems.'
+  };
+  const lockHtml = fixed => '<div class="gp-phone"><span class="gp-time">9:41</span><span class="gp-date">Friday 14 November</span>' +
+    '<button class="gp-noti" type="button" aria-expanded="false" data-n><span class="gp-nh"><span class="gp-app"></span><b class="grow">Bank</b><span>now</span></span>' +
+    '<span class="gp-nt">' + NOTE[fixed ? 'f' : 'b'] + '</span></button></div>';
+  const lockWire = d => {
+    const n = d.querySelector('[data-n]');
+    n.addEventListener('click', () => n.setAttribute('aria-expanded', String(n.getAttribute('aria-expanded') !== 'true')));
+  };
+  D('good-plain-language-2b', lockHtml(false), lockWire);
+  D('good-plain-language-2f', lockHtml(true), lockWire);
+
+  /* 3. One idea per sentence */
+  const PARCEL = {
+    b: 'Your parcel has arrived at the locker on Elm Street and you can collect it with the code 4821 until Friday, which gives you 5 days, after which it goes back to the sender unless you extend the pickup time in the app, which you can do once for 3 more days.',
+    f: 'Your parcel is at the locker on Elm Street. Your pickup code is 4821. You have 5 days to collect it, until Friday. If you need more time, extend it in the app. You can add 3 days, once. After that, the parcel goes back to the sender.'
+  };
+  const parcelHtml = fixed => {
+    const t = PARCEL[fixed ? 'f' : 'b'];
+    return '<div class="cs-form"><b>Your parcel is here</b><p class="gp-text">' + t + '</p><p class="cs-meta">Longest sentence: ' + longest(t) + ' words</p>' +
+      '<p class="gp-ask">How many days do you have to collect it?</p><div class="gp-opts">' +
+      ['3 days', '5 days', '8 days'].map(x => '<button class="btn btn-secondary cs-sm" type="button" data-pick="' + x + '">' + x + '</button>').join('') +
+      '</div><p class="cs-ok" aria-live="polite" data-ok></p><p class="gp-bad" aria-live="polite" data-bad></p></div>';
+  };
+  const parcelWire = d => {
+    const ok = d.querySelector('[data-ok]'), bad = d.querySelector('[data-bad]');
+    d.querySelectorAll('[data-pick]').forEach(b => b.addEventListener('click', () => {
+      const right = b.dataset.pick === '5 days';
+      ok.textContent = right ? 'Right: 5 days, until Friday.' : '';
+      bad.textContent = right ? '' : 'Not quite. Read it again.';
+    }));
+  };
+  D('good-plain-language-3b', parcelHtml(false), parcelWire);
+  D('good-plain-language-3f', parcelHtml(true), parcelWire);
+
+  /* 4. One name */
+  const N = { b: ['Bag', 'Add to basket', 'Added to cart', 'Your cart'], f: ['Cart', 'Add to cart', 'Added to cart', 'Your cart'] };
+  const shopHtml = '<div class="app-frame gp-frame"><div class="app-bar"><span>Shop</span><button class="btn btn-ghost cs-sm" type="button" aria-expanded="false" data-open></button></div><div class="app-body" data-view></div></div>';
+  const shopWire = fixed => (d, t) => {
+    const n = N[fixed ? 'f' : 'b'], open = d.querySelector('[data-open]'), view = d.querySelector('[data-view]');
+    const items = ['Rain jacket'];
+    let inCart = false;
+    const head = () => { open.textContent = n[0] + ' (' + items.length + ')'; open.setAttribute('aria-expanded', String(inCart)); };
+    const product = () => {
+      inCart = false; head();
+      view.innerHTML = '<div class="gp-prod"><span class="thumb c gp-img"></span><span><b>Wool scarf</b><br><span class="cs-meta">€29</span></span></div>' +
+        '<button class="btn btn-primary cs-sm" type="button" data-add style="align-self:flex-start">' + n[1] + '</button>';
+      view.querySelector('[data-add]').addEventListener('click', () => { items.push('Wool scarf'); head(); csToast(d, t, n[2], { ms: 3000, replace: true }); });
+    };
+    const cart = () => {
+      inCart = true; head();
+      view.innerHTML = '<b>' + n[3] + '</b>' + items.map(x => '<div class="cs-row"><span class="grow">' + x + '</span></div>').join('') +
+        '<button class="btn btn-ghost cs-sm" type="button" data-back style="align-self:flex-start">Keep shopping</button>';
+      view.querySelector('[data-back]').addEventListener('click', () => { product(); open.focus({ preventScroll: true }); });
+    };
+    open.addEventListener('click', () => { if (inCart) product(); else cart(); });
+    product();
+  };
+  D('good-plain-language-4b', shopHtml, shopWire(false));
+  D('good-plain-language-4f', shopHtml, shopWire(true));
+
+  csInit(cs);
+  };
+  if (window.csDemo) go(); else document.addEventListener('DOMContentLoaded', go);
+})();
+
+</script>

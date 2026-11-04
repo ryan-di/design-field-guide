@@ -1,0 +1,25 @@
+<div class="stage tall p14-stage" data-demo="pat-templates">
+      <div class="mini-app p14-app">
+        <div class="app-bar">
+          <span data-title>Untitled video</span>
+          <span class="p14-acts">
+            <button class="btn btn-ghost p14-sm" type="button" data-act="over" hidden>Start over</button>
+            <button class="btn btn-primary p14-sm" type="button" data-act="run" hidden><svg class="icon sm"><use href="#i-play"/></svg>Play</button>
+          </span>
+        </div>
+        <div class="mini-canvas">
+          <div class="p14-start" data-start>
+            <p class="p14-h" id="p14-tpl-h">Start from a template</p>
+            <div class="p14-tpls" role="group" aria-labelledby="p14-tpl-h">
+              <button class="tpl surface p14-tpl" type="button" data-tpl="t2i"><svg class="icon"><use href="#i-image"/></svg><span><b>Birthday video</b><small>Teaches the basics: photos and music, cut to the beat.</small></span></button>
+              <button class="tpl surface p14-tpl" type="button" data-tpl="i2i"><svg class="icon"><use href="#i-layers"/></svg><span><b>Travel recap</b><small>Teaches how to tell a story with a map and places.</small></span></button>
+              <button class="tpl surface p14-tpl" type="button" data-tpl="up"><svg class="icon"><use href="#i-fit"/></svg><span><b>Product demo</b><small>Teaches how to explain an app with captions.</small></span></button>
+            </div>
+            <button class="btn btn-ghost p14-sm" type="button" data-act="blank">Start blank</button>
+          </div>
+          <div class="p14-graph" data-graph hidden></div>
+        </div>
+      </div>
+      <p class="result" data-out aria-live="polite"></p>
+      <p class="try"><b>Try it:</b> pick a template: the video already plays, the parts meant for you are marked “edit me”, and one line says what to do first. Then press Start over and choose Start blank to go straight to an empty timeline.</p>
+    </div>

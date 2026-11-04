@@ -1,0 +1,38 @@
+---
+title: "Good design is mostly invisible"
+description: "When design is good, people get what they came for and don’t think about the interface at all."
+eyebrow: "Before you start"
+part:
+  id: "part-1"
+  label: "Part 1 · Good design"
+  title: "Good design"
+  sub: "What makes a design good, how to tell, and how to train your eye. The patterns and components later in the book are tools, and this part is about knowing when and how to use them."
+sidebar:
+  label: "What good means"
+---
+
+import Raw from '../../../components/Raw.astro';
+import Learned from '../../../components/Learned.astro';
+import Runtime from '../../../components/Runtime.astro';
+import F0 from '../../../fragments/ch-good-start/0.html?raw';
+import F1 from '../../../fragments/ch-good-start/1.html?raw';
+
+<Runtime at="start" />
+
+<section class="dfg-chapter" id="ch-good-start">
+
+When design is good, people get what they came for and don’t think about the interface at all. That makes good design hard to see, and easy to mistake for good looks. Polish matters, but it comes last.
+
+This part breaks “good” into habits you can practice.
+
+<Raw html={F0} />
+
+### How each entry reads
+
+Each entry is a short article. It states the idea and lets you try it in a demo. Then come the common mistakes, each with a demo you can switch between the mistake and the fix. Last, real products that get it right. Several demos are small games (spot the problem, spot the difference), because judgment is trained by looking closely.
+
+<Raw html={F1} />
+
+</section>
+
+<Runtime chapter="ch-good-start" />

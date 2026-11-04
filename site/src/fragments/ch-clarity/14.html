@@ -1,0 +1,26 @@
+<div class="stage tall" data-demo="good-spacing-rhythm">
+      <div class="row">
+        <div class="seg" role="radiogroup" aria-label="Spacing">
+          <input type="radio" name="p19-sr-mode" id="p19-sr-adhoc" value="adhoc" checked><label for="p19-sr-adhoc">Ad-hoc values</label>
+          <input type="radio" name="p19-sr-mode" id="p19-sr-scale" value="scale"><label for="p19-sr-scale">8px scale</label>
+        </div>
+        <label class="switch p19-inline"><span>Show grid</span><input type="checkbox" role="switch" id="p19-sr-grid"></label>
+      </div>
+      <div class="surface p19-sp" id="p19-sr-panel" data-mode="adhoc" role="group" aria-labelledby="p19-sr-title">
+        <div class="p19-sp-head" data-sp><h5 id="p19-sr-title" data-edge>Backup settings</h5><button class="btn btn-ghost p19-sp-reset" type="button" data-act="reset">Reset</button></div>
+        <div class="p19-sp-sec" data-sp>
+          <p class="p19-sp-title" data-edge>Upload</p>
+          <label class="switch" data-sp><span class="grow" data-edge>Back up over mobile data</span><input type="checkbox" role="switch" data-default="true" checked></label>
+          <label class="switch" data-sp><span class="grow" data-edge>Notify when done</span><input type="checkbox" role="switch" data-default="false"></label>
+        </div>
+        <div class="p19-sp-sec" data-sp>
+          <p class="p19-sp-title" data-edge>Photos</p>
+          <div class="p19-sp-field" data-sp><label for="p19-sr-format" data-edge>Quality</label><select class="select" id="p19-sr-format"><option>Original</option><option>High quality</option><option>Small</option></select></div>
+          <div class="p19-sp-field" data-sp><label for="p19-sr-prefix" data-edge>Album name</label><input class="input" id="p19-sr-prefix" value="Camera roll" autocomplete="off" spellcheck="false"></div>
+        </div>
+        <div class="p19-sp-foot" data-sp><button class="btn btn-secondary" type="button" data-act="cancel">Cancel</button><button class="btn btn-primary" type="button" data-act="save">Save</button></div>
+        <div class="p19-sp-grid" aria-hidden="true" hidden></div>
+      </div>
+      <p class="result p19-sp-out" id="p19-sr-out" aria-live="polite"></p>
+      <p class="try"><b>Try it:</b> turn on the grid. In Ad-hoc, the left edges miss the 16 px line by a few pixels each, and the readout counts every different value the panel uses. Switch to the 8px scale: a few values from one scale, and one left edge.</p>
+    </div>

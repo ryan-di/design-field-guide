@@ -1,0 +1,41 @@
+<div class="note comfy cw-wrap">
+  <div class="seg cw-seg" role="radiogroup" aria-label="Example">
+    <input type="radio" name="cw-pat-contextual-hints-w" id="cw-pat-contextual-hints-w-1" value="maps" checked><label for="cw-pat-contextual-hints-w-1">Google Maps</label>
+    <input type="radio" name="cw-pat-contextual-hints-w" id="cw-pat-contextual-hints-w-2" value="notion"><label for="cw-pat-contextual-hints-w-2">Notion</label>
+    <input type="radio" name="cw-pat-contextual-hints-w" id="cw-pat-contextual-hints-w-3" value="slack"><label for="cw-pat-contextual-hints-w-3">Slack</label>
+    <input type="radio" name="cw-pat-contextual-hints-w" id="cw-pat-contextual-hints-w-4" value="ps"><label for="cw-pat-contextual-hints-w-4">Photoshop</label>
+  </div>
+  <div class="cw" data-cw-view role="img" aria-label=""></div>
+  <p class="cw-cap" data-cw-cap aria-live="polite"></p>
+  
+  <script>
+  (() => {
+    const wrap = document.currentScript.closest('.cw-wrap');
+    const view = wrap.querySelector('[data-cw-view]'), cap = wrap.querySelector('[data-cw-cap]');
+    const ic = id => '<svg class="icon sm"><use href="#i-' + id + '"/></svg>';
+    const line = w => '<i class="cw-line"' + (w ? ' style="width:' + w + '"' : '') + '></i>';
+    const msg = (a, b) => '<div class="cw-ctxh-msg"><b></b><div>' + line(a) + line(b) + '</div></div>';
+    const S = {
+      maps: { html: '<div class="cw-ctxh-phone">' + line('86%') + line('70%') + '<div class="cw-ctxh-map"><div class="cw-ctxh-scrim">Use two fingers to move the map</div></div>' + line('90%') + line('60%') + '</div>',
+        alt: 'A web page on a phone with a map in it. After a one-finger swipe on the map, a dark overlay on the map says Use two fingers to move the map.',
+        cap: 'Google Maps: on a map inside a web page, a one-finger swipe scrolls the page, and the map shows “Use two fingers to move the map” only when you try. If you already use two fingers, you never see it.' },
+      notion: { html: '<div class="cw-ctxh-win"><div class="cw-ctxh-doc"><h6>Meeting notes</h6>' + line('84%') + line('66%') +
+          '<div class="cw-ctxh-empty"><span class="cw-ctxh-caret"></span><span class="cw-ctxh-ph">Type “/” for commands</span></div><div class="cw-ctxh-gap"></div>' + line('48%') + '</div></div>',
+        alt: 'A document. The empty line with the cursor shows a faint hint, Type slash for commands. The empty line below it shows nothing.',
+        cap: 'Notion: an empty line shows a faint hint to type “/” for commands, but only the line your cursor is on, and it’s gone the moment you type.' },
+      slack: { html: '<div class="cw-ctxh-win"><div class="cw-ctxh-msgs">' + msg('40%', '78%') + msg('30%', '56%') + '</div>' +
+          '<div class="cw-ctxh-box"><div class="cw-ctxh-typed">Running late, start without me<span class="cw-ctxh-caret"></span></div>' +
+          '<div class="cw-ctxh-bfoot">' + ic('plus') + '<small>Shift + Return to add a new line</small><span class="cw-ctxh-send"><svg class="icon"><use href="#i-play"/></svg></span></div></div></div>',
+        alt: 'A chat with a message being typed. In the corner of the message box, small text says Shift plus Return to add a new line, next to the send button.',
+        cap: 'Slack: once you start typing, a small note in the corner of the message box says how to add a new line, right where people would otherwise send by mistake.' },
+      ps: { html: '<div class="cw-ctxh-win cw-ctxh-ps"><div class="cw-ctxh-tools"><span>' + ic('search') + '</span><span>' + ic('layers') + '</span><span class="on">' + ic('fit') + '</span><span>' + ic('image') + '</span><span>' + ic('sliders') + '</span></div>' +
+          '<div class="cw-ctxh-rich surface"><b>Crop tool</b><span>Trims the edges of an image.</span><div class="thumb cw-ctxh-vid"><i></i><em>' + ic('play') + '</em></div></div></div>',
+        alt: 'A tool bar with the crop tool under the pointer. A tooltip beside it gives the tool name, one line on what it does, and a short looping video of it in use.',
+        cap: 'Photoshop: holding the pointer over a tool shows its name, one line on what it does and a short looping video of it in use, right when you’re wondering what the icon means.' }
+    };
+    const render = k => { view.innerHTML = S[k].html; view.setAttribute('aria-label', 'Sketch: ' + S[k].alt); cap.textContent = S[k].cap; };
+    wrap.querySelectorAll('input[name="cw-pat-contextual-hints-w"]').forEach(r => r.addEventListener('change', () => render(r.value)));
+    render('maps');
+  })();
+  </script>
+</div>

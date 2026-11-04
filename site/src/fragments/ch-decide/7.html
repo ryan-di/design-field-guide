@@ -1,0 +1,35 @@
+<div class="stage tall" data-demo="eff-spot-plausible">
+      <div class="p28-sp-top">
+        <p class="p28-sp-score" id="p28-sp-score" aria-live="polite">0 of 6 found</p>
+        <div class="p28-sp-acts"><button class="btn btn-secondary p28-small" type="button" id="p28-sp-reveal">Reveal all</button><button class="btn btn-ghost p28-small" type="button" id="p28-sp-reset">Start over</button></div>
+      </div>
+      <div class="app-frame p28-sp-app" role="group" aria-label="Agent-made restore dialog. Each part is a button you can inspect.">
+        <div class="p28-sp-tabs">
+          <button class="p28-hs p28-sp-tab" type="button" data-hs="ok-tab">Portrait upscale <i class="p28-sp-dot" aria-hidden="true"></i></button>
+          <span class="p28-sp-tab2">Inpaint test</span>
+        </div>
+        <div class="p28-sp-canvas">
+          <button class="p28-hs p28-sp-scrim" type="button" data-hs="modal" aria-label="Dimmed canvas behind the dialog">
+            <span class="p28-sp-n" style="left:6%;top:10%">Load image</span>
+            <span class="p28-sp-n" style="right:6%;top:12%">KSampler</span>
+            <span class="p28-sp-n" style="left:8%;bottom:8%">Upscale</span>
+            <span class="p28-sp-n" style="right:8%;bottom:10%">Save image</span>
+          </button>
+          <div class="p28-sp-dlg">
+            <div class="p28-sp-dh">
+              <button class="p28-hs p28-sp-copy" type="button" data-hs="copy"><b>Notice</b><span>Something went wrong. Do you want to restore?</span></button>
+              <button class="p28-hs p28-sp-x" type="button" data-hs="kbd" aria-label="Close icon"><svg class="icon sm" aria-hidden="true"><use href="#i-x"/></svg></button>
+            </div>
+            <button class="p28-hs p28-sp-faint" type="button" data-hs="contrast"><span>Last session · 2 tabs · 4 min ago</span></button>
+            <button class="p28-hs p28-sp-list" type="button" data-hs="states"><span>Portrait upscale · 3 changes</span><span>Inpaint test · 1 change</span></button>
+            <div class="p28-sp-foot">
+              <button class="p28-hs p28-sp-discard" type="button" data-hs="ok-discard">Discard</button>
+              <button class="p28-hs p28-sp-restore" type="button" data-hs="token">Restore</button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <p class="p28-sp-msg" id="p28-sp-msg" role="status"></p>
+      <ol class="p28-sp-found" id="p28-sp-found" aria-label="Problems found"></ol>
+      <p class="try"><b>Try it:</b> an agent built this restore dialog for the tab-close problem. Six things are wrong with it, and two parts are fine. Click or Tab to a part and press Enter to inspect it. Stuck? Reveal all.</p>
+    </div>

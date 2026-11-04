@@ -1,0 +1,65 @@
+<div class="fm" data-fm>
+  
+  <div class="seg fm-seg" role="radiogroup" aria-label="Form">
+    <input type="radio" name="fm-skeleton" id="fm-skeleton-1" value="grid" checked><label for="fm-skeleton-1">Grid</label>
+    <input type="radio" name="fm-skeleton" id="fm-skeleton-2" value="list"><label for="fm-skeleton-2">List</label>
+    <input type="radio" name="fm-skeleton" id="fm-skeleton-3" value="text"><label for="fm-skeleton-3">Text</label>
+    <input type="radio" name="fm-skeleton" id="fm-skeleton-4" value="value"><label for="fm-skeleton-4">One value</label>
+  </div>
+  <div class="fm-stage" data-fm-stage></div>
+  <p class="fig-cap" data-fm-when aria-live="polite"></p>
+  <script>
+  (() => {
+    const fm = document.currentScript.closest('[data-fm]'), stage = fm.querySelector('[data-fm-stage]'), when = fm.querySelector('[data-fm-when]');
+    const sk = (w, cls) => '<i class="skel' + (cls ? ' ' + cls : '') + '"' + (w ? ' style="width:' + w + '%"' : '') + '></i>';
+    const frame = (title, body) => '<div class="app-frame fm-frame"><div class="app-bar"><span>' + title + '</span><button class="btn btn-ghost cs-sm" type="button" data-re>Reload</button></div><div class="app-body skf-body" data-body>' + body + '</div></div>';
+    const loading = (what, html) => '<span class="skf-vh">Loading ' + what + '…</span><div aria-hidden="true">' + html + '</div>';
+    const mail = [['Maya Chen', 'Dinner on Friday?', ''], ['Airline', 'Your boarding pass for LIS', 'b'], ['Sam Ortiz', 'Photos from the weekend', 'c'], ['Bank', 'Your statement is ready', 'd']];
+    const F = {
+      grid: {
+        title: 'Lisbon trip',
+        skel: loading('photos', '<div class="skf-grid">' + sk().repeat(6) + '</div>'),
+        real: '<div class="skf-grid">' + ['', ' b', ' c', ' b', '', ' c'].map((c, i) => '<div class="thumb' + c + '" role="img" aria-label="Photo ' + (i + 1) + '"></div>').join('') + '</div>',
+        use: 'Use it for photos, products or videos, with one box for each tile.',
+        more: 'Give the boxes the size of the real tiles, so nothing shifts when they fill in.'
+      },
+      list: {
+        title: 'Inbox',
+        skel: loading('messages', '<div class="skf-list">' + ('<div class="skf-row">' + sk() + sk(38) + sk(78) + '</div>').repeat(4) + '</div>'),
+        real: '<div class="skf-list">' + mail.map(m => '<div class="skf-row"><i class="skf-av ' + m[2] + '"></i><b>' + m[0] + '</b><span>' + m[1] + '</span></div>').join('') + '</div>',
+        use: 'Use it for rows like messages, songs or orders.',
+        more: 'Show as many rows as fit on the screen, not one for every item that might come.'
+      },
+      text: {
+        title: 'Travel journal',
+        skel: loading('the article', '<div class="skf-text"><div class="skf-h">' + sk() + '</div><div class="skf-meta">' + sk() + '</div><div class="skf-lines">' + sk(100) + sk(96) + sk(98) + sk(64) + '</div></div>'),
+        real: '<div class="skf-text"><div class="skf-h">How to pack for a week in one bag</div><div class="skf-meta">6 min read</div><p class="skf-p">Start with the shoes, because they take the most room. Pick one pair you can walk in all day and wear the heavier pair on the plane. Then roll your clothes instead of folding them, and put the things you need first on top. Leave a little space for what you bring home.</p></div>',
+        use: 'Use it for an article, a description or a review.',
+        more: 'Vary the line lengths and end on a short line, so it reads as a paragraph.'
+      },
+      value: {
+        title: 'Banking',
+        skel: '<div class="skf-acct"><b>Everyday account</b><span>Available balance</span></div><div class="skf-val"><span class="skf-vh">Loading balance…</span>' + '<i class="skel" aria-hidden="true"></i></div><div class="skf-acts"><button class="btn btn-secondary cs-sm" type="button">Move money</button><button class="btn btn-secondary cs-sm" type="button">Pay someone</button></div>',
+        real: '<div class="skf-acct"><b>Everyday account</b><span>Available balance</span></div><div class="skf-val">£2,481.20</div><div class="skf-acts"><button class="btn btn-secondary cs-sm" type="button">Move money</button><button class="btn btn-secondary cs-sm" type="button">Pay someone</button></div>',
+        use: 'Use it when the page is ready but one number or name is still on its way.',
+        more: 'Size it like the real value, so the text around it stays put.'
+      }
+    };
+    let gen = 0, cur = 'grid';
+    const load = () => {
+      const g = ++gen, body = stage.querySelector('[data-body]');
+      body.setAttribute('aria-busy', 'true'); body.innerHTML = F[cur].skel;
+      setTimeout(() => { if (g !== gen) return; body.innerHTML = F[cur].real; body.removeAttribute('aria-busy'); }, 1600);
+    };
+    const show = k => {
+      cur = k;
+      stage.innerHTML = frame(F[k].title, '');
+      stage.querySelector('[data-re]').addEventListener('click', load);
+      load();
+      when.innerHTML = '<b>' + fm.querySelector('.fm-seg input:checked + label').textContent + '.</b> ' + F[k].use + ' ' + F[k].more;
+    };
+    fm.querySelectorAll('.fm-seg input').forEach(i => i.addEventListener('change', () => show(i.value)));
+    show('grid');
+  })();
+  </script>
+</div>

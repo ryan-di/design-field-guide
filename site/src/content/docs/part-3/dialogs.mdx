@@ -1,0 +1,237 @@
+---
+title: "Dialogs & panels"
+description: "A dialog blocks the page until people answer."
+eyebrow: "Chapter 19"
+sidebar:
+  label: "Dialogs & panels"
+---
+
+import Raw from '../../../components/Raw.astro';
+import Learned from '../../../components/Learned.astro';
+import Runtime from '../../../components/Runtime.astro';
+import F0 from '../../../fragments/ch-dialogs/0.html?raw';
+import F1 from '../../../fragments/ch-dialogs/1.html?raw';
+import F2 from '../../../fragments/ch-dialogs/2.html?raw';
+import F3 from '../../../fragments/ch-dialogs/3.html?raw';
+import F4 from '../../../fragments/ch-dialogs/4.html?raw';
+import F5 from '../../../fragments/ch-dialogs/5.html?raw';
+import F6 from '../../../fragments/ch-dialogs/6.html?raw';
+import F7 from '../../../fragments/ch-dialogs/7.html?raw';
+import F8 from '../../../fragments/ch-dialogs/8.html?raw';
+import F9 from '../../../fragments/ch-dialogs/9.html?raw';
+import F10 from '../../../fragments/ch-dialogs/10.html?raw';
+import F11 from '../../../fragments/ch-dialogs/11.html?raw';
+import F12 from '../../../fragments/ch-dialogs/12.html?raw';
+import F13 from '../../../fragments/ch-dialogs/13.html?raw';
+import F14 from '../../../fragments/ch-dialogs/14.html?raw';
+import F15 from '../../../fragments/ch-dialogs/15.html?raw';
+import F16 from '../../../fragments/ch-dialogs/16.html?raw';
+
+<Runtime at="start" />
+
+<section class="dfg-chapter" id="ch-dialogs">
+
+A dialog blocks the page until people answer. A side panel usually leaves the page usable, and only its modal form blocks it. Block the page only for a decision or task that has to come first.
+
+<article class="entry essay" id="dialog" data-entry data-name="Dialog">
+
+<div class="entry-head">
+
+## Dialog \{#dialog-h\}
+
+<Learned id="dialog" />
+
+</div>
+
+A dialog is a box that opens over the page and asks the person something. The page behind it is dimmed and can’t be used until they answer. Use it for a decision they have to make before they go on, such as deleting something for good.
+
+A [popover](/part-3/overlays/#popover) also opens over the page, but a click anywhere else closes it.
+
+<Raw html={F0} />
+
+### Forms \{#dialog-forms\}
+
+Dialogs come in four common forms, set by what they ask for: a confirmation, a choice about unsaved work, a short form and a notice. They differ in how many buttons they have and which button gets focus first.
+
+<Raw html={F1} />
+
+### Rules \{#dialog-rules\}
+
+Five rules keep dialogs useful.
+
+<div class="cs essay-cs">
+
+<section class="rule" id="dialog-rule-1">
+
+#### 1. Don’t use it for news \{#dialog-rule-1-h\}
+
+People open an app to do something, like read their mail, so a box with news or a tip stands in their way, and most close it without reading. Put the news where people can open it when they want, such as a “What’s new” entry or a short note they can close. They can read it now, later or never, and the mail works right away.
+
+<Raw html={F2} />
+
+</section>
+
+<section class="rule" id="dialog-rule-2">
+
+#### 2. Offer Undo instead of asking \{#dialog-rule-2-h\}
+
+If every action asks “Are you sure?”, people learn to press OK without reading, so the one time it matters, the dialog doesn’t protect them. Let actions that can be undone happen at once, and offer Undo. Keep the dialog for the rare action that can’t be undone, and say what will be lost.
+
+<Raw html={F3} />
+
+</section>
+
+<section class="rule" id="dialog-rule-3">
+
+#### 3. Give long tasks a page or a panel \{#dialog-rule-3-h\}
+
+A dialog is a small box that covers the page, so a long form inside it hides what people need to look at, like the chart behind it. To check a number they have to close the dialog, and they lose what they typed. A page or a side panel gives them room to scroll and look things up, and keeps what they entered.
+
+<Raw html={F4} />
+
+</section>
+
+<section class="rule" id="dialog-rule-4">
+
+#### 4. Name the action on each button \{#dialog-rule-4-h\}
+
+“OK” and “Cancel” don’t say what will happen. When someone leaves a photo they were cropping, “Cancel” could mean cancel the crop or cancel leaving, so people have to read the whole question, and many guess wrong. When each button names its action, the buttons alone answer the question, and the one that throws work away stands out.
+
+<Raw html={F5} />
+
+</section>
+
+<section class="rule" id="dialog-rule-5">
+
+#### 5. Don’t open it on load \{#dialog-rule-5-h\}
+
+A dialog that opens with the app stands between people and what they came for. They haven’t done anything yet, so they close it unread. Ask at the moment it matters, like after they press Download, when the question is about what they just asked for and they read it.
+
+<Raw html={F6} />
+
+</section>
+
+<Raw html={F7} />
+
+</div>
+
+### In real products \{#dialog-products\}
+
+<Raw html={F8} />
+
+</article>
+
+<article class="entry essay" id="side-panel" data-entry data-name="Side panel">
+
+<div class="entry-head">
+
+## Side panel \{#side-panel-h\}
+
+<Learned id="side-panel" />
+
+</div>
+
+A side panel opens along the left or right edge of the screen. It holds a second task next to the main view, such as comments on a doc, the details of a photo or search filters. In most forms, people can keep using the main view while it’s open.
+
+Unlike a [dialog](#dialog), it shares the screen, so people can look at both and move between them.
+
+<Raw html={F9} />
+
+### Forms \{#side-panel-forms\}
+
+Side panels come in three forms, which differ in what happens to the page: a docked panel makes it narrower, an overlay panel covers its edge, and a modal panel dims it and blocks it.
+
+<Raw html={F10} />
+
+### Rules \{#side-panel-rules\}
+
+Four rules keep side panels useful.
+
+<div class="cs essay-cs">
+
+<section class="rule" id="side-panel-rule-1">
+
+#### 1. Give the main task the full width \{#side-panel-rule-1-h\}
+
+A panel is narrow, which is fine for a side task. When the task in it becomes the main job, like writing a long reply, lines wrap every few words and the draft is hard to read back. Give that task a full page or a mode of its own, with a clear way back.
+
+<Raw html={F11} />
+
+</section>
+
+<section class="rule" id="side-panel-rule-2">
+
+#### 2. Use the whole screen on phones \{#side-panel-rule-2-h\}
+
+On a phone, a side panel takes half the screen, so the page next to it shrinks to a sliver and neither half is big enough to use. Let the panel cover the whole screen while people choose, with a clear Close or Back. When they’re done, the page comes back at full size.
+
+<Raw html={F12} />
+
+</section>
+
+<section class="rule" id="side-panel-rule-3">
+
+#### 3. Keep one panel per side \{#side-panel-rule-3-h\}
+
+Each panel takes another slice of the screen, so with three open, the document people are editing becomes a thin strip. Allow one panel on each side, and use tabs inside it for the rest. Switching tabs changes what’s in the panel, and the document keeps its room.
+
+<Raw html={F13} />
+
+</section>
+
+<section class="rule" id="side-panel-rule-4">
+
+#### 4. Don’t dim a page people still use \{#side-panel-rule-4-h\}
+
+A dimmed page tells people it’s off-limits, so they don’t think to click the photos behind the panel, and if they do, the click only closes it. If the page is meant to stay usable, keep it bright and clickable, so picking another photo updates the panel in place.
+
+<Raw html={F14} />
+
+</section>
+
+<Raw html={F15} />
+
+</div>
+
+### In real products \{#side-panel-products\}
+
+<Raw html={F16} />
+
+</article>
+
+<aside class="in-short" id="ch-dialogs-in-short" aria-labelledby="ch-dialogs-in-short-h" data-pagefind-ignore>
+
+## In short \{#ch-dialogs-in-short-h\}
+
+<div class="is-grid">
+
+<div>
+
+<a class="is-e" href="#dialog">Dialog</a>
+
+1. [Don’t use it for news](#dialog-rule-1)
+2. [Offer Undo instead of asking](#dialog-rule-2)
+3. [Give long tasks a page or a panel](#dialog-rule-3)
+4. [Name the action on each button](#dialog-rule-4)
+5. [Don’t open it on load](#dialog-rule-5)
+
+</div>
+
+<div>
+
+<a class="is-e" href="#side-panel">Side panel</a>
+
+1. [Give the main task the full width](#side-panel-rule-1)
+2. [Use the whole screen on phones](#side-panel-rule-2)
+3. [Keep one panel per side](#side-panel-rule-3)
+4. [Don’t dim a page people still use](#side-panel-rule-4)
+
+</div>
+
+</div>
+
+</aside>
+
+</section>
+
+<Runtime chapter="ch-dialogs" />

@@ -1,0 +1,20 @@
+<div class="stage tall" data-demo="stepper">
+      <form class="wizard surface">
+        <ol class="steps" data-steps>
+          <li aria-current="step"><span class="n">1</span>Choose design</li>
+          <li><span class="n">2</span>Write message</li>
+          <li><span class="n">3</span>Send</li>
+        </ol>
+        <div class="panel" data-panel="0">
+          <label class="field" style="width:100%"><span class="field-label">Design</span><select class="select" id="d-wiz-model"><option>Birthday</option><option>Thank you</option><option>Congratulations</option></select></label>
+        </div>
+        <div class="panel" data-panel="1" hidden>
+          <label class="field" style="width:100%"><span class="field-label">Message</span><textarea class="input" id="d-wiz-prompt">Happy birthday, Sam! Enjoy your day.</textarea></label>
+        </div>
+        <div class="panel" data-panel="2" hidden>
+          <p data-summary style="font-size:14.5px"></p>
+        </div>
+        <div class="nav"><button class="btn btn-secondary" type="button" data-act="back" disabled>Back</button><button class="btn btn-primary" type="button" data-act="next">Next</button></div>
+      </form>
+      <p class="try"><b>Try it:</b> change the message, go Back, then Next again, and check that your message is still there.</p>
+    </div>

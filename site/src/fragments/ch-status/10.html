@@ -1,0 +1,109 @@
+<div class="fm" data-fm>
+  <div class="seg fm-seg" role="radiogroup" aria-label="Form">
+    <input type="radio" name="fm-pat-optimistic-ui" id="fm-pat-optimistic-ui-1" value="toggle" checked><label for="fm-pat-optimistic-ui-1">Toggle</label>
+    <input type="radio" name="fm-pat-optimistic-ui" id="fm-pat-optimistic-ui-2" value="add"><label for="fm-pat-optimistic-ui-2">New item</label>
+    <input type="radio" name="fm-pat-optimistic-ui" id="fm-pat-optimistic-ui-3" value="move"><label for="fm-pat-optimistic-ui-3">Move</label>
+    <input type="radio" name="fm-pat-optimistic-ui" id="fm-pat-optimistic-ui-4" value="rename"><label for="fm-pat-optimistic-ui-4">Rename</label>
+  </div>
+  <div class="fm-stage" data-fm-stage></div>
+  <p class="fig-cap" data-fm-when aria-live="polite"></p>
+  
+  <script>
+  (() => {
+    const fm = document.currentScript.closest('[data-fm]'), stage = fm.querySelector('[data-fm-stage]'), when = fm.querySelector('[data-fm-when]');
+    const heart = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 20s-7.5-4.6-7.5-10A4.3 4.3 0 0 1 12 7.4 4.3 4.3 0 0 1 19.5 10C19.5 15.4 12 20 12 20z"/></svg>';
+    const failBox = '<label class="check fo-fail"><input type="checkbox" data-fail> Make the next request fail</label>';
+    let gen = 0;
+    const later = (fn, ms) => { const g = gen; setTimeout(() => { if (g === gen) fn(); }, ms); };
+    const request = (s, ok, bad) => { const f = s.querySelector('[data-fail]'), fails = f.checked; if (fails) f.checked = false; later(fails ? bad : ok, 900); };
+    const flash = el => { el.classList.remove('rolled'); void el.offsetWidth; el.classList.add('rolled'); };
+    const errLine = (box, text, retry) => {
+      box.innerHTML = ''; const sp = document.createElement('span'); sp.textContent = text; box.appendChild(sp);
+      const b = document.createElement('button'); b.type = 'button'; b.className = 'btn btn-secondary'; b.textContent = 'Retry';
+      b.addEventListener('click', () => { box.innerHTML = ''; retry(); }); box.appendChild(b);
+    };
+    const F = {
+      toggle: {
+        html: '<div class="app-frame fo-app"><div class="app-bar"><span>Playlist · Morning</span></div><div class="app-body" style="gap:0">' +
+          [['Here Comes the Sun', 'The Beatles'], ['Dreams', 'Fleetwood Mac'], ['Holocene', 'Bon Iver']].map(x => '<div class="fo-row"><span class="grow"><b>' + x[0] + '</b><span class="cs-meta">' + x[1] + '</span></span><button class="icon-btn fo-like" type="button" aria-pressed="false" aria-label="Like ' + x[0] + '">' + heart + '</button></div>').join('') +
+          '<p class="fo-err" data-err role="status"></p></div></div>' + failBox,
+        use: 'Use it for on and off actions, such as liking a song. The heart fills the moment it’s tapped. If saving fails, it empties again on that row, with a reason and Retry.',
+        wire: s => {
+          const err = s.querySelector('[data-err]');
+          s.querySelectorAll('.fo-like').forEach(b => {
+            const go = want => {
+              b.setAttribute('aria-pressed', String(want)); err.innerHTML = '';
+              request(s, () => {}, () => { b.setAttribute('aria-pressed', String(!want)); flash(b.closest('.fo-row')); errLine(err, 'Couldn’t ' + (want ? 'like' : 'unlike') + ' “' + b.getAttribute('aria-label').slice(5) + '”.', () => go(want)); });
+            };
+            b.addEventListener('click', () => go(b.getAttribute('aria-pressed') !== 'true'));
+          });
+        }
+      },
+      add: {
+        html: '<div class="app-frame fo-app"><div class="app-bar"><span>Sam</span></div><div class="fo-chat" data-chat><span class="fo-b in">Are we still on for 6?</span></div><div class="fo-send"><input class="input" value="Yes, see you there" aria-label="Message" data-in><button class="btn btn-primary cs-sm" type="button" data-send>Send</button></div></div>' + failBox,
+        use: 'Use it when people add something, such as a message. It appears in the list at once, slightly faded until it’s saved. If it fails, it stays in place, marked “Not sent”, with Retry.',
+        wire: s => {
+          const chat = s.querySelector('[data-chat]'), input = s.querySelector('[data-in]');
+          const send = (text, b, meta) => {
+            b.classList.add('wait'); meta.className = 'fo-meta'; meta.textContent = 'Sending…';
+            request(s, () => { b.classList.remove('wait'); meta.textContent = 'Delivered'; }, () => {
+              meta.className = 'fo-meta bad'; meta.textContent = 'Not sent. ';
+              const r = document.createElement('button'); r.type = 'button'; r.className = 'btn btn-secondary'; r.textContent = 'Retry';
+              r.addEventListener('click', () => send(text, b, meta)); meta.appendChild(r);
+            });
+          };
+          s.querySelector('[data-send]').addEventListener('click', () => {
+            const text = input.value.trim(); if (!text) return;
+            const b = document.createElement('span'); b.className = 'fo-b out'; b.textContent = text;
+            const meta = document.createElement('span'); chat.append(b, meta); input.value = '';
+            send(text, b, meta);
+          });
+        }
+      },
+      move: {
+        html: '<div class="app-frame fo-app"><div class="app-bar"><span>Home projects</span></div><div class="fo-board"><div class="fo-col" data-col="todo"><b>To do</b></div><div class="fo-col" data-col="done"><b>Done</b></div></div><p class="fo-err" data-err role="status" style="margin:0 10px 10px"></p></div>' + failBox,
+        use: 'Use it when people move something, such as a task to Done. The card moves at once. If saving fails, it moves back to where it was, and a line under the board says so.',
+        wire: s => {
+          const cols = { todo: s.querySelector('[data-col="todo"]'), done: s.querySelector('[data-col="done"]') }, err = s.querySelector('[data-err]');
+          const card = (name, where) => {
+            const c = document.createElement('div'); c.className = 'fo-card';
+            const b = document.createElement('button'); b.type = 'button'; b.className = 'btn btn-secondary';
+            c.append(name, b);
+            const place = w => { cols[w].appendChild(c); b.textContent = w === 'todo' ? 'Move to Done' : 'Move back'; b.setAttribute('aria-label', b.textContent + ': ' + name); };
+            const go = to => {
+              const from = to === 'done' ? 'todo' : 'done';
+              place(to); err.innerHTML = ''; b.focus();
+              request(s, () => {}, () => { place(from); flash(cols[from]); b.focus(); errLine(err, 'Couldn’t move “' + name + '”. It’s back in ' + (from === 'todo' ? 'To do' : 'Done') + '.', () => go(to)); });
+            };
+            b.addEventListener('click', () => go(c.parentElement === cols.todo ? 'done' : 'todo'));
+            place(where);
+          };
+          card('Paint the fence', 'todo'); card('Fix the tap', 'todo'); card('Clean gutters', 'done');
+        }
+      },
+      rename: {
+        html: '<div class="app-frame fo-app"><div class="app-bar"><span>Photos</span></div><div class="app-body fo-alb"><span class="fo-name" data-name>Summer</span><div class="thumbs"><i class="thumb"></i><i class="thumb b"></i><i class="thumb c"></i></div>' +
+          '<div class="fo-ren"><input class="input" value="Lisbon, July" aria-label="Album name" data-in><button class="btn btn-secondary cs-sm" type="button" data-go>Rename</button></div><p class="fo-err" data-err role="status"></p></div></div>' + failBox,
+        use: 'Use it when people edit text, such as an album name. The new name shows at once. If saving fails, the old name comes back and the typed name stays in the field, so nothing is lost.',
+        wire: s => {
+          const name = s.querySelector('[data-name]'), input = s.querySelector('[data-in]'), err = s.querySelector('[data-err]');
+          let saved = 'Summer';
+          const go = () => {
+            const want = input.value.trim(); if (!want) return;
+            name.textContent = want; err.innerHTML = '';
+            request(s, () => { saved = want; }, () => { name.textContent = saved; flash(name); input.value = want; errLine(err, 'Couldn’t rename the album. It’s still “' + saved + '”.', go); });
+          };
+          s.querySelector('[data-go]').addEventListener('click', go);
+        }
+      }
+    };
+    const show = k => {
+      gen++;
+      stage.innerHTML = F[k].html; F[k].wire(stage);
+      when.innerHTML = '<b>' + fm.querySelector('.fm-seg input:checked + label').textContent + '.</b> ' + F[k].use;
+    };
+    fm.querySelectorAll('.fm-seg input').forEach(i => i.addEventListener('change', () => show(i.value)));
+    show('toggle');
+  })();
+  </script>
+</div>

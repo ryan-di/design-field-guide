@@ -1,0 +1,109 @@
+<div class="fm" data-fm>
+  <div class="seg fm-seg" role="radiogroup" aria-label="Way">
+    <input type="radio" name="fm-pat-search-filters" id="fm-pat-search-filters-1" value="chips" checked><label for="fm-pat-search-filters-1">Filter chips</label>
+    <input type="radio" name="fm-pat-search-filters" id="fm-pat-search-filters-2" value="panel"><label for="fm-pat-search-filters-2">Filter panel</label>
+    <input type="radio" name="fm-pat-search-filters" id="fm-pat-search-filters-3" value="scope"><label for="fm-pat-search-filters-3">Search scope</label>
+    <input type="radio" name="fm-pat-search-filters" id="fm-pat-search-filters-4" value="recent"><label for="fm-pat-search-filters-4">Recents and suggestions</label>
+  </div>
+  <div class="fm-stage" data-fm-stage></div>
+  <p class="fig-cap" data-fm-when aria-live="polite"></p>
+  
+  <script>
+  (() => {
+    const fm = document.currentScript.closest('[data-fm]'), stage = fm.querySelector('[data-fm-stage]'), when = fm.querySelector('[data-fm-when]');
+    const icon = n => '<svg class="icon sm" aria-hidden="true"><use href="#i-' + n + '"/></svg>';
+    const qbox = (ph, v) => '<div class="sff-q">' + icon('search') + '<input class="input" type="search" aria-label="' + ph + '" placeholder="' + ph + '" value="' + (v || '') + '" autocomplete="off" spellcheck="false" data-q></div>';
+    const frame = (title, body) => '<div class="app-frame sff-frame"><div class="app-bar"><span>' + title + '</span></div><div class="app-body">' + body + '</div></div>';
+    const row = (a, b, c) => '<div class="cs-row"><span class="grow"><b>' + a + '</b>' + (b ? '<br><span class="cs-meta">' + b + '</span>' : '') + '</span>' + (c || '') + '</div>';
+    const EVENTS = [['Park cinema', 'Sat 20:00', ['free', 'out']], ['Farmers’ market', 'Sat 9:00', ['free', 'out', 'kids']], ['Jazz night', 'Sat 21:30', []], ['Puppet show', 'Sun 11:00', ['kids']], ['River walk tour', 'Sun 10:00', ['out']], ['Book swap', 'Sun 15:00', ['free', 'kids']]];
+    const LAPTOPS = [['Aster 13', 'aster', '13', 849], ['Aster 14 Pro', 'aster', '14', 1299], ['Aster 16', 'aster', '16', 1099], ['Novo Air', 'novo', '13', 999], ['Novo 14', 'novo', '14', 899]];
+    const FACETS = [['Brand', [['aster', 'Aster', l => l[1] === 'aster'], ['novo', 'Novo', l => l[1] === 'novo']]], ['Screen', [['13', '13 inch', l => l[2] === '13'], ['14', '14 inch', l => l[2] === '14'], ['16', '16 inch', l => l[2] === '16']]], ['Price', [['u1000', 'Under €1,000', l => l[3] < 1000]]]];
+    const MAIL = [['Invoice for October', 'Corner Café', 'Inbox'], ['Your invoice is ready', 'Phone company', 'Archive'], ['Invoice #2291', 'Print shop', 'Archive'], ['Re: invoice question', 'Sam', 'Sent']];
+    const PLACES = [['Home', 'Rua da Rosa 12', 1], ['Café Lua', 'Bairro Alto', 1], ['Lisbon airport', 'Terminal 1', 1], ['Casa Azul hotel', 'Alfama', 0], ['Cais do Sodré station', 'Train station', 0], ['Castelo de São Jorge', 'Castle', 0]];
+    const F = {
+      chips: {
+        html: frame('Events this weekend', '<div class="sff-chips">' + [['free', 'Free'], ['out', 'Outdoors'], ['kids', 'For kids']].map(c => '<button type="button" class="sff-chip" aria-pressed="false" data-k="' + c[0] + '">' + c[1] + '</button>').join('') + '</div><p class="sff-count" data-count></p><div data-res></div>'),
+        use: 'A row of toggles above the list.',
+        close: 'Use it for three to five filters that people use often.',
+        wire: s => {
+          const chips = Array.from(s.querySelectorAll('[data-k]')), res = s.querySelector('[data-res]'), count = s.querySelector('[data-count]');
+          const draw = () => {
+            const k = chips.filter(c => c.getAttribute('aria-pressed') === 'true').map(c => c.dataset.k);
+            const shown = EVENTS.filter(e => k.every(x => e[2].includes(x)));
+            count.textContent = shown.length + ' of ' + EVENTS.length + ' events';
+            res.innerHTML = shown.map(e => row(e[0], e[1])).join('');
+          };
+          chips.forEach(c => c.addEventListener('click', () => { c.setAttribute('aria-pressed', String(c.getAttribute('aria-pressed') !== 'true')); draw(); }));
+          draw();
+        }
+      },
+      panel: {
+        html: frame('Laptops', '<div class="sff-split"><div class="sff-facets" data-facets></div><div><p class="sff-count" data-count></p><div data-res></div></div></div>'),
+        use: 'Groups of checkboxes, each with a count of the items it matches.',
+        close: 'Use it for long lists with many ways to sort, like a shop.',
+        wire: s => {
+          const box = s.querySelector('[data-facets]'), res = s.querySelector('[data-res]'), count = s.querySelector('[data-count]');
+          const on = new Set();
+          const test = (l, set) => FACETS.every(g => { const act = g[1].filter(o => set.has(o[0])); return !act.length || act.some(o => o[2](l)); });
+          const draw = focusKey => {
+            box.innerHTML = FACETS.map(g => '<b>' + g[0] + '</b>' + g[1].map(o => {
+              const rest = new Set(Array.from(on).filter(k => !g[1].some(x => x[0] === k)));
+              const n = LAPTOPS.filter(l => o[2](l) && test(l, rest)).length;
+              return '<label class="check' + (n ? '' : ' zero') + '"><input type="checkbox" data-k="' + o[0] + '"' + (on.has(o[0]) ? ' checked' : '') + '>' + o[1] + ' <small>(' + n + ')</small></label>';
+            }).join('')).join('');
+            const shown = LAPTOPS.filter(l => test(l, on));
+            count.textContent = shown.length + ' laptops';
+            res.innerHTML = shown.map(l => row(l[0], l[2] + ' inch', '<span>€' + l[3].toLocaleString('en') + '</span>')).join('');
+            box.querySelectorAll('[data-k]').forEach(i => i.addEventListener('change', () => { if (i.checked) on.add(i.dataset.k); else on.delete(i.dataset.k); draw(i.dataset.k); }));
+            if (focusKey) box.querySelector('[data-k="' + focusKey + '"]').focus({ preventScroll: true });
+          };
+          draw();
+        }
+      },
+      scope: {
+        html: frame('Mail', qbox('Search mail', 'invoice') + '<div class="seg" role="radiogroup" aria-label="Search in"><input type="radio" name="sff-scope" value="in" checked data-sc><label data-for="in">Inbox</label><input type="radio" name="sff-scope" value="all" data-sc><label data-for="all">All mail</label></div><p class="sff-count" data-count></p><div data-res></div>'),
+        use: 'A choice of where to search, like this folder or everywhere.',
+        close: 'Show which scope is on, and offer the wider one when the narrow one finds little.',
+        wire: s => {
+          const q = s.querySelector('[data-q]'), res = s.querySelector('[data-res]'), count = s.querySelector('[data-count]'), sc = Array.from(s.querySelectorAll('[data-sc]'));
+          s.querySelectorAll('label[data-for]').forEach(l => l.addEventListener('click', () => { const r = sc.find(x => x.value === l.dataset.for); r.checked = true; r.focus({ preventScroll: true }); draw(); }));
+          const draw = () => {
+            const all = sc[1].checked, t = q.value.trim().toLowerCase();
+            const hits = MAIL.filter(m => (!t || (m[0] + ' ' + m[1]).toLowerCase().includes(t)));
+            const shown = hits.filter(m => all || m[2] === 'Inbox'), more = hits.length - shown.length;
+            count.textContent = shown.length + ' in ' + (all ? 'all mail' : 'Inbox') + (more ? ' · ' + more + ' more in other folders' : '');
+            res.innerHTML = shown.map(m => row(m[0], m[1], '<span class="sff-tag">' + m[2] + '</span>')).join('') + (more ? '<button class="btn btn-secondary cs-sm" type="button" data-wide>Search all mail</button>' : '');
+            const w = res.querySelector('[data-wide]');
+            if (w) w.addEventListener('click', () => { sc[1].checked = true; draw(); sc[1].focus({ preventScroll: true }); });
+          };
+          q.addEventListener('input', draw); sc.forEach(r => r.addEventListener('change', draw));
+          draw();
+        }
+      },
+      recent: {
+        html: frame('Maps', qbox('Search places') + '<div class="sff-sug" data-res></div><p class="cs-ok" data-out></p>'),
+        use: 'Places from before show as soon as the box gets focus, and suggestions narrow as people type.',
+        close: 'Use it where people often come back to the same things.',
+        wire: s => {
+          const q = s.querySelector('[data-q]'), res = s.querySelector('[data-res]'), out = s.querySelector('[data-out]');
+          const it = (p, t) => '<button type="button" class="sff-it" data-p="' + p[0] + '">' + icon(p[2] ? 'home' : 'search') + '<span><b>' + p[0] + '</b></span><small>' + (t && p[2] ? 'Recent' : p[1]) + '</small></button>';
+          const draw = () => {
+            const t = q.value.trim().toLowerCase();
+            if (!t) res.innerHTML = '<span class="sec">Recent</span>' + PLACES.filter(p => p[2]).map(p => it(p, '')).join('');
+            else { const h = PLACES.filter(p => p[0].toLowerCase().includes(t)).sort((a, b) => b[2] - a[2]); res.innerHTML = '<span class="sec">Suggestions</span>' + (h.length ? h.map(p => it(p, t)).join('') : '<span class="sec">No places match.</span>'); }
+            res.querySelectorAll('[data-p]').forEach(b => b.addEventListener('click', () => { out.textContent = 'Directions to ' + b.dataset.p + '.'; }));
+          };
+          q.addEventListener('input', draw); q.addEventListener('focus', draw);
+          res.innerHTML = '<span class="sec">Click the search box.</span>';
+        }
+      }
+    };
+    const show = k => {
+      stage.innerHTML = F[k].html; F[k].wire(stage);
+      when.innerHTML = '<b>' + fm.querySelector('.fm-seg input:checked + label').textContent + '.</b> ' + F[k].use + ' ' + F[k].close;
+    };
+    fm.querySelectorAll('.fm-seg input').forEach(i => i.addEventListener('change', () => show(i.value)));
+    show('chips');
+  })();
+  </script>
+</div>

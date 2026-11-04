@@ -1,0 +1,46 @@
+<div class="note comfy cw-wrap">
+      <div class="seg cw-seg" role="radiogroup" aria-label="Example">
+        <input type="radio" name="cw-pat-version-history-w" id="cw-pat-version-history-w-1" value="gdocs" checked><label for="cw-pat-version-history-w-1">Google Docs</label>
+        <input type="radio" name="cw-pat-version-history-w" id="cw-pat-version-history-w-2" value="figma"><label for="cw-pat-version-history-w-2">Figma</label>
+        <input type="radio" name="cw-pat-version-history-w" id="cw-pat-version-history-w-3" value="github"><label for="cw-pat-version-history-w-3">GitHub</label>
+        <input type="radio" name="cw-pat-version-history-w" id="cw-pat-version-history-w-4" value="photos"><label for="cw-pat-version-history-w-4">iPhone Photos</label>
+      </div>
+      <div class="cw" data-cw-view role="img" aria-label=""></div>
+      <p class="cw-cap" data-cw-cap aria-live="polite"></p>
+      
+      <script>
+      (() => {
+        const wrap = document.currentScript.closest('.cw-wrap');
+        const view = wrap.querySelector('[data-cw-view]'), cap = wrap.querySelector('[data-cw-cap]');
+        const line = w => '<i class="cw-line" style="width:' + w + '%"></i>';
+        const v = (title, meta, cls, dot) => '<div class="cw-vhis-v ' + (cls || '') + '"><b>' + title + '</b><small><i class="' + (dot || '') + '"></i>' + meta + '</small></div>';
+        const t = (cls, days) => '<span class="cw-vhis-t"><i class="thumb ' + cls + '"></i><em>' + days + '</em></span>';
+        const S = {
+          gdocs: { html: '<div class="cw-vhis-win"><div class="cw-vhis-bar"><b>Yesterday, 18:05</b><span class="btn btn-primary">Restore this version</span></div>' +
+              '<div class="cw-vhis-docs"><div class="cw-vhis-page">' + line(70) + line(94) + '<mark style="width:82%"></mark>' + line(88) + line(60) + '</div>' +
+              '<div class="cw-vhis-list">' + v('Today, 10:42', 'Current version · Ana') + v('Final draft', 'Yesterday, 18:05 · Ben', 'on named', 'b') + v('Yesterday, 14:20', 'Ana') + v('Mar 3, 09:12', 'Ben', '', 'b') + '</div></div></div>',
+            alt: 'A version history panel lists versions with times and authors. A named one, Final draft, is selected, and the page shows its text with one changed line highlighted. Restore this version sits at the top.',
+            cap: 'Google Docs: version history lists versions by time and author, and important ones can be named. Restoring one adds it as the newest version, so later edits stay in the list.' },
+          figma: { html: '<div class="cw-vhis-win"><div class="cw-vhis-fg"><b>Save to version history</b>' +
+              '<span class="cw-vhis-lab">Title<span class="cw-vhis-in focus">Before the new header</span></span>' +
+              '<span class="cw-vhis-lab">Description<span class="cw-vhis-in area">Old header with three tabs, kept for comparison.</span></span>' +
+              '<span class="cw-vhis-acts"><span class="btn btn-secondary">Cancel</span><span class="btn btn-primary">Save</span></span></div></div>',
+            alt: 'A small dialog, Save to version history, with a title field, Before the new header, a description field, and Cancel and Save buttons.',
+            cap: 'Figma: besides automatic saves, people can save a version with a title and a short description. The history then reads as named milestones, not just times.' },
+          github: { html: '<div class="cw-vhis-win"><div class="cw-vhis-gh"><div class="cw-vhis-pr"><b>Add an upscale step</b><span class="cw-vhis-row"><span class="cw-vhis-pill">Merged</span>into main<span class="btn btn-secondary">Revert</span></span></div>' +
+              '<span class="cw-vhis-arrow"><svg class="icon sm" viewBox="0 0 24 24"><path d="M12 5v14M6 13l6 6 6-6"/></svg>opens a new pull request</span>' +
+              '<div class="cw-vhis-pr cw-vhis-new"><b>Revert “Add an upscale step”</b><span class="cw-vhis-row"><span class="cw-vhis-pill open">Open</span>into main</span></div></div></div>',
+            alt: 'A merged pull request, Add an upscale step, with a Revert button. An arrow points to a new open pull request titled Revert Add an upscale step.',
+            cap: 'GitHub: a merged pull request has a Revert button. It opens a new pull request that undoes the change, so the history keeps both.' },
+          photos: { html: '<div class="cw-vhis-phone"><div class="cw-vhis-ph"><b>Recently Deleted</b><span>Select</span></div>' +
+              '<div class="cw-vhis-grid">' + t('', '29 days') + t('b', '29 days') + t('c', '14 days') + t('b', '6 days') + t('c', '2 days') + t('', '1 day') + '</div>' +
+              '<span class="cw-vhis-note">Removed for good when the days run out</span></div>',
+            alt: 'A phone album called Recently Deleted. Each photo shows how many days it has left, from 29 days down to 1 day.',
+            cap: 'iPhone Photos: deleted photos wait in Recently Deleted, and each one shows how many days it has left before it’s gone for good.' }
+        };
+        const render = k => { view.innerHTML = S[k].html; view.setAttribute('aria-label', 'Sketch: ' + S[k].alt); cap.textContent = S[k].cap; };
+        wrap.querySelectorAll('input[name="cw-pat-version-history-w"]').forEach(r => r.addEventListener('change', () => render(r.value)));
+        render('gdocs');
+      })();
+      </script>
+    </div>

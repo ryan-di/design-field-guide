@@ -1,0 +1,75 @@
+<div class="stage tall" data-demo="pat-constraints">
+      <div class="seg" role="radiogroup" aria-label="Size setting version">
+        <input type="radio" name="p15-mode" id="p15-mode-free" value="free" checked><label for="p15-mode-free">Free text</label>
+        <input type="radio" name="p15-mode" id="p15-mode-con" value="con"><label for="p15-mode-con">Constrained</label>
+      </div>
+      <div class="form-card surface" data-panel="free">
+        <h5>Video size</h5>
+        <div class="p15-pair">
+          <div class="field">
+            <label class="field-label" for="p15-fw">Width</label>
+            <input class="input" id="p15-fw" inputmode="numeric" value="1024" autocomplete="off" aria-describedby="p15-fw-msg">
+            <p class="field-msg" id="p15-fw-msg" hidden><svg class="icon"><use href="#i-warn"/></svg><span></span></p>
+          </div>
+          <div class="field">
+            <label class="field-label" for="p15-fh">Height</label>
+            <input class="input" id="p15-fh" inputmode="numeric" value="750" autocomplete="off" aria-describedby="p15-fh-msg">
+            <p class="field-msg" id="p15-fh-msg" hidden><svg class="icon"><use href="#i-warn"/></svg><span></span></p>
+          </div>
+        </div>
+      </div>
+      <div class="form-card surface" data-panel="con" hidden>
+        <h5>Video size</h5>
+        <p class="field-help">Sizes are multiples of 8. Every option below already is one.</p>
+        <div class="p15-pair">
+          <div class="field">
+            <label class="field-label" for="p15-ratio">Aspect ratio</label>
+            <select class="select" id="p15-ratio">
+              <option value="1:1">1:1</option>
+              <option value="4:3" selected>4:3</option>
+              <option value="3:2">3:2</option>
+              <option value="16:9">16:9</option>
+              <option value="free">Free</option>
+            </select>
+          </div>
+          <div class="field">
+            <label class="field-label" for="p15-cw">Width</label>
+            <select class="select" id="p15-cw">
+              <option value="512">512</option>
+              <option value="640">640</option>
+              <option value="768">768</option>
+              <option value="896">896</option>
+              <option value="1024" selected>1024</option>
+              <option value="1280">1280</option>
+              <option value="1536">1536</option>
+              <option value="2048">2048</option>
+              <option value="custom">Custom…</option>
+            </select>
+          </div>
+        </div>
+        <div class="field p15-wide" data-height hidden>
+          <label class="field-label" for="p15-ch">Height</label>
+          <select class="select" id="p15-ch">
+            <option value="512">512</option>
+            <option value="640">640</option>
+            <option value="768" selected>768</option>
+            <option value="896">896</option>
+            <option value="1024">1024</option>
+            <option value="1280">1280</option>
+            <option value="1536">1536</option>
+            <option value="2048">2048</option>
+          </select>
+        </div>
+        <div class="field p15-wide" data-custom hidden>
+          <label class="field-label" for="p15-cw-custom">Custom width</label>
+          <input class="input" id="p15-cw-custom" inputmode="numeric" value="1000" autocomplete="off" aria-describedby="p15-cw-custom-help p15-cw-custom-msg">
+          <p class="field-help" id="p15-cw-custom-help">Any multiple of 8 from 256 to 4096. Other numbers snap to the nearest one.</p>
+          <p class="field-msg" id="p15-cw-custom-msg" hidden><svg class="icon"><use href="#i-warn"/></svg><span></span></p>
+        </div>
+      </div>
+      <div class="row">
+        <button class="btn btn-primary" type="button" data-act="run">Export video</button>
+      </div>
+      <p class="result" data-out aria-live="polite"></p>
+      <p class="try"><b>Try it:</b> in Free text, the height 750 is refused, and you only learn the rule from the error. Switch to Constrained, where every choice is already valid. Then pick Custom… for the width, type 1001 and press Tab: it rounds to 1000 and says so.</p>
+    </div>

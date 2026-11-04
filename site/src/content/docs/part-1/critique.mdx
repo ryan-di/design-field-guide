@@ -1,0 +1,315 @@
+---
+title: "Judge work against its goal"
+description: "Taste grows by judging work out loud."
+eyebrow: "Chapter 6"
+sidebar:
+  label: "Judge the work"
+---
+
+import Raw from '../../../components/Raw.astro';
+import Learned from '../../../components/Learned.astro';
+import Runtime from '../../../components/Runtime.astro';
+import F0 from '../../../fragments/ch-critique/0.html?raw';
+import F1 from '../../../fragments/ch-critique/1.html?raw';
+import F2 from '../../../fragments/ch-critique/2.html?raw';
+import F3 from '../../../fragments/ch-critique/3.html?raw';
+import F4 from '../../../fragments/ch-critique/4.html?raw';
+import F5 from '../../../fragments/ch-critique/5.html?raw';
+import F6 from '../../../fragments/ch-critique/6.html?raw';
+import F7 from '../../../fragments/ch-critique/7.html?raw';
+import F8 from '../../../fragments/ch-critique/8.html?raw';
+import F9 from '../../../fragments/ch-critique/9.html?raw';
+import F10 from '../../../fragments/ch-critique/10.html?raw';
+import F11 from '../../../fragments/ch-critique/11.html?raw';
+import F12 from '../../../fragments/ch-critique/12.html?raw';
+import F13 from '../../../fragments/ch-critique/13.html?raw';
+import F14 from '../../../fragments/ch-critique/14.html?raw';
+import F15 from '../../../fragments/ch-critique/15.html?raw';
+import F16 from '../../../fragments/ch-critique/16.html?raw';
+import F17 from '../../../fragments/ch-critique/17.html?raw';
+import F18 from '../../../fragments/ch-critique/18.html?raw';
+import F19 from '../../../fragments/ch-critique/19.html?raw';
+import F20 from '../../../fragments/ch-critique/20.html?raw';
+import F21 from '../../../fragments/ch-critique/21.html?raw';
+import F22 from '../../../fragments/ch-critique/22.html?raw';
+import F23 from '../../../fragments/ch-critique/23.html?raw';
+import F24 from '../../../fragments/ch-critique/24.html?raw';
+import F25 from '../../../fragments/ch-critique/25.html?raw';
+
+<Runtime at="start" />
+
+<section class="dfg-chapter" id="ch-critique">
+
+Taste grows by judging work out loud. Each time you say why something works or doesn’t, measured against what it’s for, your eye gets sharper. The three entries below are lenses for that judgment: a critique format that ties every comment to the goal, Nielsen’s ten heuristics for finding usability problems, and Dieter Rams’ ten principles for asking what good means. Try each one on your own work first.
+
+<article class="entry essay" id="good-critique" data-entry data-name="Critique against the goal">
+
+<div class="entry-head">
+
+## Critique against the goal \{#good-critique-h\}
+
+<Learned id="good-critique" />
+
+</div>
+
+A critique judges work against what it is for. It starts from the goal, says what serves the goal and what doesn’t, and only then suggests a fix, so the designer gets something to act on and still chooses the fix.
+
+That is what separates it from a reaction: “I don’t like it” says how you feel, not what to change. Put needs like access into the goal too, such as “works with a keyboard alone”, so a missing focus ring counts against the goal and nobody can wave it off as polish.
+
+<Raw html={F0} />
+
+### Kinds of critique \{#good-critique-kinds\}
+
+Work at different stages needs different feedback, so there is one kind of critique for each stage. Each kind wastes time when it comes at the wrong stage, so [ask which one is wanted](#good-critique-rule-3). If you can’t ask, go by how finished the work is.
+
+<Raw html={F1} />
+
+<Raw html={F2} />
+
+### Rules \{#good-critique-rules\}
+
+Four rules keep critique useful.
+
+<div class="cs essay-cs">
+
+<section class="rule" id="good-critique-rule-1">
+
+#### 1. Tie each comment to the goal \{#good-critique-rule-1-h\}
+
+“I don’t like it” leaves the designer guessing, so they either defend the design or change something at random. Say what the design does, or fails to do, for the people it’s for. A reaction is still useful as a clue: look closer at what caused it, then name that.
+
+<Raw html={F3} />
+
+</section>
+
+<section class="rule" id="good-critique-rule-2">
+
+#### 2. Name the problem before the fix \{#good-critique-rule-2-h\}
+
+“Make the button bigger” is a fix without a problem. The designer can only do it or argue, and the fix may not solve anything. Name the problem first, such as “people can’t find Checkout”, so the designer can judge your fix and may find a better one.
+
+<Raw html={F4} />
+
+</section>
+
+<section class="rule" id="good-critique-rule-3">
+
+#### 3. Ask what feedback is wanted first \{#good-critique-rule-3-h\}
+
+Notes on spacing and colors don’t help an early sketch, because the idea may still change and take the details with it. Ask first whether the designer wants feedback on direction, flow or polish. For early work, ask about the idea and leave the details for later.
+
+<Raw html={F5} />
+
+</section>
+
+<section class="rule" id="good-critique-rule-4">
+
+#### 4. Hear their read first \{#good-critique-rule-4-h\}
+
+When the reviewer speaks first, the designer’s view bends toward theirs: they defend the design or take every note, and the doubt they already had never comes up. Ask the designer what works for them and what worries them, then give your critique, and say where the two agree and where they don’t. The same goes for an agent’s review: get the designer’s read before you show it.
+
+<Raw html={F6} />
+
+</section>
+
+<Raw html={F7} />
+
+</div>
+
+### In real products \{#good-critique-products\}
+
+<Raw html={F8} />
+
+</article>
+
+<article class="entry essay" id="good-heuristic-review" data-entry data-name="Heuristic review">
+
+<div class="entry-head">
+
+## Heuristic review \{#good-heuristic-review-h\}
+
+<Learned id="good-heuristic-review" />
+
+</div>
+
+A heuristic review checks a design against a short list of rules of thumb. The best-known list is Jakob Nielsen’s ten usability heuristics. One person can run it in an hour, before anyone outside the team sees the design.
+
+It finds likely problems, not proven ones, which separates it from a usability test, where you watch real people use the design. The ten heuristics also leave out accessibility, so add a separate pass for keyboard, focus, contrast and screen readers.
+
+<Raw html={F9} />
+
+The dialog in the demo breaks six of the ten. Here are all ten, each with a question to ask and the entries that cover it.
+
+<Raw html={F10} />
+
+Then make the accessibility pass. A mock shows only some of it, so most of these checks need a running build.
+
+<Raw html={F11} />
+
+### Rules \{#good-heuristic-review-rules\}
+
+Four rules keep a heuristic review useful.
+
+<div class="cs essay-cs">
+
+<section class="rule" id="good-heuristic-review-rule-1">
+
+#### 1. Pair it with watching people \{#good-heuristic-review-rule-1-h\}
+
+A review finds what reviewers expect to go wrong, but real people trip over things no list predicts and breeze past some problems the review rated high. If the review is the only test, the team fixes guesses. [Watch a few people](/part-1/problem/#good-success-criteria) try the same flow, and let what they do decide which findings matter.
+
+<Raw html={F12} />
+
+</section>
+
+<section class="rule" id="good-heuristic-review-rule-2">
+
+#### 2. Ask three to five reviewers \{#good-heuristic-review-rule-2-h\}
+
+One reviewer finds only part of the problems, because each person notices different things. Ask three to five people to review on their own, then merge the lists. Past five, each new reviewer adds little. An agent’s review counts as another reviewer only if it looks through a different lens or runs on a different model, because one model asked twice repeats its own blind spots.
+
+<Raw html={F13} />
+
+</section>
+
+<section class="rule" id="good-heuristic-review-rule-3">
+
+#### 3. Rate each problem by severity \{#good-heuristic-review-rule-3-h\}
+
+A flat list of problems gives the team no order, so they fix the quick ones first and the problem that stops people from paying waits. Rate each problem from 0 to 4 and fix from the top. The rating weighs how many people hit the problem, how much it hurts and whether it gets in their way every time.
+
+<Raw html={F14} />
+
+<Raw html={F15} />
+
+</section>
+
+<section class="rule" id="good-heuristic-review-rule-4">
+
+#### 4. Say what a mock can’t show \{#good-heuristic-review-rule-4-h\}
+
+A review of a static mock can only judge what’s drawn. Timing, focus, screen readers and real data don’t show, so a clean review reads as a pass for things nobody checked. List what the mock can’t show next to the findings, and check those parts in a running build. The table shows what each stage of a [prototype](/part-4/explore/#eff-prototype-in-code) can show.
+
+<Raw html={F16} />
+
+<Raw html={F17} />
+
+</section>
+
+<Raw html={F18} />
+
+</div>
+
+### In real products \{#good-heuristic-review-products\}
+
+<Raw html={F19} />
+
+</article>
+
+<article class="entry essay" id="good-rams-principles" data-entry data-name="Rams’ principles">
+
+<div class="entry-head">
+
+## Rams’ ten principles \{#good-rams-principles-h\}
+
+<Learned id="good-rams-principles" />
+
+</div>
+
+Dieter Rams designed radios, record players and shelves for Braun and Vitsœ. His ten principles of good design are still among the most quoted in design. He summed them up as “Less, but better.”
+
+He wrote them about physical products, and in software they work best as questions to ask of a screen. The readings in the cards below are one translation, so argue with them and write your own.
+
+<Raw html={F20} />
+
+### Rules \{#good-rams-principles-rules\}
+
+Three rules keep the principles useful.
+
+<div class="cs essay-cs">
+
+<section class="rule" id="good-rams-principles-rule-1">
+
+#### 1. Ask them as questions, not rules \{#good-rams-principles-rule-1-h\}
+
+Read as rules, some of the ten pull against each other. “Unobtrusive” says hide the toolbar, “understandable” says label every tool, and a checklist can’t say which one wins. Ask each one as a question about the goal, and the tension leads you to a design that serves both.
+
+<Raw html={F21} />
+
+</section>
+
+<section class="rule" id="good-rams-principles-rule-2">
+
+#### 2. Cut what doesn’t serve the goal \{#good-rams-principles-rule-2-h\}
+
+“As little design as possible” is often read as minimal styling: gray, flat, no labels. The screen looks simple, but people have to hunt for what they need. Remove what doesn’t serve the goal instead, and keep a visible label or a clear button, because it is often the essential part.
+
+<Raw html={F22} />
+
+</section>
+
+<section class="rule" id="good-rams-principles-rule-3">
+
+#### 3. Treat “honest” as a design rule \{#good-rams-principles-rule-3-h\}
+
+“Honest” sounds like a rule for advertising, so teams skip it, and a sign-up gets a fake countdown, a pre-ticked add-on and a price that grows later. People find out after they pay and stop trusting the product. Show the full cost before people commit, and leave add-ons unticked. See [Smart defaults](/part-2/overload/#pat-smart-defaults).
+
+<Raw html={F23} />
+
+</section>
+
+<Raw html={F24} />
+
+</div>
+
+### In real products \{#good-rams-principles-products\}
+
+<Raw html={F25} />
+
+</article>
+
+<aside class="in-short" id="ch-critique-in-short" aria-labelledby="ch-critique-in-short-h" data-pagefind-ignore>
+
+## In short \{#ch-critique-in-short-h\}
+
+<div class="is-grid">
+
+<div>
+
+<a class="is-e" href="#good-critique">Critique against the goal</a>
+
+1. [Tie each comment to the goal](#good-critique-rule-1)
+2. [Name the problem before the fix](#good-critique-rule-2)
+3. [Ask what feedback is wanted first](#good-critique-rule-3)
+4. [Hear their read first](#good-critique-rule-4)
+
+</div>
+
+<div>
+
+<a class="is-e" href="#good-heuristic-review">Heuristic review</a>
+
+1. [Pair it with watching people](#good-heuristic-review-rule-1)
+2. [Ask three to five reviewers](#good-heuristic-review-rule-2)
+3. [Rate each problem by severity](#good-heuristic-review-rule-3)
+4. [Say what a mock can’t show](#good-heuristic-review-rule-4)
+
+</div>
+
+<div>
+
+<a class="is-e" href="#good-rams-principles">Rams’ ten principles</a>
+
+1. [Ask them as questions, not rules](#good-rams-principles-rule-1)
+2. [Cut what doesn’t serve the goal](#good-rams-principles-rule-2)
+3. [Treat “honest” as a design rule](#good-rams-principles-rule-3)
+
+</div>
+
+</div>
+
+</aside>
+
+</section>
+
+<Runtime chapter="ch-critique" />

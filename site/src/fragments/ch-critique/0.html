@@ -1,0 +1,71 @@
+<div class="stage tall" data-demo="good-critique">
+      <div class="seg p23-seg" role="radiogroup" aria-label="Mode">
+        <input type="radio" name="p23-cr-mode" id="p23-cr-m-rw" value="rewrite" checked><label for="p23-cr-m-rw">Rewrite a comment</label>
+        <input type="radio" name="p23-cr-mode" id="p23-cr-m-own" value="own"><label for="p23-cr-m-own">Write your own</label>
+      </div>
+      <div class="p23-cr">
+        <figure class="p23-under" aria-labelledby="p23-cr-cap">
+          <figcaption class="p23-cap" id="p23-cr-cap">Design under review</figcaption>
+          <p class="p23-goal"><b>Goal:</b> a traveller picks a hotel and books a room in under a minute.</p>
+          <div class="surface p23-tcard">
+            <div class="thumb" role="img" aria-label="Hotel room photo"></div>
+            <h5 class="p23-part" data-part="title">Harbour View Hotel and Sp…</h5>
+            <div class="p23-badges p23-part" data-part="badges"><span>4★</span><span>New</span><span>Pool</span><span>Free cancellation</span></div>
+            <p class="p23-desc">Sea-view rooms, 5 minutes from the old town.</p>
+            <span class="p23-runlink p23-part" data-part="run">book →</span>
+          </div>
+        </figure>
+
+        <div class="p23-pane" id="p23-cr-rw">
+          <div class="seg p23-seg" role="radiogroup" aria-label="Vague comment">
+            <input type="radio" name="p23-cr-vague" id="p23-cr-v1" value="dislike" checked><label for="p23-cr-v1">“I don’t like it”</label>
+            <input type="radio" name="p23-cr-vague" id="p23-cr-v2" value="pop"><label for="p23-cr-v2">“Make it pop”</label>
+            <input type="radio" name="p23-cr-vague" id="p23-cr-v3" value="off"><label for="p23-cr-v3">“It feels off”</label>
+          </div>
+          <div class="p23-rw" data-for="dislike">
+            <p class="p23-vague"><span class="p23-k">Vague</span><span class="p23-q">“I don’t like it.”</span></p>
+            <dl class="p23-dl">
+              <div class="p23-d-goal"><dt>Goal</dt><dd>We want a traveller to book a room in under a minute.</dd></div>
+              <div class="p23-d-works"><dt>What works</dt><dd>The photo shows the real room, so people can judge it before they open anything.</dd></div>
+              <div class="p23-d-not"><dt>What doesn’t serve the goal</dt><dd>“book →” is a small gray link in the corner. The one action this card exists for is the hardest part to see.</dd></div>
+              <div class="p23-d-sugg"><dt>Suggestion</dt><dd>Could “Book” be the card’s main button, right under the title?</dd></div>
+            </dl>
+          </div>
+          <div class="p23-rw" data-for="pop" hidden>
+            <p class="p23-vague"><span class="p23-k">Vague</span><span class="p23-q">“Make it pop.”</span></p>
+            <dl class="p23-dl">
+              <div class="p23-d-goal"><dt>Goal</dt><dd>We want a traveller to book a room in under a minute.</dd></div>
+              <div class="p23-d-works"><dt>What works</dt><dd>The card is calm, so a list of twenty of them will still be easy to scan.</dd></div>
+              <div class="p23-d-not"><dt>What doesn’t serve the goal</dt><dd>Four badges carry as much weight as the title. People can’t tell which ones matter, so the eye has nowhere to land.</dd></div>
+              <div class="p23-d-sugg"><dt>Suggestion</dt><dd>Keep the one badge that helps people choose, like “Free cancellation”. Stars and the pool can move to the detail page.</dd></div>
+            </dl>
+          </div>
+          <div class="p23-rw" data-for="off" hidden>
+            <p class="p23-vague"><span class="p23-k">Vague</span><span class="p23-q">“It feels off.”</span></p>
+            <dl class="p23-dl">
+              <div class="p23-d-goal"><dt>Goal</dt><dd>We want a traveller to book a room in under a minute.</dd></div>
+              <div class="p23-d-works"><dt>What works</dt><dd>The layout matches the other cards, so people scan it the same way.</dd></div>
+              <div class="p23-d-not"><dt>What doesn’t serve the goal</dt><dd>The title is cut off. “Harbour View Hotel and Sp…” could be any of three hotels with similar names, so people can’t tell them apart.</dd></div>
+              <div class="p23-d-sugg"><dt>Suggestion</dt><dd>Let titles wrap to two lines, so the part that tells them apart stays visible.</dd></div>
+            </dl>
+          </div>
+        </div>
+
+        <div class="p23-pane" id="p23-cr-own" hidden>
+          <form class="p23-form" id="p23-cr-form" aria-label="Your critique of the hotel card">
+            <div class="field"><label class="field-label" for="p23-cr-goal">Goal</label><span class="field-help" id="p23-cr-goal-h">What is it for, and who is it for?</span><textarea class="input" id="p23-cr-goal" rows="2" aria-describedby="p23-cr-goal-h"></textarea></div>
+            <div class="field"><label class="field-label" for="p23-cr-works">What works</label><span class="field-help" id="p23-cr-works-h">Something specific worth keeping.</span><textarea class="input" id="p23-cr-works" rows="2" aria-describedby="p23-cr-works-h"></textarea></div>
+            <div class="field"><label class="field-label" for="p23-cr-not">What doesn’t serve the goal</label><span class="field-help" id="p23-cr-not-h">Name the problem. Save the fix for the next field.</span><textarea class="input" id="p23-cr-not" rows="2" aria-describedby="p23-cr-not-h"></textarea></div>
+            <div class="field"><label class="field-label" for="p23-cr-sugg">Suggestion</label><span class="field-help" id="p23-cr-sugg-h">One idea. A question is fine.</span><textarea class="input" id="p23-cr-sugg" rows="2" aria-describedby="p23-cr-sugg-h"></textarea></div>
+            <div class="p23-form-actions"><button class="btn btn-primary" type="submit" id="p23-cr-build">Assemble critique</button></div>
+          </form>
+          <p class="p23-sum" id="p23-cr-sum" role="status"></p>
+          <div class="surface p23-out" id="p23-cr-out" hidden>
+            <p class="p23-cap">Your critique</p>
+            <div class="p23-assembled" id="p23-cr-text"></div>
+            <ul class="p23-nudges" id="p23-cr-nudges"></ul>
+          </div>
+        </div>
+      </div>
+      <p class="try"><b>Try it:</b> pick a vague comment and read the rewrite. The card marks what each comment was really about. Then switch to Write your own, critique the same card, and press Assemble. Try leaving a field empty, or writing “I love the colors”.</p>
+    </div>

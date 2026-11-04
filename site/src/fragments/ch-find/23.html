@@ -1,0 +1,43 @@
+<div class="note comfy cw-wrap">
+  <div class="seg cw-seg" role="radiogroup" aria-label="Example">
+    <input type="radio" name="cw-pat-information-scent-w" id="cw-pat-information-scent-w-1" value="govuk" checked><label for="cw-pat-information-scent-w-1">GOV.UK</label>
+    <input type="radio" name="cw-pat-information-scent-w" id="cw-pat-information-scent-w-2" value="blender"><label for="cw-pat-information-scent-w-2">Blender</label>
+    <input type="radio" name="cw-pat-information-scent-w" id="cw-pat-information-scent-w-3" value="uber"><label for="cw-pat-information-scent-w-3">Uber</label>
+    <input type="radio" name="cw-pat-information-scent-w" id="cw-pat-information-scent-w-4" value="windows"><label for="cw-pat-information-scent-w-4">Windows</label>
+  </div>
+  <div class="cw" data-cw-view role="img" aria-label=""></div>
+  <p class="cw-cap" data-cw-cap aria-live="polite"></p>
+  
+  <script>
+  (() => {
+    const wrap = document.currentScript.closest('.cw-wrap');
+    const view = wrap.querySelector('[data-cw-view]'), cap = wrap.querySelector('[data-cw-cap]');
+    const ic = id => '<svg class="icon sm"><use href="#i-' + id + '"/></svg>';
+    const line = w => '<i class="cw-line"' + (w ? ' style="width:' + w + '"' : '') + '></i>';
+    const res = (t, w) => '<div class="cw-scent-res"><u>' + t + '</u>' + line(w) + '</div>';
+    const place = (icon, name) => '<div class="cw-scent-place"><b>' + ic(icon) + '</b><div>' + name + line() + '</div></div>';
+    const S = {
+      govuk: { html: '<div class="cw-scent-win"><div class="cw-scent-pad"><div class="cw-scent-search"><span>passport</span>' + ic('search') + '</div>' +
+          res('Renew your passport', '86%') + res('Get a passport urgently', '74%') + res('Apply for a first passport', '80%') + '</div></div>',
+        alt: 'A search for passport. The results are named as tasks: Renew your passport, Get a passport urgently, Apply for a first passport.',
+        cap: 'GOV.UK: pages are named for the task people come to do, like “Renew your passport”, not for the office that handles it.' },
+      blender: { html: '<div class="cw-scent-win cw-scent-narrow"><div class="cw-scent-bl"><div class="cw-scent-menu"><small>Mesh</small><span>Plane</span><span class="on">Cube</span><span>Circle</span><span>UV Sphere</span></div>' +
+          '<div class="cw-scent-tip"><span>Construct a cube mesh.</span><code>Python: bpy.<wbr>ops.<wbr>mesh.<wbr>primitive_cube_add()</code></div></div></div>',
+        alt: 'An Add Mesh menu with plain names: Plane, Cube, Circle, UV Sphere. Cube is highlighted, and its tooltip gives a one-line description with the Python name below it.',
+        cap: 'Blender: menus use plain names like “Cube”. With Python tooltips turned on, the tooltip adds the scripting name under the description, for the people who need it.' },
+      uber: { html: '<div class="cw-scent-phone"><div class="cw-scent-map"><span class="cw-scent-pin"></span></div><div class="cw-scent-sheet">' +
+          '<div class="cw-scent-where">' + ic('search') + 'Where to?</div>' + place('home', 'Home') + place('folder', 'Work') + '</div></div>',
+        alt: 'A phone with a map. Below it, the main box asks Where to?, with saved places Home and Work underneath.',
+        cap: 'Uber: the main box asks “Where to?”, the question already in your head, instead of a form label like “Destination”.' },
+      windows: { html: '<div class="cw-scent-win"><div class="cw-scent-start"><div class="cw-scent-search"><span>add or remove programs</span>' + ic('search') + '</div>' +
+          '<small>Best match</small><div class="cw-scent-best"><b>' + ic('gear') + '</b><div><strong>Add or remove programs</strong><span>System settings</span></div></div>' +
+          '<span class="cw-scent-opens">Opens <b>Settings › Apps</b></span></div></div>',
+        alt: 'A Start menu search for add or remove programs. The best match has that name and opens the Apps page in Settings.',
+        cap: 'Windows: searching the old Control Panel name, “Add or remove programs”, still opens the newer Apps page in Settings, so people who learned the old words still get there.' }
+    };
+    const render = k => { view.innerHTML = S[k].html; view.setAttribute('aria-label', 'Sketch: ' + S[k].alt); cap.textContent = S[k].cap; };
+    wrap.querySelectorAll('input[name="cw-pat-information-scent-w"]').forEach(r => r.addEventListener('change', () => render(r.value)));
+    render('govuk');
+  })();
+  </script>
+</div>

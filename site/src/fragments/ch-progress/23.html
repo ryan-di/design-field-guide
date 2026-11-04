@@ -1,0 +1,36 @@
+<div class="note comfy cw-wrap">
+      <div class="seg cw-seg" role="radiogroup" aria-label="Example">
+        <input type="radio" name="cw-skeleton-w" id="cw-skeleton-w-1" value="youtube" checked><label for="cw-skeleton-w-1">YouTube</label>
+        <input type="radio" name="cw-skeleton-w" id="cw-skeleton-w-2" value="facebook"><label for="cw-skeleton-w-2">Facebook</label>
+        <input type="radio" name="cw-skeleton-w" id="cw-skeleton-w-3" value="photos"><label for="cw-skeleton-w-3">Google Photos</label>
+      </div>
+      <div class="cw" data-cw-view role="img" aria-label=""></div>
+      <p class="cw-cap" data-cw-cap aria-live="polite"></p>
+      
+      <script>
+      (() => {
+        const wrap = document.currentScript.closest('.cw-wrap');
+        const view = wrap.querySelector('[data-cw-view]'), cap = wrap.querySelector('[data-cw-cap]');
+        const sk = (w, cls) => '<i class="skel' + (cls ? ' ' + cls : '') + '"' + (w ? ' style="width:' + w + '%"' : '') + ' aria-hidden="true"></i>';
+        const vid = () => '<div class="cw-skelw-vid">' + sk() + '<div class="cw-skelw-meta">' + sk() + sk(90) + sk(60) + '</div></div>';
+        const tile = (ratio, cls) => '<i class="cw-skelw-tile' + (cls ? ' on ' + cls : '') + '" style="flex:' + ratio + ' 1 0"></i>';
+        const S = {
+          youtube: { html: '<div class="cw-skelw-win"><div class="cw-skelw-grid">' + vid() + vid() + vid() + vid() + vid() + vid() + '</div></div>',
+            alt: 'A grid of video placeholders: a gray box for each thumbnail, a gray circle for the channel picture, and two gray bars for the title.',
+            cap: 'YouTube: the home page first shows gray boxes where thumbnails go and bars where titles go, so the videos drop in without moving anything.' },
+          facebook: { html: '<div class="cw-skelw-post"><div class="cw-skelw-head">' + sk() + sk(45) + sk(25) + '</div>' + sk(95) + sk(85) + sk(60) + sk(0, 'img') + '</div>',
+            alt: 'A placeholder post: a gray circle for the profile photo, two short bars for name and time, three bars for text, and a gray box for a photo.',
+            cap: 'Facebook: the feed shows gray posts before the real ones arrive, with a circle for the profile photo and bars for the name and text.' },
+          photos: { html: '<div class="cw-skelw-win"><div class="cw-skelw-rows"><span class="cw-skelw-date">Saturday</span>' +
+              '<div class="cw-skelw-row">' + tile(1.5, 'a') + tile(0.75) + tile(1.33, 'b') + tile(1) + '</div>' +
+              '<div class="cw-skelw-row">' + tile(1) + tile(1.78, 'c') + tile(0.75) + tile(1.5) + '</div>' +
+              '<div class="cw-skelw-row">' + tile(0.75, 'b') + tile(1.33) + tile(1.5) + tile(1, 'a') + '</div></div></div>',
+            alt: 'A photo grid where each row holds tiles of different widths. Some tiles already show photos, the rest are plain gray tiles of the same size.',
+            cap: 'Google Photos: when you scroll fast, each photo’s spot is held by a plain tile of the right size and shape. Photos fill in where they belong, so the grid doesn’t reflow.' }
+        };
+        const render = k => { view.innerHTML = S[k].html; view.setAttribute('aria-label', 'Sketch: ' + S[k].alt); cap.textContent = S[k].cap; };
+        wrap.querySelectorAll('input[name="cw-skeleton-w"]').forEach(r => r.addEventListener('change', () => render(r.value)));
+        render('youtube');
+      })();
+      </script>
+    </div>

@@ -1,0 +1,55 @@
+<div class="note comfy cw-wrap"><p>Notice how long a round runs in each: a week, eight weeks, or as long as one test takes.</p>
+      <div class="seg cw-seg" role="radiogroup" aria-label="Example">
+        <input type="radio" name="cw-eff-loop-w" id="cw-eff-loop-w-1" value="gv" checked><label for="cw-eff-loop-w-1">Google Ventures</label>
+        <input type="radio" name="cw-eff-loop-w" id="cw-eff-loop-w-2" value="basecamp"><label for="cw-eff-loop-w-2">Basecamp</label>
+        <input type="radio" name="cw-eff-loop-w" id="cw-eff-loop-w-3" value="duolingo"><label for="cw-eff-loop-w-3">Duolingo</label>
+      </div>
+      <div class="cw" data-cw-view role="img" aria-label=""></div>
+      <p class="cw-cap" data-cw-cap aria-live="polite"></p>
+      
+      <script>
+      (() => {
+        const wrap = document.currentScript.closest('.cw-wrap');
+        const view = wrap.querySelector('[data-cw-view]'), cap = wrap.querySelector('[data-cw-cap]');
+        const head = t => '<div class="cw-wloop-h">' + t + '<span><i>Blue</i> = stage of the loop</span></div>';
+        const card = (small, title, stage, extra, on) => '<div class="cw-wloop-card' + (on ? ' on' : '') + '"><small>' + small + '</small><b>' + title + '</b>' + (extra || '') + (stage ? '<span class="cw-wloop-st">' + stage + '</span>' : '') + '</div>';
+        const back = t => '<span class="cw-wloop-back"><i>↺</i>' + t + '</span>';
+        const col = (html, narrow) => '<div class="cw-wloop-col' + (narrow ? ' narrow' : '') + '">' + html + '</div>';
+        const faces = '<span class="cw-wloop-faces">' + '<i></i>'.repeat(5) + '</span>';
+        const phone = (title, isNew, stage) => '<div class="cw-wloop-phone"><b>' + title + '</b><i class="cw-wloop-prog"></i>' +
+          '<i class="cw-line" style="width:80%"></i><i class="cw-wloop-opt"></i><i class="cw-wloop-opt"></i>' +
+          (isNew ? '<span class="cw-wloop-new">New hint</span>' : '<i class="cw-wloop-opt"></i>') +
+          '<i class="cw-wloop-go"></i>' + (stage ? '<span class="cw-wloop-st">' + stage + '</span>' : '') + '</div>';
+        const ok = '<svg class="icon sm" aria-hidden="true"><use href="#i-check"/></svg>';
+        const S = {
+          gv: { html: col(head('Design sprint, one week') + '<div class="cw-wloop-grid">' +
+              card('Mon', 'Map', 'Problem · Brief') + card('Tue', 'Sketch', 'Explore') + card('Wed', 'Decide', 'Decide') +
+              card('Thu', 'Prototype', 'Build') + card('Fri', 'Test', 'Check', faces, true) + '</div>' +
+              back('Learn: Friday’s results set the next step')),
+            alt: 'A five-day week. Monday map, Tuesday sketch, Wednesday decide, Thursday prototype, Friday test with five people. An arrow loops back: Friday’s results set the next step.',
+            cap: 'Google Ventures: the design sprint fits the loop into one week. Map the problem, sketch, decide, build a prototype, then test it with five customers on Friday. What the tests show decides the next step.' },
+          basecamp: { html: col(head('Shape Up, one round') + '<div class="cw-wloop-grid two">' +
+              card('Shaping', 'Pitches', 'Problem · Brief · Explore', '<span class="cw-wloop-stack"><i></i><i></i><i></i></span>') +
+              card('Betting table', 'Pick what to build', 'Decide', '', true) + '</div>' +
+              '<div class="cw-wloop-weeks" aria-hidden="true"><i>1</i><i>2</i><i>3</i><i>4</i><i>5</i><i>6</i><i class="cd">7</i><i class="cd">8</i></div>' +
+              '<div class="cw-wloop-wl"><span style="flex:6">Six-week cycle · <em>Build</em></span><span class="cd" style="flex:2">Cool-down</span></div>' +
+              back('Next bets are made in cool-down')),
+            alt: 'Shaping produces pitches, and a betting table picks what to build. A strip of eight weeks: six weeks of building, then two weeks of cool-down, where the next bets are made.',
+            cap: 'Basecamp: in Shape Up, ideas are shaped into pitches, a betting table picks which to build, and a team builds for six weeks. A two-week cool-down follows, and the next bets are placed then, so every round has a clear end and a fresh start.' },
+          duolingo: { html: col(head('A/B test') + '<span class="cw-wloop-split">Learners split at random</span>' +
+              '<div class="cw-wloop-grid two">' + phone('A · current', false, '') + phone('B · new idea', true, 'Explore · Build') + '</div>' +
+              '<div class="cw-wloop-card"><div class="cw-wloop-res"><span class="cw-wloop-st">Check · Decide</span><span class="cw-wloop-keep">' + ok + 'Keep B</span></div>' +
+              '<div class="cw-wloop-bars"><span>A</span><i style="width:58%"></i><span>B</span><i class="win" style="width:74%"></i></div></div>' +
+              back('Learn: the result suggests the next test'), true),
+            alt: 'Two phone lesson screens. A is the current version; B adds a new hint. Learners are split at random. A result card shows B ahead and a check: keep B. An arrow loops back: the result suggests the next test.',
+            cap: 'Duolingo: many changes ship first as A/B tests. Some learners get the new version and the rest keep the current one. The result decides what ships, and it suggests what to test next.' }
+        };
+        const render = k => { view.innerHTML = S[k].html; view.setAttribute('aria-label', 'Sketch: ' + S[k].alt); cap.textContent = S[k].cap; };
+        const current = () => wrap.querySelector('input[name="cw-eff-loop-w"]:checked').value;
+        wrap.querySelectorAll('input[name="cw-eff-loop-w"]').forEach(r => r.addEventListener('change', () => render(r.value)));
+        render(current());
+        /* The chapter script that follows may still draw its old switcher into the first .cw-wrap; draw again once parsing is done. */
+        if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', () => render(current()));
+      })();
+      </script>
+      </div>

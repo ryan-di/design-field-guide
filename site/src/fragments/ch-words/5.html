@@ -1,0 +1,137 @@
+<script>
+(() => {
+  const cs = document.currentScript.closest('.cs');
+  /* This entry sits before the shared case helpers in the book, so start once they exist. */
+  const go = () => {
+  const D = (k, html, wire) => csDemo(cs.querySelector('[data-d="' + k + '"]'), html, wire);
+  const css = document.createElement('style');
+  css.textContent = [
+    '#good-labels .gl-frame{position:relative;width:min(340px,100%)}',
+    '#good-labels .gl-frame .app-body{min-height:190px}',
+    '#good-labels .gl-blur .gl-q{filter:blur(4px);user-select:none}',
+    '#good-labels .cs-dlg b{font-size:15px}',
+    '#good-labels .gl-res{font-size:14px;line-height:1.45}',
+    '#good-labels .gl-search{display:flex;gap:8px}',
+    '#good-labels .gl-search .input{padding:7px 10px;font-size:14px}',
+    '#good-labels .gl-search .btn{flex:none}',
+    '#good-labels .gl-prod{display:flex;gap:12px;align-items:center}',
+    '#good-labels .gl-img{width:64px;flex:none}',
+    '#good-labels .gl-acts{display:flex;flex-wrap:wrap;gap:8px}',
+    '#good-labels .gl-links{font-size:13.5px;color:var(--ui-muted);display:flex;gap:6px;flex-wrap:wrap}',
+    '#good-labels .gl-links a{color:var(--ui-text);text-decoration:underline;text-underline-offset:3px}',
+    '#good-labels .gl-h{font-size:14px;margin-top:4px}',
+    '#good-labels .gl-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}',
+    '#good-labels .gl-ph{position:relative}',
+    '#good-labels .gl-ph .thumb{display:block}',
+    '#good-labels .gl-more.icon-btn{position:absolute;top:4px;right:4px;width:30px;height:30px}',
+    '#good-labels .gl-pop{position:absolute;top:calc(100% + 4px);left:0;z-index:2;display:flex;flex-direction:column;min-width:190px;padding:4px;background:var(--ui-raised);border:1px solid var(--ui-border);border-radius:9px;box-shadow:var(--ui-shadow)}',
+    '#good-labels .gl-pop[hidden]{display:none}',
+    '#good-labels .gl-pop button{all:unset;cursor:pointer;padding:7px 10px;border-radius:6px;font-size:14px;color:var(--ui-text)}',
+    '#good-labels .gl-pop button:hover{background:var(--ui-hover)}',
+    '#good-labels .gl-pop button:focus-visible{background:var(--ui-hover);outline:2px solid var(--ui-sel)}'
+  ].join('\n');
+  cs.prepend(css);
+  const icon = n => '<svg class="icon sm"><use href="#i-' + n + '"/></svg>';
+  const lines = '<div class="line" style="width:86%"></div><div class="line" style="width:72%"></div><div class="line" style="width:58%"></div>';
+
+  /* 1. Name the action */
+  const draftHtml = fixed => '<div class="app-frame gl-frame gl-blur" data-frame><div class="app-bar"><span>New email</span><span class="cs-meta">To: Sam</span></div>' +
+    '<div class="app-body" data-body><b>Dinner on Friday</b>' + lines + '</div>' +
+    '<div class="cs-modal" data-modal><div class="cs-dlg" role="dialog" aria-label="Close email"><b class="gl-q">Delete this draft?</b><p class="gl-q">If you delete it, the email is gone.</p>' +
+    '<div class="acts"><button class="btn btn-secondary cs-sm" type="button" data-a="keep">' + (fixed ? 'Keep draft' : 'No') + '</button>' +
+    '<button class="btn btn-primary cs-sm" type="button" data-a="del">' + (fixed ? 'Delete draft' : 'Yes') + '</button></div></div></div></div>' +
+    '<p class="cs-meta" data-out></p>';
+  const draftWire = fixed => d => {
+    const out = d.querySelector('[data-out]'), body = d.querySelector('[data-body]');
+    d.querySelectorAll('[data-a]').forEach(b => b.addEventListener('click', () => {
+      const keep = b.dataset.a === 'keep';
+      d.querySelector('[data-modal]').remove();
+      d.querySelector('[data-frame]').classList.remove('gl-blur');
+      body.innerHTML = keep ? '<b>Dinner on Friday</b>' + lines : '<p class="gl-res">The draft was deleted.</p>';
+      out.textContent = fixed
+        ? (keep ? 'Draft kept. The button said so, so you didn’t need the question.' : 'Draft deleted. The button said it would.')
+        : 'You pressed “' + b.textContent + '”. The question was “Delete this draft?”, so the draft was ' + (keep ? 'kept.' : 'deleted.');
+    }));
+  };
+  D('good-labels-1b', draftHtml(false), draftWire(false));
+  D('good-labels-1f', draftHtml(true), draftWire(true));
+
+  /* 2. People's words */
+  const PEOPLE = ['Ana Lima', 'Maria Costa', 'Sam Reed', 'Tomás Silva'];
+  const contactsHtml = fixed => '<div class="app-frame" style="width:min(340px,100%)"><div class="app-bar"><span>Contacts</span>' +
+    '<button class="btn btn-secondary cs-sm" type="button" data-add>' + (fixed ? 'Add contact' : 'Instantiate contact') + '</button></div>' +
+    '<div class="app-body"><div class="gl-search"><input class="input" aria-label="Name" placeholder="Name" autocomplete="off">' +
+    '<button class="btn btn-primary cs-sm" type="button" data-go>' + (fixed ? 'Search' : 'Execute query') + '</button></div><div data-list></div></div></div>' +
+    '<p class="cs-meta" data-out></p>';
+  const contactsWire = d => {
+    const list = d.querySelector('[data-list]'), input = d.querySelector('input'), out = d.querySelector('[data-out]');
+    const people = PEOPLE.slice();
+    const draw = q => {
+      const hits = people.filter(p => p.toLowerCase().includes((q || '').toLowerCase()));
+      list.innerHTML = hits.map(p => '<div class="cs-row"><span class="grow">' + p + '</span></div>').join('') || '<p class="cs-meta">No one with that name.</p>';
+    };
+    const go = () => { draw(input.value.trim()); out.textContent = input.value.trim() ? 'Showing names with “' + input.value.trim() + '”.' : 'Showing everyone.'; };
+    d.querySelector('[data-go]').addEventListener('click', go);
+    input.addEventListener('keydown', e => { if (e.key === 'Enter') go(); });
+    d.querySelector('[data-add]').addEventListener('click', () => { people.push('New contact'); input.value = ''; draw(''); out.textContent = 'New contact added.'; });
+    draw('');
+  };
+  D('good-labels-2b', contactsHtml(false), contactsWire);
+  D('good-labels-2f', contactsHtml(true), contactsWire);
+
+  /* 3. One capital style */
+  const L = {
+    b: ['Add To Cart', 'Save for later', 'Size Guide', 'Shipping and returns', 'Customers Also Bought'],
+    f: ['Add to cart', 'Save for later', 'Size guide', 'Shipping and returns', 'Customers also bought']
+  };
+  const shopHtml = fixed => {
+    const l = L[fixed ? 'f' : 'b'];
+    return '<div class="app-frame" style="width:min(340px,100%)"><div class="app-bar"><span>Shop</span><span class="cs-meta">Scarves</span></div><div class="app-body">' +
+      '<div class="gl-prod"><span class="thumb c gl-img"></span><span><b>Wool scarf</b><br><span class="cs-meta">€29</span></span></div>' +
+      '<div class="gl-acts"><button class="btn btn-primary cs-sm" type="button" data-t="Added to cart">' + l[0] + '</button><button class="btn btn-secondary cs-sm" type="button" data-t="Saved for later">' + l[1] + '</button></div>' +
+      '<div class="gl-links"><a href="#" data-t="Size guide opened">' + l[2] + '</a><span>·</span><a href="#" data-t="Shipping and returns opened">' + l[3] + '</a></div>' +
+      '<b class="gl-h">' + l[4] + '</b><div class="cs-row"><span class="grow">Knit hat</span><span>€19</span></div><div class="cs-row"><span class="grow">Wool gloves</span><span>€24</span></div></div></div>';
+  };
+  const shopWire = (d, t) => {
+    d.querySelectorAll('[data-t]').forEach(b => b.addEventListener('click', e => { e.preventDefault(); csToast(d, t, b.dataset.t, { ms: 2500, replace: true }); }));
+  };
+  D('good-labels-3b', shopHtml(false), shopWire);
+  D('good-labels-3f', shopHtml(true), shopWire);
+
+  /* 4. One verb per action */
+  const albumHtml = fixed => '<div class="app-frame gl-frame" data-frame><div class="app-bar"><span>Album: Lisbon</span><span class="cs-meta" data-count>3 photos</span></div>' +
+    '<div class="app-body"><div class="gl-grid" data-grid><div class="gl-ph" data-ph><span class="thumb"></span>' +
+    '<button class="icon-btn gl-more" type="button" aria-label="More for this photo" aria-expanded="false" data-more>' + icon('dots') + '</button>' +
+    '<div class="gl-pop" data-gpop hidden><button type="button" data-share>Share</button><button type="button" data-rm>' + (fixed ? 'Remove from album' : 'Remove') + '</button></div></div>' +
+    '<span class="thumb b"></span><span class="thumb c"></span></div><p class="cs-meta" data-out></p></div></div>';
+  const albumWire = fixed => (d, t) => {
+    const frame = d.querySelector('[data-frame]'), more = d.querySelector('[data-more]'), pop = d.querySelector('[data-gpop]'), out = d.querySelector('[data-out]');
+    const setOpen = on => { pop.hidden = !on; more.setAttribute('aria-expanded', String(on)); if (on) pop.querySelector('button').focus({ preventScroll: true }); };
+    more.addEventListener('click', () => setOpen(pop.hidden));
+    pop.addEventListener('keydown', e => { if (e.key === 'Escape') { setOpen(false); more.focus({ preventScroll: true }); } });
+    d.querySelector('[data-share]').addEventListener('click', () => { setOpen(false); more.focus({ preventScroll: true }); csToast(d, t, 'Link copied', { ms: 2500, replace: true }); });
+    d.querySelector('[data-rm]').addEventListener('click', () => {
+      setOpen(false);
+      const m = document.createElement('div'); m.className = 'cs-modal';
+      m.innerHTML = '<div class="cs-dlg" role="dialog" aria-label="Confirm">' + (fixed
+        ? '<b>Remove from album?</b><p>The photo stays in your library.</p>'
+        : '<b>Delete this photo?</b><p>It will be deleted from your library and all your devices.</p>') +
+        '<div class="acts"><button class="btn btn-secondary cs-sm" type="button" data-no>Cancel</button><button class="btn ' + (fixed ? 'btn-primary' : 'btn-danger') + ' cs-sm" type="button" data-yes>' + (fixed ? 'Remove' : 'Delete') + '</button></div></div>';
+      frame.appendChild(m);
+      m.querySelector('[data-no]').focus({ preventScroll: true });
+      m.querySelector('[data-no]').addEventListener('click', () => { m.remove(); more.focus({ preventScroll: true }); out.textContent = fixed ? '' : 'You picked Remove, but the dialog asked to delete. Did you want that?'; });
+      m.querySelector('[data-yes]').addEventListener('click', () => {
+        m.remove(); d.querySelector('[data-ph]').remove(); d.querySelector('[data-count]').textContent = '2 photos';
+        out.textContent = fixed ? 'Removed from Lisbon. The photo is still in your library.' : 'The photo is gone from your library and all your devices.';
+      });
+    });
+  };
+  D('good-labels-4b', albumHtml(false), albumWire(false));
+  D('good-labels-4f', albumHtml(true), albumWire(true));
+
+  csInit(cs);
+  };
+  if (window.csDemo) go(); else document.addEventListener('DOMContentLoaded', go);
+})();
+
+</script>

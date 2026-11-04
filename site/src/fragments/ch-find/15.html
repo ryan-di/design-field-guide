@@ -1,0 +1,49 @@
+<div class="note comfy cw-wrap">
+  <div class="seg cw-seg" role="radiogroup" aria-label="Example">
+    <input type="radio" name="cw-pat-search-filters-w" id="cw-pat-search-filters-w-1" value="spotify" checked><label for="cw-pat-search-filters-w-1">Spotify</label>
+    <input type="radio" name="cw-pat-search-filters-w" id="cw-pat-search-filters-w-2" value="airbnb"><label for="cw-pat-search-filters-w-2">Airbnb</label>
+    <input type="radio" name="cw-pat-search-filters-w" id="cw-pat-search-filters-w-3" value="github"><label for="cw-pat-search-filters-w-3">GitHub</label>
+    <input type="radio" name="cw-pat-search-filters-w" id="cw-pat-search-filters-w-4" value="gmail"><label for="cw-pat-search-filters-w-4">Gmail</label>
+  </div>
+  <div class="cw" data-cw-view role="img" aria-label=""></div>
+  <p class="cw-cap" data-cw-cap aria-live="polite"></p>
+  
+  <script>
+  (() => {
+    const wrap = document.currentScript.closest('.cw-wrap');
+    const view = wrap.querySelector('[data-cw-view]'), cap = wrap.querySelector('[data-cw-cap]');
+    const ic = id => '<svg class="icon sm"><use href="#i-' + id + '"/></svg>';
+    const line = w => '<i class="cw-line"' + (w ? ' style="width:' + w + '"' : '') + '></i>';
+    const chip = (t, on, mark) => '<span class="cw-srchf-chip' + (on ? ' on' : '') + '">' + (on && mark ? ic('check') : '') + t + '</span>';
+    const item = (t, sub, cls) => '<div class="cw-srchf-item"><span class="thumb ' + cls + '"></span><div>' + t + '<small>' + sub + '</small></div></div>';
+    const hist = [3, 5, 8, 12, 18, 24, 30, 26, 20, 15, 11, 8, 6, 4, 3, 2].map((h, i) => '<i' + (i >= 3 && i <= 10 ? ' class="in"' : '') + ' style="height:' + h + 'px"></i>').join('');
+    const issue = (w, bug) => '<div class="cw-srchf-row"><span class="cw-srchf-dot"></span>' + line(w) + (bug ? '<span class="cw-srchf-lab">bug</span>' : '') + '</div>';
+    const mail = (from, w, att) => '<div class="cw-srchf-mail"><b>' + from + '</b>' + line(w) + (att ? '<span class="cw-srchf-att">PDF</span>' : '<span></span>') + '</div>';
+    const S = {
+      spotify: { html: '<div class="cw-srchf-phone"><div class="cw-srchf-ph"><b>Library</b>' + ic('search') + ic('plus') + '</div>' +
+          '<div class="cw-srchf-chips">' + chip('Playlists', true) + chip('Artists') + chip('Albums') + '</div>' +
+          '<span class="cw-srchf-sort">⇅ Recents</span>' + item('Road trip', 'Playlist', '') + item('Focus', 'Playlist', 'b') + item('Sunday morning', 'Playlist', 'c') + '</div>',
+        alt: 'A phone library screen with type chips: Playlists selected, Artists, Albums. Below, a list sorted by Recents.',
+        cap: 'Spotify: the library has type chips, like Playlists or Artists, above a list sorted by Recents, so “the one I played yesterday” is near the top and “I know it’s an album” is one tap.' },
+      airbnb: { html: '<div class="cw-srchf-sheet"><div class="cw-srchf-sh">' + ic('x') + '<b>Filters</b></div>' +
+          '<div class="cw-srchf-sec"><b>Price range</b><div class="cw-srchf-hist">' + hist + '</div><div class="cw-srchf-range"><span></span><i style="left:22%"></i><i style="left:70%"></i></div></div>' +
+          '<div class="cw-srchf-sec"><b>Bedrooms</b><div class="cw-srchf-chips">' + chip('Any') + chip('1') + chip('2', true) + chip('3+') + '</div></div>' +
+          '<div class="cw-srchf-foot"><span class="btn btn-ghost">Clear all</span><span class="btn btn-primary">Show 214 places</span></div></div>',
+        alt: 'A filter panel with a price range over a small bar chart and bedroom choices. The button at the bottom says Show 214 places, next to Clear all.',
+        cap: 'Airbnb: the button at the bottom of the filter panel says how many places match and updates as you change filters, so you see the effect before you apply it.' },
+      github: { html: '<div class="cw-srchf-win"><div class="cw-srchf-bar"><span class="cw-srchf-btn">Filters ▾</span><span class="cw-srchf-q">' + ic('search') + 'is:open label:bug</span></div>' +
+          '<div class="cw-srchf-lh"><b>12 Open</b><span>30 Closed</span><em>Author ▾ Label ▾</em></div>' + issue('70%', true) + issue('55%', true) + issue('62%', true) + '</div>',
+        alt: 'An issue list. The search box reads is:open label:bug. Below it: 12 Open, 30 Closed, and Author and Label menus. Each issue has a bug label.',
+        cap: 'GitHub: the filters you pick are written into the search box as text, like “is:open label:bug”, so you can always see what’s applied and edit it.' },
+      gmail: { html: '<div class="cw-srchf-win"><div class="cw-srchf-gq">' + ic('search') + '<span>invoice</span>' + ic('x') + '</div>' +
+          '<div class="cw-srchf-chips">' + chip('From ▾') + chip('Any time ▾') + chip('Has attachment', true, true) + chip('Is unread') + '</div>' +
+          mail('Studio Lumen', '80%', true) + mail('Kai', '64%', true) + mail('Print shop', '72%', true) + '</div>',
+        alt: 'A mail search for invoice. Under the box are chips: From, Any time, Has attachment (selected) and Is unread. Each result has a PDF attached.',
+        cap: 'Gmail: after a search, chips under the box, like “Has attachment” or a date range, narrow the results with one click, without learning search operators.' }
+    };
+    const render = k => { view.innerHTML = S[k].html; view.setAttribute('aria-label', 'Sketch: ' + S[k].alt); cap.textContent = S[k].cap; };
+    wrap.querySelectorAll('input[name="cw-pat-search-filters-w"]').forEach(r => r.addEventListener('change', () => render(r.value)));
+    render('spotify');
+  })();
+  </script>
+</div>

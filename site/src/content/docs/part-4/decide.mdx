@@ -1,0 +1,304 @@
+---
+title: "Decide with judgment, not by polish"
+description: "Agents can make every direction look finished, so polish no longer tells you which one is right."
+eyebrow: "Chapter 28"
+sidebar:
+  label: "Decide"
+---
+
+import Raw from '../../../components/Raw.astro';
+import Learned from '../../../components/Learned.astro';
+import Runtime from '../../../components/Runtime.astro';
+import F0 from '../../../fragments/ch-decide/0.html?raw';
+import F1 from '../../../fragments/ch-decide/1.html?raw';
+import F2 from '../../../fragments/ch-decide/2.html?raw';
+import F3 from '../../../fragments/ch-decide/3.html?raw';
+import F4 from '../../../fragments/ch-decide/4.html?raw';
+import F5 from '../../../fragments/ch-decide/5.html?raw';
+import F6 from '../../../fragments/ch-decide/6.html?raw';
+import F7 from '../../../fragments/ch-decide/7.html?raw';
+import F8 from '../../../fragments/ch-decide/8.html?raw';
+import F9 from '../../../fragments/ch-decide/9.html?raw';
+import F10 from '../../../fragments/ch-decide/10.html?raw';
+import F11 from '../../../fragments/ch-decide/11.html?raw';
+import F12 from '../../../fragments/ch-decide/12.html?raw';
+import F13 from '../../../fragments/ch-decide/13.html?raw';
+import F14 from '../../../fragments/ch-decide/14.html?raw';
+import F15 from '../../../fragments/ch-decide/15.html?raw';
+import F16 from '../../../fragments/ch-decide/16.html?raw';
+import F17 from '../../../fragments/ch-decide/17.html?raw';
+import F18 from '../../../fragments/ch-decide/18.html?raw';
+import F19 from '../../../fragments/ch-decide/19.html?raw';
+import F20 from '../../../fragments/ch-decide/20.html?raw';
+import F21 from '../../../fragments/ch-decide/21.html?raw';
+
+<Runtime at="start" />
+
+<section class="dfg-chapter" id="ch-decide">
+
+Agents can make every direction look finished, so polish no longer tells you which one is right. Score directions against the brief, check each one hard, and keep only the parts that hold up.
+
+<article class="entry essay" id="eff-decision-matrix" data-entry data-name="Decision matrix">
+
+<div class="entry-head">
+
+## Score directions against the brief \{#eff-decision-matrix-h\}
+
+<Learned id="eff-decision-matrix" />
+
+</div>
+
+A decision matrix scores each direction from 1 to 5 against each criterion in the brief. Each criterion gets a weight, so the things the problem is about count more. The weighted total starts the decision, but it doesn’t make it.
+
+A score of 4 against a 3 is a judgment, not a measurement. Write one line of why next to each score, so a reviewer can argue with the reason instead of the number.
+
+<Raw html={F0} />
+
+### Rules \{#eff-decision-matrix-rules\}
+
+Four rules keep a decision matrix useful.
+
+<div class="cs essay-cs">
+
+<section class="rule" id="eff-decision-matrix-rule-1">
+
+#### 1. Score against the brief, not the polish \{#eff-decision-matrix-rule-1-h\}
+
+Agents make every direction look finished, and the most polished one draws the eye, but polish says little about whether it solves the problem. Score every direction against the brief’s criteria before you pick.
+
+<Raw html={F1} />
+
+</section>
+
+<section class="rule" id="eff-decision-matrix-rule-2">
+
+#### 2. Set the weights before you score \{#eff-decision-matrix-rule-2-h\}
+
+Once you’ve seen the scores, it’s easy to nudge the weights until your favorite wins, and the matrix only confirms what you already wanted. Write the weights down from the brief first, then score on your own before you read anyone else’s scores, an agent’s included, so [their read doesn’t become yours](/part-1/critique/#good-critique-rule-4).
+
+<Raw html={F2} />
+
+</section>
+
+<section class="rule" id="eff-decision-matrix-rule-3">
+
+#### 3. Use the total to start the decision \{#eff-decision-matrix-rule-3-h\}
+
+A total of 24 against 23 looks like an answer, but the numbers are judgments. If one small change to a weight flips the winner, the directions are close, so decide on the risk you care about most and say which one it is.
+
+<Raw html={F3} />
+
+</section>
+
+<section class="rule" id="eff-decision-matrix-rule-4">
+
+#### 4. Keep three to five criteria \{#eff-decision-matrix-rule-4-h\}
+
+With many criteria all weighted the same, the one the problem is about counts as little as “looks modern”, so a direction can win while failing the problem. Keep three to five criteria from the brief, and weight the ones the problem is about higher.
+
+<Raw html={F4} />
+
+</section>
+
+<Raw html={F5} />
+
+</div>
+
+### In real products \{#eff-decision-matrix-products\}
+
+<Raw html={F6} />
+
+</article>
+
+<article class="entry essay" id="eff-spot-plausible" data-entry data-name="Spot the plausible">
+
+<div class="entry-head">
+
+## Check output that looks finished \{#eff-spot-plausible-h\}
+
+<Learned id="eff-spot-plausible" />
+
+</div>
+
+Agent-made screens often look finished and still have problems: vague copy, a broken keyboard path, a missing state, or a color a little off the design tokens. A screenshot hides all of these, so you find them by using the screen the way people will.
+
+In [Let agents prove their work](/part-4/build/#eff-agent-verification) the agent runs checks and shows you the results; here you use the result yourself and catch what no check covered.
+
+<Raw html={F7} />
+
+### Rules \{#eff-spot-plausible-rules\}
+
+Four rules keep this check useful.
+
+<div class="cs essay-cs">
+
+<section class="rule" id="eff-spot-plausible-rule-1">
+
+#### 1. Use it, don’t just look at it \{#eff-spot-plausible-rule-1-h\}
+
+A screenshot shows how a screen looks, not how it works: it can’t show that Tab skips a button, that an empty name gets saved, or that text is too faint to read. If you approve from the picture, people find these problems after release. Open the real thing: Tab through it, trigger the errors and read the copy out loud.
+
+<Raw html={F8} />
+
+</section>
+
+<section class="rule" id="eff-spot-plausible-rule-2">
+
+#### 2. Look at every state \{#eff-spot-plausible-rule-2-h\}
+
+Agents build the state they were shown, usually the one with data, but people also see the screen empty, loading and failing. A blank panel on a first visit looks broken, and a spinner that never stops leaves people stuck. Ask for each state and look at each one before you approve.
+
+<Raw html={F9} />
+
+</section>
+
+<section class="rule" id="eff-spot-plausible-rule-3">
+
+#### 3. Check values against the tokens \{#eff-spot-plausible-rule-3-h\}
+
+A padding of 15 instead of 16, or a color that’s almost the brand color, looks fine by eye. Each one is small, but the next change copies it, and the product slowly stops matching itself. Check spacing, corners and color against the design tokens. Ask the agent for token names, not raw values.
+
+<Raw html={F10} />
+
+</section>
+
+<section class="rule" id="eff-spot-plausible-rule-4">
+
+#### 4. Collect problems, then send one list \{#eff-spot-plausible-rule-4-h\}
+
+Sending problems to the agent one at a time takes many rounds, and a fix for one can bring back an earlier one, so you end up checking the same thing again. Collect everything you found in one list first, and send it back with the checks the agent should run, such as a Playwright test for the keyboard path and screenshots in both themes.
+
+<Raw html={F11} />
+
+</section>
+
+<Raw html={F12} />
+
+</div>
+
+### In real products \{#eff-spot-plausible-products\}
+
+<Raw html={F13} />
+
+</article>
+
+<article class="entry essay" id="eff-cut-combine" data-entry data-name="Cut and combine">
+
+<div class="entry-head">
+
+## Combine the best parts, cut the rest \{#eff-cut-combine-h\}
+
+<Learned id="eff-cut-combine" />
+
+</div>
+
+When you have several design directions, the best answer is often none of them whole: it takes the strongest part of each and cuts the rest. Then you check that the parts you kept still work together as one design.
+
+Agents make it cheap to get many directions, so the work that’s left is choosing which parts solve the problem and which only add to it. In the demo, each direction has three parts: the trigger (what starts it), the surface (what people see) and the recovery (how they get their work back).
+
+<Raw html={F14} />
+
+### Rules \{#eff-cut-combine-rules\}
+
+Four rules keep this choice useful.
+
+<div class="cs essay-cs">
+
+<section class="rule" id="eff-cut-combine-rule-1">
+
+#### 1. Take directions apart \{#eff-cut-combine-rule-1-h\}
+
+Each direction is usually strong in one place and weak in others, so if you pick one whole, you keep its weak parts too. Split every direction into the same parts, such as trigger, surface and recovery, and pick the best version of each part.
+
+<Raw html={F15} />
+
+</section>
+
+<section class="rule" id="eff-cut-combine-rule-2">
+
+#### 2. Cut what the problem doesn’t need \{#eff-cut-combine-rule-2-h\}
+
+Good ideas pile up fast, and each one sounds worth keeping, but every part is something to build, test and explain, and people have to work out what each control does. Write the problem down and keep only the parts that solve it. The rest can wait until people ask for it.
+
+<Raw html={F16} />
+
+</section>
+
+<section class="rule" id="eff-cut-combine-rule-3">
+
+#### 3. Read the result as one story \{#eff-cut-combine-rule-3-h\}
+
+Parts from different directions can contradict each other. A design can keep both a confirm dialog and an Undo toast: each makes sense alone, but together they ask people to decide twice. Describe the combined design in one sentence, from trigger to surface to recovery. If the sentence needs an “or”, cut one side.
+
+<Raw html={F17} />
+
+</section>
+
+<section class="rule" id="eff-cut-combine-rule-4">
+
+#### 4. Write down why parts were cut \{#eff-cut-combine-rule-4-h\}
+
+A few weeks later, nobody remembers why a part was cut, so someone suggests it again and the team repeats the discussion or adds it back. Write one line per cut part in the ticket or the pull request, so it comes back only with new evidence.
+
+<Raw html={F18} />
+
+</section>
+
+<Raw html={F19} />
+
+</div>
+
+### In real products \{#eff-cut-combine-products\}
+
+<Raw html={F20} />
+
+</article>
+
+<Raw html={F21} />
+
+<aside class="in-short" id="ch-decide-in-short" aria-labelledby="ch-decide-in-short-h" data-pagefind-ignore>
+
+## In short \{#ch-decide-in-short-h\}
+
+<div class="is-grid">
+
+<div>
+
+<a class="is-e" href="#eff-decision-matrix">Score directions against the brief</a>
+
+1. [Score against the brief, not the polish](#eff-decision-matrix-rule-1)
+2. [Set the weights before you score](#eff-decision-matrix-rule-2)
+3. [Use the total to start the decision](#eff-decision-matrix-rule-3)
+4. [Keep three to five criteria](#eff-decision-matrix-rule-4)
+
+</div>
+
+<div>
+
+<a class="is-e" href="#eff-spot-plausible">Check output that looks finished</a>
+
+1. [Use it, don’t just look at it](#eff-spot-plausible-rule-1)
+2. [Look at every state](#eff-spot-plausible-rule-2)
+3. [Check values against the tokens](#eff-spot-plausible-rule-3)
+4. [Collect problems, then send one list](#eff-spot-plausible-rule-4)
+
+</div>
+
+<div>
+
+<a class="is-e" href="#eff-cut-combine">Combine the best parts, cut the rest</a>
+
+1. [Take directions apart](#eff-cut-combine-rule-1)
+2. [Cut what the problem doesn’t need](#eff-cut-combine-rule-2)
+3. [Read the result as one story](#eff-cut-combine-rule-3)
+4. [Write down why parts were cut](#eff-cut-combine-rule-4)
+
+</div>
+
+</div>
+
+</aside>
+
+</section>
+
+<Runtime chapter="ch-decide" />

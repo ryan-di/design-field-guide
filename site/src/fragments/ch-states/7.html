@@ -1,0 +1,42 @@
+<div class="note comfy cw-wrap">
+      <div class="seg cw-seg" role="radiogroup" aria-label="Example">
+        <input type="radio" name="cw-interaction-states-w" id="cw-interaction-states-w-1" value="figma" checked><label for="cw-interaction-states-w-1">Figma</label>
+        <input type="radio" name="cw-interaction-states-w" id="cw-interaction-states-w-2" value="youtube"><label for="cw-interaction-states-w-2">YouTube</label>
+        <input type="radio" name="cw-interaction-states-w" id="cw-interaction-states-w-3" value="spotify"><label for="cw-interaction-states-w-3">Spotify</label>
+        <input type="radio" name="cw-interaction-states-w" id="cw-interaction-states-w-4" value="slack"><label for="cw-interaction-states-w-4">Slack</label>
+      </div>
+      <div class="cw" data-cw-view role="img" aria-label=""></div>
+      <p class="cw-cap" data-cw-cap aria-live="polite"></p>
+      
+      <script>
+      (() => {
+        const wrap = document.currentScript.closest('.cw-wrap');
+        const view = wrap.querySelector('[data-cw-view]'), cap = wrap.querySelector('[data-cw-cap]');
+        const ic = id => '<svg class="icon sm"><use href="#i-' + id + '"/></svg>';
+        const k = t => '<span class="cw-isw-k">' + t + '</span>';
+        const handles = ['left:-4px;top:-4px', 'right:-4px;top:-4px', 'left:-4px;bottom:-4px', 'right:-4px;bottom:-4px'].map(p => '<i class="cw-isw-h" style="' + p + '"></i>').join('');
+        const cv = (mod, inner) => '<span class="cw-isw-cv"><span class="cw-isw-shape' + (mod ? ' ' + mod : '') + '">' + (inner || '') + '</span></span>';
+        const ch = pill => '<div class="cw-isw-ch"><span class="cw-isw-av"></span><b>Bake Lab</b>' + pill + '</div>';
+        const row = (lead, title, mod, end) => '<div class="cw-isw-row' + (mod ? ' ' + mod : '') + '"><i>' + lead + '</i><span><b>' + title + '</b><small>Ana</small></span><em>' + end + '</em></div>';
+        const eq = '<span class="cw-isw-eq"><b style="height:60%"></b><b style="height:100%"></b><b style="height:40%"></b></span>';
+        const comp = (text, on) => '<div class="cw-isw-comp"><span' + (on ? '' : ' class="ph"') + '>' + text + '</span><div class="cw-isw-tools">' + ic('plus') + ic('image') + '<span class="cw-isw-send' + (on ? '' : ' off') + '">' + ic('play') + '</span></div></div>';
+        const S = {
+          figma: { html: '<div class="cw-isw-set"><span class="cw-isw-sp">' + cv('') + k('Rest') + '</span><span class="cw-isw-sp">' + cv('hov') + k('Hover') + '</span><span class="cw-isw-sp">' + cv('sel', handles + '<span class="cw-isw-size">120 × 80</span>') + k('Selected') + '</span></div>',
+            alt: 'The same shape three times. At rest it has no outline. On hover it gets a thin blue outline. Selected, it gets the outline, four corner handles and a size label.',
+            cap: 'Figma: hovering a layer draws a thin outline; selecting it adds handles and its size. “I’m pointing at it” and “I’ve picked it” never look the same.' },
+          youtube: { html: '<div class="cw-isw-set stack"><span class="cw-isw-sp">' + k('Before') + ch('<span class="cw-isw-pill sub">Subscribe</span>') + '</span><span class="cw-isw-sp">' + k('After') + ch('<span class="cw-isw-pill subd">Subscribed</span>') + '</span></div>',
+            alt: 'A channel row twice. Before: a dark, filled Subscribe button. After: a quieter gray Subscribed button with a small arrow for options.',
+            cap: 'YouTube: Subscribe is a strong filled button; once pressed it becomes a quieter Subscribed button. The color and the label both say which state you’re in.' },
+          spotify: { html: '<div class="cw-isw-list">' + row('1', 'Morning light', '', k('Rest')) + row(ic('play'), 'Paper boats', 'hov', k('Hover')) + row(eq, 'Long way home', 'play', k('Playing')) + '<div class="cw-isw-player"><span class="cw-isw-pause"></span><span class="cw-isw-bar"></span></div></div>',
+            alt: 'A track list. The first track shows its number. The hovered track shows a play icon instead of its number. The playing track has a highlighted title and small bars. Below, the main button shows pause.',
+            cap: 'Spotify: hovering a track swaps its number for a play icon, and the playing track is highlighted with small moving bars. The main button shows pause while music plays.' },
+          slack: { html: '<div class="cw-isw-set stack"><span class="cw-isw-sp">' + k('Empty') + comp('Message #design', false) + '</span><span class="cw-isw-sp">' + k('Typed') + comp('Ship it today?', true) + '</span></div>',
+            alt: 'A message box twice. Empty, it shows a placeholder and a dimmed send button. With text typed, the send button is filled and active.',
+            cap: 'Slack: the send button stays dimmed while the message box is empty and turns on as soon as you type. The reason it’s off is right there: there’s nothing to send.' }
+        };
+        const render = k => { view.innerHTML = S[k].html; view.setAttribute('aria-label', 'Sketch: ' + S[k].alt); cap.textContent = S[k].cap; };
+        wrap.querySelectorAll('input[name="cw-interaction-states-w"]').forEach(r => r.addEventListener('change', () => render(r.value)));
+        render('figma');
+      })();
+      </script>
+    </div>

@@ -1,0 +1,98 @@
+<div class="fm" data-fm>
+  
+  <div class="seg fm-seg" role="radiogroup" aria-label="Form">
+    <input type="radio" name="fm-tooltip" id="fm-tooltip-1" value="name" checked><label for="fm-tooltip-1">Name</label>
+    <input type="radio" name="fm-tooltip" id="fm-tooltip-2" value="key"><label for="fm-tooltip-2">With shortcut</label>
+    <input type="radio" name="fm-tooltip" id="fm-tooltip-3" value="explain"><label for="fm-tooltip-3">Explanation</label>
+    <input type="radio" name="fm-tooltip" id="fm-tooltip-4" value="full"><label for="fm-tooltip-4">Full text</label>
+  </div>
+  <div class="fm-stage" data-fm-stage></div>
+  <p class="fig-cap" data-fm-when aria-live="polite"></p>
+  <script>
+  (() => {
+    const fm = document.currentScript.closest('[data-fm]'), stage = fm.querySelector('[data-fm-stage]'), when = fm.querySelector('[data-fm-when]');
+    const icon = n => '<svg class="icon"><use href="#i-' + n + '"/></svg>';
+    const lines = '<div class="line" style="width:84%"></div><div class="line" style="width:92%"></div><div class="line" style="width:58%"></div>';
+    const frame = (title, right, body) => '<div class="tpf-wrap"><div class="app-frame"><div class="app-bar"><span>' + title + '</span>' + right + '</div><div class="app-body">' + body + '</div></div><div class="tpf-tip" role="tooltip" aria-hidden="true" hidden></div></div>';
+    const ib = (ic, name, start) => '<button class="icon-btn" type="button" aria-label="' + name + '" data-tt="' + name + '"' + (start ? ' data-start' : '') + '>' + icon(ic) + '</button>';
+    const fmt = (cls, ch, name, key, mac, start) => '<button class="icon-btn ' + cls + '" type="button" aria-label="' + name + '" aria-keyshortcuts="' + mac + '" data-tt="' + name + '" data-key="' + key + '"' + (start ? ' data-start' : '') + '>' + ch + '</button>';
+    const song = (t, a, start) => '<button class="tpf-song" type="button" data-tt="' + t + '" data-trunc' + (start ? ' data-start' : '') + '>' + icon('play') + '<b>' + t + '</b><span>' + a + '</span></button>';
+    const F = {
+      name: {
+        html: frame('Inbox', '<div class="tpf-tools">' + ib('trash', 'Delete', true) + ib('folder', 'Move to folder') + ib('check', 'Mark as done') + ib('dots', 'More') + '</div>',
+          '<div class="tpf-mail"><b>Maya Chen</b><span>Dinner on Friday?</span></div>' + lines + '<p class="tpf-out" data-out></p>'),
+        below: true,
+        use: 'Use it for icon buttons that have no text.',
+        more: 'Keep it to the one or two words the button would say if it had a label.'
+      },
+      key: {
+        html: frame('Trip notes', '', '<div class="tpf-fmt">' + fmt('', 'B', 'Bold', '⌘B', 'Meta+B', true) + fmt('i', 'I', 'Italic', '⌘I', 'Meta+I') + fmt('u', 'U', 'Underline', '⌘U', 'Meta+U') + '</div>' + lines + '<p class="tpf-out" data-out></p>'),
+        below: true,
+        use: 'Use it when the button also has a keyboard shortcut.',
+        more: 'People learn the shortcut while they use the button.'
+      },
+      explain: {
+        html: frame('Your stay', '', '<div class="tpf-sum"><span>2 nights × £120</span><span>£240</span></div><div class="tpf-sum"><button class="tpf-term" type="button" data-tt="A daily charge for the pool, the gym and beach towels." aria-description="A daily charge for the pool, the gym and beach towels." data-start>Resort fee</button><span>£30</span></div><div class="tpf-sum"><span>Taxes</span><span>£27</span></div><div class="tpf-sum tot"><span>Total</span><span>£297</span></div><button class="btn btn-primary" type="button" style="align-self:flex-start">Reserve</button>'),
+        use: 'Use it to explain a word some people won’t know, in one short sentence.',
+        more: 'Mark the word with a dotted underline, so people can tell there is more.'
+      },
+      full: {
+        html: frame('Road trip', '', '<div class="tpf-songs">' + song('Concerto for Two Violins in D Minor: I. Vivace', 'J. S. Bach') + song('Clair de lune', 'Claude Debussy') + song('The Four Seasons, Violin Concerto No. 2 in G Minor “Summer”: III. Presto', 'Antonio Vivaldi', true) + song('Gymnopédie No. 1', 'Erik Satie') + '</div>'),
+        use: 'Use it when a long name is cut off to fit.',
+        more: 'Show it only on the names that are cut, not on ones people can already read.'
+      }
+    };
+    let gen = 0, wrap, tip, cur = null, lastHide = 0, below = false;
+    const place = el => {
+      const w = wrap.getBoundingClientRect(), r = el.getBoundingClientRect(), t = tip.getBoundingClientRect();
+      if (!w.width) return;
+      let left = r.left - w.left + r.width / 2 - t.width / 2;
+      left = Math.max(4, Math.min(left, w.width - t.width - 4));
+      let top = below ? r.bottom - w.top + 6 : r.top - w.top - t.height - 6;
+      if (top < 0 || top + t.height > w.height) top = below ? r.top - w.top - t.height - 6 : r.bottom - w.top + 6;
+      tip.style.left = left + 'px'; tip.style.top = top + 'px';
+    };
+    const cut = el => { const b = el.querySelector('b'); return !b || b.scrollWidth > b.clientWidth + 1; };
+    const showTip = el => {
+      if (el.hasAttribute('data-trunc') && !cut(el)) { hideTip(); return; }
+      if (cur) cur.classList.remove('tpf-hov');
+      cur = el; el.classList.add('tpf-hov');
+      tip.textContent = el.dataset.tt;
+      if (el.dataset.key) { const k = document.createElement('span'); k.className = 'tpf-kbd'; k.textContent = el.dataset.key; tip.appendChild(k); }
+      tip.hidden = false; place(el);
+    };
+    const hideTip = () => { if (!tip || tip.hidden) return; tip.hidden = true; if (cur) cur.classList.remove('tpf-hov'); cur = null; lastHide = Date.now(); };
+    let hoverG = 0;
+    stage.addEventListener('pointerover', e => {
+      const el = e.target.closest('[data-tt]');
+      if (!el || e.pointerType === 'touch' || el === cur) return;
+      const g = gen, h = ++hoverG, warm = (tip && !tip.hidden) || Date.now() - lastHide < 400;
+      if (warm) { showTip(el); return; }
+      setTimeout(() => { if (g !== gen || h !== hoverG || !el.matches(':hover')) return; showTip(el); }, 400);
+    });
+    stage.addEventListener('pointerout', e => {
+      const el = e.target.closest('[data-tt]');
+      if (!el || el.contains(e.relatedTarget)) return;
+      hoverG++;
+      if (el === cur && document.activeElement !== el) hideTip();
+    });
+    stage.addEventListener('focusin', e => { const el = e.target.closest('[data-tt]'); if (el && el.matches(':focus-visible')) showTip(el); });
+    stage.addEventListener('focusout', e => { const el = e.target.closest('[data-tt]'); if (el && el === cur && !el.matches(':hover')) hideTip(); });
+    stage.addEventListener('keydown', e => { if (e.key === 'Escape') hideTip(); });
+    stage.addEventListener('click', e => {
+      const el = e.target.closest('[data-tt]'), out = stage.querySelector('[data-out]');
+      if (el && out) out.textContent = el.dataset.tt + (el.dataset.key ? ' (' + el.dataset.key + ')' : '') + ' pressed.';
+    });
+    new ResizeObserver(() => { if (cur && tip && !tip.hidden) place(cur); }).observe(stage);
+    const show = k => {
+      gen++;
+      stage.innerHTML = F[k].html;
+      wrap = stage.querySelector('.tpf-wrap'); tip = stage.querySelector('.tpf-tip'); cur = null; below = !!F[k].below;
+      showTip(stage.querySelector('[data-start]'));
+      when.innerHTML = '<b>' + fm.querySelector('.fm-seg input:checked + label').textContent + '.</b> ' + F[k].use + ' ' + F[k].more;
+    };
+    fm.querySelectorAll('.fm-seg input').forEach(i => i.addEventListener('change', () => show(i.value)));
+    show('name');
+  })();
+  </script>
+</div>

@@ -1,0 +1,126 @@
+<div class="fm" data-fm>
+  
+  <div class="seg fm-seg" role="radiogroup" aria-label="Form">
+    <input type="radio" name="fm-link-vs-button" id="fm-link-vs-button-1" value="inline" checked><label for="fm-link-vs-button-1">Inline link</label>
+    <input type="radio" name="fm-link-vs-button" id="fm-link-vs-button-2" value="solo"><label for="fm-link-vs-button-2">Standalone link</label>
+    <input type="radio" name="fm-link-vs-button" id="fm-link-vs-button-3" value="button"><label for="fm-link-vs-button-3">Button</label>
+    <input type="radio" name="fm-link-vs-button" id="fm-link-vs-button-4" value="btnlink"><label for="fm-link-vs-button-4">Button-style link</label>
+    <input type="radio" name="fm-link-vs-button" id="fm-link-vs-button-5" value="text"><label for="fm-link-vs-button-5">Text button</label>
+  </div>
+  <div class="fm-stage" data-fm-stage></div>
+  <p class="fig-cap" data-fm-when aria-live="polite"></p>
+  <script>
+  (() => {
+    const fm = document.currentScript.closest('[data-fm]'), stage = fm.querySelector('[data-fm-stage]'), when = fm.querySelector('[data-fm-when]');
+    const SHOP = 'shop.example.com';
+    const row = (a, b) => '<div class="cs-row"><span class="grow">' + a + '</span><span class="cs-meta">' + b + '</span></div>';
+    /* Links point at "#" and cancel the click, so the book never scrolls or leaves the page. */
+    const link = (go, label, cls) => '<a class="' + cls + '" href="#" data-go="' + go + '">' + label + '</a>';
+    const frame = '<div class="app-frame fm-frame lvf-br"><div class="lvf-bar"><button class="icon-btn lvf-back" type="button" aria-label="Back" data-back>←</button><div class="lvf-url" data-url></div></div><div class="app-body lvf-page" data-page></div><div class="lvf-status" data-status></div></div>';
+
+    /* A tiny browser: an address line, a Back button, and a status bar that shows where a link goes on hover or focus.
+       A click on a link changes the address and adds a Back step. Ctrl/⌘/Shift-click or middle-click opens it in a "new tab" instead.
+       Buttons never touch the address: they change the page they're on. */
+    const browser = (pages, start) => {
+      stage.innerHTML = frame;
+      const url = stage.querySelector('[data-url]'), page = stage.querySelector('[data-page]'), st = stage.querySelector('[data-status]'), back = stage.querySelector('[data-back]');
+      const hist = []; let cur = start;
+      const out = html => { const o = page.querySelector('[data-out]'); if (o) o.innerHTML = html; };
+      const newTab = a => out('Opened “' + a.textContent.replace('→', '').trim() + '” in a new tab. This page stays as it is.');
+      const draw = kb => {
+        const p = pages[cur];
+        url.textContent = SHOP + p.path; back.disabled = !hist.length; st.textContent = '';
+        page.innerHTML = p.html() + '<p class="cs-meta lvf-note" data-out></p>';
+        page.querySelectorAll('a[data-go]').forEach(a => {
+          const show = () => { st.textContent = SHOP + pages[a.dataset.go].path; }, hide = () => { st.textContent = ''; };
+          a.addEventListener('mouseenter', show); a.addEventListener('focus', show);
+          a.addEventListener('mouseleave', hide); a.addEventListener('blur', hide);
+          a.addEventListener('click', e => { e.preventDefault(); if (e.ctrlKey || e.metaKey || e.shiftKey) newTab(a); else go(a.dataset.go, e.detail === 0); });
+          a.addEventListener('mousedown', e => { if (e.button === 1) e.preventDefault(); });
+          a.addEventListener('auxclick', e => { if (e.button === 1) { e.preventDefault(); newTab(a); } });
+        });
+        if (p.wire) p.wire(page, api);
+        if (kb) { const el = page.querySelector('a, button'); if (el) el.focus(); }
+      };
+      const go = (k, kb) => { hist.push(cur); cur = k; draw(kb); };
+      back.addEventListener('click', e => {
+        if (!hist.length) return;
+        cur = hist.pop(); draw();
+        /* After a keyboard Back, keep focus on Back, or move it into the page once there is nowhere further back. */
+        if (e.detail === 0) { if (!back.disabled) back.focus(); else { const el = page.querySelector('a, button'); if (el) el.focus(); } }
+      });
+      const api = { draw, out };
+      draw();
+    };
+
+    const returns = { path: '/help/returns', html: () => '<b>Returns policy</b><p>Send items back within 30 days of delivery. Use the label in the box, or print a new one from your orders.</p>' };
+    const checkout = { path: '/checkout', html: () => '<b>Checkout</b>' + row('Deliver to', '12 Elm Street') + row('Pay with', 'Visa ending 4242') + row('Total', '$101.00') };
+    const F = {
+      inline: {
+        use: 'Use it to point to another page from inside a sentence.',
+        more: 'Underline it, so people can find it without relying on color.',
+        show: () => browser({
+          jacket: { path: '/rain-jacket', html: () => '<div class="lvf-head"><b>Rain jacket</b><span class="lvf-price">$89</span></div><p>Light, packable and fully waterproof. Free returns within 30 days. Read the ' + link('returns', 'returns policy', 'lvf-a') + ' before you order.</p>' },
+          returns
+        }, 'jacket')
+      },
+      solo: {
+        use: 'Use it for a way to another page that sits on its own, such as “See all orders”.',
+        more: 'Its place and wording already say it’s a link, so it can drop the underline until hover.',
+        show: () => browser({
+          account: { path: '/account', html: () => '<b>Recent orders</b>' + row('Rain jacket', 'Delivered') + row('Wool socks', 'On the way') + link('orders', 'See all orders →', 'lvf-solo') },
+          orders: { path: '/account/orders', html: () => '<b>All orders</b>' + row('Rain jacket', 'Delivered') + row('Wool socks', 'On the way') + row('Water bottle', 'Delivered') + row('Running cap', 'Returned') }
+        }, 'account')
+      },
+      button: {
+        use: 'Use it when pressing it changes something here: add, save, send, delete.',
+        more: 'The address stays the same, and the result shows on the page.',
+        show: () => {
+          let n = 0;
+          browser({
+            jacket: { path: '/rain-jacket',
+              html: () => '<div class="lvf-head"><b>Rain jacket</b><span class="lvf-price">$89</span></div><span class="lvf-sub">In your cart: <b data-n>' + n + '</b></span><button class="btn btn-primary" type="button" data-add>Add to cart</button>',
+              wire: (pg, api) => pg.querySelector('[data-add]').addEventListener('click', () => { n++; pg.querySelector('[data-n]').textContent = n; api.out('Added to cart.'); }) }
+          }, 'jacket');
+        }
+      },
+      btnlink: {
+        use: 'Use it when the main next step is another page, such as “Go to checkout”.',
+        more: 'It looks like a button because it matters most, but it stays a link, so new tabs and Back still work.',
+        show: () => browser({
+          cart: { path: '/cart', html: () => '<b>Your cart</b>' + row('Rain jacket', '$89.00') + row('Wool socks', '$12.00') + link('checkout', 'Go to checkout', 'btn btn-primary') },
+          checkout
+        }, 'cart')
+      },
+      text: {
+        use: 'Use it for a small action that shouldn’t compete with the main one, such as “Remove”.',
+        more: 'It looks light, but it’s still a button: it acts here and doesn’t change the address.',
+        show: () => {
+          const ALL = [['Rain jacket', '$89.00'], ['Wool socks', '$12.00']];
+          let items = ALL.slice();
+          browser({
+            cart: { path: '/cart',
+              html: () => '<b>Your cart</b>' + (items.length ? items.map(([name, price]) => '<div class="cs-row"><span class="grow">' + name + '<br><span class="cs-meta">' + price + '</span></span><button class="lvf-text" type="button" data-rm="' + name + '" aria-label="Remove ' + name + '">Remove</button></div>').join('') : '<p class="lvf-sub">Your cart is empty.</p>') +
+                (items.length ? link('checkout', 'Go to checkout', 'btn btn-primary') : ''),
+              wire: (pg, api) => pg.querySelectorAll('[data-rm]').forEach(b => b.addEventListener('click', e => {
+                const name = b.dataset.rm, kb = e.detail === 0;
+                items = items.filter(x => x[0] !== name); api.draw();
+                api.out('<span>' + name + ' removed.</span><button class="lvf-text" type="button" data-undo>Undo</button>');
+                const u = pg.querySelector('[data-undo]');
+                u.addEventListener('click', ev => { items = ALL.filter(x => items.includes(x) || x[0] === name); api.draw(ev.detail === 0); });
+                if (kb) u.focus();
+              })) },
+            checkout
+          }, 'cart');
+        }
+      }
+    };
+    const show = k => {
+      F[k].show();
+      when.innerHTML = '<b>' + fm.querySelector('.fm-seg input:checked + label').textContent + '.</b> ' + F[k].use + ' ' + F[k].more;
+    };
+    fm.querySelectorAll('.fm-seg input').forEach(i => i.addEventListener('change', () => show(i.value)));
+    show('inline');
+  })();
+  </script>
+</div>

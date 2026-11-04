@@ -1,0 +1,233 @@
+<script>
+  (() => {
+    const sec = document.currentScript.closest('section');
+    const $ = (s, el = sec) => el.querySelector(s);
+    const $$ = (s, el = sec) => Array.from(el.querySelectorAll(s));
+
+    /* 1. Decision matrix */
+    (() => {
+      const st = $('[data-demo="eff-decision-matrix"]');
+      if (!st) return;
+      const KEYS = ['loss', 'int', 'eff', 'fit'];
+      const SHORT = { loss: 'Loss', int: 'Interruption', eff: 'Effort', fit: 'Fit' };
+      const BRIEF = { loss: 3, int: 2, eff: 1, fit: 2 };
+      const DIRS = [
+        { name: 'Ask on close', sub: 'Confirm dialog when a tab with changes closes', s: { loss: 4, int: 1, eff: 5, fit: 4 } },
+        { name: 'Keep drafts', sub: 'Save a draft on every change', s: { loss: 5, int: 5, eff: 2, fit: 3 } },
+        { name: 'Undo the close', sub: 'Toast with Undo, plus Reopen closed tab', s: { loss: 3, int: 4, eff: 4, fit: 5 } },
+        { name: 'Restore on next launch', sub: 'Banner offers the unsaved changes later', s: { loss: 4, int: 4, eff: 3, fit: 4 } }
+      ];
+      const ranges = $$('input[type="range"]', st);
+      const list = $('#p28-dm-list', st), note = $('#p28-dm-note', st);
+      const total = (d, w) => KEYS.reduce((a, k) => a + d.s[k] * w[k], 0);
+      const leaders = w => { const t = DIRS.map(d => total(d, w)); const m = Math.max(...t); return DIRS.filter((d, i) => t[i] === m).map(d => d.name); };
+      const baseLead = leaders(BRIEF)[0];
+      list.innerHTML = DIRS.map((d, i) => '<li class="p28-dir" data-i="' + i + '"><div class="p28-dir-top"><span><b>' + d.name + '</b><span class="p28-lead" hidden>Leads</span><br><small>' + d.sub + '</small></span><span class="p28-tot"></span></div><div class="bar" aria-hidden="true"><span></span></div><p class="p28-scs">' + KEYS.map(k => SHORT[k] + ' ' + d.s[k]).join(' · ') + '</p></li>').join('');
+      const render = () => {
+        const w = {};
+        ranges.forEach(r => { w[r.dataset.k] = +r.value; r.nextElementSibling.textContent = '×' + r.value; r.setAttribute('aria-valuetext', 'weight ' + r.value + ' of 3'); });
+        const max = 5 * KEYS.reduce((a, k) => a + w[k], 0);
+        const lead = leaders(w);
+        $$('.p28-dir', list).forEach((li, i) => {
+          const t = total(DIRS[i], w);
+          const isLead = max > 0 && lead.includes(DIRS[i].name);
+          li.classList.toggle('lead', isLead);
+          $('.p28-lead', li).hidden = !isLead;
+          $('.p28-tot', li).textContent = t + ' / ' + max;
+          $('.bar > span', li).style.width = (max ? Math.round(t / max * 100) : 0) + '%';
+        });
+        const atBrief = KEYS.every(k => w[k] === BRIEF[k]);
+        const totals = DIRS.map(d => total(d, w)).sort((a, b) => b - a);
+        const gap = totals[0] - totals[1];
+        let msg, changed = false;
+        if (max === 0) msg = 'Every weight is 0, so nothing is being compared.';
+        else if (lead.length > 1) { msg = 'Tie: ' + lead.join(' and ') + '. The numbers can’t decide this. Compare what goes wrong in each one’s worst case.'; changed = true; }
+        else if (lead[0] !== baseLead) { msg = 'The winner changed: ' + lead[0] + ' now leads, not ' + baseLead + '. Check that these weights still match the brief before you trust it.'; changed = true; }
+        else if (atBrief) msg = 'With the brief’s weights, ' + baseLead + ' leads by ' + gap + '. Close enough that a small weight change could flip it.';
+        else msg = baseLead + ' still leads, by ' + gap + '. The result holds with these weights.';
+        note.textContent = msg;
+        note.classList.toggle('changed', changed);
+      };
+      ranges.forEach(r => r.addEventListener('input', render));
+      $('#p28-dm-reset', st).addEventListener('click', () => { ranges.forEach(r => { r.value = BRIEF[r.dataset.k]; }); render(); });
+      render();
+    })();
+
+    /* 2. Spot the problems */
+    (() => {
+      const st = $('[data-demo="eff-spot-plausible"]');
+      if (!st) return;
+      const ISSUES = {
+        modal: ['Wrong component', 'a modal blocks the whole canvas on launch. Nothing here is urgent, so a banner above the canvas fits better: people can finish what they opened the app for.'],
+        copy: ['Generic copy', '“Notice” and “Something went wrong” could sit on any dialog. Say what was kept: “2 tabs have unsaved changes from your last session.”'],
+        kbd: ['No keyboard path', 'in the agent’s code the × is a bare icon: it can’t be focused and Escape does nothing. There must be a way out without a mouse.'],
+        contrast: ['Contrast too low', 'the faded line is well under the 4.5:1 that body text needs, and it carries useful facts.'],
+        states: ['Missing states', 'only the happy path is designed. What shows if a draft can’t be read, or if restoring fails?'],
+        token: ['Off-token button', 'Restore uses an illustration color, its own radius and uneven padding instead of the primary button.']
+      };
+      const FINE = {
+        'ok-tab': 'Looks fine: the dot on the tab is the usual unsaved marker.',
+        'ok-discard': 'Looks fine: Discard is a secondary button and says what it does.'
+      };
+      const TOTAL = Object.keys(ISSUES).length;
+      const hs = $$('.p28-hs', st);
+      const score = $('#p28-sp-score', st), msg = $('#p28-sp-msg', st), out = $('#p28-sp-found', st);
+      let order = [], revealed = new Set(), falseAlarms = 0;
+      const update = () => {
+        const found = order.filter(k => !revealed.has(k)).length;
+        score.textContent = found + ' of ' + TOTAL + ' found' + (revealed.size ? ' · ' + revealed.size + ' revealed' : '') + (falseAlarms ? ' · ' + falseAlarms + (falseAlarms === 1 ? ' false alarm' : ' false alarms') : '');
+        out.innerHTML = '';
+        order.forEach(k => {
+          const li = document.createElement('li');
+          const b = document.createElement('b'); b.textContent = ISSUES[k][0] + ':';
+          li.append(b, ' ' + ISSUES[k][1]);
+          if (revealed.has(k)) { const em = document.createElement('em'); em.textContent = ' (revealed)'; li.append(em); }
+          out.appendChild(li);
+        });
+      };
+      const mark = (k, how) => {
+        if (order.includes(k)) return false;
+        order.push(k);
+        if (how === 'shown') revealed.add(k);
+        const el = hs.find(h => h.dataset.hs === k);
+        el.classList.add(how);
+        el.dataset.n = order.length;
+        return true;
+      };
+      hs.forEach(h => h.addEventListener('click', () => {
+        const k = h.dataset.hs;
+        if (FINE[k]) {
+          if (!h.classList.contains('fine')) { falseAlarms++; h.classList.add('fine'); }
+          msg.textContent = FINE[k];
+        } else if (mark(k, 'found')) {
+          const left = TOTAL - order.length;
+          msg.textContent = 'Found: ' + ISSUES[k][0].toLowerCase() + '. ' + (left ? left + ' to go.' : 'All six found. Each one would pass a quick look at a screenshot.');
+        } else msg.textContent = ISSUES[k][0] + ' is already on the list.';
+        update();
+      }));
+      $('#p28-sp-reveal', st).addEventListener('click', () => {
+        Object.keys(ISSUES).forEach(k => mark(k, 'shown'));
+        msg.textContent = 'All six are marked. The dashed ones are those you hadn’t found.';
+        update();
+      });
+      $('#p28-sp-reset', st).addEventListener('click', () => {
+        order = []; revealed = new Set(); falseAlarms = 0;
+        hs.forEach(h => { h.classList.remove('found', 'shown', 'fine'); delete h.dataset.n; });
+        msg.textContent = '';
+        update();
+      });
+      update();
+    })();
+
+    /* 3. Cut and combine */
+    (() => {
+      const st = $('[data-demo="eff-cut-combine"]');
+      if (!st) return;
+      const PARTS = {
+        trigger: { label: 'Trigger', a: 'Ask before a tab with changes closes', b: 'Keep a draft on every change', c: 'Keep the closed tab for a while' },
+        surface: { label: 'Surface', a: 'Confirm dialog on close', b: '“Draft” marker on the tab', c: 'Toast with Undo after closing' },
+        recovery: { label: 'Recovery', a: 'Save, Don’t save or Cancel', b: 'Restore the draft from the tab’s menu', c: 'Undo, or Reopen closed tab, brings back its changes' }
+      };
+      const TRADE = {
+        trigger: { a: 'Every close with changes gets interrupted.', b: 'The most work to build: drafts need storage and cleanup.', c: 'Closed tabs are lost if the app crashes or restarts.' },
+        surface: { a: 'Blocks the canvas until people answer.', b: 'Easy to miss, and it only shows while the tab is open.', c: 'The toast fades after a few seconds, so the way back must also live in a menu.' },
+        recovery: { a: 'People decide in the moment, often without reading.', b: 'Hidden in a menu people need to know about.', c: 'Needs a limit on how many closed tabs to keep.' }
+      };
+      const keep = $('#p28-cc-keep', st), clashUl = $('#p28-cc-clash', st), tradeUl = $('#p28-cc-trade', st);
+      const status = $('#p28-cc-status', st), cut = $('#p28-cc-cut', st), live = $('#p28-cc-live', st);
+      const get = n => $('input[name="p28-cc-' + n + '"]:checked', st).value;
+      const L = v => v.toUpperCase();
+      const li = (ul, items) => { ul.innerHTML = ''; items.forEach(t => { const x = document.createElement('li'); x.textContent = t; ul.appendChild(x); }); ul.parentElement.hidden = !items.length; };
+      const render = () => {
+        const p = { trigger: get('trigger'), surface: get('surface'), recovery: get('recovery') };
+        keep.innerHTML = '';
+        Object.keys(PARTS).forEach(k => {
+          const x = document.createElement('li');
+          const b = document.createElement('b'); b.textContent = PARTS[k].label;
+          const s = document.createElement('span'); s.textContent = PARTS[k][p[k]] + ' (' + L(p[k]) + ')';
+          x.append(b, s); keep.appendChild(x);
+        });
+        const clashes = [];
+        if (p.trigger === 'a' && p.surface !== 'a') clashes.push('Asking before close needs a dialog to ask in. Pick the dialog, or a trigger that doesn’t ask.');
+        if (p.surface === 'a' && p.trigger !== 'a') clashes.push('A dialog on close with nothing to ask just interrupts. Cut it, or ask first.');
+        if (p.recovery === 'a' && p.trigger !== 'a') clashes.push('Save, Don’t save and Cancel only exist if you ask before closing.');
+        if (p.recovery === 'b' && p.trigger !== 'b') clashes.push('Restoring a draft needs drafts kept on every change.');
+        if (p.surface === 'b' && p.recovery === 'c') clashes.push('The tab marker closes with the tab, so it can’t offer Undo. Use the toast.');
+        const trades = Object.keys(TRADE).map(k => TRADE[k][p[k]]);
+        if (p.trigger === 'a' && p.recovery === 'c') trades.push('People decide twice: once in the dialog, then again with Undo.');
+        li(clashUl, clashes);
+        li(tradeUl, clashes.length ? [] : trades);
+        const from = new Set(Object.values(p));
+        const label = clashes.length ? clashes.length + (clashes.length === 1 ? ' clash' : ' clashes') : (from.size === 1 ? 'Holds together · one direction whole' : 'Holds together');
+        status.textContent = label;
+        status.className = 'p28-cc-status ' + (clashes.length ? 'bad' : 'ok');
+        cut.innerHTML = '';
+        const cuts = [];
+        Object.keys(PARTS).forEach(k => ['a', 'b', 'c'].forEach(v => { if (v !== p[k]) cuts.push(PARTS[k][v] + ' (' + L(v) + ')'); }));
+        cuts.forEach((t, i) => { const s = document.createElement('s'); s.textContent = t; cut.append(s); if (i < cuts.length - 1) cut.append(' · '); });
+        live.textContent = 'Combined design: ' + label + '.';
+      };
+      $$('.p28-opt input', st).forEach(r => r.addEventListener('change', render));
+      render();
+    })();
+
+    /* In Comfy switcher */
+    (() => {
+            const node = (name, body, cls) => '<div class="cw-node' + (cls ? ' ' + cls : '') + '"><b>' + name + '</b>' + (body || '<i class="cw-line"></i>') + '</div>';
+      const DEC = {
+        dialog: { html: '<div class="cw-dec-stage"><div class="cw-dec-dim"><div class="cw-nodes">' + node('Load image') + node('KSampler') + node('Save image') + '</div></div><div class="cw-dec-dlg"><b>Restore unsaved work?</b><span>2 tabs had unsaved changes.</span><div class="cw-dec-btns"><span class="cw-dec-btn">Discard</span><span class="cw-dec-btn pri">Restore</span></div></div></div>',
+          alt: 'A dialog asking Restore unsaved work, over a dimmed canvas with three nodes.',
+          cap: 'Dialog: it reads well and asks a clear question, but it blocks the canvas on every launch for something that can wait. Ask whether a banner fits better.' },
+        settings: { html: '<div class="cw-dec-panel"><b>Saving</b><div class="cw-dec-row"><span>Auto-save</span><i class="cw-dec-tog"></i></div><div class="cw-dec-row flag"><span>Auto-save interval (ms)</span><span class="cw-dec-val">30000</span></div><div class="cw-dec-row flag"><span>Autosave on close</span><i class="cw-dec-tog"></i></div><span class="cw-dec-flagnote">Units in ms · a second auto-save switch</span></div>',
+          alt: 'A settings panel with Auto-save, an interval in milliseconds and a second Autosave on close switch. The last two rows are flagged.',
+          cap: 'Settings panel: tidy rows, but the interval is in milliseconds and a second auto-save switch repeats the first. Check it against the settings that already exist.' },
+        copy: { html: '<div class="cw-nodes">' + node('Load image') + node('KSampler') + '</div><div class="cw-dec-toast"><span>Error: restore failed (code 2). Please try again.</span><em>Retry</em></div>',
+          alt: 'A toast saying Error: restore failed, code 2, please try again, with a Retry action.',
+          cap: 'Error copy: calm and polite, yet it doesn’t say what was lost or what to do if Retry fails. Ask for what happened, what’s kept and the next step.' },
+        widget: { html: '<div class="cw-nodes">' + node('KSampler', '<span class="cw-dec-sl"><span>Denoise</span><i></i>0.75</span>', 'cw-dec-wide') + node('KSampler', '<span class="cw-dec-sl bad"><span>Denoise</span><i></i>0.7…</span>', 'cw-dec-narrow') + '</div>',
+          alt: 'The same node at two widths. At the default width the Denoise slider fits; on the narrow node its value is cut off.',
+          cap: 'Node widget: fine at the default node width. Narrow the node, zoom out and use the keyboard before you trust it.' }
+      };
+
+      const dm = (w, dirs) => { const max = 5 * w.reduce((a, x) => a + x[1], 0); const tot = d => d[1].reduce((a, v, i) => a + v * w[i][1], 0); const best = Math.max(...dirs.map(tot));
+        return '<div class="cw-dm-w">' + w.map(x => '<span>' + x[0] + ' ×' + x[1] + '</span>').join('') + '</div><div class="cw-dm-list">' + dirs.map(d => { const t = tot(d); return '<div class="cw-dm-dir' + (t === best ? ' top' : '') + '"><div><b>' + d[0] + '</b><span>' + t + ' / ' + max + '</span></div><span class="cw-dm-bar"><i style="width:' + Math.round(t / max * 100) + '%"></i></span><small>' + d[1].map((v, i) => w[i][0] + ' ' + v).join(' · ') + '</small></div>'; }).join('') + '</div>'; };
+      const DM = {
+        tab: { html: dm([['Loss', 3], ['Interruption', 2], ['Effort', 1], ['Fit', 2]], [['Keep drafts', [5, 5, 2, 3]], ['Undo the close', [3, 4, 4, 5]], ['Ask on close', [4, 1, 5, 4]]]),
+          alt: 'Tab close with the brief’s weights. Keep drafts leads with 33 of 40, Undo the close 31, Ask on close 27.',
+          cap: 'Tab close: with the brief’s weights, Keep drafts leads by only 2. Name the risk you care about most before you decide.' },
+        copy: { html: dm([['Clarity', 2], ['Effort', 3], ['Fit', 1]], [['Rewrite the message', [5, 5, 4]], ['New help panel', [4, 1, 3]]]),
+          alt: 'Quick copy fix with effort weighted 3. Rewrite the message scores 29 of 30, New help panel 14.',
+          cap: 'Quick copy fix: effort dominates, so the one-line rewrite wins by a mile. When the call is this clear, skip the matrix.' },
+        risky: { html: dm([['Safety', 3], ['Speed', 1], ['Fit', 1]], [['Keep asking by default', [5, 2, 4]], ['Stop asking, offer Undo', [3, 5, 4]]]),
+          alt: 'Risky default with safety weighted 3. Keep asking by default scores 21 of 25, Stop asking 18.',
+          cap: 'Risky default: when a change could lose work for everyone, weight safety highest. The safer default wins even though it’s slower.' },
+        newcomer: { html: dm([['No interruption', 3], ['Discoverable', 2], ['Effort', 1]], [['Inline hint by the tab', [5, 3, 4]], ['Tip on first close', [2, 4, 4]], ['Welcome tour', [1, 5, 2]]]),
+          alt: 'Newcomer feature with no interruption weighted 3. Inline hint scores 25 of 30, tip on first close 18, welcome tour 15.',
+          cap: 'Newcomer feature: people are still learning the canvas, so interruption weighs most. The quiet hint beats a tour that’s easier to find.' }
+      };
+      const cc = (chip, rows, cut) => '<div class="cw-cc-card"><div class="cw-cc-head"><b>Combined design</b><span class="cw-cc-chip' + (chip.bad ? ' bad' : '') + '">' + chip.t + '</span></div>' + rows.map(r => '<div class="cw-cc-row' + (r[3] ? ' bad' : '') + '"><span>' + r[0] + '</span><span>' + r[1] + '</span><span class="cw-cc-src">' + r[2] + '</span></div>').join('') + '<span class="cw-cc-cut">Cut: ' + cut.map(c => '<s>' + c + '</s>').join(' · ') + '</span></div>';
+      const CC = {
+        tab: { html: cc({ t: 'Holds together' }, [['Trigger', 'Keep a draft on every change', 'B'], ['Surface', 'Toast with Undo after closing', 'C'], ['Recovery', 'Undo or Reopen closed tab', 'C']], ['Confirm dialog (A)', 'Tab marker (B)', 'Save / Don’t save (A)']),
+          alt: 'Tab close: trigger from B, surface and recovery from C. Holds together. The dialog and tab marker are cut.',
+          cap: 'Tab close: B’s drafts plus C’s Undo toast. Nothing blocks closing, and the draft keeps Undo working after a restart.' },
+        search: { html: cc({ t: 'Holds together' }, [['Open', 'Double-click the canvas', 'B'], ['Results', 'Grouped by category', 'A'], ['Insert', 'Place at the click point', 'B']], ['Side panel (A)', 'Flat result list (B)', 'Drag from the panel (A)']),
+          alt: 'Node search: open and insert from direction B, grouped results from direction A.',
+          cap: 'Node search: open where people already double-click, borrow the other direction’s grouped results, and insert where they clicked.' },
+        templates: { html: cc({ t: 'Holds together' }, [['Entry', 'New tab offers templates', 'A'], ['Browse', 'Grid with thumbnails', 'B'], ['Start', 'Opens as a new unsaved tab', 'A']], ['Separate gallery page (B)', 'Text list (A)', 'Overwrite current tab (B)']),
+          alt: 'Template picker: entry and start from A, thumbnail grid from B.',
+          cap: 'Template picker: a template opens as a new unsaved tab, so whatever protects tab close protects it too. The page that overwrites the current tab is cut.' },
+        clash: { html: cc({ t: '2 clashes', bad: true }, [['Trigger', 'Ask before a tab closes', 'A', 1], ['Surface', 'Toast with Undo after closing', 'C', 1], ['Recovery', 'Restore the draft from a menu', 'B', 1]], ['Confirm dialog (A)', 'Keep a draft (B)']),
+          alt: 'A clash: trigger from A, surface from C, recovery from B. All three rows are flagged and the chip says 2 clashes.',
+          cap: 'A clash: each part is good alone, but asking needs a dialog and restoring a draft needs drafts kept. If the story needs an “or”, cut one side.' }
+      };
+      const SETS = { dec: [DEC, 'dialog'], dm: [DM, 'tab'], cc: [CC, 'tab'] };
+      $$('.cw-wrap[data-cw]').forEach(wrap => {
+        const [S, first] = SETS[wrap.dataset.cw];
+        const view = $('[data-cw-view]', wrap), cap = $('[data-cw-cap]', wrap);
+        const render = k => { view.innerHTML = S[k].html; view.setAttribute('aria-label', 'Sketch: ' + S[k].alt); cap.textContent = S[k].cap; };
+        $$('input[name="cw-eff-' + wrap.dataset.cw + '"]', wrap).forEach(r => r.addEventListener('change', () => render(r.value)));
+        render(first);
+      });
+    })();
+  })();
+  </script>

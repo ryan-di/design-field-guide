@@ -1,0 +1,310 @@
+---
+title: "States"
+description: "Every component spends time in states other than the default: loading, empty, error, disabled."
+eyebrow: "Chapter 24"
+sidebar:
+  label: "States"
+---
+
+import Raw from '../../../components/Raw.astro';
+import Learned from '../../../components/Learned.astro';
+import Runtime from '../../../components/Runtime.astro';
+import F0 from '../../../fragments/ch-states/0.html?raw';
+import F1 from '../../../fragments/ch-states/1.html?raw';
+import F2 from '../../../fragments/ch-states/2.html?raw';
+import F3 from '../../../fragments/ch-states/3.html?raw';
+import F4 from '../../../fragments/ch-states/4.html?raw';
+import F5 from '../../../fragments/ch-states/5.html?raw';
+import F6 from '../../../fragments/ch-states/6.html?raw';
+import F7 from '../../../fragments/ch-states/7.html?raw';
+import F8 from '../../../fragments/ch-states/8.html?raw';
+import F9 from '../../../fragments/ch-states/9.html?raw';
+import F10 from '../../../fragments/ch-states/10.html?raw';
+import F11 from '../../../fragments/ch-states/11.html?raw';
+import F12 from '../../../fragments/ch-states/12.html?raw';
+import F13 from '../../../fragments/ch-states/13.html?raw';
+import F14 from '../../../fragments/ch-states/14.html?raw';
+import F15 from '../../../fragments/ch-states/15.html?raw';
+import F16 from '../../../fragments/ch-states/16.html?raw';
+import F17 from '../../../fragments/ch-states/17.html?raw';
+import F18 from '../../../fragments/ch-states/18.html?raw';
+import F19 from '../../../fragments/ch-states/19.html?raw';
+import F20 from '../../../fragments/ch-states/20.html?raw';
+import F21 from '../../../fragments/ch-states/21.html?raw';
+import F22 from '../../../fragments/ch-states/22.html?raw';
+
+<Runtime at="start" />
+
+<section class="dfg-chapter" id="ch-states">
+
+Every component spends time in states other than the default: loading, empty, error, disabled. Design each of them.
+
+<article class="entry essay" id="interaction-states" data-entry data-name="Interaction states">
+
+<div class="entry-head">
+
+## Interaction states \{#interaction-states-h\}
+
+<Learned id="interaction-states" />
+
+</div>
+
+Interaction states are the different looks one control takes as people use it: hover, focus, pressed, selected, disabled, loading, and the result after. Each state tells people something they need in that moment: that the control reacts, that it heard the click, that it’s working, or that it’s done.
+
+A state lives on the control itself, so people see it exactly where they acted. A message, like a [toast](/part-3/feedback/#toast) or an [inline message](/part-3/feedback/#inline-message), is for anything that needs more words than a control can hold.
+
+<Raw html={F0} />
+
+### Forms \{#interaction-states-forms\}
+
+States fall into four kinds, by what they report. Hover and pressed follow the pointer, focus shows where the keyboard is, selected shows what’s chosen, and disabled and loading say what the control can do right now.
+
+<Raw html={F1} />
+
+### Rules \{#interaction-states-rules\}
+
+Four rules keep interaction states useful.
+
+<div class="cs essay-cs">
+
+<section class="rule" id="interaction-states-rule-1">
+
+#### 1. Design every state, not just the default \{#interaction-states-rule-1-h\}
+
+A button that looks the same while it sends, after it fails and when there’s nothing to send gives people no answer, so they press again or give up. Give each state its own look and words, such as “Sending…”, “Sent” and “Retry”. Before building, list every state (default, hover, focus, pressed, disabled, loading, error, success) and check each one in the browser.
+
+<Raw html={F2} />
+
+</section>
+
+<section class="rule" id="interaction-states-rule-2">
+
+#### 2. Say why it’s off \{#interaction-states-rule-2-h\}
+
+A disabled control shows that people can’t act, but not why, so they check every field and guess. Put the reason right next to it, or keep it enabled and explain when it’s pressed, the same fix as for [a disabled button](/part-3/actions/#buttons).
+
+<Raw html={F3} />
+
+</section>
+
+<section class="rule" id="interaction-states-rule-3">
+
+#### 3. Keep the focus ring \{#interaction-states-rule-3-h\}
+
+Without a focus ring, keyboard users can’t see which button they’re on, so they press Enter and hope. As in [Keyboard and focus](/part-1/craft/#good-keyboard-focus), restyle the ring to fit the design instead of removing it. `:focus-visible` shows it only when people use the keyboard, so it never shows on mouse clicks.
+
+<Raw html={F4} />
+
+</section>
+
+<section class="rule" id="interaction-states-rule-4">
+
+#### 4. Block the second click \{#interaction-states-rule-4-h\}
+
+If a button still works while it’s loading, a nervous double-click places two orders. Once it’s pressed, ignore repeat clicks and show that it’s working. Keep its width fixed too, because a button that grows to fit “Placing your order…” moves the buttons next to it, like [content that loads late](/part-1/craft/#good-edge-cases).
+
+<Raw html={F5} />
+
+</section>
+
+<Raw html={F6} />
+
+</div>
+
+### In real products \{#interaction-states-products\}
+
+<Raw html={F7} />
+
+</article>
+
+<article class="entry essay" id="empty-state" data-entry data-name="Empty state">
+
+<div class="entry-head">
+
+## Empty state \{#empty-state-h\}
+
+<Learned id="empty-state" />
+
+</div>
+
+An empty state is what a screen shows when there’s nothing in it: no albums yet, no search results, no tasks left. Instead of a blank space, it says what belongs here and how to get the first one.
+
+Loading means content is on its way, and an [error](#error-state) means something failed. Empty means everything worked, and there’s nothing to show.
+
+<Raw html={F8} />
+
+### Forms \{#empty-state-forms\}
+
+Empty states come in three common kinds, set by why the screen is empty: first use, no results and all done. Each kind needs different words and a different action.
+
+<Raw html={F9} />
+
+### Rules \{#empty-state-rules\}
+
+Three rules keep empty states useful.
+
+<div class="cs essay-cs">
+
+<section class="rule" id="empty-state-rule-1">
+
+#### 1. Say what goes here \{#empty-state-rule-1-h\}
+
+“No items” doesn’t say what belongs on the screen or how to add it, so people have to find the small + in the corner on their own. Name what will show up here, and put the button for the first one inside the empty space, where it takes one press.
+
+<Raw html={F10} />
+
+</section>
+
+<section class="rule" id="empty-state-rule-2">
+
+#### 2. Offer one way to start \{#empty-state-rule-2-h\}
+
+Five equal buttons make a new person stop and compare them, and none of them looks like the place to start. Give one main action, and at most one quieter one beside it, such as a link to [templates](/part-2/blank/#pat-templates) for people who look for them.
+
+<Raw html={F11} />
+
+</section>
+
+<section class="rule" id="empty-state-rule-3">
+
+#### 3. Match the message to the cause \{#empty-state-rule-3-h\}
+
+If an empty search and an unstarted wishlist both say “No items”, people can’t tell which problem they have, and a search that’s too narrow needs a different fix than a list that’s new. For no results, name the filter and offer to clear it. For first use, explain how to add the first item.
+
+<Raw html={F12} />
+
+</section>
+
+<Raw html={F13} />
+
+</div>
+
+### In real products \{#empty-state-products\}
+
+<Raw html={F14} />
+
+</article>
+
+<article class="entry essay" id="error-state" data-entry data-name="Error state">
+
+<div class="entry-head">
+
+## Error state \{#error-state-h\}
+
+<Learned id="error-state" />
+
+</div>
+
+An error state is what a screen, or part of one, shows when something failed: a page didn’t load, a save didn’t go through, a link is broken. It says what went wrong in plain words and offers the next step.
+
+It sits where content would be, like an [empty state](#empty-state), but it means the opposite: something failed, and people need to know what and what to do about it.
+
+<Raw html={F15} />
+
+### Forms \{#error-state-forms\}
+
+Error states come in four common kinds, set by what failed: content that didn’t load, an action that didn’t go through, a link to something that’s gone, and a page people aren’t allowed to open. Each kind needs a different next step.
+
+<Raw html={F16} />
+
+### Rules \{#error-state-rules\}
+
+Four rules keep error states useful.
+
+<div class="cs essay-cs">
+
+<section class="rule" id="error-state-rule-1">
+
+#### 1. Say what failed \{#error-state-rule-1-h\}
+
+When every problem gets the same words, people can’t tell if they made a mistake, lost their connection or hit a bug, so they don’t know what to fix. Name the thing that failed, and say where the cause lies: in what they entered, in the connection, or on the product’s side. People then know whether to change their input, wait for the connection or try again later.
+
+<Raw html={F17} />
+
+</section>
+
+<section class="rule" id="error-state-rule-2">
+
+#### 2. Offer the next step \{#error-state-rule-2-h\}
+
+An error with only an OK button closes and leaves the problem where it was. Put the next step on buttons in the message, such as Try again or Get help, as in [Error messages](/part-1/words/#good-error-copy). Most failures go away on a second try, and help is there when they don’t.
+
+<Raw html={F18} />
+
+</section>
+
+<section class="rule" id="error-state-rule-3">
+
+#### 3. Keep people’s work \{#error-state-rule-3-h\}
+
+When an upload of 40 photos fails halfway and the error clears the selection, people have to pick all 40 again, and the 18 that already uploaded get sent a second time. Keep what people chose and what already finished, so Retry continues from where it stopped.
+
+<Raw html={F19} />
+
+</section>
+
+<section class="rule" id="error-state-rule-4">
+
+#### 4. Don’t lead with the code \{#error-state-rule-4-h\}
+
+“Error 500” means nothing to most people, who can’t tell whose fault it is, or whether to retry or wait. [Lead with plain words](/part-1/words/#good-error-copy): say what didn’t load, that it isn’t their fault, and what to do. The code can stay below in small text, for when they contact support.
+
+<Raw html={F20} />
+
+</section>
+
+<Raw html={F21} />
+
+</div>
+
+### In real products \{#error-state-products\}
+
+<Raw html={F22} />
+
+</article>
+
+<aside class="in-short" id="ch-states-in-short" aria-labelledby="ch-states-in-short-h" data-pagefind-ignore>
+
+## In short \{#ch-states-in-short-h\}
+
+<div class="is-grid">
+
+<div>
+
+<a class="is-e" href="#interaction-states">Interaction states</a>
+
+1. [Design every state, not just the default](#interaction-states-rule-1)
+2. [Say why it’s off](#interaction-states-rule-2)
+3. [Keep the focus ring](#interaction-states-rule-3)
+4. [Block the second click](#interaction-states-rule-4)
+
+</div>
+
+<div>
+
+<a class="is-e" href="#empty-state">Empty state</a>
+
+1. [Say what goes here](#empty-state-rule-1)
+2. [Offer one way to start](#empty-state-rule-2)
+3. [Match the message to the cause](#empty-state-rule-3)
+
+</div>
+
+<div>
+
+<a class="is-e" href="#error-state">Error state</a>
+
+1. [Say what failed](#error-state-rule-1)
+2. [Offer the next step](#error-state-rule-2)
+3. [Keep people’s work](#error-state-rule-3)
+4. [Don’t lead with the code](#error-state-rule-4)
+
+</div>
+
+</div>
+
+</aside>
+
+</section>
+
+<Runtime chapter="ch-states" />

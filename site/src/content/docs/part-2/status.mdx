@@ -1,0 +1,313 @@
+---
+title: "Did it work?"
+description: "You press a button and nothing seems to happen, so you press it again, or you decide it’s broken and give up."
+eyebrow: "Chapter 10"
+sidebar:
+  label: "Did it work?"
+---
+
+import Raw from '../../../components/Raw.astro';
+import Learned from '../../../components/Learned.astro';
+import Runtime from '../../../components/Runtime.astro';
+import F0 from '../../../fragments/ch-status/0.html?raw';
+import F1 from '../../../fragments/ch-status/1.html?raw';
+import F2 from '../../../fragments/ch-status/2.html?raw';
+import F3 from '../../../fragments/ch-status/3.html?raw';
+import F4 from '../../../fragments/ch-status/4.html?raw';
+import F5 from '../../../fragments/ch-status/5.html?raw';
+import F6 from '../../../fragments/ch-status/6.html?raw';
+import F7 from '../../../fragments/ch-status/7.html?raw';
+import F8 from '../../../fragments/ch-status/8.html?raw';
+import F9 from '../../../fragments/ch-status/9.html?raw';
+import F10 from '../../../fragments/ch-status/10.html?raw';
+import F11 from '../../../fragments/ch-status/11.html?raw';
+import F12 from '../../../fragments/ch-status/12.html?raw';
+import F13 from '../../../fragments/ch-status/13.html?raw';
+import F14 from '../../../fragments/ch-status/14.html?raw';
+import F15 from '../../../fragments/ch-status/15.html?raw';
+import F16 from '../../../fragments/ch-status/16.html?raw';
+import F17 from '../../../fragments/ch-status/17.html?raw';
+import F18 from '../../../fragments/ch-status/18.html?raw';
+import F19 from '../../../fragments/ch-status/19.html?raw';
+import F20 from '../../../fragments/ch-status/20.html?raw';
+import F21 from '../../../fragments/ch-status/21.html?raw';
+import F22 from '../../../fragments/ch-status/22.html?raw';
+import F23 from '../../../fragments/ch-status/23.html?raw';
+
+<Runtime at="start" />
+
+<section class="dfg-chapter" id="ch-status">
+
+You press a button and nothing seems to happen, so you press it again, or you decide it’s broken and give up. Jakob Nielsen put this first in his ten usability heuristics, as visibility of system status: people should always know what the system is doing, and hear back quickly. The patterns below answer “did it work?” at the right moment and in the right place, with Part 3 components like the [spinner](/part-3/progress/#spinner), the [progress bar](/part-3/progress/#progress-bar) and the [toast](/part-3/feedback/#toast).
+
+<Raw html={F0} />
+
+<article class="entry essay" id="pat-instant-feedback" data-entry data-name="Instant feedback">
+
+<div class="entry-head">
+
+## Instant feedback \{#pat-instant-feedback-h\}
+
+<Learned id="pat-instant-feedback" />
+
+</div>
+
+Instant feedback means the screen answers an action right away: a pressed button changes, a ticked box shows a tick, a save says “Saving…”. People know their action registered, so they don’t click again or give up.
+
+The work itself may take seconds, but the sign that it started should take less than a tenth of a second. Put the new state in text as well, so screen readers announce it too.
+
+<Raw html={F1} />
+
+### Ways to do it \{#pat-instant-feedback-ways\}
+
+Feedback comes in four common strengths. The bigger or slower the action, the stronger the answer.
+
+<Raw html={F2} />
+
+### Rules \{#pat-instant-feedback-rules\}
+
+Four rules keep feedback useful.
+
+<div class="cs essay-cs">
+
+<section class="rule" id="pat-instant-feedback-rule-1">
+
+#### 1. Leave the confirmation up long enough \{#pat-instant-feedback-rule-1-h\}
+
+A confirmation that flashes by is gone before people look at it, so they’re left unsure and do the action again. Keep a short confirmation on screen for one to two seconds, or better, switch to a state that lasts, like “Saved just now”, until the next change.
+
+<Raw html={F3} />
+
+</section>
+
+<section class="rule" id="pat-instant-feedback-rule-2">
+
+#### 2. Show it where the action happened \{#pat-instant-feedback-rule-2-h\}
+
+People look at the thing they just clicked, so a change in a far corner of the screen goes unseen and they click again. Show the answer on the button, row or card that was used. A counter elsewhere can update too, as a second sign.
+
+<Raw html={F4} />
+
+</section>
+
+<section class="rule" id="pat-instant-feedback-rule-3">
+
+#### 3. Match the strength to the action \{#pat-instant-feedback-rule-3-h\}
+
+When every small action gets a toast, the toasts pile up and people stop reading them, so they miss the one that matters too. A changed control is enough for most clicks. Keep toasts and other strong signals for actions that matter or take a while.
+
+<Raw html={F5} />
+
+</section>
+
+<section class="rule" id="pat-instant-feedback-rule-4">
+
+#### 4. Ignore repeat clicks while it works \{#pat-instant-feedback-rule-4-h\}
+
+When a button gives no sign during a slow action, people click again, and each click can run the action again: two comments, two orders. While it works, say so on the button and ignore further clicks. Use aria-disabled instead of disabled, so keyboard focus stays on the button.
+
+<Raw html={F6} />
+
+</section>
+
+<Raw html={F7} />
+
+</div>
+
+### In real products \{#pat-instant-feedback-products\}
+
+<Raw html={F8} />
+
+</article>
+
+<article class="entry essay" id="pat-optimistic-ui" data-entry data-name="Optimistic UI">
+
+<div class="entry-head">
+
+## Optimistic UI \{#pat-optimistic-ui-h\}
+
+<Learned id="pat-optimistic-ui" />
+
+</div>
+
+Optimistic UI shows the result of an action before the server confirms it. The app assumes the action will work, updates the screen at once, and sends the request in the background. If the request fails, it puts things back and says so.
+
+It goes one step further than [instant feedback](#pat-instant-feedback), which only shows that the action has started: here the result itself shows at once. That suits small actions that almost always succeed, such as a like, a star or a status change.
+
+<Raw html={F9} />
+
+### Ways to do it \{#pat-optimistic-ui-ways\}
+
+Four kinds of actions often use it, and each needs its own way to show a failure. Tick “Make the next request fail” to see it.
+
+<Raw html={F10} />
+
+### Rules \{#pat-optimistic-ui-rules\}
+
+Three rules keep optimistic UI honest.
+
+<div class="cs essay-cs">
+
+<section class="rule" id="pat-optimistic-ui-rule-1">
+
+#### 1. Show failures where they happened \{#pat-optimistic-ui-rule-1-h\}
+
+Sometimes the request fails after the screen has changed. If nothing says so, the change quietly vanishes later or looks saved when it isn’t, and people find out much later, when it matters. Roll the change back where people can see it, say what failed, and offer Retry. Announce the rollback in text too, because a heart that empties again is invisible to a screen reader.
+
+<Raw html={F11} />
+
+</section>
+
+<section class="rule" id="pat-optimistic-ui-rule-2">
+
+#### 2. Wait when it matters \{#pat-optimistic-ui-rule-2-h\}
+
+Some actions often fail or carry a real cost, like payments or deletes. Showing success at once and taking it back a moment later is worse than waiting, because people may already have closed the app, sure it worked. For these, wait for the server’s answer and show progress. Keep optimism for small, reversible actions that almost always succeed.
+
+<Raw html={F12} />
+
+</section>
+
+<section class="rule" id="pat-optimistic-ui-rule-3">
+
+#### 3. Let the latest request decide \{#pat-optimistic-ui-rule-3-h\}
+
+Two quick clicks send two requests, and the answers can come back in the wrong order. If the screen follows whichever answer arrives last, it can show a state the person didn’t choose. Treat the server’s answer as the truth, but let only the latest request decide what’s shown.
+
+<Raw html={F13} />
+
+</section>
+
+<Raw html={F14} />
+
+</div>
+
+### In real products \{#pat-optimistic-ui-products\}
+
+<Raw html={F15} />
+
+</article>
+
+<article class="entry essay" id="pat-background-work" data-entry data-name="Background work">
+
+<div class="entry-head">
+
+## Background work with notification \{#pat-background-work-h\}
+
+<Learned id="pat-background-work" />
+
+</div>
+
+Some work takes longer than people want to wait, such as an upload, an export or a backup. Background work lets it run while people keep doing other things. A small indicator shows that it’s still going, a toast says when it’s done, and finished results wait in a list until people look at them.
+
+That is what separates it from a [progress bar](/part-3/progress/#progress-bar) in a dialog, which makes people sit and watch: here people keep working while the progress stays on screen. Tell screen readers when the work starts and when it ends, not at every step of progress.
+
+<Raw html={F16} />
+
+### Ways to do it \{#pat-background-work-ways\}
+
+There are four common ways to keep background work in view. They differ in how much room the work takes and in how people hear that it’s done. Many products combine two, like an indicator while it runs and a toast at the end.
+
+<Raw html={F17} />
+
+### Rules \{#pat-background-work-rules\}
+
+Four rules keep background work useful.
+
+<div class="cs essay-cs">
+
+<section class="rule" id="pat-background-work-rule-1">
+
+#### 1. Keep progress on screen \{#pat-background-work-rule-1-h\}
+
+People rarely stay on the screen where they started a long job, and once they move on, progress that lived on that screen is gone. They can’t tell if the work is still running, stuck or done, so they go back to check or start it again. Put a small indicator in a bar that stays on every screen.
+
+<Raw html={F18} />
+
+</section>
+
+<section class="rule" id="pat-background-work-rule-2">
+
+#### 2. Keep finished work in a list \{#pat-background-work-rule-2-h\}
+
+A toast that says “ready” is easy to miss, because people look away or it fades before they finish what they’re doing. If that toast was the only way to the result, the result is lost to them. Keep finished work in a list they can open later, and mark new items until they’ve been opened.
+
+<Raw html={F19} />
+
+</section>
+
+<section class="rule" id="pat-background-work-rule-3">
+
+#### 3. Group notices that come together \{#pat-background-work-rule-3-h\}
+
+When many items finish close together, one toast per item piles up. The toasts cover the screen and all say nearly the same thing, and people have to read or close each one. Send one toast for the whole batch, with a link to the items.
+
+<Raw html={F20} />
+
+</section>
+
+<section class="rule" id="pat-background-work-rule-4">
+
+#### 4. Make failures louder than success \{#pat-background-work-rule-4-h\}
+
+A failure that looks like a success goes unnoticed until someone needs the file, and by then it may be too late to redo the work. Keep a failure on screen until it’s dealt with: mark it clearly, say what went wrong, and offer a way to fix it.
+
+<Raw html={F21} />
+
+</section>
+
+<Raw html={F22} />
+
+</div>
+
+### In real products \{#pat-background-work-products\}
+
+<Raw html={F23} />
+
+</article>
+
+<aside class="in-short" id="ch-status-in-short" aria-labelledby="ch-status-in-short-h" data-pagefind-ignore>
+
+## In short \{#ch-status-in-short-h\}
+
+<div class="is-grid">
+
+<div>
+
+<a class="is-e" href="#pat-instant-feedback">Instant feedback</a>
+
+1. [Leave the confirmation up long enough](#pat-instant-feedback-rule-1)
+2. [Show it where the action happened](#pat-instant-feedback-rule-2)
+3. [Match the strength to the action](#pat-instant-feedback-rule-3)
+4. [Ignore repeat clicks while it works](#pat-instant-feedback-rule-4)
+
+</div>
+
+<div>
+
+<a class="is-e" href="#pat-optimistic-ui">Optimistic UI</a>
+
+1. [Show failures where they happened](#pat-optimistic-ui-rule-1)
+2. [Wait when it matters](#pat-optimistic-ui-rule-2)
+3. [Let the latest request decide](#pat-optimistic-ui-rule-3)
+
+</div>
+
+<div>
+
+<a class="is-e" href="#pat-background-work">Background work with notification</a>
+
+1. [Keep progress on screen](#pat-background-work-rule-1)
+2. [Keep finished work in a list](#pat-background-work-rule-2)
+3. [Group notices that come together](#pat-background-work-rule-3)
+4. [Make failures louder than success](#pat-background-work-rule-4)
+
+</div>
+
+</div>
+
+</aside>
+
+</section>
+
+<Runtime chapter="ch-status" />

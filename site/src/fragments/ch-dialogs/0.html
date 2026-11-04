@@ -1,0 +1,19 @@
+<div class="stage" data-demo="dialog">
+      <div class="row">
+        <button class="btn btn-danger" type="button" data-act="open"><svg class="icon sm"><use href="#i-trash"/></svg>Delete 3 notes</button>
+        <button class="btn btn-secondary" type="button" data-act="archive">Archive 3 notes</button>
+      </div>
+      <dialog class="ui-dialog" id="d-dialog" aria-labelledby="d-dialog-title">
+        <form method="dialog">
+          <div class="dlg-body">
+            <h4 id="d-dialog-title">Delete 3 notes?</h4>
+            <p>Grocery list, Book ideas and Gift list will be deleted. You can’t undo this.</p>
+          </div>
+          <div class="dlg-actions">
+            <button class="btn btn-secondary" value="cancel" type="submit" autofocus>Cancel</button>
+            <button class="btn btn-danger" value="delete" type="submit">Delete notes</button>
+          </div>
+        </form>
+      </dialog>
+      <p class="try"><b>Try it:</b> press Delete 3 notes, then Archive 3 notes. Delete can’t be undone, so it asks first, says exactly what will go and labels the button with the action. Archive just happens and offers Undo.</p>
+    </div>

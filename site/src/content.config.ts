@@ -6,6 +6,11 @@ import { docsSchema } from '@astrojs/starlight/schema';
 export const collections = {
 	docs: defineCollection({
 		loader: docsLoader(),
-		schema: docsSchema({ extend: z.object({ eyebrow: z.string().optional() }) }),
+		schema: docsSchema({
+			extend: z.object({
+				eyebrow: z.string().optional(),
+				part: z.object({ id: z.string(), label: z.string(), title: z.string(), sub: z.string() }).optional(),
+			}),
+		}),
 	}),
 };

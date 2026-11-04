@@ -1,0 +1,126 @@
+<script>
+(() => {
+  const cs = document.currentScript.closest('.cs');
+  const D = (k, html, wire) => csDemo(cs.querySelector('[data-d="' + k + '"]'), html, wire);
+  const icon = (n, big) => '<svg class="icon' + (big ? '' : ' sm') + '"><use href="#i-' + n + '"/></svg>';
+  const item = (k, label, ic) => '<button type="button" class="sn-i" data-k="' + k + '">' + (ic ? icon(ic) : '') + '<span>' + label + '</span></button>';
+  const app = (nav, cls, navCls) => '<div class="sn-app' + (cls ? ' ' + cls : '') + '"><nav class="sn-nav' + (navCls ? ' ' + navCls : '') + '" aria-label="Main">' + nav + '</nav><div class="sn-page" data-page></div></div>';
+  const mark = (d, k) => d.querySelectorAll('.sn-i[data-k]').forEach(b => { if (b.dataset.k === k) b.setAttribute('aria-current', 'page'); else b.removeAttribute('aria-current'); });
+  const title = text => '<h5 class="sn-title" tabindex="-1">' + text + '</h5>';
+  const lines = '<div class="line" style="width:88%"></div><div class="line" style="width:66%"></div><div class="line" style="width:76%"></div>';
+
+  /* 1. Actions in the nav */
+  const P1 = { files: ['Taxes 2025', 'Trip plan.doc', 'Budget.xlsx'], photos: ['Beach.jpg', 'Birthday.jpg', 'Snow.jpg'], trash: ['Old notes.txt'] };
+  const N1 = { files: 'Files', photos: 'Photos', trash: 'Trash' };
+  const kind = n => /\.jpg$/.test(n) ? 'image' : /\./.test(n) ? 'book' : 'folder';
+  const fileRows = list => list.map(n => '<div class="cs-row"><span class="grow sn-file">' + icon(kind(n)) + '<span>' + n + '</span></span></div>').join('');
+  const actB = app(item('files', 'Files', 'folder') + item('photos', 'Photos', 'image') + item('newf', 'New folder', 'plus') + item('upload', 'Upload', 'layers') + item('trash', 'Trash', 'trash'));
+  const actF = app(item('files', 'Files', 'folder') + item('photos', 'Photos', 'image') + item('trash', 'Trash', 'trash'));
+  const actWire = fixed => d => {
+    const data = JSON.parse(JSON.stringify(P1)), page = d.querySelector('[data-page]');
+    let nf = 0, nu = 0;
+    const folder = () => 'Summer trip' + (nf ? ' ' + (nf + 1) : '');
+    const photo = () => 'IMG_' + (2041 + nu) + '.jpg';
+    const go = (k, note, focus) => {
+      mark(d, k);
+      if (k === 'newf') {
+        page.innerHTML = title('New folder') + '<label class="cs-f">Folder name<input class="input" data-name></label><button type="button" class="btn btn-primary cs-sm" data-create style="align-self:flex-start">Create</button>';
+        const inp = page.querySelector('[data-name]'); inp.value = folder();
+        page.querySelector('[data-create]').addEventListener('click', () => { const n = inp.value.trim() || 'Untitled folder'; nf++; data.files.unshift(n); go('files', 'Folder “' + n + '” created in Files.', '.sn-title'); });
+        return;
+      }
+      if (k === 'upload') {
+        page.innerHTML = title('Upload') + '<div class="sn-drop">Drop files here</div><button type="button" class="btn btn-primary cs-sm" data-pick style="align-self:flex-start">Choose a file</button>';
+        page.querySelector('[data-pick]').addEventListener('click', () => { const n = photo(); nu++; data.files.push(n); go('files', n + ' uploaded to Files.', '.sn-title'); });
+        return;
+      }
+      const acts = fixed && k !== 'trash' ? '<div class="sn-acts"><button type="button" class="btn btn-secondary cs-sm" data-new>New folder</button><button type="button" class="btn btn-primary cs-sm" data-up>Upload</button></div>' : '';
+      page.innerHTML = '<div class="sn-head">' + title(N1[k]) + acts + '</div><div>' + fileRows(data[k]) + '</div><p class="cs-ok" role="status">' + (note || '') + '</p>';
+      if (acts) {
+        page.querySelector('[data-new]').addEventListener('click', () => { const n = folder(); nf++; data[k].unshift(n); go(k, 'Folder “' + n + '” created in ' + N1[k] + '.', '[data-new]'); });
+        page.querySelector('[data-up]').addEventListener('click', () => { const n = photo(); nu++; data[k].push(n); go(k, n + ' uploaded to ' + N1[k] + '.', '[data-up]'); });
+      }
+      if (focus) { const f = page.querySelector(focus); if (f) f.focus({ preventScroll: true }); }
+    };
+    d.querySelectorAll('.sn-i').forEach(b => b.addEventListener('click', () => go(b.dataset.k)));
+    go('photos');
+  };
+  D('side-nav-1b', actB, actWire(false));
+  D('side-nav-1f', actF, actWire(true));
+
+  /* 2. Too many items */
+  const key = s => s.toLowerCase().replace(/\s+/g, '-');
+  const many = list => list.map(s => item(key(s), s)).join('');
+  const head = s => '<p class="sn-h">' + s + '</p>';
+  const SETUP = [['Shipping', 'Rates and zones'], ['Taxes', 'Rates by region'], ['Payments', 'Cards and payouts'], ['Staff', 'People and access']];
+  const manyB = app(many(['Orders', 'Products', 'Customers', 'Discounts', 'Reports', 'Gift cards', 'Reviews', 'Shipping', 'Taxes', 'Payments', 'Staff']), '', 'sn-tight');
+  const manyF = app(head('Sell') + many(['Orders', 'Products', 'Customers']) + head('Grow') + many(['Discounts', 'Reports']) +
+    '<button type="button" class="sn-i sn-more" aria-expanded="false" data-more><span>More (2)</span><span class="sn-chev" aria-hidden="true">›</span></button>' +
+    '<div class="sn-sub" data-sub hidden>' + many(['Gift cards', 'Reviews']) + '</div><span class="sn-sep"></span>' + item('settings', 'Settings', 'gear'), '', 'sn-tight');
+  const manyWire = d => {
+    const page = d.querySelector('[data-page]');
+    const go = (k, label) => {
+      mark(d, k);
+      page.innerHTML = k === 'settings'
+        ? title('Settings') + SETUP.map(s => '<div class="cs-row"><span class="grow">' + s[0] + '</span><span class="cs-meta">' + s[1] + '</span></div>').join('')
+        : title(label) + lines;
+    };
+    d.querySelectorAll('.sn-i[data-k]').forEach(b => b.addEventListener('click', () => go(b.dataset.k, b.textContent)));
+    const more = d.querySelector('[data-more]');
+    if (more) more.addEventListener('click', () => { const open = more.getAttribute('aria-expanded') !== 'true'; more.setAttribute('aria-expanded', String(open)); d.querySelector('[data-sub]').hidden = !open; });
+    go('orders', 'Orders');
+  };
+  D('side-nav-2b', manyB, manyWire);
+  D('side-nav-2f', manyF, manyWire);
+
+  /* 3. Icons only */
+  const TOOLS = [['library', 'Library', 'image'], ['adjust', 'Adjust', 'sliders'], ['layers', 'Layers', 'layers'], ['presets', 'Presets', 'cube'], ['help', 'Help', 'book']];
+  const fig = (cls, cap) => '<figure><div class="thumb' + cls + '"></div>' + cap + '</figure>';
+  const BODY3 = {
+    library: '<div class="sn-thumbs">' + fig('', 'Beach') + fig(' b', 'Lake') + fig(' c', 'Dunes') + '</div>',
+    adjust: '<div class="sn-adj"><span>Light</span><div class="line" style="width:70%"></div><span>Color</span><div class="line" style="width:45%"></div><span>Detail</span><div class="line" style="width:58%"></div></div>',
+    layers: '<div><div class="cs-row"><span class="grow">Text</span></div><div class="cs-row"><span class="grow">Sticker</span></div><div class="cs-row"><span class="grow">Photo</span></div></div>',
+    presets: '<div class="sn-thumbs">' + fig('', 'Warm') + fig(' b', 'Mono') + fig(' c', 'Fade') + '</div>',
+    help: lines
+  };
+  const railB = app(TOOLS.map(([k, n, ic]) => '<button type="button" class="sn-i sn-ic" data-k="' + k + '" aria-label="' + n + '" data-tipr="' + n + '">' + icon(ic, true) + '</button>').join(''), '', 'sn-rail');
+  const railF = app(TOOLS.map(([k, n, ic]) => '<button type="button" class="sn-i sn-ic sn-lab" data-k="' + k + '">' + icon(ic, true) + '<span>' + n + '</span></button>').join(''), '', 'sn-rail');
+  const iconWire = d => {
+    const page = d.querySelector('[data-page]');
+    const go = k => {
+      mark(d, k);
+      const name = TOOLS.find(x => x[0] === k)[1];
+      page.innerHTML = '<p class="sn-task">Task: open <b>Presets</b></p>' + title(name) + BODY3[k] + '<p class="cs-ok" role="status">' + (k === 'presets' ? 'Found it.' : '') + '</p>';
+    };
+    d.querySelectorAll('.sn-i').forEach(b => b.addEventListener('click', () => go(b.dataset.k)));
+    go('library');
+  };
+  D('side-nav-3b', railB, iconWire);
+  D('side-nav-3f', railF, iconWire);
+
+  /* 4. Current place not marked */
+  const MUSIC = [['home', 'Home', 'home', 'Good evening'], ['search', 'Search', 'search', 'Browse all'], ['library', 'Library', 'book', 'Your music']];
+  const two = (a, b) => '<div class="sn-two"><span>' + a + '</span><span class="cs-meta">' + b + '</span></div>';
+  const BODY4 = {
+    home: '<div>' + two('Road trip', 'Playlist') + two('Morning coffee', 'Playlist') + two('Kind of Blue', 'Album') + '</div>',
+    search: '<div class="sn-search">' + icon('search') + '<span>What do you want to hear?</span></div><div class="sn-tiles"><span>Pop</span><span>Jazz</span><span>Rock</span><span>Chill</span></div>',
+    library: '<div>' + two('Liked songs', '212 songs') + two('Road trip', '34 songs') + two('Focus', '18 songs') + '</div>'
+  };
+  const musicHtml = app(MUSIC.map(([k, n, ic]) => item(k, n, ic)).join(''));
+  const musicWire = fixed => d => {
+    const page = d.querySelector('[data-page]');
+    const go = k => {
+      const m = MUSIC.find(x => x[0] === k);
+      if (fixed) mark(d, k);
+      page.innerHTML = title(fixed ? m[1] : m[3]) + BODY4[k];
+    };
+    d.querySelectorAll('.sn-i').forEach(b => b.addEventListener('click', () => go(b.dataset.k)));
+    go('library');
+  };
+  D('side-nav-4b', musicHtml, musicWire(false));
+  D('side-nav-4f', musicHtml, musicWire(true));
+
+  csInit(cs);
+})();
+
+  </script>

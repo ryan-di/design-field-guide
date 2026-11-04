@@ -1,0 +1,74 @@
+<div class="fm" data-fm>
+  <div class="seg fm-seg" role="radiogroup" aria-label="Way to do it">
+    <input type="radio" name="fm-pat-contextual-hints" id="fm-pat-contextual-hints-1" value="ph" checked><label for="fm-pat-contextual-hints-1">Placeholder</label>
+    <input type="radio" name="fm-pat-contextual-hints" id="fm-pat-contextual-hints-2" value="help"><label for="fm-pat-contextual-hints-2">Help icon</label>
+    <input type="radio" name="fm-pat-contextual-hints" id="fm-pat-contextual-hints-3" value="call"><label for="fm-pat-contextual-hints-3">Callout</label>
+    <input type="radio" name="fm-pat-contextual-hints" id="fm-pat-contextual-hints-4" value="nudge"><label for="fm-pat-contextual-hints-4">Nudge</label>
+  </div>
+  <div class="fm-stage" data-fm-stage></div>
+  <p class="fig-cap" data-fm-when aria-live="polite"></p>
+  
+  <script>
+  (() => {
+    const fm = document.currentScript.closest('[data-fm]'), stage = fm.querySelector('[data-fm-stage]'), when = fm.querySelector('[data-fm-when]');
+    const frame = (title, right, body) => '<div class="app-frame fm-frame"><div class="app-bar"><span>' + title + '</span>' + (right || '') + '</div><div class="app-body">' + body + '</div></div>';
+    const MAIL = [['Ana', 'Lunch on Friday?'], ['Bookshop', 'Your order has shipped'], ['Leo', 'Photos from the trip'], ['Gym', 'New class times'], ['Mia', 'Re: birthday plans']];
+    const F = {
+      ph: {
+        html: frame('Hotels', '', '<label class="field-label">Where to?<input class="input" placeholder="City, area or hotel name" style="margin-top:6px"></label><label class="field-label">Dates<input class="input" value="12–16 Nov" style="margin-top:6px"></label><p class="cs-meta" data-out></p>'),
+        use: 'Use it for a short example of what goes in an empty field.',
+        more: 'It disappears as soon as people type, so it can’t hold instructions they need while typing.',
+        wire: s => { const i = s.querySelector('input'), o = s.querySelector('[data-out]'); i.addEventListener('input', () => { o.textContent = i.value ? 'The placeholder is gone now.' : ''; }); }
+      },
+      help: {
+        html: frame('Settings', '', '<div class="fmh-row"><span class="grow">Two-step sign-in</span><button class="icon-btn fmh-q" type="button" aria-label="What is two-step sign-in?" aria-expanded="false" data-q>?</button><label class="switch"><input type="checkbox" role="switch" aria-label="Two-step sign-in"></label></div><p class="fmh-say" data-say hidden>When you sign in on a new phone or computer, we also ask for a code from your phone.</p><div class="fmh-row"><span class="grow">Sign out of other devices</span></div>'),
+        use: 'Use it for detail only some people want.',
+        more: 'Nothing shows until people ask, so it never gets in anyone’s way.',
+        wire: s => { const q = s.querySelector('[data-q]'), p = s.querySelector('[data-say]'); q.addEventListener('click', () => { p.hidden = !p.hidden; q.setAttribute('aria-expanded', String(!p.hidden)); }); }
+      },
+      call: {
+        html: frame('Now playing', '', '<div class="fmh-player"><span class="thumb c"></span><b>Late Bus Home</b><span class="cs-meta">The Quiet Hours</span><div class="fmh-ctl"><button class="btn btn-secondary" type="button">Pause</button><button class="btn btn-secondary" type="button" data-lyr>Lyrics</button></div><div class="fmh-call" data-call><span><b>New:</b> see the words as the song plays.</span><button class="btn btn-secondary" type="button" data-ok>Got it</button></div><p class="cs-meta" data-out></p></div>'),
+        use: 'Use it once, to point at a new or easy-to-miss control.',
+        more: 'It closes for good after Got it, or as soon as people use the control.',
+        wire: s => {
+          const c = s.querySelector('[data-call]'), o = s.querySelector('[data-out]'), l = s.querySelector('[data-lyr]');
+          s.querySelector('[data-ok]').addEventListener('click', () => { c.remove(); o.textContent = 'Callout closed for good.'; l.focus(); });
+          l.addEventListener('click', () => { if (c.isConnected) c.remove(); o.textContent = 'Lyrics open. The callout is gone, because you found it.'; });
+        }
+      },
+      nudge: {
+        html: frame('Inbox', '<button class="btn btn-secondary cs-sm" type="button" data-arch>Archive</button>', '<div class="fmh-mail" tabindex="0" aria-label="Messages" data-list></div><div data-slot></div><p class="cs-meta" data-out>Select a message and press Archive.</p>'),
+        use: 'Use it after people do something the long way, to offer the short way.',
+        more: 'Show it once, after a repeat, never on the first try.',
+        wire: s => {
+          const list = s.querySelector('[data-list]'), slot = s.querySelector('[data-slot]'), o = s.querySelector('[data-out]');
+          let rows = MAIL.slice(), sel = 0, clicks = 0, nudged = false;
+          const draw = () => { list.innerHTML = rows.map((m, i) => '<div class="cs-row' + (i === sel ? ' on' : '') + '" data-i="' + i + '"><b>' + m[0] + '</b><span class="grow">' + m[1] + '</span></div>').join('') || '<p class="cs-meta">All done.</p>'; };
+          const archive = how => {
+            if (!rows.length) return;
+            rows.splice(sel, 1); sel = Math.min(sel, rows.length - 1); draw();
+            if (how === 'click') {
+              clicks++;
+              if (clicks === 2 && !nudged) { nudged = true; slot.innerHTML = '<p class="fmh-nudge">Tip: press <kbd>E</kbd> to archive the selected message.</p>'; o.textContent = 'Second time with the button, so a nudge appears.'; return; }
+              o.textContent = 'Archived with the button.';
+            } else { slot.innerHTML = ''; o.textContent = 'Archived with E.'; }
+          };
+          list.addEventListener('click', e => { const r = e.target.closest('[data-i]'); if (r) { sel = Number(r.dataset.i); draw(); } });
+          list.addEventListener('keydown', e => {
+            if (e.key === 'e' || e.key === 'E') { e.preventDefault(); archive('key'); }
+            else if (e.key === 'ArrowDown' || e.key === 'ArrowUp') { e.preventDefault(); sel = Math.max(0, Math.min(rows.length - 1, sel + (e.key === 'ArrowDown' ? 1 : -1))); draw(); }
+          });
+          s.querySelector('[data-arch]').addEventListener('click', () => archive('click'));
+          draw();
+        }
+      }
+    };
+    const show = k => {
+      stage.innerHTML = F[k].html; F[k].wire(stage);
+      when.innerHTML = '<b>' + fm.querySelector('.fm-seg input:checked + label').textContent + '.</b> ' + F[k].use + ' ' + F[k].more;
+    };
+    fm.querySelectorAll('.fm-seg input').forEach(i => i.addEventListener('change', () => show(i.value)));
+    show('ph');
+  })();
+  </script>
+</div>

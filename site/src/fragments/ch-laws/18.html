@@ -1,0 +1,26 @@
+<div class="stage tall" data-demo="pat-teslers-law">
+      <div class="seg" role="radiogroup" aria-label="Who carries the complexity">
+        <input type="radio" name="p17-tes" id="p17-tes-person" value="person" checked><label for="p17-tes-person">On the person</label>
+        <input type="radio" name="p17-tes" id="p17-tes-system" value="system"><label for="p17-tes-system">On the system</label>
+      </div>
+      <div class="surface form-card" data-view="person">
+        <div class="field">
+          <label class="field-label" for="p17-tes-path">Save imported photos to</label>
+          <input class="input" id="p17-tes-path" autocomplete="off" spellcheck="false" aria-describedby="p17-tes-help p17-tes-msg">
+          <p class="field-help" id="p17-tes-help">Type the full folder path, for example /Users/you/Pictures/Lisbon trip</p>
+          <p class="field-msg" id="p17-tes-msg" hidden><svg class="icon"><use href="#i-warn"/></svg><span data-msg></span></p>
+        </div>
+        <div><button class="btn btn-primary" type="button" data-save>Save here</button></div>
+      </div>
+      <div class="surface form-card" data-view="system" hidden>
+        <fieldset>
+          <legend>Save imported photos to</legend>
+          <label class="check"><input type="radio" name="p17-tes-folder" value="Pictures/Lisbon trip" checked><span>Pictures/Lisbon trip<small>Used for your last import</small></span></label>
+          <label class="check"><input type="radio" name="p17-tes-folder" value="Pictures/Birthday"><span>Pictures/Birthday<small>Used yesterday</small></span></label>
+          <label class="check"><input type="radio" name="p17-tes-folder" value="Pictures"><span>Pictures<small>The default folder</small></span></label>
+        </fieldset>
+        <div><button class="btn btn-secondary" type="button" data-browse><svg class="icon"><use href="#i-folder"/></svg>Choose another folder…</button></div>
+      </div>
+      <p class="result" data-out aria-live="polite"></p>
+      <p class="try"><b>Try it:</b> in “On the person”, save to a Lisbon trip folder. Then switch to “On the system”: a folder still has to be chosen, but now the app offers recent ones and nobody types a path.</p>
+    </div>

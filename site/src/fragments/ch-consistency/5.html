@@ -1,0 +1,45 @@
+<div class="note comfy cw-wrap"><p>Notice what stays the same from screen to screen, and which habits people bring from other products.</p>
+  <div class="seg cw-seg" role="radiogroup" aria-label="Example">
+    <input type="radio" name="cw-good-consistency-w" id="cw-good-consistency-w-1" value="docs" checked><label for="cw-good-consistency-w-1">Google Docs</label>
+    <input type="radio" name="cw-good-consistency-w" id="cw-good-consistency-w-2" value="mac"><label for="cw-good-consistency-w-2">macOS</label>
+    <input type="radio" name="cw-good-consistency-w" id="cw-good-consistency-w-3" value="linear"><label for="cw-good-consistency-w-3">Linear</label>
+    <input type="radio" name="cw-good-consistency-w" id="cw-good-consistency-w-4" value="yt"><label for="cw-good-consistency-w-4">YouTube</label>
+  </div>
+  <div class="cw cw-gcs-view" data-cw-view role="img" aria-label=""></div>
+  <p class="cw-cap" data-cw-cap aria-live="polite"></p>
+  
+  <script>
+  (() => {
+    const wrap = document.currentScript.closest('.cw-wrap');
+    const view = wrap.querySelector('[data-cw-view]'), cap = wrap.querySelector('[data-cw-cap]');
+    const ic = id => '<svg class="icon sm" aria-hidden="true"><use href="#i-' + id + '"/></svg>';
+    const line = w => '<i class="cw-line" style="width:' + w + '%"></i>';
+    const common = ['File', 'Edit', 'View', 'Insert', 'Format'];
+    const app = (c, name, own) => '<div class="cw-gcs-app"><span class="cw-gcs-app-top"><i class="cw-gcs-ic' + c + '"></i><b>' + name + '</b><span class="cw-gcs-share">Share</span></span><span class="cw-gcs-menus">' +
+      common.map(m => '<span>' + m + '</span>').join('') + own.map(m => '<em>' + m + '</em>').join('') + '<span>Tools</span><span>Help</span></span></div>';
+    const vid = (c, title, meta, open) => '<div class="cw-gcs-vid"><span class="cw-gcs-thumb' + c + '"></span><div class="cw-gcs-meta"><b>' + title + '</b><i class="cw-gcs-more' + (open ? ' on' : '') + '">⋮</i><span>' + meta + '</span>' +
+      (open ? '<div class="cw-gcs-menu"><span>Add to queue</span><span>Save</span><span>Share</span><span>Not interested</span></div>' : '') + '</div></div>';
+    const S = {
+      docs: { html: '<div class="cw-gcs-apps">' + app('', 'Trip notes', []) + app(' b', 'Budget', ['Data']) + app(' c', 'Pitch', ['Slide', 'Arrange']) +
+          '<span class="cw-gcs-key"><i></i>Menus only this kind of file needs</span></div>',
+        alt: 'Three editor windows: a document, a spreadsheet and a presentation. Each has the same menus in the same order, File, Edit, View, Insert, Format, Tools, Help, and a Share button in the same corner. Only Data, Slide and Arrange differ, marked with a dashed underline.',
+        cap: 'Google Docs: Docs, Sheets and Slides share one menu order and keep Share in the top-right corner. Only a few menus differ, so learning one teaches the others.' },
+      mac: { html: '<div class="cw-gcs-dlg"><i></i><b>Save changes to “Trip notes”?</b><span>Unsaved changes will be lost.</span>' +
+          '<div class="cw-gcs-btns"><span class="btn btn-secondary">Don’t Save</span><span class="sp"></span><span class="btn btn-secondary">Cancel</span><span class="btn btn-primary">Save</span></div></div>',
+        alt: 'A dialog asking to save changes. Don’t Save sits alone on the left. Cancel and the filled Save button sit on the right, with Save at the far right.',
+        cap: 'macOS: dialogs put the main button at the right end, with Cancel just before it. Apps that keep the platform’s order let people answer without rereading the buttons.' },
+      linear: { html: '<div class="cw-gcs-win">' + line(40) + line(85) + line(70) + line(90) + line(60) + line(80) +
+          '<div class="cw-gcs-cmd"><div class="cw-gcs-in">' + ic('search') + '<span>Type a command or search…</span><span class="cw-gcs-kbd">⌘K</span></div>' +
+          '<ul><li class="on">Create new issue</li><li>Change status…</li><li>Assign to…</li><li>Go to inbox</li></ul></div></div>',
+        alt: 'A command menu over the app, opened with Command K. A search field on top and a list of commands below: Create new issue, Change status, Assign to, Go to inbox.',
+        cap: 'Linear: Cmd+K opens a command menu, the same shortcut Slack and GitHub use to jump around or run commands. People bring that habit from tool to tool.' },
+      yt: { html: '<div class="cw-gcs-yt">' + vid('', 'Baking bread at home', '24K views · 2 days ago', true) + vid(' b', 'A quiet hike in the hills', '9K views · 1 week ago') + vid(' c', 'Fixing an old bike', '51K views · 3 weeks ago') + '</div>',
+        alt: 'A row of video cards. Each has the same three-dot menu beside its title. The first one is open: Add to queue, Save, Share, Not interested.',
+        cap: 'YouTube: every video in a feed or search results has the same ⋮ menu beside its title, with the same actions. Learn it once and it works on every video.' }
+    };
+    const render = k => { view.innerHTML = S[k].html; view.setAttribute('aria-label', 'Sketch: ' + S[k].alt); cap.textContent = S[k].cap; };
+    wrap.querySelectorAll('input[name="cw-good-consistency-w"]').forEach(r => r.addEventListener('change', () => render(r.value)));
+    render('docs');
+  })();
+  </script>
+</div>

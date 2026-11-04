@@ -1,0 +1,91 @@
+<script>
+(() => {
+  const cs = document.currentScript.closest('.cs');
+  const D = (k, html, wire) => csDemo(cs.querySelector('[data-d="' + k + '"]'), html, wire);
+  const warn = '<svg class="icon sm"><use href="#i-warn"/></svg>';
+  const frame = (title, bar, body) => '<div class="app-frame ac-fr"><div class="app-bar"><span>' + title + '</span>' + (bar || '') + '</div><div class="app-body">' + body + '</div></div>';
+  const sec = (title, body, open) => '<details' + (open ? ' open' : '') + '><summary>' + title + '</summary><div class="acc-body">' + body + '</div></details>';
+  const acc = inner => '<div class="acc ac-acc">' + inner + '</div>';
+  const kv = (k, v) => '<div class="kv">' + k + ' <b>' + v + '</b></div>';
+  /* Count every click on a section header inside the demo. */
+  const countClicks = (d, out, label) => {
+    let n = 0; out.textContent = label + n;
+    d.addEventListener('click', e => { if (e.target.closest('summary')) { n++; out.textContent = label + n; } });
+  };
+
+  /* 1. Opened every visit */
+  const ITEMS = kv('Running socks', '$12.00') + kv('Water bottle', '$18.50');
+  const RECEIPT = kv('Paid', '$30.50') + kv('Card', 'Visa ending 4242');
+  const orderBody = fixed => fixed
+    ? '<div class="ac-status"><span class="ac-pill">Out for delivery</span>' + kv('Arrives', 'Today, 2–4 pm') + '</div>' + acc(sec('Items (2)', ITEMS) + sec('Receipt', RECEIPT))
+    : acc(sec('Delivery status', kv('Status', 'Out for delivery') + kv('Arrives', 'Today, 2–4 pm')) + sec('Items (2)', ITEMS) + sec('Receipt', RECEIPT));
+  const orderWire = fixed => d => {
+    const body = d.querySelector('[data-body]'), v = d.querySelector('[data-v]');
+    let visit = 1, opens = 0;
+    const meta = () => { v.innerHTML = '<span>Visit ' + visit + '</span><span>Clicks to see the status: ' + opens + '</span>'; };
+    const load = () => {
+      body.innerHTML = orderBody(fixed); meta();
+      const ds = body.querySelector('details');
+      if (!fixed) ds.addEventListener('toggle', () => { if (ds.open) { opens++; meta(); } });
+    };
+    d.querySelector('[data-reload]').addEventListener('click', () => { visit++; load(); });
+    load();
+  };
+  const orderHtml = frame('Order #4821', '<button class="btn btn-secondary cs-sm" type="button" data-reload>Reload</button>', '<div class="ac-stack" data-body></div><p class="cs-meta ac-v" data-v></p>');
+  D('accordion-1b', orderHtml, orderWire(false));
+  D('accordion-1f', orderHtml, orderWire(true));
+
+  /* 2. Need it all */
+  const LIST = items => '<ul class="ac-ul">' + items.map(x => '<li>' + x + '</li>').join('') + '</ul>';
+  const CABIN = [
+    ['Amenities', LIST(['Wi-Fi', 'Kitchen', 'Free parking on site', 'Washer'])],
+    ['House rules', LIST(['Check-in after 3 pm', 'No pets', 'No parties'])],
+    ['Cancellation', '<p class="ac-p">Free cancellation until 5 days before check-in. After that, the first night isn’t refunded.</p>'],
+    ['Location', '<p class="ac-p">12 minutes by car to Lakeside village. The last 2 km is a gravel road.</p>']
+  ];
+  const cabinTop = '<p class="ac-sub">4 guests · 2 bedrooms · $140/night</p>';
+  D('accordion-2b', frame('Lake cabin', '', cabinTop + acc(CABIN.map(([h, b]) => sec(h, b)).join(''))), () => {});
+  D('accordion-2f', frame('Lake cabin', '', cabinTop +
+    '<nav class="ac-toc" aria-label="On this page">' + CABIN.map(([h], i) => '<a href="#accordion" data-to="' + i + '">' + h + '</a>').join('') + '</nav>' +
+    '<div class="ac-page" data-page>' + CABIN.map(([h, b]) => '<h4 class="ac-h2" tabindex="-1">' + h + '</h4>' + b).join('') + '</div>'), d => {
+    const page = d.querySelector('[data-page]'), hs = page.querySelectorAll('h4');
+    d.querySelectorAll('[data-to]').forEach(a => a.addEventListener('click', e => {
+      e.preventDefault(); const h = hs[+a.dataset.to];
+      page.scrollTo({ top: h.offsetTop - 4, behavior: 'smooth' }); h.focus({ preventScroll: true });
+    }));
+  });
+
+  /* 3. Nested */
+  const digest = '<label class="cs-f">Send digest<select class="select" data-dg><option>Weekly</option><option>Daily</option><option>Never</option></select></label>';
+  const sw = (label, on) => '<label class="switch ac-sw"><span class="grow">' + label + '</span><input type="checkbox"' + (on ? ' checked' : '') + '></label>';
+  const OTHER = sec('Privacy', sw('Show my profile', true)) + sec('Account', kv('Email', 'maya@mail.com'));
+  const nestHtml = fixed => frame('Settings', '', (fixed
+    ? acc(sec('Notifications', '<h4 class="ac-h">Email</h4>' + digest + sw('Product news') + '<h4 class="ac-h">Push</h4>' + sw('Mentions', true)) + OTHER)
+    : acc(sec('Notifications', '<div class="ac-in">' + acc(
+        sec('Email', '<div class="ac-in">' + acc(sec('Digest', digest) + sec('Product news', sw('Product news'))) + '</div>') +
+        sec('Push', sw('Mentions', true))) + '</div>') + OTHER)) +
+    '<div class="ac-foot"><span class="cs-meta" data-n></span><span class="cs-ok" data-ok></span></div>');
+  const nestWire = d => {
+    countClicks(d, d.querySelector('[data-n]'), 'Clicks: ');
+    const ok = d.querySelector('[data-ok]');
+    d.querySelector('[data-dg]').addEventListener('change', e => { ok.textContent = 'Saved: ' + e.target.value + ' digest'; });
+  };
+  D('accordion-3b', nestHtml(false), nestWire);
+  D('accordion-3f', nestHtml(true), nestWire);
+
+  /* 4. Hidden essentials */
+  const alert = '<div class="ac-warn" data-warn><p>' + warn + '<span>Your card expired. Update it by Nov 12 to keep your plan.</span></p><button class="btn btn-secondary cs-sm" type="button" data-upd>Update card</button></div>';
+  const DETAILS = kv('Billing email', 'maya@mail.com') + kv('Member since', '2021');
+  const subHtml = fixed => frame('Subscription', '', kv('Plan', 'Family') + kv('Next payment', 'Nov 12 · $16.99') +
+    (fixed ? alert + acc(sec('Details', DETAILS)) : acc(sec('Details', alert + DETAILS))));
+  const subWire = d => {
+    const b = d.querySelector('[data-upd]');
+    b.addEventListener('click', () => { const w = d.querySelector('[data-warn]'); w.outerHTML = '<p class="cs-ok" tabindex="-1" data-done>Card updated. You’re all set.</p>'; d.querySelector('[data-done]').focus(); });
+  };
+  D('accordion-4b', subHtml(false), subWire);
+  D('accordion-4f', subHtml(true), subWire);
+
+  csInit(cs);
+})();
+
+  </script>

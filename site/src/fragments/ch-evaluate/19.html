@@ -1,0 +1,183 @@
+<script>
+(() => {
+  const cs = document.currentScript.closest('.cs');
+  const D = (k, html, wire) => csDemo(cs.querySelector('[data-d="' + k + '"]'), html, wire);
+  const st = document.createElement('style');
+  st.textContent = [
+    '#eff-design-qa .qa-card{width:min(400px,100%);background:var(--ui-surface);border:1px solid var(--ui-border);border-radius:12px;padding:14px;box-shadow:var(--ui-shadow);display:flex;flex-direction:column;gap:10px;text-align:left;font-size:14px;line-height:1.45;color:var(--ui-text)}',
+    '#eff-design-qa .qa-top{display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap}',
+    '#eff-design-qa .qa-lbl{font:600 11.5px var(--font-mono);letter-spacing:.06em;text-transform:uppercase;color:var(--ui-muted)}',
+    '#eff-design-qa .qa-sum{font-weight:600}',
+    '#eff-design-qa .qa-sum:empty{display:none}',
+    '#eff-design-qa .qa-sum.bad{color:var(--ui-danger)}',
+    '#eff-design-qa .qa-shots{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(150px,100%),1fr));gap:10px}',
+    '#eff-design-qa .qa-shot{display:flex;flex-direction:column;gap:4px;font-size:12.5px}',
+    '#eff-design-qa .qa-shot > span{font:600 11.5px var(--font-mono);color:var(--ui-muted)}',
+    '#eff-design-qa .qa-shot > em{font-style:normal;font-size:12.5px;line-height:1.35}',
+    '#eff-design-qa .qa-shot.bad > em{color:var(--ui-danger);font-weight:600}',
+    '#eff-design-qa .qa-scr{height:86px;border:1px solid var(--ui-border);border-radius:6px;padding:8px;display:flex;justify-content:center;align-items:center;overflow:hidden;background:#f6f6f4}',
+    '#eff-design-qa .qa-shot.bad .qa-scr{box-shadow:0 0 0 2px var(--ui-danger)}',
+    '#eff-design-qa .qa-bp{width:100%;max-width:150px;flex:none;border-radius:6px;padding:7px;background:#fff;border:1px solid #ddd;color:#222;display:flex;flex-direction:column;gap:3px;font:600 10.5px/1.2 var(--font-body)}',
+    '#eff-design-qa .qa-bp small{font-weight:400;color:#888}',
+    '#eff-design-qa .qa-bp i{font-style:normal;align-self:flex-start;white-space:nowrap;background:#2563eb;color:#fff;border-radius:4px;padding:2px 6px;font-size:9.5px}',
+    '#eff-design-qa .qa-scr.dark{background:#141518}',
+    '#eff-design-qa .qa-scr.dark .qa-bp{background:#24262b;border-color:#34363c;color:#eee}',
+    '#eff-design-qa .qa-scr.dark .qa-bp small{color:#3d4046}',
+    '#eff-design-qa .qa-scr.phone .qa-bp{width:62px;max-width:62px;overflow:hidden}',
+    '#eff-design-qa .qa-rows{display:flex;flex-direction:column;gap:6px}',
+    '#eff-design-qa .qa-row{display:flex;align-items:center;gap:8px;padding:7px 9px;border:1px solid var(--ui-border);border-radius:8px;background:var(--ui-bg);overflow:hidden;font-size:13.5px}',
+    '#eff-design-qa .qa-row > b{white-space:nowrap;font-weight:600}',
+    '#eff-design-qa .qa-row.trunc > b{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis}',
+    '#eff-design-qa .qa-row > span{flex:none;font-size:12.5px;color:var(--ui-muted);white-space:nowrap}',
+    '#eff-design-qa .qa-row .btn{flex:none;white-space:nowrap}',
+    '#eff-design-qa .qa-row .qa-bar{flex:none;width:44px;height:5px;border-radius:3px;background:var(--ui-skel);overflow:hidden}',
+    '#eff-design-qa .qa-row .qa-bar::before{content:"";display:block;width:60%;height:100%;background:var(--ui-sel)}',
+    '#eff-design-qa .qa-st{display:flex;flex-direction:column;gap:3px}',
+    '#eff-design-qa .qa-st > span{font:600 11.5px var(--font-mono);color:var(--ui-muted)}',
+    '#eff-design-qa .qa-st.bad .qa-row{box-shadow:0 0 0 2px var(--ui-danger)}',
+    '#eff-design-qa .qa-st > em{font-style:normal;color:var(--ui-danger);font-weight:600;font-size:12.5px}',
+    '#eff-design-qa .qa-st.ok > em{color:var(--ui-ok)}',
+    '#eff-design-qa .qa-find{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:6px}',
+    '#eff-design-qa .qa-find li{display:flex;flex-direction:column;gap:5px;padding:8px 10px;border:1px solid var(--ui-border);border-radius:8px}',
+    '#eff-design-qa .qa-find li > div{display:flex;justify-content:space-between;align-items:center;gap:8px}',
+    '#eff-design-qa .qa-find li p{font-size:13px;color:var(--ui-muted)}',
+    '#eff-design-qa .qa-find li p b{color:var(--ui-text)}',
+    '#eff-design-qa .qa-find li.dis > div > span{text-decoration:line-through;color:var(--ui-muted)}',
+    '#eff-design-qa .qa-pay{display:flex;flex-direction:column;gap:6px;padding:10px;border:1px dashed var(--ui-border);border-radius:8px}',
+    '#eff-design-qa .qa-pay .btn{align-self:flex-start}',
+    '#eff-design-qa .qa-pay .btn.qa-off{opacity:.4;cursor:not-allowed}',
+    '#eff-design-qa .qa-meta{font:500 12.5px var(--font-mono);color:var(--ui-muted)}',
+    '#eff-design-qa .qa-meta:empty{display:none}',
+    '#eff-design-qa .qa-meta.bad{color:var(--ui-danger)}',
+    '#eff-design-qa .qa-form{display:grid;grid-template-columns:1fr 1fr;grid-template-areas:"name email" "pass pass" "go go";gap:8px}',
+    '#eff-design-qa .qa-form label{display:flex;flex-direction:column;gap:3px;font-size:12.5px;font-weight:600;min-width:0}',
+    '#eff-design-qa .qa-form .input{padding:7px 9px;font-size:14px}',
+    '#eff-design-qa .qa-form .btn{justify-self:start}',
+    '#eff-design-qa .qa-ok{color:var(--ui-ok);font-weight:600}'
+  ].join('\n');
+  cs.appendChild(st);
+
+  /* 1. Themes and widths: a boarding pass card */
+  const bp = '<div class="qa-bp">Lisbon → Berlin<small>Gate B12 · Boards 14:05</small><i>Add to wallet</i></div>';
+  const SHOTS = [
+    ['Light · desktop', '', 'Looks right.'],
+    ['Dark · desktop', 'dark', 'Gate and time are too faint to read.'],
+    ['Light · 360px', 'phone', '“Add to wallet” is cut off.'],
+    ['Dark · 360px', 'dark phone', 'Both problems.']
+  ];
+  const shot = (s, flag) => '<div class="qa-shot' + (flag && s[1] ? ' bad' : '') + '"><span>' + s[0] + '</span><div class="qa-scr ' + s[1] + '" role="img" aria-label="Screenshot of the boarding pass card, ' + s[0] + '">' + bp + '</div>' +
+    (flag ? '<em>' + s[2] + '</em>' : '<em class="qa-ok">No issues.</em>') + '</div>';
+  const runHtml = '<div class="qa-card"><div class="qa-top"><span class="qa-lbl">Design QA · boarding pass</span><button class="btn btn-primary cs-sm" type="button" data-go>Run checks</button></div>' +
+    '<p class="qa-sum" aria-live="polite" data-sum>Not run yet.</p><div class="qa-shots" data-out></div></div>';
+  D('eff-design-qa-1b', runHtml, (d, t) => d.querySelector('[data-go]').addEventListener('click', e => {
+    e.target.disabled = true; d.querySelector('[data-sum]').textContent = 'Checking…';
+    t.after(() => { d.querySelector('[data-out]').innerHTML = shot(SHOTS[0], false); d.querySelector('[data-sum]').textContent = '1 screenshot. No issues found.'; }, 600);
+  }));
+  D('eff-design-qa-1f', runHtml, (d, t) => d.querySelector('[data-go]').addEventListener('click', e => {
+    e.target.disabled = true; d.querySelector('[data-sum]').textContent = 'Checking…';
+    t.after(() => {
+      d.querySelector('[data-out]').innerHTML = SHOTS.map(s => shot(s, true)).join('');
+      const s = d.querySelector('[data-sum]'); s.className = 'qa-sum bad'; s.textContent = '4 screenshots. 2 problems to fix.';
+    }, 900);
+  }));
+
+  /* 2. Every state: a file upload row */
+  const SHORT = 'notes.pdf', LONG = 'Lisbon trip – hotel bookings, train times and museum tickets (final v3).pdf';
+  const row = (state, name, trunc) => '<div class="qa-row' + (trunc ? ' trunc' : '') + '"><b>' + name + '</b>' + {
+    up: '<span class="qa-bar" aria-label="60% uploaded"></span><span>60%</span>',
+    done: '<span>Uploaded</span>',
+    fail: '<span>Failed</span><button class="btn btn-secondary cs-sm" type="button" data-skip>Retry</button>'
+  }[state] + '</div>';
+  const stHtml = '<div class="qa-card"><div class="qa-top"><span class="qa-lbl">Design QA · upload row</span><button class="btn btn-primary cs-sm" type="button" data-go>Run checks</button></div>' +
+    '<p class="qa-sum" aria-live="polite" data-sum>Not run yet.</p><div class="qa-rows" data-out></div><p class="qa-meta" data-note></p></div>';
+  D('eff-design-qa-2b', stHtml, (d, t) => d.querySelector('[data-go]').addEventListener('click', e => {
+    e.target.disabled = true;
+    t.after(() => {
+      d.querySelector('[data-out]').innerHTML = '<div class="qa-st"><span>Uploaded</span>' + row('done', SHORT) + '</div><button class="btn btn-secondary cs-sm" type="button" data-real>Use a real file name</button>';
+      d.querySelector('[data-sum]').textContent = '1 state checked. No issues found.';
+      d.querySelector('[data-real]').addEventListener('click', b => {
+        b.target.remove();
+        d.querySelector('[data-out]').insertAdjacentHTML('beforeend', '<div class="qa-st"><span>After release</span>' + row('fail', LONG) + '</div>');
+        const n = d.querySelector('[data-note]'); n.className = 'qa-meta bad'; n.textContent = 'A real upload failed. Its long name pushes Retry out of view.';
+      });
+    }, 600);
+  }));
+  D('eff-design-qa-2f', stHtml, (d, t) => d.querySelector('[data-go]').addEventListener('click', e => {
+    e.target.disabled = true;
+    t.after(() => {
+      const draw = fixed => {
+        d.querySelector('[data-out]').innerHTML =
+          '<div class="qa-st"><span>Uploading</span>' + row('up', SHORT) + '</div>' +
+          '<div class="qa-st"><span>Uploaded</span>' + row('done', SHORT) + '</div>' +
+          '<div class="qa-st"><span>Failed</span>' + row('fail', SHORT) + '</div>' +
+          '<div class="qa-st ' + (fixed ? 'ok' : 'bad') + '"><span>Failed, long name</span>' + row('fail', LONG, fixed) + '<em>' + (fixed ? 'Fixed: the name is shortened and Retry stays in view.' : 'The name pushes Retry out of view.') + '</em></div>' +
+          (fixed ? '' : '<button class="btn btn-secondary cs-sm" type="button" data-fix>Fix the long name</button>');
+        const f = d.querySelector('[data-fix]');
+        if (f) f.addEventListener('click', () => { draw(true); d.querySelector('[data-sum]').textContent = '4 states checked. No issues left.'; });
+      };
+      draw(false);
+      d.querySelector('[data-sum]').textContent = '4 states checked. 1 problem found.';
+    }, 900);
+  }));
+
+  /* 3. Open the findings: a checkout form */
+  const FINDS = [
+    ['Pay button has low contrast.', 'Not a bug. <b>Pay is disabled until the card number is filled in.</b> Dismissed: it’s meant to look inactive.', true],
+    ['Total is cut off at 360px.', 'Confirmed. <b>“Total €42.00” ends at “Total €4”.</b> Kept.', false],
+    ['Card field has no visible label.', 'Confirmed. <b>Only placeholder text, which goes away as people type.</b> Kept.', false]
+  ];
+  const payBox = '<div class="qa-pay"><span class="qa-lbl">Checkout preview</span><input class="input" placeholder="Card number" aria-label="Card number" style="padding:7px 9px;font-size:14px"><button class="btn btn-primary cs-sm qa-off" type="button" aria-disabled="true" data-pay>Pay €42.00</button><p class="qa-meta" data-paymsg></p></div>';
+  const findHtml = fixed => '<div class="qa-card"><span class="qa-lbl">Agent report · 3 findings</span><ul class="qa-find">' +
+    FINDS.map((f, n) => '<li data-f="' + n + '"><div><span>' + (n + 1) + '. ' + f[0] + '</span>' + (fixed ? '<button class="btn btn-secondary cs-sm" type="button" data-open="' + n + '">Open</button>' : '') + '</div></li>').join('') +
+    '</ul>' + (fixed ? '<p class="qa-sum" aria-live="polite" data-sum></p>' : '<button class="btn btn-primary cs-sm" type="button" data-all style="align-self:flex-start">Fix all</button>' + payBox) + '</div>';
+  D('eff-design-qa-3b', findHtml(false), d => {
+    const pay = d.querySelector('[data-pay]'), msg = d.querySelector('[data-paymsg]');
+    pay.addEventListener('click', () => {
+      if (pay.classList.contains('qa-off')) return;
+      msg.className = 'qa-meta bad'; msg.textContent = 'Tapped Pay. Nothing happened: the card number is empty.';
+    });
+    d.querySelector('[data-all]').addEventListener('click', e => {
+      e.target.disabled = true; e.target.textContent = '3 fixes applied';
+      pay.classList.remove('qa-off'); pay.removeAttribute('aria-disabled');
+      msg.className = 'qa-meta bad'; msg.textContent = 'Pay now looks active before the form is filled. Try tapping it.';
+    });
+  });
+  D('eff-design-qa-3f', findHtml(true), d => {
+    const seen = new Set();
+    d.querySelectorAll('[data-open]').forEach(b => b.addEventListener('click', () => {
+      const n = +b.dataset.open, li = d.querySelector('[data-f="' + n + '"]');
+      b.remove(); seen.add(n);
+      li.insertAdjacentHTML('beforeend', '<p>' + FINDS[n][1] + '</p>');
+      if (FINDS[n][2]) li.classList.add('dis');
+      if (seen.size === 3) d.querySelector('[data-sum]').textContent = '2 fixes to make. 1 finding dismissed, with the reason written down.';
+    }));
+  });
+
+  /* 4. Keyboard order: a sign-up form */
+  const formHtml = fixed => {
+    const f = {
+      name: '<label style="grid-area:name">Name<input class="input" data-n="Name"></label>',
+      email: '<label style="grid-area:email">Email<input class="input" type="email" data-n="Email"></label>',
+      pass: '<label style="grid-area:pass">Password<input class="input" type="password" data-n="Password"></label>',
+      go: '<button class="btn btn-primary cs-sm" type="button" style="grid-area:go" data-n="Create account">Create account</button>'
+    };
+    const order = fixed ? ['name', 'email', 'pass', 'go'] : ['name', 'go', 'pass', 'email'];
+    return '<div class="qa-card"><span class="qa-lbl">Sign up</span><form class="qa-form" data-form onsubmit="return false">' + order.map(k => f[k]).join('') + '</form>' +
+      '<p class="qa-meta" aria-live="polite" data-log>Focus order: (click Name, then press Tab)</p>' +
+      '<p>Automated scan: <span class="qa-ok">0 issues</span>' + (fixed ? '<br>Keyboard check: <span class="qa-ok">order matches the screen</span> · Screen reader: <span class="qa-ok">labels read out</span>' : '<br><b>Marked “accessible”.</b>') + '</p></div>';
+  };
+  const formWire = (d) => {
+    const seen = [];
+    d.querySelector('[data-form]').addEventListener('focusin', e => {
+      const n = e.target.dataset.n; if (!n) return;
+      if (seen[seen.length - 1] !== n) seen.push(n);
+      d.querySelector('[data-log]').textContent = 'Focus order: ' + seen.slice(-5).join(' → ');
+    });
+  };
+  D('eff-design-qa-4b', formHtml(false), formWire);
+  D('eff-design-qa-4f', formHtml(true), formWire);
+
+  csInit(cs);
+})();
+
+</script>

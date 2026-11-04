@@ -1,0 +1,94 @@
+<div class="fm" data-fm>
+  
+  <div class="seg fm-seg" role="radiogroup" aria-label="Form">
+    <input type="radio" name="fm-combobox" id="fm-combobox-1" value="select" checked><label for="fm-combobox-1">Select</label>
+    <input type="radio" name="fm-combobox" id="fm-combobox-2" value="combo"><label for="fm-combobox-2">Combobox</label>
+    <input type="radio" name="fm-combobox" id="fm-combobox-3" value="multi"><label for="fm-combobox-3">Multi-select</label>
+    <input type="radio" name="fm-combobox" id="fm-combobox-4" value="auto"><label for="fm-combobox-4">Autocomplete</label>
+  </div>
+  <div class="fm-stage" data-fm-stage></div>
+  <p class="fig-cap" data-fm-when aria-live="polite"></p>
+  <script>
+  (() => {
+    const fm = document.currentScript.closest('[data-fm]'), stage = fm.querySelector('[data-fm-stage]'), when = fm.querySelector('[data-fm-when]');
+    const icon = (n, c) => '<svg class="icon ' + (c || 'sm') + '"><use href="#i-' + n + '"/></svg>';
+    const esc = t => t.replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[c]);
+    const field = (label, ph, listLabel, ic) => '<div class="cf-field' + (ic ? ' ic' : '') + '"><label class="field-label cf-lab">' + label + '<input class="input" role="combobox" aria-expanded="false" aria-autocomplete="list" autocomplete="off" placeholder="' + ph + '" data-q></label>' + (ic ? icon('search') : '') + '<ul class="listbox surface" role="listbox" aria-label="' + listLabel + '" hidden data-ul></ul></div>';
+    // Shared combobox wiring: items(q) -> list of strings; pick(v) on choice. Keyboard: arrows, Enter, Escape.
+    const combo = (q, ul, items, pick, o = {}) => {
+      let list = [], act = -1;
+      const close = () => { ul.hidden = true; q.setAttribute('aria-expanded', 'false'); act = -1; };
+      const mark = () => ul.querySelectorAll('[role=option]').forEach((li, i) => { li.setAttribute('aria-selected', String(i === act)); if (i === act) li.scrollIntoView({ block: 'nearest' }); });
+      const open = () => {
+        list = items(q.value.trim().toLowerCase());
+        if (!list.length && o.hideEmpty) return close();
+        ul.innerHTML = list.length ? list.map(v => '<li role="option" aria-selected="false">' + esc(v) + '</li>').join('') : '<li class="none">No matches</li>';
+        ul.querySelectorAll('[role=option]').forEach((li, i) => { li.addEventListener('mousedown', e => e.preventDefault()); li.addEventListener('click', () => { pick(list[i]); close(); }); });
+        act = o.noAuto ? -1 : o.start ? o.start(list) : 0; mark();
+        ul.hidden = false; q.setAttribute('aria-expanded', 'true');
+      };
+      q.addEventListener('input', open);
+      if (!o.hideEmpty) q.addEventListener('focus', open);
+      q.addEventListener('blur', () => { close(); if (o.blur) o.blur(); });
+      q.addEventListener('keydown', e => {
+        if ((e.key === 'ArrowDown' || e.key === 'ArrowUp') && ul.hidden) { e.preventDefault(); open(); return; }
+        if (ul.hidden) return;
+        if (e.key === 'ArrowDown' || e.key === 'ArrowUp') { if (!list.length) return; e.preventDefault(); act = act < 0 ? (e.key === 'ArrowDown' ? 0 : list.length - 1) : (act + (e.key === 'ArrowDown' ? 1 : -1) + list.length) % list.length; mark(); }
+        else if (e.key === 'Enter') { if (act >= 0 && list[act]) { e.preventDefault(); pick(list[act]); close(); } }
+        else if (e.key === 'Escape') { e.preventDefault(); close(); }
+      });
+      return { open, close };
+    };
+    const LANGS = ['English (UK)', 'English (US)', 'Español', 'Français', 'Deutsch', 'Italiano', 'Nederlands', 'Polski', 'Português', 'Svenska', 'Türkçe', '日本語'];
+    const AIRPORTS = ['Amsterdam (AMS)', 'Athens (ATH)', 'Barcelona (BCN)', 'Berlin (BER)', 'Dublin (DUB)', 'Lisbon (LIS)', 'London Gatwick (LGW)', 'London Heathrow (LHR)', 'Los Angeles (LAX)', 'Madrid (MAD)', 'Milan (MXP)', 'New York (JFK)', 'Paris (CDG)', 'Porto (OPO)', 'Rome (FCO)', 'Vienna (VIE)'];
+    const LABELS = ['Bills', 'Family', 'Receipts', 'School', 'Travel', 'Work'];
+    const ADDR = ['12 Market Street, Springfield', '12 Maple Avenue, Springfield', '120 Main Street, Shelbyville', '1200 Marsh Road, Springfield', '21 Mill Lane, Ogdenville', '45 Oak Street, Springfield', '7 Orchard Close, Shelbyville'];
+    const F = {
+      select: {
+        html: '<div class="cf-card surface"><b>Language and region</b><label class="field-label cf-lab">Language<select class="select" data-sel>' + LANGS.map(l => '<option' + (l === 'English (UK)' ? ' selected' : '') + '>' + l + '</option>').join('') + '</select></label><p class="field-help">Menus and emails use this language.</p><p class="cf-out" data-out></p></div>',
+        use: 'Use it for about six to fifteen known options, like a language. There’s no search box, so the list has to be short enough to scan.',
+        wire: s => { const sel = s.querySelector('[data-sel]'), out = s.querySelector('[data-out]'); sel.addEventListener('change', () => { out.innerHTML = icon('check') + '<span>Saved. Menus now show in ' + sel.value + '.</span>'; }); }
+      },
+      combo: {
+        html: '<div class="cf-card surface"><b>Flights from Boston</b>' + field('Where to?', 'City or airport code', 'Airports', true) + '<button class="btn btn-primary" type="button" data-go>Search flights</button><p class="cf-out" data-out></p></div>',
+        use: 'Use it for a long list where people know the name they want, like an airport. Only an item from the list can be picked, so the answer is always valid.',
+        wire: s => {
+          const q = s.querySelector('[data-q]'), ul = s.querySelector('[data-ul]'), out = s.querySelector('[data-out]');
+          let chosen = '';
+          const match = (a, t) => a.toLowerCase().split(/[ ()]+/).some(w => w.startsWith(t));
+          combo(q, ul, t => AIRPORTS.filter(a => !t || t === chosen.toLowerCase() || match(a, t)), v => { chosen = v; q.value = v; out.textContent = ''; }, { blur: () => { if (q.value !== chosen) q.value = chosen; }, start: list => Math.max(0, list.indexOf(chosen)) });
+          s.querySelector('[data-go]').addEventListener('click', () => { out.innerHTML = chosen ? icon('check') + '<span>Showing flights to ' + chosen + '.</span>' : '<span class="field-msg">' + icon('warn') + '<span>Pick an airport from the list.</span></span>'; });
+        }
+      },
+      multi: {
+        html: '<div class="cf-card surface"><b>“Boarding pass for Friday”</b><div class="cf-field"><span class="field-label">Labels</span><div class="cf-box" data-box><input class="input" role="combobox" aria-label="Add a label" aria-expanded="false" aria-autocomplete="list" autocomplete="off" placeholder="Add a label" data-q></div><ul class="listbox surface" role="listbox" aria-label="Labels" hidden data-ul></ul></div><p class="field-help">Pick as many as you like. Backspace removes the last one.</p></div>',
+        use: 'Use it when people pick several, like labels on an email. Each pick shows as a chip with its own remove button.',
+        wire: s => {
+          const q = s.querySelector('[data-q]'), ul = s.querySelector('[data-ul]'), box = s.querySelector('[data-box]');
+          let on = ['Travel'];
+          const draw = () => { box.querySelectorAll('.cf-chip').forEach(c => c.remove()); on.forEach(v => q.insertAdjacentHTML('beforebegin', '<span class="cf-chip">' + v + '<button type="button" aria-label="Remove ' + v + '" data-rm="' + v + '">' + icon('x') + '</button></span>')); box.querySelectorAll('[data-rm]').forEach(b => b.addEventListener('click', () => { on = on.filter(x => x !== b.dataset.rm); draw(); q.focus(); })); };
+          const c = combo(q, ul, t => LABELS.filter(l => !on.includes(l) && (!t || l.toLowerCase().includes(t))), v => { on.push(v); q.value = ''; draw(); setTimeout(() => { if (document.activeElement === q) c.open(); }); });
+          q.addEventListener('keydown', e => { if (e.key === 'Backspace' && !q.value && on.length) { on.pop(); draw(); c.open(); } });
+          draw();
+        }
+      },
+      auto: {
+        html: '<div class="cf-card surface"><b>Delivery address</b>' + field('Street address', 'Start typing your address', 'Suggested addresses', false) + '<p class="field-help">Pick a suggestion, or keep what you typed.</p><button class="btn btn-primary" type="button" data-go>Use this address</button><p class="cf-out" data-out></p></div>',
+        use: 'Use it when the list helps but can’t cover every answer, like a street address. People can pick a suggestion or keep their own text.',
+        wire: s => {
+          const q = s.querySelector('[data-q]'), ul = s.querySelector('[data-ul]'), out = s.querySelector('[data-out]');
+          combo(q, ul, t => t.length < 2 ? [] : ADDR.filter(a => a.toLowerCase().includes(t)).slice(0, 4), v => { q.value = v; out.textContent = ''; }, { hideEmpty: true, noAuto: true });
+          q.addEventListener('input', () => { out.textContent = ''; });
+          s.querySelector('[data-go]').addEventListener('click', () => { const v = q.value.trim(); out.innerHTML = v ? icon('check') + '<span>We’ll deliver to ' + esc(v) + '.</span>' : '<span class="field-msg">' + icon('warn') + '<span>Enter a street address.</span></span>'; });
+        }
+      }
+    };
+    const show = k => {
+      stage.innerHTML = F[k].html; F[k].wire(stage);
+      when.innerHTML = '<b>' + fm.querySelector('.fm-seg input:checked + label').textContent + '.</b> ' + F[k].use;
+    };
+    fm.querySelectorAll('.fm-seg input').forEach(i => i.addEventListener('change', () => show(i.value)));
+    show('select');
+  })();
+  </script>
+</div>

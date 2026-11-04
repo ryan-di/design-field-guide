@@ -1,0 +1,85 @@
+---
+title: "Two definitions"
+description: "Design is deciding how something should work for the people who use it."
+part:
+  id: "start"
+  label: "Start here"
+  title: "Design and design engineering"
+  sub: "Two short definitions before the rest of the book: what design is, and what a design engineer does."
+sidebar:
+  label: "Two definitions"
+---
+
+import Raw from '../../../components/Raw.astro';
+import Learned from '../../../components/Learned.astro';
+import Runtime from '../../../components/Runtime.astro';
+import F0 from '../../../fragments/ch-intro/0.html?raw';
+import F1 from '../../../fragments/ch-intro/1.html?raw';
+import F2 from '../../../fragments/ch-intro/2.html?raw';
+import F3 from '../../../fragments/ch-intro/3.html?raw';
+
+<Runtime at="start" />
+
+<section class="dfg-chapter" id="ch-intro">
+
+<article class="entry essay" id="design-what" data-entry data-name="What design is">
+
+<div class="entry-head">
+
+## What design is \{#design-what-h\}
+
+<Learned id="design-what" />
+
+</div>
+
+Design is deciding how something should work for the people who use it. How it looks is part of that, but it’s the last part.
+
+It helps to think of three layers. The problem comes first, and each layer after it rests on the one before.
+
+<Raw html={F0} />
+
+Most of what people call bad design is a wrong call about the problem or the behavior, not the surface. The demo shows one parking app, changed at each layer, and in every version you park for what turns out to be 1 hour 20 minutes.
+
+<Raw html={F1} />
+
+Only the new problem removes the ticket altogether, because it answers the real question. That is why this book starts with judgment about problems and gets to components last.
+
+</article>
+
+<article class="entry essay" id="design-engineering" data-entry data-name="What design engineering is">
+
+<div class="entry-head">
+
+## What design engineering is \{#design-engineering-h\}
+
+<Learned id="design-engineering" />
+
+</div>
+
+A design engineer designs in the material the product is made of: code. Instead of handing over pictures, they build the thing, try it, and change it until it works.
+
+The role exists because many design decisions only show up when something runs. How long should a spinner wait before it appears? What happens to a 40-character name? Where does focus go when a dialog closes? A mockup rarely answers these, but a prototype in code answers them in minutes.
+
+<Raw html={F2} />
+
+It sits between two roles that already exist. The three differ mostly in where each one starts and what each one is judged on.
+
+<Raw html={F3} />
+
+The rest of the book follows that work, from judging the problem to shipping the solution.
+
+</article>
+
+<aside class="in-short" id="ch-intro-in-short" aria-labelledby="ch-intro-in-short-h" data-pagefind-ignore>
+
+## In short \{#ch-intro-in-short-h\}
+
+<div class="is-grid">
+
+</div>
+
+</aside>
+
+</section>
+
+<Runtime chapter="ch-intro" />

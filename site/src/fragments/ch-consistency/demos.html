@@ -1,0 +1,141 @@
+<script>
+(() => {
+  const { $, $$, store, demo, toast } = window.dfg;
+
+  /* js-43-consistency.js */
+  demo('good-consistency', st => {
+    const ISSUES = {
+      save: { name: 'One action, three looks', text: 'Save is a filled button in one card, an outlined one in the other and a plain link in the top bar. People wonder whether they do different things. Fix: one Save component, used everywhere.' },
+      term: { name: 'Two names for one thing', text: '“Album” in one card and “collection” in the other mean the same thing. People assume they’re two different things. Fix: one term per concept.' },
+      order: { name: 'The button order flips', text: 'Cancel comes before Save in the first card and after it in the second. People click by position, so the flip makes them hit the wrong one. Fix: one order for every footer, the one the platform uses.' },
+      icon: { name: 'Two icons for delete', text: 'Delete is a trash can on one row and an × on the next. An × usually means close or remove from a list, so people can’t tell whether it deletes. Fix: one icon per action.' },
+      case: { name: 'Mixed capitalization', text: '“Photo Display” is in Title Case and “Saved filters” is in sentence case. It’s small, but the screen feels assembled from different parts. Fix: one capitalization rule for every heading.' }
+    };
+    const keys = Object.keys(ISSUES);
+    const spots = $$('.p20-spot', st);
+    const score = $('#p20-cs-score', st), say = $('#p20-cs-say', st), list = $('#p20-cs-list', st);
+    const reveal = $('#p20-cs-reveal', st), reset = $('#p20-cs-reset', st);
+    const START = say.textContent;
+    let found = [];
+    spots.forEach(s => { if (s.hasAttribute('aria-label')) s.dataset.label = s.getAttribute('aria-label'); });
+    const mark = k => {
+      found.push(k);
+      const n = found.length;
+      spots.filter(s => s.dataset.issue === k).forEach(s => {
+        s.dataset.found = String(n);
+        if (s.dataset.label) { s.setAttribute('aria-label', s.dataset.label + ', found, number ' + n); return; }
+        const sr = document.createElement('span');
+        sr.className = 'p20-vh';
+        sr.dataset.sr = '';
+        sr.textContent = ', found, number ' + n;
+        s.appendChild(sr);
+      });
+      const li = document.createElement('li');
+      const b = document.createElement('b');
+      b.textContent = ISSUES[k].name + '. ';
+      li.append(b, ISSUES[k].text);
+      list.appendChild(li);
+    };
+    const render = () => {
+      score.textContent = found.length + ' of ' + keys.length + ' found';
+      reveal.hidden = found.length === keys.length;
+      reset.hidden = !found.length;
+    };
+    spots.forEach(s => s.addEventListener('click', () => {
+      const k = s.dataset.issue;
+      if (!k) { say.textContent = 'That one matches the rest. Keep looking.'; return; }
+      if (found.includes(k)) { say.textContent = 'Already found: number ' + (found.indexOf(k) + 1) + ', ' + ISSUES[k].name.toLowerCase() + '.'; return; }
+      mark(k);
+      render();
+      say.textContent = found.length === keys.length
+        ? 'All ' + keys.length + ' found. Each one is small. Together they make the screen feel unreliable.'
+        : 'Found ' + found.length + ' of ' + keys.length + ': ' + ISSUES[k].name.toLowerCase() + '. See the list below.';
+    }));
+    reveal.addEventListener('click', () => {
+      const missed = keys.filter(k => !found.includes(k));
+      missed.forEach(mark);
+      render();
+      say.textContent = 'Showing all ' + keys.length + '. The ' + (missed.length === 1 ? 'one you missed is' : missed.length + ' you missed are') + ' at the end of the list.';
+      reset.focus();
+    });
+    reset.addEventListener('click', () => {
+      found = [];
+      spots.forEach(s => {
+        delete s.dataset.found;
+        if (s.dataset.label) s.setAttribute('aria-label', s.dataset.label);
+        $$('[data-sr]', s).forEach(x => x.remove());
+      });
+      list.textContent = '';
+      say.textContent = START;
+      render();
+      reveal.focus();
+    });
+    render();
+  });
+
+  demo('good-design-tokens', st => {
+    const D = { radius: 8, space: 4, text: 15, accent: 'blue' };
+    const PALETTE = { blue: 'var(--palette-blue)', ink: 'var(--palette-ink)', green: 'var(--palette-green)' };
+    const preview = $('#p20-tk-preview', st), code = $('#p20-tk-code', st);
+    const ranges = $$('input[type="range"][data-token]', st);
+    const radios = $$('input[name="p20-tk-accent"]', st);
+    const range = k => ranges.find(r => r.dataset.token === k);
+    const render = changed => {
+      const t = { radius: Number(range('radius').value), space: Number(range('space').value), text: Number(range('text').value), accent: (radios.find(r => r.checked) || {}).value || D.accent };
+      ['radius', 'space', 'text'].forEach(k => {
+        preview.style.setProperty('--p20-' + k, t[k] + 'px');
+        $('#p20-tk-' + k + '-out', st).textContent = t[k] + 'px';
+      });
+      preview.dataset.accent = t.accent;
+      const lines = [
+        ['radius', '--radius: ' + t.radius + 'px;'],
+        ['space', '--space: ' + t.space + 'px;'],
+        ['text', '--text: ' + t.text + 'px;'],
+        ['accent', '--accent: ' + PALETTE[t.accent] + ';']
+      ];
+      code.textContent = '';
+      code.append('/* tokens */\n:root {\n');
+      lines.forEach(([k, s]) => {
+        const span = document.createElement('span');
+        span.textContent = '  ' + s;
+        if (k === changed) span.className = 'p20-hl';
+        code.append(span, '\n');
+      });
+      code.append('}\n/* a component */\n.button {\n  border-radius: var(--radius);\n  padding: calc(var(--space) * 2)\n           calc(var(--space) * 4);\n  font-size: var(--text);\n  background: var(--accent);\n}');
+    };
+    ranges.forEach(r => r.addEventListener('input', () => render(r.dataset.token)));
+    radios.forEach(r => r.addEventListener('change', () => render('accent')));
+    $('#p20-tk-reset', st).addEventListener('click', () => {
+      ['radius', 'space', 'text'].forEach(k => { range(k).value = String(D[k]); });
+      radios.forEach(r => { r.checked = r.value === D.accent; });
+      render();
+    });
+    render();
+  });
+
+  demo('good-break-on-purpose', st => {
+    const box = $('#p20-bp', st), cap = $('#p20-bp-cap', st);
+    const CAP = {
+      uniform: 'Every row looks the same, so “Delete document” blends in with “Duplicate”. One slip, and the work is gone.',
+      one: 'One row breaks the pattern, and the eye goes straight to it. The reason is written down: red and a divider are only for actions that destroy work.',
+      many: 'Every row is special, so none of them is. The red delete is one more color in the noise.'
+    };
+    const SAY = {
+      rename: 'Renaming “Budget 2026”',
+      duplicate: 'Duplicated “Budget 2026”',
+      export: 'Exported budget-2026.pdf',
+      share: 'Link copied'
+    };
+    const mode = () => ($('input[name="p20-bp-mode"]:checked', st) || {}).value || 'one';
+    const render = () => { const m = mode(); box.dataset.mode = m; cap.textContent = CAP[m]; };
+    $$('input[name="p20-bp-mode"]', st).forEach(r => r.addEventListener('change', render));
+    $$('.p20-bp-item', st).forEach(b => b.addEventListener('click', () => {
+      if (b.dataset.k === 'delete') toast(st, 'Deleted “Budget 2026”', { action: { label: 'Undo', run: () => toast(st, 'Restored “Budget 2026”') } });
+      else toast(st, SAY[b.dataset.k]);
+    }));
+    render();
+  });
+
+
+})();
+</script>

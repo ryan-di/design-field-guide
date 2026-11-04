@@ -1,0 +1,59 @@
+<div class="stage tall" data-demo="pat-layered-ui">
+      <div class="seg" role="radiogroup" aria-label="Panel mode">
+        <input type="radio" name="p16-mode" id="p16-mode-s" value="simple" checked><label for="p16-mode-s">Simple</label>
+        <input type="radio" name="p16-mode" id="p16-mode-a" value="advanced"><label for="p16-mode-a">Advanced</label>
+      </div>
+      <div class="surface form-card p16-panel">
+        <div class="field">
+          <label class="field-label" for="p16-prompt">Message on the card</label>
+          <textarea class="input" id="p16-prompt" rows="2">Happy birthday, Gran! Love from all of us.</textarea>
+        </div>
+        <div class="field">
+          <label class="field-label" for="p16-size">Size</label>
+          <select class="select" id="p16-size">
+            <option value="Small card">Small card, 10 × 15 cm</option>
+            <option value="Large card">Large card, 13 × 18 cm</option>
+            <option value="Square card">Square card, 15 × 15 cm</option>
+          </select>
+        </div>
+        <div class="p16-adv" id="p16-adv" hidden>
+          <div class="p16-grid">
+            <div class="field">
+              <label class="field-label" for="p16-sampler">Paper</label>
+              <select class="select" id="p16-sampler">
+                <option value="Matte">Matte</option>
+                <option value="Glossy">Glossy</option>
+                <option value="Linen">Linen</option>
+                <option value="Recycled">Recycled</option>
+              </select>
+            </div>
+            <div class="field">
+              <label class="field-label" for="p16-steps">Copies</label>
+              <input class="input" id="p16-steps" type="number" min="1" max="100" value="1">
+            </div>
+            <div class="field">
+              <label class="field-label" for="p16-cfg">Border in mm</label>
+              <input class="input" id="p16-cfg" type="number" min="0" max="10" step="0.5" value="3">
+            </div>
+            <div class="field">
+              <label class="field-label" for="p16-seed">Gift note</label>
+              <input class="input" id="p16-seed" placeholder="None" autocomplete="off">
+            </div>
+          </div>
+          <div class="p16-graph">
+            <p class="p16-graph-label" id="p16-graph-label">What happens to your order</p>
+            <ol class="p16-chips" aria-labelledby="p16-graph-label">
+              <li class="node">Upload</li><li class="node">Crop</li><li class="node" data-hot>Print</li><li class="node">Pack</li><li class="node">Ship</li>
+            </ol>
+          </div>
+        </div>
+        <div class="p16-note" id="p16-adv-note" hidden>
+          <svg class="icon" aria-hidden="true"><use href="#i-sliders"/></svg>
+          <span class="grow" data-note-text></span>
+          <button class="btn btn-ghost" type="button" data-act="show">Show</button>
+          <button class="btn btn-ghost" type="button" data-act="reset">Reset</button>
+        </div>
+        <button class="btn btn-primary p16-run" type="button" data-act="run">Add to cart</button>
+      </div>
+      <p class="try"><b>Try it:</b> switch to Advanced and change the paper or the copies. Switch back to Simple: your values stay, and a note says what’s different. Add to cart in either mode and the toast shows the same settings.</p>
+    </div>

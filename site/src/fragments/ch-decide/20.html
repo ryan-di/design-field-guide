@@ -1,0 +1,60 @@
+<div class="note comfy cw-wrap">
+      <div class="seg cw-seg" role="radiogroup" aria-label="Example">
+        <input type="radio" name="cw-eff-cut-combine-w" id="cw-eff-cut-combine-w-1" value="sprint" checked><label for="cw-eff-cut-combine-w-1">GV design sprint</label>
+        <input type="radio" name="cw-eff-cut-combine-w" id="cw-eff-cut-combine-w-2" value="shapeup"><label for="cw-eff-cut-combine-w-2">Shape Up</label>
+        <input type="radio" name="cw-eff-cut-combine-w" id="cw-eff-cut-combine-w-3" value="vscode"><label for="cw-eff-cut-combine-w-3">VS Code</label>
+        <input type="radio" name="cw-eff-cut-combine-w" id="cw-eff-cut-combine-w-4" value="pixel"><label for="cw-eff-cut-combine-w-4">Google Pixel</label>
+      </div>
+      <div class="cw" data-cw-view role="img" aria-label=""></div>
+      <p class="cw-cap" data-cw-cap aria-live="polite"></p>
+      
+      <script>
+      (() => {
+        const wrap = document.currentScript.closest('.cw-wrap');
+        const view = wrap.querySelector('[data-cw-view]'), cap = wrap.querySelector('[data-cw-cap]');
+        const ic = id => '<svg class="icon sm"><use href="#i-' + id + '"/></svg>';
+        const line = w => '<i class="cw-line" style="width:' + w + '%"></i>';
+        const dots = n => n ? '<span class="cw-ecc-dots">' + '<i></i>'.repeat(n) + '</span>' : '';
+        const pan = (n, d) => '<span class="cw-ecc-pan' + (d > 2 ? ' hot' : '') + '"><em>' + n + '</em>' + line(60) + dots(d) + '</span>';
+        const sk = (name, d) => '<div class="cw-ecc-sk"><b>Sketch ' + name + '</b>' + d.map((x, i) => pan(i + 1, x)).join('') + '</div>';
+        /* A face: eyes open, closed, or looking aside. */
+        const eyes = (x, y, k) => k === 'shut'
+          ? '<path class="c" d="M' + (x - 7) + ' ' + y + 'h4M' + (x + 3) + ' ' + y + 'h4"/>'
+          : '<circle class="e" cx="' + (x - 5 + (k === 'side' ? 4 : 0)) + '" cy="' + y + '" r="1.8"/><circle class="e" cx="' + (x + 5 + (k === 'side' ? 4 : 0)) + '" cy="' + y + '" r="1.8"/>';
+        const face = k => '<svg viewBox="0 0 30 30" aria-hidden="true"><circle class="h" cx="15" cy="15" r="11"/>' + eyes(15, 14, k) + (k === 'side' ? '<path class="c" d="M14 20h6"/>' : '<path class="c" d="M11 20q4 3 8 0"/>') + '</svg>';
+        const S = {
+          sprint: { html: '<div class="cw-ecc-board"><div class="cw-ecc-sks">' + sk('A', [3, 0, 1]) + sk('B', [0, 1, 4]) + sk('C', [1, 3, 0]) + '</div>' +
+              '<span class="cw-ecc-down" aria-hidden="true">↓</span>' +
+              '<div class="cw-ecc-proto"><b>Storyboard for the prototype</b><div class="cw-ecc-strip"><span>1 from A' + line(80) + '</span><span>2 from C' + line(70) + '</span><span>3 from B' + line(85) + '</span></div></div></div>',
+            alt: 'Three solution sketches, A, B and C, each with three panels. Dot stickers cluster on panel 1 of A, panel 2 of C and panel 3 of B. Below, one storyboard takes panel 1 from A, 2 from C and 3 from B.',
+            cap: 'GV’s design sprint: people put dot stickers on the parts they like in each sketch, not on whole sketches. The team then draws one storyboard from the best parts, which shows whether they still fit together.' },
+          shapeup: { html: '<div class="cw-ecc-doc"><div class="cw-ecc-dh"><b>Pitch</b><span class="cw-ecc-chip">Appetite: 2 weeks</span></div>' +
+              '<div class="cw-ecc-sec"><em>Problem</em>' + line(92) + line(70) + '</div>' +
+              '<div class="cw-ecc-sec"><em>Solution</em><div class="cw-ecc-fat"><i></i><span>→</span><i></i></div></div>' +
+              '<div class="cw-ecc-sec"><em>Rabbit holes</em>' + line(80) + '</div>' +
+              '<div class="cw-ecc-sec cut"><em>No-gos</em><s>Sync drafts across devices</s><s>Full version history</s></div></div>',
+            alt: 'A pitch document with a chip saying Appetite: 2 weeks, and sections for Problem, Solution as two rough boxes, and Rabbit holes. The last section, No-gos, lists two struck-out features: sync drafts across devices, and full version history.',
+            cap: 'Basecamp’s Shape Up: a pitch ends with “No-gos”, the parts left out on purpose, so they don’t creep back in during the build.' },
+          vscode: { html: '<div class="cw-ecc-ed"><div class="cw-ecc-top">closeTab.ts</div><div class="cw-ecc-code">' +
+              '<span class="cw-ecc-lens"><u>Accept current</u><u>Accept incoming</u><u class="on">Accept both</u></span>' +
+              '<span class="cw-ecc-mk cw-ecc-cur">&lt;&lt;&lt;&lt;&lt;&lt;&lt; current</span><span class="cw-ecc-cur">onClose: askToSave()</span>' +
+              '<span class="cw-ecc-mk">=======</span>' +
+              '<span class="cw-ecc-inc">onClose: showUndo()</span><span class="cw-ecc-mk cw-ecc-inc">&gt;&gt;&gt;&gt;&gt;&gt;&gt; incoming</span></div>' +
+              '<div class="cw-ecc-warn">' + ic('warn') + '<span>Both kept: two answers to one close</span></div></div>',
+            alt: 'A code editor showing a merge conflict. Above it: Accept current, Accept incoming, Accept both. The current side asks to save on close, the incoming side shows Undo on close. A warning below says keeping both gives two answers to one close.',
+            cap: 'VS Code: for each merge conflict you can keep one side, the other, or both. Keeping both still needs a read, because two good changes can contradict each other, like a save prompt and an Undo on the same close.' },
+          pixel: { html: '<div class="cw-ecc-ph"><svg class="cw-ecc-photo" viewBox="0 0 180 110" aria-hidden="true">' +
+              '<ellipse class="b1" cx="40" cy="112" rx="25" ry="30"/><circle class="h" cx="40" cy="58" r="15"/>' + eyes(40, 56, 'open') +
+              '<ellipse class="b2" cx="90" cy="112" rx="25" ry="30"/><circle class="h" cx="90" cy="54" r="15"/>' + eyes(90, 52, 'open') + '<circle class="ring" cx="90" cy="54" r="20"/>' +
+              '<ellipse class="b3" cx="140" cy="112" rx="25" ry="30"/><circle class="h" cx="140" cy="58" r="15"/>' + eyes(140, 56, 'open') + '</svg>' +
+              '<span class="cw-ecc-pick">Faces from the other shots</span>' +
+              '<div class="cw-ecc-faces"><span>' + face('shut') + '</span><span>' + face('side') + '</span><span class="on">' + face('open') + '<i class="tick">' + ic('check') + '</i></span></div></div>',
+            alt: 'A phone photo editor showing a group photo of three people. The middle face is selected. A strip below offers that face from the other shots: eyes shut, looking aside, and eyes open, which is picked.',
+            cap: 'Google Pixel: Best Take works from a few group shots taken seconds apart. You pick each person’s best face, and because the shots are so close, the result still looks like one moment.' }
+        };
+        const render = k => { view.innerHTML = S[k].html; view.setAttribute('aria-label', 'Sketch: ' + S[k].alt); cap.textContent = S[k].cap; };
+        wrap.querySelectorAll('input[name="cw-eff-cut-combine-w"]').forEach(r => r.addEventListener('change', () => render(r.value)));
+        render('sprint');
+      })();
+      </script>
+    </div>

@@ -1,0 +1,42 @@
+<div class="note comfy cw-wrap">
+      <div class="seg cw-seg" role="radiogroup" aria-label="Example">
+        <input type="radio" name="cw-checkbox-w" id="cw-checkbox-w-1" value="gmail" checked><label for="cw-checkbox-w-1">Gmail</label>
+        <input type="radio" name="cw-checkbox-w" id="cw-checkbox-w-2" value="lightroom"><label for="cw-checkbox-w-2">Lightroom Classic</label>
+        <input type="radio" name="cw-checkbox-w" id="cw-checkbox-w-3" value="photos"><label for="cw-checkbox-w-3">Google Photos</label>
+      </div>
+      <div class="cw" data-cw-view role="img" aria-label=""></div>
+      <p class="cw-cap" data-cw-cap aria-live="polite"></p>
+      
+      <script>
+      (() => {
+        const wrap = document.currentScript.closest('.cw-wrap');
+        const view = wrap.querySelector('[data-cw-view]'), cap = wrap.querySelector('[data-cw-cap]');
+        const ic = id => '<svg class="icon sm"><use href="#i-' + id + '"/></svg>';
+        const ln = w => '<i class="cw-chkw-ln"' + (w ? ' style="width:' + w + '"' : '') + '></i>';
+        const cb = st => '<i class="cw-chkw-cb' + (st ? ' ' + st : '') + '"></i>';
+        const row = on => '<div class="cw-chkw-row' + (on ? ' on' : '') + '">' + cb(on ? 'on' : '') + '<i class="cw-chkw-ln cw-chkw-from"></i><i class="cw-chkw-ln cw-chkw-subj"></i></div>';
+        const opt = (on, label) => '<span class="cw-chkw-opt' + (on ? '' : ' off') + '">' + cb(on ? 'on' : '') + label + (on ? ln() : '') + '</span>';
+        const sec = (title, body) => '<div class="cw-chkw-sec"><span>' + title + '</span>' + body + '</div>';
+        const ck = on => '<i class="cw-chkw-ck' + (on ? ' on' : '') + '"></i>';
+        const th = on => '<span class="cw-chkw-th' + (on ? ' on' : '') + '">' + ck(on) + '</span>';
+        const S = {
+          gmail: { html: '<div class="cw-chkw-win"><div class="cw-chkw-tool">' + cb('mix') + '<span class="cw-chkw-car">▾</span><i class="cw-chkw-sep"></i>' + ic('folder') + ic('trash') + ic('dots') + '</div>' +
+              row(false) + row(true) + row(false) + row(true) + row(false) + '</div>',
+            alt: 'An email list with a checkbox on each row. Two rows are checked and highlighted. The checkbox at the top shows a dash, and action buttons sit next to it.',
+            cap: 'Gmail: checking emails only selects them, for an action like Archive or Delete. The box at the top shows a dash when just some are checked.' },
+          lightroom: { html: '<div class="cw-chkw-dlg"><b>Export 12 photos</b>' + sec('Image sizing', opt(true, 'Resize to fit')) + sec('Output sharpening', opt(true, 'Sharpen for screen')) + sec('Watermark', opt(false, 'Add a watermark')) +
+              '<div class="cw-chkw-foot"><span class="btn btn-secondary">Cancel</span><span class="btn btn-primary">Export</span></div></div>',
+            alt: 'An export dialog with sections for image sizing, sharpening and watermark. Each has its own checkbox; two are checked. Cancel and Export sit at the bottom.',
+            cap: 'Lightroom Classic: the export dialog lists independent options, like resizing, sharpening and adding a watermark, as checkboxes that apply when you press Export.' },
+          photos: { html: '<div class="cw-chkw-ph"><div class="cw-chkw-bar">' + ic('x') + '<span class="grow">5 selected</span>' + ic('plus') + ic('trash') + ic('dots') + '</div>' +
+              '<div class="cw-chkw-day">' + ck(true) + 'Today</div><div class="cw-chkw-grid">' + th(true) + th(true) + th(true) + th(true) + '</div>' +
+              '<div class="cw-chkw-day">' + ck(false) + 'Yesterday</div><div class="cw-chkw-grid">' + th(false) + th(true) + th(false) + th(false) + '</div></div>',
+            alt: 'A photo grid in selection mode. The Today date is checked, so all four of its photos are checked. Under Yesterday, one photo is checked. The top bar says 5 selected, with action buttons.',
+            cap: 'Google Photos: each photo has a check circle, and the one beside a date selects every photo from that day. The top bar counts what’s picked.' }
+        };
+        const render = k => { view.innerHTML = S[k].html; view.setAttribute('aria-label', 'Sketch: ' + S[k].alt); cap.textContent = S[k].cap; };
+        wrap.querySelectorAll('input[name="cw-checkbox-w"]').forEach(r => r.addEventListener('change', () => render(r.value)));
+        render('gmail');
+      })();
+      </script>
+    </div>

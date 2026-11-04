@@ -1,0 +1,67 @@
+<div class="fm" data-fm>
+  <div class="seg fm-seg" role="radiogroup" aria-label="Kind of token">
+    <input type="radio" name="fm-good-design-tokens" id="fm-good-design-tokens-1" value="base" checked><label for="fm-good-design-tokens-1">Base</label>
+    <input type="radio" name="fm-good-design-tokens" id="fm-good-design-tokens-2" value="role"><label for="fm-good-design-tokens-2">Role</label>
+    <input type="radio" name="fm-good-design-tokens" id="fm-good-design-tokens-3" value="comp"><label for="fm-good-design-tokens-3">Component</label>
+  </div>
+  <div class="fm-stage" data-fm-stage></div>
+  <p class="fig-cap" data-fm-when aria-live="polite"></p>
+  
+  <script>
+  (() => {
+    const fm = document.currentScript.closest('[data-fm]'), stage = fm.querySelector('[data-fm-stage]'), when = fm.querySelector('[data-fm-when]');
+    const BASE = { 'blue-600': '#2F5DA8', 'green-600': '#2E7D4F', 'purple-600': '#6B4FA8', 'red-600': '#C4471F' };
+    const F = {
+      base: {
+        pick: ['Change the value of blue-600', [['#2F5DA8', 'Original'], ['#1F4A8C', 'Darker'], ['#4A7BD0', 'Lighter']]],
+        hl: ['blue-600'],
+        use: 'Raw values, like blue-600 = #2F5DA8. Components never use them directly.',
+        effect: 'Change one, and every role that points at it follows: here the button, the bar and the link.'
+      },
+      role: {
+        pick: ['Point accent at', [['blue-600', 'blue-600'], ['green-600', 'green-600'], ['purple-600', 'purple-600']]],
+        hl: ['accent'],
+        use: 'A name for a job, like accent or danger. This is the layer components use.',
+        effect: 'Point accent somewhere else and the app is rebranded in one line. Danger stays red.'
+      },
+      comp: {
+        pick: ['Point play-bg at', [['accent', 'accent'], ['text', 'text']]],
+        hl: ['play-bg'],
+        use: 'For one component that has to differ from its role, like a play button in the text color.',
+        effect: 'Only the play button changes. Keep these rare, because each one is a place where the system can split.'
+      }
+    };
+    const show = k => {
+      const f = F[k], st = { blue: '#2F5DA8', accent: 'blue-600', play: 'accent' };
+      stage.innerHTML = '<div class="tkf"><div class="tkf-side"><div class="tkf-code" data-code></div><div class="tkf-pick" role="group" aria-label="' + f.pick[0] + '"><span>' + f.pick[0] + '</span>' +
+        f.pick[1].map((o, i) => '<button type="button" aria-pressed="' + (i ? 'false' : 'true') + '" data-v="' + o[0] + '">' + o[1] + '</button>').join('') + '</div></div>' +
+        '<div class="tkf-prev" data-prev><span class="tkf-art"></span><b>Blue Hours</b><span class="cs-meta">Nora Lind</span><span class="tkf-bar"><i></i></span>' +
+        '<span class="tkf-ctl"><button class="tkf-play" type="button" aria-label="Play"><svg class="icon"><use href="#i-play"/></svg></button><a class="tkf-link" href="#">See lyrics</a></span>' +
+        '<p class="tkf-err">Can’t download over mobile data.</p></div></div>';
+      const code = stage.querySelector('[data-code]'), prev = stage.querySelector('[data-prev]');
+      const render = () => {
+        const base = Object.assign({}, BASE, { 'blue-600': st.blue });
+        const line = (name, val, sw) => '<span' + (f.hl.includes(name) ? ' class="on"' : '') + '>' + (sw ? '<i style="background:' + sw + '"></i>' : '') + name + ' ' + val + '</span>';
+        code.innerHTML = '<b>Base</b>' + Object.keys(base).map(n => line(n, base[n], base[n])).join('') +
+          '<b>Role</b>' + line('accent', '→ ' + st.accent) + line('danger', '→ red-600') + line('text', '→ grey-900') +
+          '<b>Component</b>' + line('play-bg', '→ ' + st.play);
+        const accent = base[st.accent];
+        prev.style.setProperty('--tk-accent', accent);
+        prev.style.setProperty('--tk-danger', base['red-600']);
+        prev.style.setProperty('--tk-play', st.play === 'text' ? 'var(--ui-primary)' : accent);
+        prev.querySelector('.tkf-play').style.color = st.play === 'text' ? 'var(--ui-on-primary)' : '#fff';
+      };
+      stage.querySelectorAll('[data-v]').forEach(b => b.addEventListener('click', () => {
+        stage.querySelectorAll('[data-v]').forEach(x => x.setAttribute('aria-pressed', String(x === b)));
+        if (k === 'base') st.blue = b.dataset.v; else if (k === 'role') st.accent = b.dataset.v; else st.play = b.dataset.v;
+        render();
+      }));
+      stage.querySelector('.tkf-link').addEventListener('click', e => e.preventDefault());
+      render();
+      when.innerHTML = '<b>' + fm.querySelector('.fm-seg input:checked + label').textContent + '.</b> ' + f.use + ' ' + f.effect;
+    };
+    fm.querySelectorAll('.fm-seg input').forEach(i => i.addEventListener('change', () => show(i.value)));
+    show('base');
+  })();
+  </script>
+</div>

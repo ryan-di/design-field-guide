@@ -1,0 +1,129 @@
+<div class="fm" data-fm>
+  
+  <div class="seg fm-seg" role="radiogroup" aria-label="Form">
+    <input type="radio" name="fm-stepper" id="fm-stepper-1" value="row" checked><label for="fm-stepper-1">Horizontal</label>
+    <input type="radio" name="fm-stepper" id="fm-stepper-2" value="vert"><label for="fm-stepper-2">Vertical</label>
+    <input type="radio" name="fm-stepper" id="fm-stepper-3" value="count"><label for="fm-stepper-3">Step count</label>
+  </div>
+  <div class="fm-stage" data-fm-stage></div>
+  <p class="fig-cap" data-fm-when aria-live="polite"></p>
+  <script>
+  (() => {
+    const fm = document.currentScript.closest('[data-fm]'), stage = fm.querySelector('[data-fm-stage]'), when = fm.querySelector('[data-fm-when]');
+    const icon = n => '<svg class="icon"><use href="#i-' + n + '"/></svg>';
+    const q = t => '<p class="st-q" tabindex="-1">' + t + '</p>';
+    const label = (list, v) => (list.find(x => x[0] === v) || [, ''])[1];
+    const radios = (name, opts, val) => '<div class="st-opts" role="radiogroup">' + opts.map(o => '<label class="st-radio"><input type="radio" name="' + name + '" value="' + o[0] + '"' + (o[0] === val ? ' checked' : '') + '><span>' + o[1] + '</span></label>').join('') + '</div>';
+    const row = (k, v) => '<div class="cs-row"><span class="k">' + k + '</span><span class="v">' + v + '</span></div>';
+    const focus = (box, sel) => { const h = box.querySelector(sel); if (h) h.focus({ preventScroll: true }); };
+
+    // Horizontal: a checkout in three named steps.
+    const SHIP = [['std', 'Standard · free, 3–5 days'], ['exp', 'Express · $9, tomorrow']];
+    const PAY = [['visa', 'Visa ending 4242'], ['paypal', 'PayPal']];
+    const rowWire = s => {
+      const box = s.querySelector('[data-card]'), st = { step: 0, ship: 'std', pay: 'visa', placed: false };
+      const draw = f => {
+        const steps = ['Delivery', 'Payment', 'Review'].map((n, i) => {
+          const state = st.placed || i < st.step ? 'done' : i === st.step ? 'cur' : '';
+          return '<li' + (state === 'cur' ? ' aria-current="step"' : '') + '><span class="st-step ' + state + '"><span class="st-n">' + (state === 'done' ? icon('check') : i + 1) + '</span><span class="st-l">' + n + '</span></span></li>';
+        }).join('');
+        let body, nav = '';
+        if (st.placed) body = q('Order placed') + '<p class="st-p" role="status">It ships by ' + label(SHIP, st.ship).split(' · ')[0].toLowerCase() + ' delivery.</p>';
+        else {
+          body = st.step === 0 ? q('How should we send it?') + radios('stf-ship', SHIP, st.ship)
+            : st.step === 1 ? q('How do you want to pay?') + radios('stf-pay', PAY, st.pay)
+            : q('Check your order') + '<div class="st-sum">' + row('Delivery', label(SHIP, st.ship)) + row('Pay with', label(PAY, st.pay)) + row('Total', st.ship === 'exp' ? '$95.00' : '$86.00') + '</div>';
+          nav = '<div class="st-nav">' + (st.step ? '<button type="button" class="btn btn-secondary cs-sm" data-back>Back</button>' : '') + '<button type="button" class="btn btn-primary cs-sm" data-next>' + (st.step === 2 ? 'Place order' : 'Next') + '</button></div>';
+        }
+        box.innerHTML = '<ol class="st-steps" aria-label="Steps">' + steps + '</ol><div class="st-body">' + body + '</div>' + nav;
+        if (f) focus(box, '.st-q');
+      };
+      box.addEventListener('change', e => { if (e.target.name === 'stf-ship') st.ship = e.target.value; if (e.target.name === 'stf-pay') st.pay = e.target.value; });
+      box.addEventListener('click', e => {
+        if (e.target.closest('[data-back]')) { st.step--; draw(true); }
+        else if (e.target.closest('[data-next]')) { if (st.step === 2) st.placed = true; else st.step++; draw(true); }
+      });
+      draw();
+    };
+
+    // Vertical: a savings account, steps stacked, the current one open in place.
+    const VSTEPS = [['type', 'Account type', 'Which account do you want?', [['easy', 'Easy access · 3.1%'], ['fixed', 'Fixed for 1 year · 4.2%']]],
+                    ['amt', 'Monthly amount', 'How much will you pay in each month?', [['50', '$50'], ['100', '$100'], ['200', '$200']]],
+                    ['from', 'Pay in from', 'Which account should it come from?', [['chk', 'Checking ending 2210'], ['other', 'Another bank']]]];
+    const vertWire = s => {
+      const box = s.querySelector('[data-card]'), st = { step: 0, type: null, amt: null, from: null, opened: false };
+      const draw = f => {
+        if (st.opened) { box.innerHTML = q('Account opened') + '<p class="st-p" role="status">' + label(VSTEPS[0][3], st.type).split(' · ')[0] + ', $' + st.amt + ' a month from ' + (st.from === 'chk' ? 'Checking ending 2210' : 'another bank') + '.</p>'; if (f) focus(box, '.st-q'); return; }
+        box.innerHTML = '<ol class="stf-v" aria-label="Steps">' + VSTEPS.map(([k, t, ask, opts], i) => {
+          const done = st[k] !== null && i !== st.step, cur = i === st.step;
+          return '<li class="' + (cur ? 'cur' : done ? 'done' : '') + '"' + (cur ? ' aria-current="step"' : '') + '><span class="st-n">' + (done ? icon('check') : i + 1) + '</span>' +
+            '<div class="stf-h"><p class="stf-t" tabindex="-1">' + t + '</p>' + (done ? '<button type="button" class="st-edit" data-edit="' + i + '" aria-label="Edit ' + t.toLowerCase() + '">Edit</button>' : '') + '</div>' +
+            (done ? '<p class="stf-sum">' + label(opts, st[k]) + '</p>' : '') +
+            (cur ? '<div class="stf-body"><p class="st-p">' + ask + '</p>' + radios('stf-' + k, opts, st[k]) + '<button type="button" class="btn btn-primary cs-sm" data-cont' + (st[k] === null ? ' disabled' : '') + '>Continue</button></div>' : '') + '</li>';
+        }).join('') + '</ol>' + (st.step === 3 ? '<div class="st-nav"><button type="button" class="btn btn-primary cs-sm" data-open>Open account</button></div>' : '');
+        if (f) focus(box, st.step === 3 ? '[data-open]' : 'li.cur .stf-t');
+      };
+      box.addEventListener('change', e => { const k = e.target.name.replace('stf-', ''); if (k in st) { st[k] = e.target.value; const c = box.querySelector('[data-cont]'); if (c) c.disabled = false; } });
+      box.addEventListener('click', e => {
+        const ed = e.target.closest('[data-edit]');
+        if (ed) { st.step = Number(ed.dataset.edit); draw(true); }
+        else if (e.target.closest('[data-cont]')) { const next = VSTEPS.findIndex(([k], i) => i > st.step && st[k] === null); st.step = next < 0 ? (VSTEPS.findIndex(([k]) => st[k] === null) < 0 ? 3 : VSTEPS.findIndex(([k]) => st[k] === null)) : next; draw(true); }
+        else if (e.target.closest('[data-open]')) { st.opened = true; draw(true); }
+      });
+      draw();
+    };
+
+    // Step count: a phone plan, one short question per screen.
+    const QS = [['data', 'How much data do you use?', [['5', '5 GB'], ['20', '20 GB'], ['unl', 'Unlimited']]],
+                ['abroad', 'Do you call other countries?', [['no', 'Rarely or never'], ['yes', 'Every week']]],
+                ['keep', 'Keep your current number?', [['yes', 'Yes, move it over'], ['no', 'No, give me a new one']]]];
+    const countWire = s => {
+      const box = s.querySelector('[data-card]'), st = { step: 0, data: null, abroad: null, keep: null };
+      const price = () => ({ 5: 10, 20: 18, unl: 30 })[st.data] + (st.abroad === 'yes' ? 5 : 0);
+      const draw = f => {
+        const n = QS.length, fin = st.step === n, pct = fin ? 100 : Math.round(100 * (st.step + 0.5) / n);
+        let body;
+        if (fin) body = q('Your plan') + '<p class="st-p">' + label(QS[0][2], st.data) + (st.abroad === 'yes' ? ', with calls abroad' : '') + (st.keep === 'yes' ? ', keeping your number' : ', with a new number') + '.</p><p class="st-q" style="font-size:22px">$' + price() + ' a month</p>';
+        else { const [k, ask, opts] = QS[st.step]; body = q(ask) + '<div class="st-chips" role="group" aria-label="Answers">' + opts.map(o => '<button type="button" class="st-chip" data-v="' + o[0] + '" aria-pressed="' + (st[k] === o[0]) + '">' + o[1] + '</button>').join('') + '</div>'; }
+        box.innerHTML = '<p class="st-count">' + (fin ? 'Done' : 'Step ' + (st.step + 1) + ' of ' + n) + '</p><div class="stf-bar" role="progressbar" aria-label="Progress" aria-valuemin="0" aria-valuemax="' + n + '" aria-valuenow="' + st.step + '"><span style="width:' + pct + '%"></span></div>' +
+          '<div class="st-body">' + body + '</div><div class="st-nav">' + (st.step ? '<button type="button" class="btn btn-secondary cs-sm" data-back>Back</button>' : '') + (fin ? '' : '<button type="button" class="btn btn-primary cs-sm" data-next' + (st[QS[st.step][0]] === null ? ' disabled' : '') + '>' + (st.step === n - 1 ? 'See my plan' : 'Next') + '</button>') + '</div>';
+        if (f) focus(box, '.st-q');
+      };
+      box.addEventListener('click', e => {
+        const c = e.target.closest('[data-v]');
+        if (c) { st[QS[st.step][0]] = c.dataset.v; box.querySelectorAll('[data-v]').forEach(x => x.setAttribute('aria-pressed', String(x === c))); box.querySelector('[data-next]').disabled = false; }
+        else if (e.target.closest('[data-back]')) { st.step--; draw(true); }
+        else if (e.target.closest('[data-next]')) { st.step++; draw(true); }
+      });
+      draw();
+    };
+
+    const F = {
+      row: {
+        html: '<div class="st-card" data-card></div>',
+        use: 'Use it for three to five steps on a wide screen, like a checkout.',
+        more: 'Each step has a short name, so people can see what’s ahead before they start.',
+        wire: rowWire
+      },
+      vert: {
+        html: '<div class="st-card" data-card></div>',
+        use: 'Use it when steps need room to explain, or when the page is narrow.',
+        more: 'Finished steps stay in view with their answers and an Edit link.',
+        wire: vertWire
+      },
+      count: {
+        html: '<div class="stf-phone" data-card></div>',
+        use: 'Use it on phones, or when the task is a run of short questions.',
+        more: 'A count and a bar show how much is left without naming every step.',
+        wire: countWire
+      }
+    };
+    const show = k => {
+      stage.innerHTML = F[k].html; F[k].wire(stage);
+      when.innerHTML = '<b>' + fm.querySelector('.fm-seg input:checked + label').textContent + '.</b> ' + F[k].use + ' ' + F[k].more;
+    };
+    fm.querySelectorAll('.fm-seg input').forEach(i => i.addEventListener('change', () => show(i.value)));
+    show('row');
+  })();
+  </script>
+</div>

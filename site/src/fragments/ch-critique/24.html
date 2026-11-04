@@ -1,0 +1,114 @@
+<script>
+(() => {
+  const cs = document.currentScript.closest('.cs');
+  const go = () => {
+  const D = (k, html, wire) => csDemo(cs.querySelector('[data-d="' + k + '"]'), html, wire);
+  const css = document.createElement('style');
+  css.textContent = [
+    '#good-rams-principles .rp-col{width:min(360px,100%);display:flex;flex-direction:column;gap:10px;text-align:left}',
+    '#good-rams-principles .rp-ed{position:relative;border-radius:12px;overflow:hidden;border:1px solid var(--ui-border);background:var(--ui-bg)}',
+    '#good-rams-principles .rp-photo{all:unset;cursor:pointer;display:block;width:100%;height:170px;background:linear-gradient(135deg,var(--thumb-a),var(--thumb-c))}',
+    '#good-rams-principles .rp-photo:focus-visible{outline:3px solid var(--ui-sel);outline-offset:-3px}',
+    '#good-rams-principles .rp-tools{display:flex;justify-content:space-around;gap:4px;padding:8px;background:var(--ui-surface);border-top:1px solid var(--ui-border)}',
+    '#good-rams-principles .rp-tools[hidden]{display:none}',
+    '#good-rams-principles .rp-tool{display:flex;flex-direction:column;align-items:center;gap:3px;font:600 12px var(--font-body);color:var(--ui-text);min-width:44px}',
+    '#good-rams-principles .rp-tool span[hidden]{display:none}',
+    '#good-rams-principles .rp-card{background:var(--ui-surface);border:1px solid var(--ui-border);border-radius:12px;padding:10px 12px;display:flex;flex-direction:column;gap:6px;font-size:13.5px;line-height:1.4}',
+    '#good-rams-principles .rp-h{font:600 11.5px var(--font-mono);text-transform:uppercase;letter-spacing:.06em;color:var(--ui-muted)}',
+    '#good-rams-principles .rp-out{font-size:13.5px;line-height:1.45}',
+    '#good-rams-principles .rp-out:empty{display:none}',
+    '#good-rams-principles .rp-bad{color:var(--ui-danger)}',
+    '#good-rams-principles .rp-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;padding:12px}',
+    '#good-rams-principles .rp-ico{all:unset;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:4px;padding:10px 4px;border-radius:10px;font:600 12.5px var(--font-body);color:var(--ui-text);text-align:center}',
+    '#good-rams-principles .rp-ico:hover{background:var(--ui-hover)}',
+    '#good-rams-principles .rp-ico:focus-visible{outline:3px solid var(--ui-sel);outline-offset:1px}',
+    '#good-rams-principles .rp-min .rp-ico{color:color-mix(in srgb,var(--ui-text) 35%,var(--ui-surface))}',
+    '#good-rams-principles .rp-pane{padding:10px 12px;border-top:1px solid var(--ui-border);font-size:13.5px;display:flex;flex-direction:column;gap:8px}',
+    '#good-rams-principles .rp-pane:empty{display:none}',
+    '#good-rams-principles .rp-urg{display:flex;justify-content:space-between;gap:8px;background:var(--ui-danger-soft);color:var(--ui-text);border-radius:8px;padding:6px 10px;font:600 13px var(--font-body)}',
+    '#good-rams-principles .rp-price{font:700 26px/1.1 var(--font-body)}',
+    '#good-rams-principles .rp-small{font-size:11px;color:color-mix(in srgb,var(--ui-text) 45%,var(--ui-surface))}',
+    '#good-rams-principles .rp-sub{justify-content:center}'
+  ].join('\n');
+  cs.appendChild(css);
+  const icon = n => '<svg class="icon" aria-hidden="true"><use href="#i-' + n + '"/></svg>';
+
+  /* 1. Rules vs questions */
+  const TOOLS = [['fit', 'Crop'], ['sliders', 'Light'], ['image', 'Color'], ['layers', 'Filters']];
+  const edHtml = (fixed) => '<div class="rp-col"><div class="rp-ed"><button class="rp-photo" type="button" aria-label="Photo"' + (fixed ? '' : ' tabindex="-1"') + '></button>' +
+    '<div class="rp-tools" data-tools>' + TOOLS.map(t => '<span class="rp-tool">' + icon(t[0]) + '<span data-lab' + (fixed ? '' : ' hidden') + '>' + t[1] + '</span></span>').join('') + '</div></div>' +
+    (fixed ? '<div class="rp-card"><span class="rp-h">Goal: quick edits on a phone</span><span><b>Unobtrusive?</b> Can people see the whole photo when they want to?</span><span><b>Understandable?</b> Can they tell what each tool does?</span><span><b>So:</b> labeled tools while editing. Tap the photo to hide them and look.</span></div>'
+      : '<div class="rp-card"><span class="rp-h">Rule check</span><label class="check"><input type="checkbox" data-r="5"><span>5 · Unobtrusive: hide the toolbar</span></label><label class="check"><input type="checkbox" data-r="4"><span>4 · Understandable: label every tool</span></label></div>') +
+    '<p class="rp-out" data-out></p></div>';
+  D('good-rams-principles-1b', edHtml(false), d => {
+    const tools = d.querySelector('[data-tools]'), o = d.querySelector('[data-out]');
+    const upd = () => {
+      const r5 = d.querySelector('[data-r="5"]').checked, r4 = d.querySelector('[data-r="4"]').checked;
+      tools.hidden = r5;
+      d.querySelectorAll('[data-lab]').forEach(l => { l.hidden = !r4; });
+      o.innerHTML = r5 && r4 ? '<span class="rp-bad">Both are ticked, but the labels sit on a hidden toolbar. Nobody sees them. The checklist can’t say which rule wins.</span>'
+        : r5 ? 'Rule 5 passes. Rule 4 fails: there are no labels.' : r4 ? 'Rule 4 passes. Rule 5 fails: the toolbar always covers part of the photo.' : '';
+    };
+    d.querySelectorAll('[data-r]').forEach(c => c.addEventListener('change', upd));
+  });
+  D('good-rams-principles-1f', edHtml(true), d => {
+    const tools = d.querySelector('[data-tools]'), o = d.querySelector('[data-out]');
+    d.querySelector('.rp-photo').addEventListener('click', () => {
+      tools.hidden = !tools.hidden;
+      o.textContent = tools.hidden ? 'Toolbar hidden. The whole photo is on screen.' : 'Toolbar back, with a label on every tool.';
+    });
+  });
+
+  /* 2. Minimal styling */
+  const SET = [['gear', 'General'], ['cloud-off', 'Offline'], ['image', 'Wallpaper'], ['layers', 'Notifications'], ['book', 'Privacy'], ['sliders', 'Sound']];
+  const setHtml = fixed => '<div class="rp-col"><div class="rp-ed' + (fixed ? '' : ' rp-min') + '"><div class="rp-grid">' +
+    SET.map(s => '<button class="rp-ico" type="button" aria-label="' + s[1] + '" data-s="' + s[1] + '">' + icon(s[0]) + (fixed ? '<span>' + s[1] + '</span>' : '') + '</button>').join('') +
+    '</div><div class="rp-pane" data-pane></div></div><p class="cs-meta" data-out>Tries: 0</p></div>';
+  const setWire = d => {
+    const pane = d.querySelector('[data-pane]'), o = d.querySelector('[data-out]');
+    let tries = 0;
+    d.querySelectorAll('[data-s]').forEach(b => b.addEventListener('click', () => {
+      tries++;
+      const s = b.dataset.s;
+      pane.innerHTML = '<b>' + s + '</b>' + (s === 'Notifications' ? '<label class="switch" style="padding:0"><span class="grow">Allow notifications</span><input type="checkbox" role="switch" checked data-sw></label>' : '<span class="cs-meta">Not what you were looking for.</span>');
+      o.textContent = 'Tries: ' + tries;
+      const sw = pane.querySelector('[data-sw]');
+      if (sw) sw.addEventListener('change', () => { o.textContent = sw.checked ? 'Tries: ' + tries : 'Notifications off after ' + tries + (tries === 1 ? ' try.' : ' tries.'); });
+    }));
+  };
+  D('good-rams-principles-2b', setHtml(false), setWire);
+  D('good-rams-principles-2f', setHtml(true), setWire);
+
+  /* 3. Honest */
+  const subHtml = fixed => '<div class="rp-col"><div class="rp-ed"><div class="rp-pane">' +
+    (fixed ? '' : '<div class="rp-urg"><span>Only 2 spots left at this price!</span><span data-clock>04:59</span></div>') +
+    '<b>Music Premium</b><span class="rp-price">€4.99<span style="font-size:14px;font-weight:600"> / month</span></span>' +
+    (fixed ? '<span>For the first 3 months. Then €9.99 a month. Cancel any time.</span>' : '') +
+    '<label class="check"><input type="checkbox" data-add' + (fixed ? '' : ' checked') + '><span>Add audiobooks<small>+€3 a month</small></span></label>' +
+    '<button class="btn btn-primary cs-sm rp-sub" type="button" data-sub>Subscribe</button>' +
+    (fixed ? '' : '<span class="rp-small">Introductory price for 3 months, then €9.99/month. Add-ons billed separately.</span>') +
+    '</div></div><p class="rp-out" data-out></p></div>';
+  const subWire = fixed => (d, t) => {
+    const add = d.querySelector('[data-add]'), sub = d.querySelector('[data-sub]'), o = d.querySelector('[data-out]');
+    const today = () => 4.99 + (add.checked ? 3 : 0), later = () => 9.99 + (add.checked ? 3 : 0);
+    const eur = n => '€' + n.toFixed(2);
+    const label = () => { if (fixed) sub.textContent = 'Subscribe · ' + eur(today()) + ' today'; };
+    add.addEventListener('change', label); label();
+    if (!fixed) {
+      let s = 299; const clock = d.querySelector('[data-clock]');
+      t.every(() => { s = s > 0 ? s - 1 : 299; clock.textContent = '0' + Math.floor(s / 60) + ':' + String(s % 60).padStart(2, '0'); }, 1000);
+    }
+    sub.addEventListener('click', () => {
+      o.textContent = fixed ? 'Charged ' + eur(today()) + ' today, then ' + eur(later()) + ' a month from month 4. You saw this before you pressed.'
+        : 'Charged ' + eur(today()) + ' today' + (add.checked ? ', not €4.99' : '') + '. From month 4: ' + eur(later()) + ' a month.' + (add.checked ? ' The add-on was ticked for you.' : '');
+    });
+  };
+  D('good-rams-principles-3b', subHtml(false), subWire(false));
+  D('good-rams-principles-3f', subHtml(true), subWire(true));
+
+  csInit(cs);
+  };
+  if (window.csDemo) go(); else document.addEventListener('DOMContentLoaded', go);
+})();
+
+</script>

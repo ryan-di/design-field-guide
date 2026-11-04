@@ -1,0 +1,15 @@
+<div class="stage tall" data-demo="good-keyboard-focus">
+      <div class="seg" role="radiogroup" aria-label="Version">
+        <input type="radio" name="p22-kf-mode" id="p22-kf-before" value="before"><label for="p22-kf-before">Before</label>
+        <input type="radio" name="p22-kf-mode" id="p22-kf-after" value="after" checked><label for="p22-kf-after">After</label>
+      </div>
+      <div class="p22-kf-wrap">
+        <div class="p22-kf-host" id="p22-kf-host"></div>
+        <div class="surface p22-path">
+          <div class="p22-path-head"><p class="p22-cap" id="p22-kf-cap">Focus path</p><button class="btn btn-ghost" type="button" id="p22-kf-clear">Clear</button></div>
+          <ol id="p22-kf-log" aria-labelledby="p22-kf-cap"></ol>
+          <p class="p22-sum" id="p22-kf-sum"></p>
+        </div>
+      </div>
+      <p class="try"><b>Try it:</b> choose Before, then press Tab to move through the form and watch the focus path. Can you tell where you are? Try to reach Book. Then choose After and do it again. Shift+Tab goes back.</p>
+    </div>

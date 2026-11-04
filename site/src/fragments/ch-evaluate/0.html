@@ -1,0 +1,42 @@
+<div class="stage tall" data-demo="eff-quick-sessions">
+      <div class="p30-qs">
+        <div class="surface p30-panel">
+          <p class="p30-ph">Session plan</p>
+          <fieldset class="p30-fs">
+            <legend class="field-label">Task to give</legend>
+            <label class="check"><input type="radio" name="p30-qs-task" value="feature"><span>“Try the new restore banner.”</span></label>
+            <label class="check"><input type="radio" name="p30-qs-task" value="hint"><span>“Close this tab, then get your work back.”</span></label>
+            <label class="check"><input type="radio" name="p30-qs-task" value="goal" checked><span>“Change the prompt, close the tab, then carry on where you left off.”</span></label>
+            <p class="p30-verdict" id="p30-qs-task-v" aria-live="polite"></p>
+          </fieldset>
+          <fieldset class="p30-fs">
+            <legend class="field-label">Watch for</legend>
+            <label class="check"><input type="checkbox" checked><span>Do they notice the banner?</span></label>
+            <label class="check"><input type="checkbox" checked><span>Where do they look for the lost work first?</span></label>
+            <label class="check"><input type="checkbox"><span>Do they pick Restore or Discard, and why?</span></label>
+          </fieldset>
+          <fieldset class="p30-fs">
+            <legend class="field-label">Questions to ask after</legend>
+            <label class="check"><input type="checkbox" data-lead="It names the banner, so now they’ll say they saw it." checked><span>“Did you notice the banner?”</span></label>
+            <label class="check"><input type="checkbox" data-lead="It asks for praise. People are polite and will say yes."><span>“Was the banner helpful?”</span></label>
+            <label class="check"><input type="checkbox" checked><span>“What did you expect to happen when you closed the tab?”</span></label>
+            <label class="check"><input type="checkbox"><span>“What would you do next?”</span></label>
+            <p class="p30-verdict" id="p30-qs-q-v" aria-live="polite"></p>
+          </fieldset>
+        </div>
+        <div class="surface p30-panel">
+          <div class="p30-tally-top">
+            <p class="p30-ph">Problems across sessions</p>
+            <span class="p30-sample">Sample notes</span>
+          </div>
+          <div class="p30-dots" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></div>
+          <ul class="p30-tally" id="p30-qs-tally"></ul>
+          <p class="p30-note" id="p30-qs-note" aria-live="polite">No sessions yet.</p>
+          <div class="p30-btns">
+            <button class="btn btn-primary p30-sm" type="button" id="p30-qs-log">Log session 1</button>
+            <button class="btn btn-ghost p30-sm" type="button" id="p30-qs-reset">Reset</button>
+          </div>
+        </div>
+      </div>
+      <p class="try"><b>Try it:</b> pick each task wording and read why it helps or hurts. Tick the questions you’d ask. Then log all five sessions and see which problems repeat.</p>
+    </div>

@@ -1,0 +1,24 @@
+<div class="stage tall" data-demo="good-design-rationale">
+      <div class="p24-dr">
+        <div class="surface form-card p24-form" role="group" aria-labelledby="p24-dr-ttl">
+          <h5 id="p24-dr-ttl">Decision record</h5>
+          <div class="field"><label class="field-label" for="p24-dr-context">Context</label><textarea class="input" id="p24-dr-context" data-f="context" rows="3" placeholder="What’s the problem, and who has it?"></textarea></div>
+          <div class="field"><label class="field-label" for="p24-dr-options">Options considered</label><p class="field-help" id="p24-dr-options-help">One per line. Include the ones you rejected, and why.</p><textarea class="input" id="p24-dr-options" data-f="options" rows="4" aria-describedby="p24-dr-options-help" placeholder="Option: what it’s good at, and what it costs"></textarea></div>
+          <div class="field"><label class="field-label" for="p24-dr-decision">Decision</label><p class="field-help" id="p24-dr-decision-help">Say it as what people will notice.</p><textarea class="input" id="p24-dr-decision" data-f="decision" rows="3" aria-describedby="p24-dr-decision-help" placeholder="What changes for people?"></textarea></div>
+          <div class="field"><label class="field-label" for="p24-dr-why">Why</label><textarea class="input" id="p24-dr-why" data-f="why" rows="3" placeholder="Why this option beats the others"></textarea></div>
+          <div class="field"><label class="field-label" for="p24-dr-trade">Trade-offs</label><textarea class="input" id="p24-dr-trade" data-f="trade" rows="2" placeholder="What this choice costs, and for whom"></textarea></div>
+          <div class="field"><label class="field-label" for="p24-dr-know">How we’ll know it worked</label><textarea class="input" id="p24-dr-know" data-f="know" rows="2" placeholder="What you’ll look at, and what would make you change course"></textarea></div>
+          <div class="row p24-dr-acts">
+            <button class="btn btn-ghost" type="button" id="p24-dr-blank">Start blank</button>
+            <button class="btn btn-ghost" type="button" id="p24-dr-example">Load example</button>
+          </div>
+        </div>
+        <div class="p24-codebox p24-dr-out">
+          <div class="p24-codehead"><span id="p24-dr-code-cap">PR description (Markdown)</span><button class="btn btn-secondary p24-copybtn" type="button" id="p24-dr-copy">Copy</button></div>
+          <pre class="p24-code" id="p24-dr-code" tabindex="0" aria-labelledby="p24-dr-code-cap"></pre>
+          <p class="p24-check" id="p24-dr-check" aria-live="polite"></p>
+          <p class="p24-copymsg" id="p24-dr-msg" role="status"></p>
+        </div>
+      </div>
+      <p class="try"><b>Try it:</b> edit any field and watch the Markdown update. Delete the two rejected options and read the check below the Markdown. Press Start blank to write your own: the draft stays in this browser, and Copy gives you a PR description to paste.</p>
+    </div>

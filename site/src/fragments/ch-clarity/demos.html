@@ -1,0 +1,162 @@
+<script>
+(() => {
+  const { $, $$, store, demo, toast } = window.dfg;
+
+  /* js-42-clarity.js */
+  demo('good-visual-hierarchy', st => {
+    const card = $('#p19-vh-card', st), ctl = $('#p19-vh-ctl', st), hint = $('#p19-vh-hint', st);
+    const size = $('#p19-vh-size', st), weight = $('#p19-vh-weight', st), squint = $('#p19-vh-squint', st);
+    const sizeOut = $('#p19-vh-size-out', st), weightOut = $('#p19-vh-weight-out', st);
+    const again = $('[data-act="again"]', st);
+    const W = { 400: 'Regular', 500: 'Medium', 600: 'Semibold', 700: 'Bold' };
+    const C = { quiet: 'var(--ui-muted)', strong: 'var(--ui-text)', accent: 'var(--ui-sel)' };
+    const pick = name => ($('input[name="' + name + '"]:checked', st) || {}).value;
+    const render = () => {
+      const after = pick('p19-vh-mode') !== 'before';
+      const s = Number(size.value), w = Number(weight.value), c = pick('p19-vh-color') || 'strong';
+      card.dataset.mode = after ? 'after' : 'before';
+      card.classList.toggle('p19-blur', squint.checked);
+      ctl.hidden = !after;
+      card.style.setProperty('--p19-ts', s + 'px');
+      card.style.setProperty('--p19-tw', String(w));
+      card.style.setProperty('--p19-tc', C[c]);
+      sizeOut.textContent = s + ' px';
+      weightOut.textContent = W[w];
+      size.setAttribute('aria-valuetext', s + ' pixels');
+      weight.setAttribute('aria-valuetext', W[w]);
+      again.className = 'btn ' + (after ? 'btn-secondary' : 'btn-primary');
+      // Rough visual weight: the stats are 18 px semibold, which scores 24.
+      const score = s * (1 + (w - 400) / 600);
+      let msg;
+      if (!after) msg = 'Everything has the same size and weight, so nothing leads. Squint, and the card turns into one even block.';
+      else if (score < 22) msg = c === 'accent'
+        ? 'Only the color sets the title apart now, and the bolder numbers win. Squint: the title fades into the card.'
+        : 'The numbers are now bigger or bolder than the title, so they lead. Is that what people need first?';
+      else if (score < 30) msg = 'The title leads, but only just. A bigger step in size or weight makes the order obvious.';
+      else msg = 'One clear focal point: the title leads, the numbers come second and the details third.' + (c === 'quiet' ? ' Size and weight carry it, even in a quiet color.' : '');
+      if (hint.textContent !== msg) hint.textContent = msg;
+    };
+    [size, weight, squint].forEach(el => el.addEventListener('input', render));
+    $$('input[name="p19-vh-mode"], input[name="p19-vh-color"]', st).forEach(r => r.addEventListener('change', render));
+    squint.addEventListener('change', render);
+    $('[data-act="open"]', st).addEventListener('click', () => toast(st, 'Opened 24 photos'));
+    again.addEventListener('click', () => toast(st, 'Backup 19 started'));
+    render();
+  });
+
+  demo('good-proximity', st => {
+    const form = $('#p19-px-form', st), inside = $('#p19-px-in', st), between = $('#p19-px-out', st);
+    const inOut = $('#p19-px-in-out', st), outOut = $('#p19-px-out-out', st), ratio = $('#p19-px-ratio', st);
+    const hint = $('#p19-px-hint', st), use = $('use', hint), text = $('span', hint);
+    const ICON = { good: '#i-check', meh: '#i-info', bad: '#i-warn' };
+    const render = () => {
+      const a = Number(inside.value), b = Number(between.value), r = b / Math.max(a, 1);
+      form.style.setProperty('--p19-in', a + 'px');
+      form.style.setProperty('--p19-out', b + 'px');
+      inOut.textContent = a + ' px';
+      outOut.textContent = b + ' px';
+      inside.setAttribute('aria-valuetext', a + ' pixels');
+      between.setAttribute('aria-valuetext', b + ' pixels');
+      ratio.textContent = 'Between ÷ inside: ' + r.toFixed(1) + '×';
+      let tone, msg;
+      if (r < 0.8) { tone = 'bad'; msg = 'Each label now sits closer to the field above it, so people read it as that field’s label.'; }
+      else if (r < 1.5) { tone = 'bad'; msg = 'The gaps are about equal, so each label floats between two fields. People have to read to work out which field it names.'; }
+      else if (r < 2) { tone = 'meh'; msg = 'Getting there. A little more space between groups makes each label and field snap together.'; }
+      else { tone = 'good'; msg = 'Each label clearly belongs to its field: the space between groups is at least twice the space inside.'; }
+      hint.dataset.tone = tone;
+      use.setAttribute('href', ICON[tone]);
+      if (text.textContent !== msg) text.textContent = msg;
+    };
+    [inside, between].forEach(el => el.addEventListener('input', render));
+    render();
+  });
+
+  demo('good-spacing-rhythm', st => {
+    const panel = $('#p19-sr-panel', st), grid = $('.p19-sp-grid', panel), gridSw = $('#p19-sr-grid', st), out = $('#p19-sr-out', st);
+    const PROPS = ['paddingTop', 'paddingRight', 'paddingBottom', 'paddingLeft', 'marginTop', 'marginRight', 'marginBottom', 'marginLeft', 'rowGap', 'columnGap'];
+    const mode = () => ($('input[name="p19-sr-mode"]:checked', st) || {}).value || 'adhoc';
+    const measure = () => {
+      const vals = new Set();
+      $$('[data-sp], [data-edge]', panel).forEach(el => {
+        const cs = getComputedStyle(el);
+        PROPS.forEach(p => { const v = parseFloat(cs[p]); if (v > 0) vals.add(Math.round(v)); });
+      });
+      const left = panel.getBoundingClientRect().left;
+      const edges = new Set($$('[data-edge]', panel).map(el => Math.round(el.getBoundingClientRect().left - left)));
+      const list = Array.from(vals).sort((x, y) => x - y).join(', ');
+      out.textContent = 'Spacing values in use: ' + list + ' px. ' + (edges.size === 1 ? 'All left edges on one line.' : 'Left edges on ' + edges.size + ' different lines.');
+    };
+    const render = () => { panel.dataset.mode = mode(); grid.hidden = !gridSw.checked; measure(); };
+    $$('input[name="p19-sr-mode"]', st).forEach(r => r.addEventListener('change', render));
+    gridSw.addEventListener('change', render);
+    $('[data-act="reset"]', st).addEventListener('click', () => {
+      $$('input[data-default]', panel).forEach(cb => { cb.checked = cb.dataset.default === 'true'; });
+      $('#p19-sr-format', st).selectedIndex = 0;
+      $('#p19-sr-prefix', st).value = 'Camera roll';
+      toast(st, 'Settings reset');
+    });
+    $('[data-act="cancel"]', st).addEventListener('click', () => toast(st, 'No changes saved'));
+    $('[data-act="save"]', st).addEventListener('click', () => toast(st, 'Backup settings saved'));
+    render();
+  });
+
+  demo('good-contrast', st => {
+    const sample = $('#p19-ct-sample', st), light = $('#p19-ct-l', st), lightOut = $('#p19-ct-l-out', st), ratioEl = $('#p19-ct-ratio', st);
+    const list = $('#p19-st-list', st), grey = $('#p19-st-grey', st);
+    const H = 225, S = 0.08;
+    const toRgb = l => {
+      const a = S * Math.min(l, 1 - l);
+      const f = n => { const k = (n + H / 30) % 12; return l - a * Math.max(-1, Math.min(k - 3, 9 - k, 1)); };
+      return [f(0), f(8), f(4)].map(v => Math.round(v * 255));
+    };
+    const lin = c => { c /= 255; return c <= 0.04045 ? c / 12.92 : Math.pow((c + 0.055) / 1.055, 2.4); };
+    const lum = c => 0.2126 * lin(c[0]) + 0.7152 * lin(c[1]) + 0.0722 * lin(c[2]);
+    const bg = () => {
+      const m = getComputedStyle(sample).backgroundColor.match(/rgba?\(([^)]+)\)/);
+      if (!m) return [255, 255, 255];
+      const p = m[1].split(/[\s,/]+/).filter(Boolean).map(Number);
+      return p.length > 3 && p[3] === 0 ? [255, 255, 255] : p.slice(0, 3);
+    };
+    const ratioAt = (L, b) => { const x = lum(toRgb(L / 100)), y = lum(b); return (Math.max(x, y) + 0.05) / (Math.min(x, y) + 0.05); };
+    const CHECKS = [{ key: 'body', min: 4.5 }, { key: 'large', min: 3 }];
+    const render = () => {
+      const L = Number(light.value), r = ratioAt(L, bg());
+      const shown = (Math.floor(r * 100) / 100).toFixed(2);
+      sample.style.color = 'hsl(' + H + ', ' + S * 100 + '%, ' + L + '%)';
+      lightOut.textContent = L + '%';
+      ratioEl.textContent = shown + ' : 1';
+      CHECKS.forEach(c => {
+        const li = $('[data-check="' + c.key + '"]', st), ok = r >= c.min;
+        li.dataset.ok = String(ok);
+        $('use', li).setAttribute('href', ok ? '#i-check' : '#i-x');
+        $('b', li).textContent = ok ? 'Pass' : 'Fail';
+      });
+      light.setAttribute('aria-valuetext', L + '%, contrast ' + shown + ' to 1, ' + (r >= 4.5 ? 'passes for all text' : r >= 3 ? 'passes for large text only' : 'fails for all text'));
+    };
+    $('[data-act="fix"]', st).addEventListener('click', () => {
+      const L = Number(light.value), b = bg();
+      if (ratioAt(L, b) >= 4.5) { toast(st, 'This gray already passes 4.5 : 1'); return; }
+      for (let d = 1; d <= 100; d++) {
+        const hit = [L - d, L + d].find(x => x >= 0 && x <= 100 && ratioAt(x, b) >= 4.5);
+        if (hit !== undefined) { light.value = String(hit); break; }
+      }
+      render();
+    });
+    light.addEventListener('input', render);
+    // Start on a gray that fails in the current theme: pale on light, dim on dark.
+    light.value = lum(bg()) > 0.5 ? '68' : '40';
+    try { window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', render); } catch (e) { /* older browsers */ }
+    try { new MutationObserver(render).observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] }); } catch (e) { /* ignore */ }
+    const renderStatus = () => {
+      list.dataset.mode = ($('input[name="p19-st-mode"]:checked', st) || {}).value || 'color';
+      list.classList.toggle('p19-grey', grey.checked);
+    };
+    $$('input[name="p19-st-mode"]', st).forEach(r => r.addEventListener('change', renderStatus));
+    grey.addEventListener('change', renderStatus);
+    render();
+    renderStatus();
+  });
+
+
+})();
+</script>

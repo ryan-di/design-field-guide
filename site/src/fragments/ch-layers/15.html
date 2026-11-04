@@ -1,0 +1,175 @@
+<script>
+(() => {
+  const cs = document.currentScript.closest('.cs');
+  // The shared case helpers (csDemo, csInit) load further down the book, so wait for them.
+  const start = () => {
+  // Each demo renders into its own root, so listeners go away on Reset.
+  const D = (k, html, wire) => csDemo(cs.querySelector('[data-d="' + k + '"]'), '<div class="sc-root">' + html + '</div>', (d, t) => wire(d.firstElementChild, t));
+  const st = document.createElement('style');
+  st.textContent = `
+#pat-shortcuts .sc-root{display:flex;flex-direction:column;align-items:center;gap:12px;width:100%;min-width:0}
+#pat-shortcuts .sc-frame{width:min(340px,100%);position:relative}
+#pat-shortcuts .sc-kbd{display:inline-grid;place-items:center;min-width:20px;height:20px;padding:0 5px;margin-left:6px;border-radius:5px;border:1px solid var(--ui-border);border-bottom-width:2px;background:var(--ui-bg);color:var(--ui-muted);font:600 12px/1 var(--font-mono)}
+#pat-shortcuts .sc-now{display:flex;flex-direction:column;gap:2px}
+#pat-shortcuts .sc-now b{font-size:15px}
+#pat-shortcuts .sc-ctrls{display:flex;flex-wrap:wrap;gap:6px}
+#pat-shortcuts .sc-ctrls .btn{padding:6px 9px;font-size:13.5px}
+#pat-shortcuts .sc-pop{position:absolute;right:10px;top:44px;width:min(220px,90%);background:var(--ui-surface);border:1px solid var(--ui-border);border-radius:10px;box-shadow:var(--ui-shadow);padding:10px;display:flex;flex-direction:column;gap:6px;z-index:3;font-size:13.5px}
+#pat-shortcuts .sc-pop .kv{align-items:center;color:var(--ui-text)}
+#pat-shortcuts .sc-tabs{display:flex;gap:2px;padding:6px 8px 0;background:var(--ui-hover);border-bottom:1px solid var(--ui-border)}
+#pat-shortcuts .sc-tab{padding:6px 12px;border-radius:7px 7px 0 0;font:600 12.5px var(--font-body);color:var(--ui-muted)}
+#pat-shortcuts .sc-tab.on{background:var(--ui-bg);color:var(--ui-text)}
+#pat-shortcuts .sc-url{padding:6px 10px;font:500 12px var(--font-mono);color:var(--ui-muted);border-bottom:1px solid var(--ui-border);background:var(--ui-bg)}
+#pat-shortcuts .sc-note{font:400 14px/1.45 var(--font-body);min-height:66px;resize:none}
+#pat-shortcuts .sc-press{display:flex;align-items:center;gap:8px;font-size:13.5px;color:var(--ui-muted)}
+#pat-shortcuts .sc-gone{padding:22px 16px;text-align:center;color:var(--ui-muted);font-size:14px}
+#pat-shortcuts .sc-msgs{display:flex;flex-direction:column;gap:6px;padding:4px;border-radius:8px;outline:none}
+#pat-shortcuts .sc-msgs:focus-visible{outline:3px solid var(--ui-sel);outline-offset:2px}
+#pat-shortcuts .sc-msg{align-self:flex-start;max-width:80%;padding:6px 10px;border-radius:12px;background:var(--ui-hover);font-size:14px}
+#pat-shortcuts .sc-msg.me{align-self:flex-end;background:var(--ui-sel-soft)}
+#pat-shortcuts .sc-week{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:4px}
+#pat-shortcuts .sc-day{display:flex;flex-direction:column;gap:4px;min-height:96px;padding:4px;border-radius:7px;background:var(--ui-hover)}
+#pat-shortcuts .sc-day > span{font:600 12px var(--font-body);color:var(--ui-muted);text-align:center}
+#pat-shortcuts .sc-ev{all:unset;box-sizing:border-box;cursor:pointer;width:100%;padding:5px 4px;border-radius:6px;background:var(--ui-sel-soft);border-left:3px solid var(--ui-sel);font:600 12px/1.2 var(--font-body);color:var(--ui-text);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+#pat-shortcuts .sc-ev.sel{outline:2px solid var(--ui-sel)}
+#pat-shortcuts .sc-ev:focus-visible{outline:3px solid var(--ui-sel)}
+#pat-shortcuts .sc-evbar{display:flex;align-items:center;justify-content:space-between;gap:8px;font-size:13.5px}
+#pat-shortcuts .sc-evbar .icon-btn{width:32px;height:32px}
+#pat-shortcuts .sc-opt{all:unset;cursor:pointer;display:flex;justify-content:space-between;align-items:center;padding:6px 8px;border-radius:6px;color:var(--ui-text)}
+#pat-shortcuts .sc-opt:hover,#pat-shortcuts .sc-opt:focus-visible{background:var(--ui-hover)}
+#pat-shortcuts .sc-opt:focus-visible{outline:2px solid var(--ui-sel)}
+#pat-shortcuts .sc-sel{font:400 13px var(--font-body);padding:4px 6px;width:auto}
+`;
+  cs.appendChild(st);
+  const kb = s => '<kbd class="sc-kbd" aria-hidden="true">' + s + '</kbd>';
+  const mods = e => e.ctrlKey || e.metaKey || e.altKey;
+
+  /* 1. Music: keys exist but are hidden vs shown */
+  const SONGS = [['Morning light', 'Nora Vale'], ['Harbour lights', 'The Docks'], ['Slow river', 'Ana Ruiz'], ['Night bus', 'Kit Moreau'], ['Paper moon', 'Lena Ho']];
+  const musicHtml = fixed => '<div class="app-frame sc-frame"><div class="app-bar"><span>Music</span>' +
+    (fixed ? '<button class="btn btn-ghost cs-sm" type="button" aria-expanded="false" data-keys>Shortcuts' + kb('?') + '</button>' : '') + '</div>' +
+    '<div class="app-body"><div class="sc-now"><span class="cs-meta">Now playing</span><b data-title></b><span class="cs-meta" data-artist></span></div>' +
+    '<div class="sc-ctrls">' +
+    '<button class="btn btn-secondary" type="button" data-cmd="prev"' + (fixed ? ' aria-keyshortcuts="P"' : '') + '>Previous' + (fixed ? kb('P') : '') + '</button>' +
+    '<button class="btn btn-secondary" type="button" data-cmd="next"' + (fixed ? ' aria-keyshortcuts="N"' : '') + '>Next' + (fixed ? kb('N') : '') + '</button>' +
+    '<button class="btn btn-secondary" type="button" data-cmd="like"' + (fixed ? ' aria-keyshortcuts="L"' : '') + '>Like' + (fixed ? kb('L') : '') + '</button></div></div>' +
+    (fixed ? '<div class="sc-pop" data-pp hidden><b>Keyboard shortcuts</b><div class="kv"><span>Next song</span>' + kb('N') + '</div><div class="kv"><span>Previous song</span>' + kb('P') + '</div><div class="kv"><span>Like</span>' + kb('L') + '</div><div class="kv"><span>This list</span>' + kb('?') + '</div></div>' : '') +
+    '</div><p class="cs-meta" data-count>With the mouse: 0 · With keys: 0</p>';
+  const musicWire = fixed => d => {
+    const title = d.querySelector('[data-title]'), artist = d.querySelector('[data-artist]'), count = d.querySelector('[data-count]');
+    const pop = d.querySelector('[data-pp]'), keysBtn = d.querySelector('[data-keys]');
+    let at = 0, mouse = 0, keys = 0, liked = new Set();
+    const draw = () => { title.textContent = SONGS[at][0] + (liked.has(at) ? ' ♥' : ''); artist.textContent = SONGS[at][1]; count.textContent = 'With the mouse: ' + mouse + ' · With keys: ' + keys; };
+    const run = c => { if (c === 'next') at = (at + 1) % SONGS.length; else if (c === 'prev') at = (at + SONGS.length - 1) % SONGS.length; else if (liked.has(at)) liked.delete(at); else liked.add(at); };
+    const setPop = on => { if (!pop) return; pop.hidden = !on; keysBtn.setAttribute('aria-expanded', String(on)); };
+    d.querySelectorAll('[data-cmd]').forEach(b => b.addEventListener('click', () => { run(b.dataset.cmd); mouse++; draw(); }));
+    if (keysBtn) keysBtn.addEventListener('click', () => setPop(pop.hidden));
+    d.addEventListener('keydown', e => {
+      if (mods(e) || e.target.closest('input, textarea')) return;
+      if (e.key === '?' && fixed) { e.preventDefault(); setPop(pop.hidden); return; }
+      if (e.key === 'Escape' && pop && !pop.hidden) { setPop(false); keysBtn.focus(); return; }
+      const c = { n: 'next', p: 'prev', l: 'like' }[e.key.toLowerCase()];
+      if (!c) return;
+      e.preventDefault(); run(c); keys++; draw();
+    });
+    d.querySelector('.sc-frame').addEventListener('click', e => { if (pop && !pop.hidden && !e.target.closest('[data-pp],[data-keys]')) setPop(false); });
+    draw();
+  };
+  D('pat-shortcuts-1b', musicHtml(false), musicWire(false));
+  D('pat-shortcuts-1f', musicHtml(true), musicWire(true));
+
+  /* 2. Browser clash */
+  const KEYS = ['Esc', 'Alt+Q', 'Ctrl+Alt+W'];
+  const noteHtml = fixed => '<div class="app-frame sc-frame"><div class="sc-tabs" data-tabs><span class="sc-tab on" data-tab="notes">Notes</span><span class="sc-tab" data-tab="weather">Weather</span></div>' +
+    '<div class="sc-url">notes.example.com</div><div data-page>' +
+    '<div class="app-bar"><span>Packing list</span><span class="cs-meta" data-saved>Not saved yet</span></div>' +
+    '<div class="app-body"><textarea class="input sc-note" aria-label="Note">Passport, charger, sun hat, swimsuit, book</textarea>' +
+    '<div class="sc-evbar"><span>Close note' + kb(fixed ? '<span data-k>Esc</span>' : 'Ctrl+W') + '</span>' + (fixed ? '<button class="btn btn-ghost cs-sm" type="button" aria-expanded="false" data-keys>Shortcuts</button>' : '') + '</div></div>' +
+    (fixed ? '<div class="sc-pop" data-pp hidden><b>Keyboard shortcuts</b><label class="kv"><span>Close note</span><select class="select sc-sel" data-pick>' + KEYS.map(k => '<option>' + k + '</option>').join('') + '</select></label><div class="kv"><span>New note</span>' + kb('Alt+N') + '</div><div class="kv"><span>Search notes</span>' + kb('/') + '</div></div>' : '') +
+    '</div></div><div class="sc-press">Press: <button class="btn btn-secondary cs-sm" type="button" data-press>' + (fixed ? 'Esc' : 'Ctrl + W') + '</button></div><p class="cs-meta" data-out></p>';
+  const noteWire = fixed => d => {
+    const page = d.querySelector('[data-page]'), out = d.querySelector('[data-out]'), press = d.querySelector('[data-press]');
+    const pop = d.querySelector('[data-pp]'), keysBtn = d.querySelector('[data-keys]');
+    const closeNote = () => { page.innerHTML = '<div class="sc-gone">Note closed and saved.<br>Your notes list would show here.</div>'; out.textContent = 'The app closed the note. The tab is still open.'; press.disabled = true; };
+    press.addEventListener('click', () => {
+      if (!fixed) {
+        d.querySelector('[data-tab="notes"]').remove(); d.querySelector('[data-tab="weather"]').classList.add('on');
+        d.querySelector('.sc-url').textContent = 'weather.example.com';
+        page.innerHTML = '<div class="sc-gone">Lisbon: 22°, sunny</div>';
+        out.textContent = 'The browser took Ctrl+W and closed the whole tab. The note’s last changes are gone.'; press.disabled = true; return;
+      }
+      closeNote();
+    });
+    if (!fixed) return;
+    const setPop = on => { pop.hidden = !on; keysBtn.setAttribute('aria-expanded', String(on)); };
+    keysBtn.addEventListener('click', () => setPop(pop.hidden));
+    d.querySelector('[data-pick]').addEventListener('change', e => { d.querySelector('[data-k]').textContent = e.target.value; press.textContent = e.target.value.replace(/\+/g, ' + '); out.textContent = 'Close note now uses ' + e.target.value + '.'; });
+    d.querySelector('textarea').addEventListener('keydown', e => { if (e.key === 'Escape' && d.querySelector('[data-k]').textContent === 'Esc') { e.preventDefault(); closeNote(); } });
+  };
+  D('pat-shortcuts-2b', noteHtml(false), noteWire(false));
+  D('pat-shortcuts-2f', noteHtml(true), noteWire(true));
+
+  /* 3. Single keys while typing */
+  const chatHtml = '<div class="app-frame sc-frame"><div class="app-bar"><span>Sam</span><span class="cs-meta">' + kb('A') + ' archives</span></div>' +
+    '<div class="app-body" data-body><div class="sc-msgs" tabindex="0" role="group" aria-label="Messages. Press A to archive this chat." data-msgs><p class="sc-msg">Dinner at 6 on Friday?</p><p class="sc-msg">I booked the place by the river.</p></div>' +
+    '<input class="input" aria-label="Reply" placeholder="Reply to Sam" data-reply></div></div><p class="cs-meta" data-out></p>';
+  const chatWire = fixed => d => {
+    const body = d.querySelector('[data-body]'), out = d.querySelector('[data-out]');
+    const archive = () => {
+      const typed = (d.querySelector('[data-reply]') || {}).value || '';
+      body.innerHTML = '<div class="sc-gone">Chat archived.</div>';
+      out.textContent = fixed ? 'You pressed A in the message list, so the chat was archived.' : 'You typed “' + typed + '”, then the A archived the chat. The reply is gone.';
+    };
+    d.addEventListener('keydown', e => {
+      if (mods(e) || !d.querySelector('[data-msgs]')) return;
+      const inField = !!e.target.closest('input');
+      if (fixed && inField && e.key === 'Escape') { e.preventDefault(); d.querySelector('[data-msgs]').focus(); out.textContent = 'Left the reply box. Shortcuts work again.'; return; }
+      if (e.key.toLowerCase() !== 'a' || (fixed && inField)) return;
+      e.preventDefault(); archive();
+    });
+  };
+  D('pat-shortcuts-3b', chatHtml, chatWire(false));
+  D('pat-shortcuts-3f', chatHtml, chatWire(true));
+
+  /* 4. Shortcut as the only way */
+  const DAYS = ['Mon', 'Tue', 'Wed', 'Thu'];
+  const calHtml = fixed => '<div class="app-frame sc-frame"><div class="app-bar"><span>Calendar</span><span class="cs-meta">This week</span></div>' +
+    '<div class="app-body"><div class="sc-week">' + DAYS.map((n, i) => '<div class="sc-day" data-day="' + i + '"><span>' + n + '</span></div>').join('') + '</div>' +
+    '<div class="sc-evbar"><span data-sel>Pick an event.</span><button class="icon-btn" type="button" aria-label="Event options" aria-expanded="false" data-more disabled><svg class="icon sm"><use href="#i-dots"/></svg></button></div></div>' +
+    '<div class="sc-pop" data-pp hidden><button class="sc-opt" type="button" data-opt="edit">Edit</button>' + (fixed ? '<button class="sc-opt" type="button" data-opt="dup">Duplicate' + kb('D') + '</button>' : '') + '<button class="sc-opt" type="button" data-opt="del">Delete</button></div></div><p class="cs-meta" data-out></p>';
+  const calWire = fixed => d => {
+    const days = d.querySelectorAll('[data-day]'), sel = d.querySelector('[data-sel]'), more = d.querySelector('[data-more]'), pop = d.querySelector('[data-pp]'), out = d.querySelector('[data-out]');
+    let cur = null;
+    const setPop = on => { pop.hidden = !on; more.setAttribute('aria-expanded', String(on)); if (on) pop.querySelector('button').focus(); };
+    const add = (day, name) => {
+      const b = document.createElement('button'); b.type = 'button'; b.className = 'sc-ev'; b.textContent = name;
+      b.addEventListener('click', () => { d.querySelectorAll('.sc-ev').forEach(x => x.classList.remove('sel')); b.classList.add('sel'); cur = b; sel.textContent = name + ', ' + DAYS[day]; b.dataset.day = day; more.disabled = false; });
+      b.dataset.day = day; days[day].appendChild(b); return b;
+    };
+    const dup = () => {
+      if (!cur) return;
+      const nd = Number(cur.dataset.day) + 1;
+      if (nd >= DAYS.length) { out.textContent = 'No room after Thursday.'; return; }
+      add(nd, cur.textContent).click(); out.textContent = 'Duplicated to ' + DAYS[nd] + '.';
+    };
+    add(0, 'Yoga'); add(2, 'Dentist');
+    more.addEventListener('click', () => setPop(pop.hidden));
+    pop.addEventListener('click', e => {
+      const o = e.target.closest('[data-opt]'); if (!o) return;
+      setPop(false); more.focus();
+      if (o.dataset.opt === 'dup') dup();
+      else if (o.dataset.opt === 'del' && cur) { cur.remove(); cur = null; sel.textContent = 'Pick an event.'; more.disabled = true; out.textContent = 'Deleted.'; }
+      else out.textContent = 'The edit form would open here.';
+    });
+    pop.addEventListener('keydown', e => { if (e.key === 'Escape') { setPop(false); more.focus(); } });
+    d.addEventListener('keydown', e => { if (!mods(e) && e.key.toLowerCase() === 'd' && cur) { e.preventDefault(); dup(); } });
+  };
+  D('pat-shortcuts-4b', calHtml(false), calWire(false));
+  D('pat-shortcuts-4f', calHtml(true), calWire(true));
+
+  csInit(cs);
+  };
+  if (window.csDemo) start(); else document.addEventListener('DOMContentLoaded', start);
+})();
+
+</script>

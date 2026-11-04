@@ -1,0 +1,170 @@
+<script>
+(() => {
+  const cs = document.currentScript.closest('.cs');
+  // The shared case helpers (csDemo, csInit) load further down the book, so wait for them.
+  const start = () => {
+  // Each demo renders into its own root, so listeners go away on Reset.
+  const D = (k, html, wire) => csDemo(cs.querySelector('[data-d="' + k + '"]'), '<div class="cu-root">' + html + '</div>', (d, t) => wire(d.firstElementChild, t));
+  const st = document.createElement('style');
+  st.textContent = `
+#pat-customization .cu-root{display:flex;flex-direction:column;align-items:center;gap:12px;width:100%;min-width:0}
+#pat-customization .cu-frame{width:min(340px,100%);position:relative}
+#pat-customization .cu-frame .app-body{gap:8px}
+#pat-customization .cu-scroll{height:190px;overflow:auto;display:flex;flex-direction:column;gap:8px;padding:2px}
+#pat-customization .cu-card{display:flex;flex-direction:column;gap:2px;padding:9px 11px;border:1px solid var(--ui-border);border-radius:9px;background:var(--ui-surface);font-size:13.5px;flex:none}
+#pat-customization .cu-card b{font-size:14px}
+#pat-customization .cu-card .cu-big{font:700 20px var(--font-body)}
+#pat-customization .cu-card .btn{align-self:flex-start;padding:5px 12px;font-size:13.5px;margin-top:4px}
+#pat-customization .cu-panel{display:flex;flex-direction:column;gap:5px;padding:9px 11px;border-radius:9px;background:var(--ui-hover);font-size:13.5px}
+#pat-customization .cu-panel label{display:flex;gap:7px;align-items:center}
+#pat-customization .cu-sec{margin:0;font:600 12px var(--font-body);color:var(--ui-muted)}
+#pat-customization .cu-people{display:flex;flex-wrap:wrap;gap:6px}
+#pat-customization .cu-people .btn{padding:5px 10px;font-size:13.5px}
+#pat-customization .cu-photo{height:84px;border-radius:8px;background:linear-gradient(160deg,var(--ui-sel-soft),var(--ui-hover) 70%)}
+#pat-customization .cu-offer{display:flex;flex-wrap:wrap;align-items:center;gap:6px 8px;padding:8px 10px;border-radius:9px;background:var(--ui-sel-soft);font-size:13.5px}
+#pat-customization .cu-offer .btn{padding:4px 10px;font-size:13px}
+#pat-customization .cu-help{width:min(340px,100%);padding:8px 11px;border-left:3px solid var(--ui-sel);border-radius:0 8px 8px 0;background:var(--ui-surface);font-size:13.5px;color:var(--ui-text);box-sizing:border-box}
+#pat-customization .cu-row{display:flex;align-items:center;gap:6px;border-bottom:1px solid var(--ui-border)}
+#pat-customization .cu-row:last-child{border-bottom:0}
+#pat-customization .cu-open{all:unset;cursor:pointer;flex:1;min-width:0;display:flex;gap:8px;align-items:baseline;padding:7px 6px;border-radius:6px;font-size:14px;color:var(--ui-text)}
+#pat-customization .cu-open:hover{background:var(--ui-hover)}
+#pat-customization .cu-open:focus-visible{outline:2px solid var(--ui-sel)}
+#pat-customization .cu-open small{color:var(--ui-muted);font:500 11.5px var(--font-mono)}
+#pat-customization .cu-open span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+#pat-customization .cu-row .icon-btn{width:32px;height:32px;flex:none}
+#pat-customization .cu-chips{display:flex;flex-wrap:wrap;gap:6px}
+#pat-customization .cu-chips .btn{padding:4px 10px;font-size:13px}
+#pat-customization .cu-empty{font-size:13px;color:var(--ui-muted);padding:4px 0}
+#pat-customization .cu-acts{display:flex;justify-content:space-between;align-items:center;gap:8px}
+`;
+  cs.appendChild(st);
+  const star = '<svg class="icon sm" aria-hidden="true"><use href="#p16-i-star"/></svg>';
+
+  /* 1. Defaults first: bank home */
+  const CARDS = {
+    offer: '<div class="cu-card" data-c="offer"><b>Offers for you</b><span>Get 2% back on travel insurance.</span></div>',
+    rates: '<div class="cu-card" data-c="rates"><b>Exchange rates</b><span>EUR → USD 1.08 · EUR → GBP 0.85</span></div>',
+    branch: '<div class="cu-card" data-c="branch"><b>Find a branch</b><span>3 branches near you</span></div>',
+    bal: '<div class="cu-card" data-c="bal"><span>Everyday account</span><span class="cu-big">€2,340.50</span><button class="btn btn-primary" type="button" data-pay>Pay</button></div>',
+    recent: '<div class="cu-card" data-c="recent"><b>Recent</b><span>Rent −€900 · Grocer −€42</span></div>'
+  };
+  const NAMES = { offer: 'Offers', rates: 'Exchange rates', branch: 'Find a branch', bal: 'Balance and Pay', recent: 'Recent payments' };
+  const bankHtml = order => '<div class="app-frame cu-frame"><div class="app-bar"><span>Bank</span><button class="btn btn-ghost cs-sm" type="button" aria-expanded="false" data-cust>Customize</button></div>' +
+    '<div class="app-body"><div class="cu-panel" data-panel hidden><b>Show on home</b>' + order.map(k => '<label><input type="checkbox" checked data-show="' + k + '">' + NAMES[k] + '</label>').join('') + '</div>' +
+    '<div class="cu-scroll" tabindex="0" role="region" aria-label="Home">' + order.map(k => CARDS[k]).join('') + '</div></div></div><p class="cs-meta" data-out></p>';
+  const bankWire = fixed => d => {
+    const panel = d.querySelector('[data-panel]'), cust = d.querySelector('[data-cust]'), out = d.querySelector('[data-out]');
+    cust.addEventListener('click', () => { panel.hidden = !panel.hidden; cust.setAttribute('aria-expanded', String(!panel.hidden)); out.textContent = panel.hidden ? '' : 'Most people never open this. They keep the default.'; });
+    panel.addEventListener('change', e => { const c = d.querySelector('[data-c="' + e.target.dataset.show + '"]'); if (c) c.hidden = !e.target.checked; });
+    d.querySelector('[data-pay]').addEventListener('click', () => { out.textContent = fixed ? 'Found it first thing.' : 'Found it, after scrolling past three cards.'; });
+  };
+  D('pat-customization-1b', bankHtml(['offer', 'rates', 'branch', 'bal']), bankWire(false));
+  D('pat-customization-1f', bankHtml(['bal', 'recent', 'offer']), bankWire(true));
+
+  /* 2. Offer it when it helps: share sheet */
+  const PEOPLE = ['Ana', 'Ben', 'Leo', 'Mia', 'Mum', 'Sam', 'Zoe'];
+  const shareHtml = '<div class="app-frame cu-frame"><div class="app-bar"><span>Beach day.jpg</span><span class="cs-meta">Share</span></div><div class="app-body">' +
+    '<div class="cu-photo" role="img" aria-label="Photo"></div><div data-favs></div><h5 class="cu-sec">Share with</h5><div class="cu-people" data-people></div><div data-offer></div></div></div><p class="cs-meta" data-out></p>';
+  const shareWire = fixed => d => {
+    const favsEl = d.querySelector('[data-favs]'), peopleEl = d.querySelector('[data-people]'), offerEl = d.querySelector('[data-offer]'), out = d.querySelector('[data-out]');
+    const count = {}, favs = new Set(), offered = new Set();
+    const pbtn = p => '<button class="btn btn-secondary" type="button" data-p="' + p + '">' + (favs.has(p) ? star + ' ' : '') + p + '</button>';
+    const draw = () => {
+      favsEl.innerHTML = favs.size ? '<h5 class="cu-sec">Favorites</h5><div class="cu-people">' + [...favs].map(pbtn).join('') + '</div>' : '';
+      peopleEl.innerHTML = PEOPLE.filter(p => !favs.has(p)).map(pbtn).join('');
+    };
+    d.querySelector('.app-body').addEventListener('click', e => {
+      const add = e.target.closest('[data-add]');
+      if (add) { favs.add(add.dataset.add); offerEl.innerHTML = ''; draw(); out.textContent = add.dataset.add + ' is now a favorite, at the top.'; d.querySelector('[data-p="' + add.dataset.add + '"]').focus(); return; }
+      if (e.target.closest('[data-no]')) { offerEl.innerHTML = ''; out.textContent = 'Fine. It won’t ask about this person again.'; return; }
+      const b = e.target.closest('[data-p]'); if (!b) return;
+      const p = b.dataset.p; count[p] = (count[p] || 0) + 1;
+      out.textContent = 'Shared with ' + p + ' (' + count[p] + (count[p] === 1 ? ' time' : ' times') + ').' + (!fixed && count[p] >= 3 ? ' Favorites are under Settings › Sharing.' : '');
+      if (fixed && count[p] >= 3 && !favs.has(p) && !offered.has(p)) {
+        offered.add(p);
+        offerEl.innerHTML = '<div class="cu-offer" role="status"><span>You often share with ' + p + '. Add to favorites?</span><button class="btn btn-primary" type="button" data-add="' + p + '">Add</button><button class="btn btn-ghost" type="button" data-no>Not now</button></div>';
+      }
+    });
+    draw();
+  };
+  D('pat-customization-2b', shareHtml, shareWire(false));
+  D('pat-customization-2f', shareHtml, shareWire(true));
+
+  /* 3. Add on top, don't reorder: settings */
+  const SET = ['Account', 'Notifications', 'Privacy', 'Display', 'Storage'];
+  const setHtml = fixed => '<div class="cu-help"><b>Help:</b> to turn off read receipts, open Settings and choose the third item.</div>' +
+    '<div class="app-frame cu-frame"><div class="app-bar"><span>Settings</span>' + (fixed ? '<button class="btn btn-ghost cs-sm" type="button" data-reset disabled>Reset to default</button>' : '') + '</div><div class="app-body"><div data-pins></div><div data-list></div></div></div><p class="cs-meta" data-out></p>';
+  const setWire = fixed => d => {
+    let order = SET.slice(); const pins = [];
+    const list = d.querySelector('[data-list]'), pinsEl = d.querySelector('[data-pins]'), out = d.querySelector('[data-out]'), reset = d.querySelector('[data-reset]');
+    const row = (n, i) => '<div class="cu-row"><button class="cu-open" type="button" data-open="' + n + '"><small>' + (i + 1) + '</small><span>' + n + '</span></button>' +
+      '<button class="icon-btn p16-pin" type="button" aria-label="' + (pins.includes(n) ? 'Unpin ' : 'Pin ') + n + '" aria-pressed="' + pins.includes(n) + '" data-pin="' + n + '">' + star + '</button></div>';
+    const draw = () => {
+      if (fixed) {
+        pinsEl.innerHTML = pins.length ? '<h5 class="cu-sec">Pinned</h5><div class="cu-chips">' + pins.map(n => '<button class="btn btn-secondary" type="button" data-open="' + n + '">' + n + '</button>').join('') + '</div><h5 class="cu-sec">All settings</h5>' : '';
+        reset.disabled = !pins.length;
+      }
+      list.innerHTML = order.map(row).join('');
+    };
+    d.querySelector('.cu-frame').addEventListener('click', e => {
+      const p = e.target.closest('[data-pin]');
+      if (p) {
+        const n = p.dataset.pin, i = pins.indexOf(n);
+        if (i >= 0) pins.splice(i, 1); else pins.push(n);
+        if (!fixed) order = pins.slice().reverse().concat(SET.filter(x => !pins.includes(x)));
+        draw(); d.querySelector('[data-pin="' + n + '"]').focus();
+        out.textContent = (i >= 0 ? 'Unpinned ' : 'Pinned ') + n + '.';
+        return;
+      }
+      const o = e.target.closest('[data-open]');
+      if (o) { const idx = order.indexOf(o.dataset.open); out.textContent = 'Opened ' + o.dataset.open + (o.closest('.cu-row') && idx === 2 ? (o.dataset.open === 'Privacy' ? '. Read receipts are here.' : '. No read receipts here.') : '.'); return; }
+      if (e.target.closest('[data-reset]')) { pins.length = 0; order = SET.slice(); draw(); out.textContent = 'Back to the default.'; d.querySelector('[data-pin]').focus(); }
+    });
+    draw();
+  };
+  D('pat-customization-3b', setHtml(false), setWire(false));
+  D('pat-customization-3f', setHtml(true), setWire(true));
+
+  /* 4. Keep the pinned list short: chats */
+  const PINNED = ['Mum', 'Flat 4B', 'Book club', 'Leo', 'Camping trip', 'Work lunch'];
+  const RECENT = ['Ana', 'Dentist'];
+  const chatHtml = '<div class="app-frame cu-frame"><div class="app-bar"><span data-title>Chats</span><span class="cs-meta" data-n></span></div><div class="app-body" data-body></div></div><p class="cs-meta" data-out></p>';
+  const chatWire = fixed => d => {
+    const body = d.querySelector('[data-body]'), title = d.querySelector('[data-title]'), n = d.querySelector('[data-n]'), out = d.querySelector('[data-out]');
+    let pins = PINNED.slice();
+    const list = focusAt => {
+      title.textContent = 'Chats'; n.textContent = pins.length + ' pinned';
+      const pinRow = c => '<div class="cu-row"><button class="cu-open" type="button" data-chat="' + c + '"><span>' + c + '</span></button>' + (fixed ? '<button class="icon-btn p16-pin" type="button" aria-pressed="true" aria-label="Unpin ' + c + '" data-unpin="' + c + '">' + star + '</button>' : '') + '</div>';
+      body.innerHTML = '<h5 class="cu-sec">Pinned</h5>' + (pins.length ? pins.map(pinRow).join('') : '<p class="cu-empty" tabindex="-1" data-empty>Pin chats you open every day. They stay at the top.</p>') +
+        '<h5 class="cu-sec">Recent</h5>' + RECENT.map(c => '<div class="cu-row"><button class="cu-open" type="button" data-chat="' + c + '"><span>' + c + '</span></button></div>').join('');
+      if (focusAt !== undefined) { const b = body.querySelectorAll('[data-unpin]'); if (b.length) b[Math.min(focusAt, b.length - 1)].focus(); else body.querySelector('[data-empty]').focus(); }
+    };
+    const chat = (c, step) => {
+      title.textContent = step ? 'Chat info' : c; n.textContent = '';
+      body.innerHTML = '<button class="btn btn-ghost cs-sm" type="button" data-back>← Back</button>' + (step
+        ? '<div class="cu-acts"><span>' + c + '</span>' + (pins.includes(c) ? '<button class="btn btn-secondary cs-sm" type="button" data-unpin-deep="' + c + '">Unpin chat</button>' : '<span class="cs-meta">Not pinned</span>') + '</div>'
+        : '<p class="cu-empty">Messages with ' + c + ' would show here.</p><button class="btn btn-secondary cs-sm" type="button" data-info="' + c + '">Chat info</button>');
+      body.querySelector('button').focus();
+    };
+    let steps = 0;
+    body.addEventListener('click', e => {
+      const u = e.target.closest('[data-unpin]');
+      if (u) { const i = pins.indexOf(u.dataset.unpin); pins.splice(i, 1); out.textContent = 'Unpinned ' + u.dataset.unpin + ' in one step.'; list(i); return; }
+      const deep = e.target.closest('[data-unpin-deep]');
+      if (deep) { pins = pins.filter(x => x !== deep.dataset.unpinDeep); steps++; out.textContent = 'Unpinned ' + deep.dataset.unpinDeep + '. Steps so far: ' + steps + '.'; list(); return; }
+      const c = e.target.closest('[data-chat]'), info = e.target.closest('[data-info]');
+      if (c) { if (!fixed) steps++; chat(c.dataset.chat, 0); return; }
+      if (info) { steps++; chat(info.dataset.info, 1); return; }
+      if (e.target.closest('[data-back]')) list();
+    });
+    list();
+  };
+  D('pat-customization-4b', chatHtml, chatWire(false));
+  D('pat-customization-4f', chatHtml, chatWire(true));
+
+  csInit(cs);
+  };
+  if (window.csDemo) start(); else document.addEventListener('DOMContentLoaded', start);
+})();
+
+</script>

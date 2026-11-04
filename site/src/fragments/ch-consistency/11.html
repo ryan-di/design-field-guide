@@ -1,0 +1,127 @@
+<script>
+(() => {
+  const cs = document.currentScript.closest('.cs');
+  /* Part 1 sits above the shared case helpers in the book, so wait for them. */
+  const run = () => {
+  const D = (k, html, wire) => csDemo(cs.querySelector('[data-d="' + k + '"]'), html, wire);
+  const css = document.createElement('style');
+  css.textContent = `
+#good-design-tokens .tk-out{font:500 12.5px/1.45 var(--font-mono);color:var(--ui-muted);text-align:center;max-width:min(330px,100%);min-height:18px;margin:0}
+#good-design-tokens .tk-sw{padding:0;gap:10px;font-size:14px}
+#good-design-tokens .tk-ctl{display:flex;flex-wrap:wrap;gap:10px 16px;align-items:center;justify-content:center}
+#good-design-tokens .tk-pick{display:inline-flex;gap:4px;padding:3px;border-radius:9px;background:var(--ui-hover);border:1px solid var(--ui-border)}
+#good-design-tokens .tk-pick button,#good-design-tokens .tk-chips button{all:unset;cursor:pointer;padding:5px 11px;border-radius:7px;font:600 13px var(--font-body);color:var(--ui-muted)}
+#good-design-tokens .tk-pick button[aria-pressed="true"]{background:var(--ui-surface);color:var(--ui-text);box-shadow:0 1px 3px rgba(0,0,0,.18)}
+#good-design-tokens .tk-pick button:focus-visible,#good-design-tokens .tk-chips button:focus-visible{outline:2px solid var(--ui-sel);outline-offset:1px}
+#good-design-tokens .tk-card{--t-radius:8px;--t-accent:var(--ui-sel);width:min(290px,100%);display:flex;flex-direction:column;gap:10px;background:var(--ui-surface);border:1px solid var(--ui-border);border-top:4px solid var(--t-accent);border-radius:var(--t-radius);box-shadow:var(--ui-shadow);padding:14px;text-align:left;transition:border-radius .2s}
+#good-design-tokens .tk-top{display:flex;align-items:center;justify-content:space-between;gap:8px}
+#good-design-tokens .tk-top b{font-size:16px}
+#good-design-tokens .tk-badge{font:700 11.5px var(--font-body);color:var(--ui-on-sel);padding:2px 8px}
+#good-design-tokens .tk-l{display:flex;flex-direction:column;gap:4px;font:600 13px var(--font-body)}
+#good-design-tokens .tk-in{font:400 14px var(--font-body);padding:8px 10px;border:1.5px solid var(--ui-border);background:var(--ui-bg);color:var(--ui-text);min-width:0}
+#good-design-tokens .tk-in:focus{outline:none;border-color:var(--ui-sel)}
+#good-design-tokens .tk-btn{all:unset;cursor:pointer;align-self:flex-start;padding:8px 14px;font:600 14px var(--font-body);color:var(--ui-on-sel)}
+#good-design-tokens .tk-btn:focus-visible{outline:3px solid var(--ui-text);outline-offset:2px}
+#good-design-tokens .tk-link{font-size:13.5px;text-underline-offset:3px}
+#good-design-tokens [data-m="b"] .tk-badge{border-radius:4px;background:var(--ui-sel)}
+#good-design-tokens [data-m="b"] .tk-in{border-radius:8px}
+#good-design-tokens [data-m="b"] .tk-btn{border-radius:6px;background:var(--ui-sel)}
+#good-design-tokens [data-m="b"] .tk-link{color:var(--ui-sel)}
+#good-design-tokens [data-m="f"] .tk-badge{border-radius:var(--t-radius);background:var(--t-accent)}
+#good-design-tokens [data-m="f"] .tk-in{border-radius:var(--t-radius)}
+#good-design-tokens [data-m="f"] .tk-btn{border-radius:var(--t-radius);background:var(--t-accent)}
+#good-design-tokens [data-m="f"] .tk-link{color:var(--t-accent)}
+#good-design-tokens .tk-badge,#good-design-tokens .tk-in,#good-design-tokens .tk-btn{transition:border-radius .2s,background .2s}
+#good-design-tokens .tk-wrap{display:flex;flex-wrap:wrap;gap:12px;align-items:center;justify-content:center;width:100%}
+#good-design-tokens .tk-wx{width:min(220px,100%);display:flex;flex-direction:column;gap:8px;background:var(--ui-surface);border:1px solid var(--ui-border);border-radius:12px;box-shadow:var(--ui-shadow);padding:12px;text-align:left}
+#good-design-tokens .tk-bars{display:flex;align-items:flex-end;gap:6px;height:70px}
+#good-design-tokens .tk-bars span{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;font:500 10.5px var(--font-mono);color:var(--ui-muted)}
+#good-design-tokens .tk-bars i{display:block;width:100%;border-radius:3px 3px 0 0;transition:background .3s}
+#good-design-tokens .tk-code{margin:0;width:min(250px,100%);background:var(--ui-surface);border:1px solid var(--ui-border);border-radius:10px;padding:8px 10px;font:500 12px/1.6 var(--font-mono);color:var(--ui-muted);white-space:pre;overflow:hidden}
+#good-design-tokens .tk-code mark{background:var(--ui-sel-soft);color:var(--ui-text);border-radius:3px}
+#good-design-tokens .tk-chips{display:flex;flex-wrap:wrap;gap:5px;justify-content:center;width:min(330px,100%)}
+#good-design-tokens .tk-chips button{border:1px solid var(--ui-border);background:var(--ui-surface);font:500 12.5px var(--font-mono);color:var(--ui-text);display:inline-flex;flex-direction:column;align-items:center;gap:1px}
+#good-design-tokens .tk-chips button small{font:500 11px var(--font-body);color:var(--ui-muted)}
+#good-design-tokens .tk-chips button[aria-pressed="true"]{border-color:var(--ui-sel);background:var(--ui-sel-soft)}
+#good-design-tokens .tk-new{width:min(220px,100%);background:var(--ui-surface);border:1.5px dashed var(--ui-sel);padding:10px;display:flex;flex-direction:column;gap:6px;text-align:left;transition:border-radius .2s}
+#good-design-tokens .tk-new .thumb{aspect-ratio:auto;height:56px;border-radius:inherit}
+#good-design-tokens .tk-new b{font-size:14px}
+`;
+  cs.prepend(css);
+
+  /* 1. Hardcoded values */
+  const card = m => '<div class="tk-card" data-m="' + m + '" data-card><div class="tk-top"><b>Weekly recipes</b><span class="tk-badge">Free</span></div>' +
+    '<label class="tk-l">Email<input class="tk-in" type="email" value="ana@example.com" autocomplete="off"></label>' +
+    '<button class="tk-btn" type="button" data-sub>Subscribe</button><a class="tk-link" href="#" data-link>See a past issue</a></div>' +
+    '<div class="tk-ctl"><label class="switch tk-sw"><span>Rounder corners</span><input type="checkbox" role="switch" data-sw></label>' +
+    '<div class="tk-pick" role="group" aria-label="Accent"><button type="button" aria-pressed="true" data-acc="blue">Blue</button><button type="button" aria-pressed="false" data-acc="green">Green</button></div></div>' +
+    '<p class="tk-out" aria-live="polite" data-out></p>';
+  const wireCard = m => d => {
+    const c = d.querySelector('[data-card]'), out = d.querySelector('[data-out]');
+    const say = () => { out.textContent = m === 'f' ? 'Followed the tokens: card, badge, input, button, link.' : 'Followed the tokens: card. Kept their own values: badge, input, button, link.'; };
+    d.querySelector('[data-sw]').addEventListener('change', e => { c.style.setProperty('--t-radius', e.target.checked ? '16px' : '8px'); say(); });
+    d.querySelectorAll('[data-acc]').forEach(b => b.addEventListener('click', () => {
+      d.querySelectorAll('[data-acc]').forEach(x => x.setAttribute('aria-pressed', String(x === b)));
+      c.style.setProperty('--t-accent', b.dataset.acc === 'green' ? 'var(--ui-ok)' : 'var(--ui-sel)'); say();
+    }));
+    d.querySelector('[data-sub]').addEventListener('click', e => { e.target.textContent = 'Subscribed'; });
+    d.querySelector('[data-link]').addEventListener('click', e => e.preventDefault());
+  };
+  D('good-design-tokens-1b', card('b'), wireCard('b'));
+  D('good-design-tokens-1f', card('f'), wireCard('f'));
+
+  /* 2. Value names */
+  const BLUE = '#2F5DA8', GREEN = '#2E7D4F';
+  const RAIN = [['Mo', 20], ['Tu', 55], ['We', 80], ['Th', 35], ['Fr', 10], ['Sa', 45], ['Su', 60]];
+  const weather = '<div class="tk-wrap"><div class="tk-wx"><b>Lisbon this week</b><div class="tk-bars" role="img" aria-label="Rain each day, highest on Wednesday">' +
+    RAIN.map(r => '<span><i data-rain style="height:' + r[1] * 0.6 + 'px"></i>' + r[0] + '</span>').join('') + '</div><span class="cs-meta">Rain in mm</span>' +
+    '<button class="tk-btn" type="button" data-alert style="border-radius:8px;color:#fff">Get rain alerts</button></div><pre class="tk-code" data-code></pre></div>' +
+    '<button class="btn btn-secondary cs-sm" type="button" data-go>Make the brand green</button><p class="tk-out" aria-live="polite" data-out></p>';
+  const CODE = {
+    b: g => (g ? '<mark>blue-500: ' + GREEN + '</mark>\n/* blue-500 is green now */' : 'blue-500: ' + BLUE + '\n') + '\n\n.alert-button {\n  background: blue-500 }\n.rain-bar {\n  background: blue-500 }',
+    f: g => 'blue-500:  ' + BLUE + '\ngreen-600: ' + GREEN + '\n\n' + (g ? '<mark>accent: green-600</mark>' : 'accent: blue-500') + '\nrain:   blue-500\n\n.alert-button {\n  background: accent }\n.rain-bar {\n  background: rain }'
+  };
+  const wireWeather = m => d => {
+    const code = d.querySelector('[data-code]'), out = d.querySelector('[data-out]'), go = d.querySelector('[data-go]');
+    const paint = g => {
+      code.innerHTML = CODE[m](g);
+      d.querySelector('[data-alert]').style.background = g ? GREEN : BLUE;
+      d.querySelectorAll('[data-rain]').forEach(i => { i.style.background = g && m === 'b' ? GREEN : BLUE; });
+    };
+    go.addEventListener('click', () => {
+      paint(true); go.disabled = true;
+      out.textContent = m === 'b' ? 'The button is green, and so is the rain. To fix the rain, someone now has to edit the chart too.' : 'One line changed. The button is green and the rain stays blue.';
+    });
+    paint(false);
+  };
+  D('good-design-tokens-2b', weather, wireWeather('b'));
+  D('good-design-tokens-2f', weather, wireWeather('f'));
+
+  /* 3. Too many tokens */
+  const SETS = {
+    b: [2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12].map(n => ({ name: 'radius-' + n, px: n, uses: { 2: 1, 3: 2, 4: 18, 5: 3, 6: 9, 7: 3, 8: 41, 9: 2, 10: 4, 11: 1, 12: 6 }[n] })),
+    f: [{ name: 'radius-small', px: 4, job: 'inputs, buttons' }, { name: 'radius-medium', px: 8, job: 'cards' }, { name: 'radius-large', px: 16, job: 'dialogs' }]
+  };
+  const picker = m => '<div class="tk-new" data-new style="border-radius:8px"><span class="thumb b"></span><b>New card</b><span class="cs-meta">Which radius?</span></div>' +
+    '<div class="tk-chips" role="group" aria-label="Radius tokens">' + SETS[m].map(s => '<button type="button" aria-pressed="false" data-px="' + s.px + '" data-name="' + s.name + '">' + s.name + (s.job ? '<small>' + s.job + '</small>' : '') + '</button>').join('') + '</div>' +
+    '<p class="tk-out" aria-live="polite" data-out></p>';
+  const wirePicker = m => d => {
+    const box = d.querySelector('[data-new]'), out = d.querySelector('[data-out]');
+    d.querySelectorAll('[data-px]').forEach(b => b.addEventListener('click', () => {
+      d.querySelectorAll('[data-px]').forEach(x => x.setAttribute('aria-pressed', String(x === b)));
+      const s = SETS[m].find(x => x.name === b.dataset.name), px = s.px;
+      box.style.borderRadius = px + 'px';
+      if (m === 'f') { out.textContent = s.name + ' is ' + px + ' px, the one for ' + s.job + '.'; return; }
+      const near = SETS.b.filter(x => Math.abs(x.px - px) === 1);
+      out.textContent = s.name + ' is used in ' + s.uses + ' places. ' + near.map(x => x.name + ' (' + x.uses + ' uses)').join(' and ') + (near.length > 1 ? ' look' : ' looks') + ' the same, and nothing says which one to use.';
+    }));
+  };
+  D('good-design-tokens-3b', picker('b'), wirePicker('b'));
+  D('good-design-tokens-3f', picker('f'), wirePicker('f'));
+
+  csInit(cs);
+  };
+  if (window.csDemo) run(); else document.addEventListener('DOMContentLoaded', run);
+})();
+
+</script>

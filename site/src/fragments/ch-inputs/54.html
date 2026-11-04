@@ -1,0 +1,42 @@
+<div class="note comfy cw-wrap"><p>Notice how each field fits the text it holds: a label that stays, a box that grows, a count near the limit, and the value shown back the way it will be saved.</p>
+  <div class="seg cw-seg" role="radiogroup" aria-label="Example">
+    <input type="radio" name="cw-text-field-w" id="cw-text-field-w-1" value="google" checked><label for="cw-text-field-w-1">Google sign-in</label>
+    <input type="radio" name="cw-text-field-w" id="cw-text-field-w-2" value="slack"><label for="cw-text-field-w-2">Slack</label>
+    <input type="radio" name="cw-text-field-w" id="cw-text-field-w-3" value="yt"><label for="cw-text-field-w-3">YouTube Studio</label>
+    <input type="radio" name="cw-text-field-w" id="cw-text-field-w-4" value="gh"><label for="cw-text-field-w-4">GitHub</label>
+  </div>
+  <div class="cw" data-cw-view role="img" aria-label=""></div>
+  <p class="cw-cap" data-cw-cap aria-live="polite"></p>
+  
+  <script>
+  (() => {
+    const wrap = document.currentScript.closest('.cw-wrap');
+    const view = wrap.querySelector('[data-cw-view]'), cap = wrap.querySelector('[data-cw-cap]');
+    const ic = id => '<svg class="icon sm"><use href="#i-' + id + '"/></svg>';
+    const caret = '<i class="cw-wtf-caret"></i>';
+    const msg = (cls, name, w) => '<div class="cw-wtf-msg"><i class="cw-wtf-av' + cls + '"></i><span><b>' + name + '</b><i class="cw-line" style="width:' + w + '%"></i></span></div>';
+    const S = {
+      google: { html: '<div class="cw-wtf-pane"><span class="cw-wtf-k">Empty</span><div class="cw-wtf-of"><span class="ph">Email</span></div>'
+          + '<span class="cw-wtf-k">Typing</span><div class="cw-wtf-of on"><em>Email</em>ana.ruiz@example.com' + caret + '</div></div>',
+        alt: 'Two states of one email field. Empty: the word Email sits inside the box. Typing: the box holds an address and the word Email has moved up into the top border.',
+        cap: 'Google sign-in: the field’s label sits inside the box, then moves up into the border once you type. Unlike a placeholder, it never disappears.' },
+      slack: { html: '<div class="cw-wtf-pane">' + msg('', 'Ben Ito', 70) + msg(' b', 'Maya Chen', 45)
+          + '<div class="cw-wtf-box"><span class="cw-wtf-tools"><b>B</b><i>I</i><s>S</s>' + ic('plus') + '</span><span class="cw-wtf-text"><span>Quick update on the export bug:</span><span>– it only crashes above 2 GB</span><span>– the fix is in review' + caret + '</span></span>'
+          + '<span class="cw-wtf-foot">' + ic('plus') + '<span class="grow"></span><span class="cw-wtf-send">' + ic('play') + '</span></span></div></div>',
+        alt: 'A chat channel with two messages. Below them, the message box has grown to three lines of text, with formatting tools on top and a send button at the bottom.',
+        cap: 'Slack: the message box grows line by line as you write, up to a set height, then scrolls. Short messages stay compact and long ones stay readable.' },
+      yt: { html: '<div class="cw-wtf-pane"><div class="cw-wtf-of on"><em>Title (required)</em>Night timelapse over the harbor' + caret + '<small>31/100</small></div>'
+          + '<div class="cw-wtf-of"><em>Description</em>Shot over four hours from the old pier. Music and camera settings below.<small>72/5000</small></div></div>',
+        alt: 'An upload form. The title field holds a title and shows 31/100 in its corner. The description field shows 72/5000.',
+        cap: 'YouTube Studio: the title and description fields show a running count against their limits, like 31/100. People see the limit before they hit it.' },
+      gh: { html: '<div class="cw-wtf-pane"><div class="cw-wtf-gh"><span><b>Owner</b><span class="cw-wtf-in">ana ▾</span></span><span class="cw-wtf-slash">/</span><span><b>Repository name</b><span class="cw-wtf-in on">portrait tools' + caret + '</span></span></div>'
+          + '<span class="cw-wtf-note">' + ic('info') + '<span>Will be created as <b>portrait-tools</b>.</span></span></div>',
+        alt: 'A new repository form. The name field holds portrait tools, with a space. A note under it says it will be created as portrait-tools.',
+        cap: 'GitHub: if a new repository name has spaces or other characters it can’t use, the form shows the name it will create instead, like portrait-tools. People see the fix, not just an error.' }
+    };
+    const render = k => { view.innerHTML = S[k].html; view.setAttribute('aria-label', 'Sketch: ' + S[k].alt); cap.textContent = S[k].cap; };
+    wrap.querySelectorAll('input[name="cw-text-field-w"]').forEach(r => r.addEventListener('change', () => render(r.value)));
+    render('google');
+  })();
+  </script>
+</div>

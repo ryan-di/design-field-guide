@@ -1,0 +1,46 @@
+<div class="note comfy cw-wrap"><p>Notice how each one shows how far along you are and asks for a little at a time.</p>
+      <div class="seg cw-seg" role="radiogroup" aria-label="Example">
+        <input type="radio" name="cw-stepper-w" id="cw-stepper-w-1" value="macos" checked><label for="cw-stepper-w-1">macOS Installer</label>
+        <input type="radio" name="cw-stepper-w" id="cw-stepper-w-2" value="airbnb"><label for="cw-stepper-w-2">Airbnb</label>
+        <input type="radio" name="cw-stepper-w" id="cw-stepper-w-3" value="duolingo"><label for="cw-stepper-w-3">Duolingo</label>
+        <input type="radio" name="cw-stepper-w" id="cw-stepper-w-4" value="vscode"><label for="cw-stepper-w-4">VS Code</label>
+      </div>
+      <div class="cw" data-cw-view role="img" aria-label=""></div>
+      <p class="cw-cap" data-cw-cap aria-live="polite"></p>
+      
+      <script>
+      (() => {
+        const wrap = document.currentScript.closest('.cw-wrap');
+        const view = wrap.querySelector('[data-cw-view]'), cap = wrap.querySelector('[data-cw-cap]');
+        const ic = id => '<svg class="icon sm"><use href="#i-' + id + '"/></svg>';
+        const line = w => '<i class="cw-line" style="width:' + w + '%"></i>';
+        const btn = (t, kind) => '<span class="btn btn-' + kind + ' cw-stw-btn">' + t + '</span>';
+        const st = (state, label) => '<span class="' + state + '">' + label + '</span>';
+        const ck = (done, label, open, body) => '<div class="cw-stw-st' + (open ? ' open' : '') + '"><span><i class="cw-stw-ck' + (done ? ' on' : '') + '">' + (done ? ic('check') : '') + '</i>' + label + '</span>' + (body || '') + '</div>';
+        const S = {
+          macos: { html: '<div class="cw-stw-win"><div class="cw-stw-tb"><i></i><i></i><i></i><span>Install Utility</span></div><div class="cw-stw-split"><div class="cw-stw-list">' +
+              st('done', 'Introduction') + st('done', 'License') + st('now', 'Destination') + st('', 'Install type') + st('', 'Installing') + st('', 'Summary') + '</div>' +
+              '<div class="cw-stw-pane"><b>Select a destination</b><div class="cw-stw-disks"><span class="cw-stw-disk on">' + ic('cube') + 'Main disk</span><span class="cw-stw-disk">' + ic('cube') + 'Backup</span></div>' + line(85) +
+              '<div class="cw-stw-nav">' + btn('Go Back', 'secondary') + btn('Continue', 'primary') + '</div></div></div></div>',
+            alt: 'An installer window. A list on the left names six steps; Introduction and License are done, Destination is current and bold. The right side asks for a destination disk, with Go Back and Continue buttons.',
+            cap: 'macOS Installer: a list on the left names every step from Introduction to Summary and marks the current one, so people always know how much is left.' },
+          airbnb: { html: '<div class="cw-stw-phone"><div class="cw-stw-top"><span class="cw-stw-pill">Save &amp; exit</span></div><span class="cw-stw-q">What kind of place is it?</span>' +
+              '<div class="cw-stw-tiles"><span class="on">House</span><span>Flat</span><span>Cabin</span><span>Boat</span></div>' +
+              '<div class="cw-stw-segs"><i><b style="width:60%"></b></i><i></i><i></i></div><div class="cw-stw-nav split"><span class="cw-stw-ghost">Back</span>' + btn('Next', 'primary') + '</div></div>',
+            alt: 'A phone screen asking what kind of place it is, with four choice tiles and House picked. Save & exit sits at the top. At the bottom, a progress bar in three parts is partly filled, with Back and Next.',
+            cap: 'Airbnb: listing a home is many short screens grouped into a few big steps, with a progress bar at the bottom. Save & exit keeps the answers so hosts can finish later.' },
+          duolingo: { html: '<div class="cw-stw-phone"><div class="cw-stw-top">' + ic('x') + '<span class="cw-stw-track"><b style="width:40%"></b></span></div><span class="cw-stw-bubble">Why are you learning?</span>' +
+              '<div class="cw-stw-opts"><span>Travel</span><span class="on">Work</span><span>School</span><span>Just for fun</span></div><span class="btn btn-primary cw-stw-wide">Continue</span></div>',
+            alt: 'A phone screen with a progress bar at the top, about 40 percent full. One question, Why are you learning, with four answers; Work is picked. A wide Continue button sits at the bottom.',
+            cap: 'Duolingo: setup asks one short question per screen, with a progress bar on top. Each screen takes seconds, so the whole thing feels light.' },
+          vscode: { html: '<div class="cw-stw-win"><div class="cw-stw-walk"><div class="cw-stw-steps"><b>Get started</b>' + ck(true, 'Choose a theme') + ck(true, 'Open a folder') +
+              ck(false, 'Run a command', true, '<p>Every action is in the command palette.</p>' + btn('Open palette', 'secondary')) + ck(false, 'Learn shortcuts') + '</div><span class="thumb b"></span></div></div>',
+            alt: 'A welcome page with four steps. Choose a theme and Open a folder have checkmarks. Run a command is open, with a short line and a button. Learn shortcuts is not done yet.',
+            cap: 'VS Code: the Get Started walkthrough lists its steps with checkmarks. You can open any step in any order, and finished ones stay ticked.' }
+        };
+        const render = k => { view.innerHTML = S[k].html; view.setAttribute('aria-label', 'Sketch: ' + S[k].alt); cap.textContent = S[k].cap; };
+        wrap.querySelectorAll('input[name="cw-stepper-w"]').forEach(r => r.addEventListener('change', () => render(r.value)));
+        render('macos');
+      })();
+      </script>
+    </div>

@@ -1,0 +1,130 @@
+<script>
+(() => {
+  const cs = document.currentScript.closest('.cs');
+  const run = () => {
+    const D = (k, html, wire) => csDemo(cs.querySelector('[data-d="' + k + '"]'), html, wire);
+    const st = document.createElement('style');
+    st.textContent = `
+#good-design-rationale .dr-doc{width:min(380px,100%);background:var(--ui-surface);border:1px solid var(--ui-border);border-radius:12px;box-shadow:var(--ui-shadow);padding:12px 14px;display:flex;flex-direction:column;gap:9px;text-align:left;font-size:14px;line-height:1.45}
+#good-design-rationale .dr-doc > b{font-size:15px}
+#good-design-rationale .dr-k{display:block;font:600 11.5px var(--font-mono);letter-spacing:.06em;text-transform:uppercase;color:var(--ui-muted)}
+#good-design-rationale .dr-who{display:flex;gap:8px;align-items:flex-start}
+#good-design-rationale .dr-av{flex:none;width:24px;height:24px;border-radius:50%;display:grid;place-items:center;font:700 12px var(--font-body);background:var(--ui-sel-soft);color:var(--ui-sel)}
+#good-design-rationale .dr-link{display:flex;align-items:center;gap:6px;border:1px solid var(--ui-border);border-radius:8px;padding:6px 9px;background:var(--ui-bg);font-size:13.5px}
+#good-design-rationale .dr-link .icon{color:var(--ui-sel)}
+#good-design-rationale .dr-out{display:flex;flex-direction:column;gap:6px}
+#good-design-rationale .dr-out:empty{display:none}
+#good-design-rationale .dr-box{border-left:3px solid var(--ui-sel);background:var(--ui-bg);border-radius:0 8px 8px 0;padding:7px 10px;display:flex;flex-direction:column;gap:5px}
+#good-design-rationale .dr-bad{border-left:3px solid var(--ui-danger);padding:4px 10px}
+#good-design-rationale .dr-good{border-left:3px solid var(--ui-ok);padding:4px 10px}
+#good-design-rationale .dr-rej{display:flex;flex-direction:column;gap:2px;padding-left:10px;border-left:1px solid var(--ui-border)}
+#good-design-rationale .dr-rej i{font-style:normal;color:var(--ui-muted)}
+#good-design-rationale .dr-hl{background:var(--ui-sel-soft);border-radius:6px;padding:4px 6px;margin:0 -6px}
+#good-design-rationale .dr-opt{display:flex;flex-direction:column;gap:2px}
+#good-design-rationale .dr-opt i{font-style:normal;color:var(--ui-muted)}
+#good-design-rationale .dr-opt.new{background:var(--ui-sel-soft);border-radius:6px;padding:5px 7px;margin:0 -7px}
+#good-design-rationale .dr-md{margin:0;width:min(400px,100%);background:var(--ui-surface);border:1px solid var(--ui-border);border-radius:12px;box-shadow:var(--ui-shadow);padding:12px 14px;font:13px/1.55 var(--font-mono);color:var(--ui-text);white-space:pre-wrap;text-align:left}
+#good-design-rationale .dr-md b{font-weight:700}
+#good-design-rationale .dr-md .top{display:block;background:var(--ui-sel-soft);border-radius:6px;padding:4px 6px;margin:0 -6px}
+#good-design-rationale .dr-md .muted{color:var(--ui-muted)}
+#good-design-rationale .dr-rev{width:min(400px,100%);display:flex;gap:8px;align-items:flex-start;font-size:14px;line-height:1.45;text-align:left}
+`;
+    cs.prepend(st);
+    const icon = n => '<svg class="icon sm"><use href="#i-' + n + '"/></svg>';
+    const who = (i, text) => '<div class="dr-who"><span class="dr-av">' + i + '</span><span>' + text + '</span></div>';
+
+    /* 1. Where people look */
+    const issue = fixed => '<div class="dr-doc"><span class="dr-k">Music · Issue #418</span><b>Keep playing after an album ends?</b>' +
+      who('M', 'Mia: Why does playback stop at the end of an album? Should we play similar songs instead?') +
+      (fixed ? '<span class="dr-link">' + icon('book') + 'Decision: stop at the end of an album · PR #377</span>' : '') +
+      '<button class="btn btn-secondary cs-sm" type="button" data-find style="align-self:flex-start">Find the reason</button><div class="dr-out" data-out></div></div>';
+    D('good-design-rationale-1b', issue(false), (d, t) => {
+      const out = d.querySelector('[data-out]');
+      d.querySelector('[data-find]').addEventListener('click', e => {
+        e.target.disabled = true;
+        out.innerHTML = '<span class="cs-meta">Searching team chat for “autoplay”…</span>';
+        t.after(() => {
+          out.innerHTML = '<span class="cs-meta">214 messages found.</span><p class="dr-bad">The decision was made on a call in March. Nobody wrote it down, so Mia books a meeting to ask.</p>';
+        }, 900);
+      });
+    });
+    D('good-design-rationale-1f', issue(true), d => {
+      const out = d.querySelector('[data-out]');
+      d.querySelector('[data-find]').addEventListener('click', e => {
+        e.target.disabled = true;
+        out.innerHTML = '<div class="dr-box"><span><span class="dr-k">What changes for people</span>Playback stops at the end of an album.</span>' +
+          '<span><span class="dr-k">Why</span>People who play whole albums said extra songs ruined the ending.</span>' +
+          '<span><span class="dr-k">Rejected</span>Play similar songs: right for playlists, so it stays on there.</span></div>' +
+          '<p class="dr-good">Mia reads it in a minute and closes the issue.</p>';
+      });
+    });
+
+    /* 2. Rejected options */
+    const rec = fixed => '<div class="dr-doc"><span class="dr-k">Shop · Decision record</span><b>Show prices with tax included</b>' +
+      '<span><span class="dr-k">Why</span>People compare prices on the product page. The total there should be the total they pay.</span>' +
+      (fixed ? '<span data-rej><span class="dr-k">Rejected</span><span class="dr-rej"><b>Add tax at checkout</b><i>In a test, people saw a higher total at the last step and left.</i></span></span>' : '') +
+      '<button class="btn btn-secondary cs-sm" type="button" data-prop style="align-self:flex-start">Ben’s proposal</button><div class="dr-out" data-out></div></div>';
+    const propose = fixed => d => {
+      d.querySelector('[data-prop]').addEventListener('click', e => {
+        e.target.remove();
+        const out = d.querySelector('[data-out]');
+        out.innerHTML = who('B', 'Ben: “Could we show prices without tax and add it at checkout? They’d look lower.”') +
+          (fixed ? '<p class="dr-good">Answered by the record. Ben reads the rejected option and drops the idea.</p>'
+            : '<p class="dr-bad">Nobody remembers why that was ruled out. A 45-minute meeting is booked to discuss it again.</p>');
+        if (fixed) d.querySelector('[data-rej]').classList.add('dr-hl');
+      });
+    };
+    D('good-design-rationale-2b', rec(false), propose(false));
+    D('good-design-rationale-2f', rec(true), propose(true));
+
+    /* 3. Write it while deciding */
+    D('good-design-rationale-3b',
+      '<div class="dr-doc"><span class="dr-k">Settings · Decision record</span><b>Dark mode</b><div class="dr-out" data-out><span class="cs-meta">Not written yet. The pull request was merged 3 weeks ago.</span></div>' +
+      '<button class="btn btn-secondary cs-sm" type="button" data-go style="align-self:flex-start">Write it up</button></div>',
+      d => {
+        d.querySelector('[data-go]').addEventListener('click', e => {
+          e.target.remove();
+          d.querySelector('[data-out]').innerHTML = '<span><span class="dr-k">Options</span>Some were discussed.</span><span><span class="dr-k">Decision</span>The app follows the system setting.</span><span><span class="dr-k">Why</span>It seemed best.</span>' +
+            '<p class="dr-bad">Written from memory to close the ticket. The reasons are gone.</p>';
+        });
+      });
+    const OPTS = [
+      ['A. Always light, with a switch in Settings', 'Simple, but people who use dark mode everywhere get a bright screen at night.'],
+      ['B. Follow the system setting', 'Nothing to find, but people who want only this app dark can’t have it.'],
+      ['C. Follow the system, with a switch in Settings to override it', 'Found while writing B’s trade-off. Chosen: it fixes the gap in B and costs one setting.']
+    ];
+    D('good-design-rationale-3f',
+      '<div class="dr-doc"><span class="dr-k">Settings · Decision record, draft</span><b>Dark mode</b><span class="cs-meta">Written during the design review.</span><div class="dr-out" data-out>' +
+      OPTS.slice(0, 2).map(o => '<span class="dr-opt"><b>' + o[0] + '</b><i data-tr></i></span>').join('') + '</div>' +
+      '<button class="btn btn-secondary cs-sm" type="button" data-go style="align-self:flex-start">Write the next trade-off</button></div>',
+      d => {
+        let n = 0;
+        const out = d.querySelector('[data-out]');
+        d.querySelector('[data-go]').addEventListener('click', e => {
+          const tr = out.querySelectorAll('[data-tr]');
+          tr[n].textContent = OPTS[n][1];
+          n++;
+          if (n === 2) {
+            out.insertAdjacentHTML('beforeend', '<span class="dr-opt new"><b>' + OPTS[2][0] + '</b><i>' + OPTS[2][1] + '</i></span>');
+            e.target.remove();
+          }
+        });
+      });
+
+    /* 4. Lead with what changes */
+    D('good-design-rationale-4b',
+      '<pre class="dr-md"><span class="top"><b>## Changes</b>\n- Refactor SortService to a strategy pattern\n- Add index on photos.date_taken</span>- Migrate thumbnail cache keys\n- Update 14 snapshot tests\n- Default sort is now dateTaken</pre>' +
+      '<div class="dr-rev"><span class="dr-av">R</span><span>Reviewer, after the first lines: “Looks like a refactor. Approved.”</span></div>',
+      () => {});
+    D('good-design-rationale-4f',
+      '<pre class="dr-md"><span class="top"><b>## What changes for people</b>\nPhotos are sorted by the day they were taken, not the day they were added.</span><b>## Why</b>\nOld scans and photos from friends showed up under the wrong month.\n<b>## How</b>\n<span class="muted">Sort by date_taken, with a new index. Thumbnail cache keys migrated.</span></pre>' +
+      '<div class="dr-rev"><span class="dr-av">R</span><span>Reviewer, after the first lines: “The sort order changes. I’ll check how old scans look.”</span></div>',
+      () => {});
+
+    csInit(cs);
+  };
+  /* csDemo and csInit are defined further down the book, so wait for them */
+  if (window.csDemo) run(); else document.addEventListener('DOMContentLoaded', run);
+})();
+
+</script>

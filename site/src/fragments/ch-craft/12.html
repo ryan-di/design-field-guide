@@ -1,0 +1,155 @@
+<script>
+(() => {
+  const cs = document.currentScript.closest('.cs');
+  /* This entry sits before the shared case helpers in the book, so start once they exist. */
+  const go = () => {
+  const D = (k, html, wire) => csDemo(cs.querySelector('[data-d="' + k + '"]'), html, wire);
+  const css = document.createElement('style');
+  css.textContent = [
+    '#good-edge-cases .ec-frame{width:min(340px,100%)}',
+    '#good-edge-cases .ec-frame .app-body{gap:8px}',
+    '#good-edge-cases .ec-ev{display:flex;gap:10px;padding:8px 10px;border-radius:8px;background:var(--ui-surface);border:1px solid var(--ui-border);border-left:3px solid var(--ui-sel);font-size:13.5px;line-height:1.35}',
+    '#good-edge-cases .ec-time{flex:none;width:40px;font:500 12.5px var(--font-mono);color:var(--ui-muted);padding-top:1px}',
+    '#good-edge-cases .ec-main{display:flex;flex-direction:column;gap:3px;min-width:0;flex:1}',
+    '#good-edge-cases .ec-naive{height:66px;box-sizing:border-box}',
+    '#good-edge-cases .ec-naive .ec-title{white-space:nowrap}',
+    '#good-edge-cases .ec-good .ec-title{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}',
+    '#good-edge-cases .ec-loc{color:var(--ui-muted)}',
+    '#good-edge-cases .ec-avs{display:flex;gap:3px;align-items:center;white-space:nowrap}',
+    '#good-edge-cases .ec-av{width:16px;height:16px;border-radius:50%;flex:none;background:var(--thumb-b)}',
+    '#good-edge-cases .ec-av:nth-child(3n+2){background:var(--thumb-c)}',
+    '#good-edge-cases .ec-av:nth-child(3n){background:var(--thumb-d)}',
+    '#good-edge-cases .ec-more{font:600 12px var(--font-body);color:var(--ui-muted);margin-left:3px}',
+    '#good-edge-cases .ec-files{display:flex;flex-direction:column;gap:2px;width:min(210px,100%)}',
+    '#good-edge-cases .ec-file{all:unset;cursor:pointer;display:flex;align-items:center;gap:7px;padding:6px 8px;border-radius:6px;font-size:13.5px;color:var(--ui-text);min-width:0}',
+    '#good-edge-cases .ec-file:hover{background:var(--ui-hover)}',
+    '#good-edge-cases .ec-file:focus-visible{outline:2px solid var(--ui-sel);background:var(--ui-hover)}',
+    '#good-edge-cases .ec-file .icon{color:var(--ui-muted)}',
+    '#good-edge-cases .ec-name{display:flex;min-width:0;white-space:pre}',
+    '#good-edge-cases .ec-cut{overflow:hidden;text-overflow:ellipsis;min-width:0}',
+    '#good-edge-cases .ec-end{flex:none}',
+    '#good-edge-cases .ec-full{min-height:18px}',
+    '#good-edge-cases .ec-miss{font:500 13px var(--font-mono);color:var(--ui-danger)}',
+    '#good-edge-cases .ec-miss:empty{display:none}',
+    '#good-edge-cases .ec-hl{min-height:188px;justify-content:flex-start;gap:0}',
+    '#good-edge-cases .ec-h{display:flex;align-items:center;gap:10px;height:52px;box-sizing:border-box;border-bottom:1px solid var(--ui-border);font-size:13.5px}',
+    '#good-edge-cases .ec-h:last-child{border-bottom:0}',
+    '#good-edge-cases .ec-h .grow{flex:1;min-width:0;line-height:1.3}',
+    '#good-edge-cases .ec-ht{width:52px;height:38px;aspect-ratio:auto;flex:none;border-radius:6px}',
+    '#good-edge-cases .ec-ad{font:600 11px var(--font-mono);color:var(--ui-muted);margin-left:4px}',
+    '#good-edge-cases .ec-sk-line{display:block;height:11px;width:70%;margin:3px 0}',
+    '#good-edge-cases .ec-art{display:flex;gap:12px;align-items:center}',
+    '#good-edge-cases .ec-pic{width:60px;height:60px;aspect-ratio:auto;border-radius:50%;flex:none}',
+    '#good-edge-cases .ec-artist{font-size:16px}',
+    '#good-edge-cases .ec-fol{font-size:13.5px;padding:2px 0}',
+    '#good-edge-cases .ec-fol.btn{padding:3px 6px;margin-left:-6px;font-size:13.5px}',
+    '#good-edge-cases .ec-val{color:var(--ui-text);text-align:right}',
+    '#good-edge-cases .ec-none{color:var(--ui-muted)}'
+  ].join('\n');
+  cs.prepend(css);
+  const icon = n => '<svg class="icon sm"><use href="#i-' + n + '"/></svg>';
+
+  /* 1. Ideal data only */
+  const SAMPLE = [['12:00', 'Lunch with Sam', 'Café Lua', 2], ['15:00', 'Dentist', 'Elm Street 4', 1]];
+  const REAL = [['09:00', 'Quarterly planning with the design, research and engineering teams', 'Room 4B', 24], ['11:45', 'Call', null, 1], ['12:00', 'Lunch with Sam', 'Café Lua', 2]];
+  const avs = n => Array.from({ length: n }, () => '<i class="ec-av"></i>').join('');
+  const ev = (fixed, e) => fixed
+    ? '<div class="ec-ev ec-good"><span class="ec-time">' + e[0] + '</span><div class="ec-main"><b class="ec-title">' + e[1] + '</b>' + (e[2] ? '<span class="ec-loc">Where: ' + e[2] + '</span>' : '') +
+      '<span class="ec-avs">' + avs(Math.min(e[3], 3)) + (e[3] > 3 ? '<span class="ec-more">+' + (e[3] - 3) + '</span>' : '') + '</span></div></div>'
+    : '<div class="ec-ev ec-naive"><span class="ec-time">' + e[0] + '</span><div class="ec-main"><b class="ec-title">' + e[1] + '</b><span class="ec-loc">Where: ' + (e[2] || '') + '</span>' +
+      '<span class="ec-avs">' + avs(e[3]) + '</span></div></div>';
+  const calHtml = '<div class="app-frame ec-frame"><div class="app-bar"><span>Tuesday</span><button class="btn btn-ghost cs-sm" type="button" data-load>Load real events</button></div>' +
+    '<div class="app-body" data-list></div></div><p class="cs-meta" aria-live="polite" data-out></p>';
+  const calWire = fixed => d => {
+    const list = d.querySelector('[data-list]'), load = d.querySelector('[data-load]'), out = d.querySelector('[data-out]');
+    let real = false;
+    const draw = () => {
+      list.innerHTML = (real ? REAL : SAMPLE).map(e => ev(fixed, e)).join('');
+      load.textContent = real ? 'Show sample events' : 'Load real events';
+      out.textContent = !real ? 'Sample events, as in the mockup.' : fixed
+        ? 'Long title, no place, 24 guests: each one was in the mockup, so each already has a design.'
+        : 'Long title, no place, 24 guests: the mockup never showed any of these.';
+    };
+    load.addEventListener('click', () => { real = !real; draw(); });
+    draw();
+  };
+  D('good-edge-cases-1b', calHtml, calWire(false));
+  D('good-edge-cases-1f', calHtml, calWire(true));
+
+  /* 2. Truncation */
+  const FILES = ['Quarterly report draft – March.pdf', 'Quarterly report draft – April.pdf', 'Quarterly report draft – May.pdf'];
+  const fileBtn = (fixed, f) => {
+    const cut = f.lastIndexOf(' – ') + 3;
+    return '<button class="ec-file" type="button" data-f="' + f + '"' + (fixed ? ' title="' + f + '"' : '') + '>' + icon('book') +
+      (fixed ? '<span class="ec-name"><span class="ec-cut">' + f.slice(0, cut) + '</span><span class="ec-end">' + f.slice(cut) + '</span></span>'
+             : '<span class="ec-name"><span class="ec-cut">' + f + '</span></span>') + '</button>';
+  };
+  const filesHtml = fixed => '<div class="app-frame ec-frame"><div class="app-bar"><span>Attach a file</span><span class="cs-meta">Documents</span></div>' +
+    '<div class="app-body"><div class="ec-files">' + FILES.map(f => fileBtn(fixed, f)).join('') + '</div>' + (fixed ? '<p class="cs-meta ec-full" data-full></p>' : '') + '</div></div>' +
+    '<p class="cs-ok" aria-live="polite" data-ok></p><p class="ec-miss" aria-live="polite" data-miss></p>';
+  const filesWire = fixed => d => {
+    const ok = d.querySelector('[data-ok]'), miss = d.querySelector('[data-miss]'), full = d.querySelector('[data-full]');
+    d.querySelectorAll('[data-f]').forEach(b => {
+      const f = b.dataset.f;
+      if (fixed) ['focus', 'mouseenter'].forEach(ev => b.addEventListener(ev, () => { full.textContent = f; }));
+      b.addEventListener('click', () => {
+        const right = f.includes('April');
+        ok.textContent = right ? 'Attached: ' + f : '';
+        miss.textContent = right ? '' : 'Attached: ' + f + '. That’s not the April report.';
+      });
+    });
+  };
+  D('good-edge-cases-2b', filesHtml(false), filesWire(false));
+  D('good-edge-cases-2f', filesHtml(true), filesWire(true));
+
+  /* 3. Layout shift */
+  const AD = ['Hotel Mar', '€112 a night', ' b'];
+  const LIST = [['Casa Azul', '€84 a night', ''], ['Lua Hostel', '€38 a night', ' c']];
+  const hrow = (h, ad) => '<div class="ec-h"><span class="thumb ec-ht' + h[2] + '"></span><span class="grow"><b>' + h[0] + '</b>' + (ad ? '<span class="ec-ad">Ad</span>' : '') +
+    '<br><span class="cs-meta">' + h[1] + '</span></span><button class="btn btn-secondary cs-sm" type="button" data-book="' + h[0] + '">Book</button></div>';
+  const skrow = '<div class="ec-h" aria-hidden="true"><span class="skel ec-ht"></span><span class="grow"><span class="skel ec-sk-line"></span><span class="skel ec-sk-line" style="width:40%"></span></span></div>';
+  const hotelsHtml = '<div class="app-frame ec-frame"><div class="app-bar"><span>Hotels in Porto</span><button class="btn btn-ghost cs-sm" type="button" data-reload>Reload</button></div>' +
+    '<div class="app-body ec-hl" data-list></div></div><p class="cs-meta" aria-live="polite" data-out>Booked: nothing yet</p>';
+  const hotelsWire = fixed => (d, t) => {
+    const list = d.querySelector('[data-list]'), out = d.querySelector('[data-out]');
+    let gen = 0;
+    const draw = state => {
+      const top = state === 'done' ? hrow(AD, true) : (fixed ? skrow : '');
+      list.innerHTML = top + LIST.map(h => hrow(h)).join('');
+    };
+    list.addEventListener('click', e => {
+      const b = e.target.closest('[data-book]');
+      if (b) out.textContent = 'Booked: ' + b.dataset.book + (b.dataset.book === 'Hotel Mar' ? ' (the ad).' : '.');
+    });
+    d.querySelector('[data-reload]').addEventListener('click', () => {
+      const g = ++gen;
+      out.textContent = 'Booked: nothing yet';
+      draw('loading');
+      t.after(() => { if (g === gen) draw('done'); }, 1000);
+    });
+    draw('done');
+  };
+  D('good-edge-cases-3b', hotelsHtml, hotelsWire(false));
+  D('good-edge-cases-3f', hotelsHtml, hotelsWire(true));
+
+  /* 4. Raw values */
+  const artistHtml = fixed => '<div class="app-frame ec-frame"><div class="app-bar"><span>Music</span><span class="cs-meta">Artist</span></div><div class="app-body">' +
+    '<div class="ec-art"><span class="thumb b ec-pic"></span><span><b class="ec-artist">Lua Vermelha</b><br>' +
+    (fixed ? '<button class="btn btn-ghost ec-fol" type="button" data-fol>1.2M followers</button>' : '<span class="ec-fol">1234567 followers</span>') + '</span></div>' +
+    '<div class="cs-row"><span>Bio</span><span class="ec-val' + (fixed ? ' ec-none' : '') + '">' + (fixed ? 'No bio yet' : 'null') + '</span></div>' +
+    '<div class="cs-row"><span>Next show</span><span class="ec-val' + (fixed ? ' ec-none' : '') + '">' + (fixed ? 'No shows announced' : 'undefined') + '</span></div>' +
+    '<div class="cs-row"><span>Joined</span><span class="ec-val">' + (fixed ? 'March 2023' : '2023-03-14T09:12:00Z') + '</span></div></div></div>';
+  const artistWire = fixed => d => {
+    if (!fixed) return;
+    const b = d.querySelector('[data-fol]');
+    b.addEventListener('click', () => { b.textContent = b.textContent === '1.2M followers' ? '1,234,567 followers' : '1.2M followers'; });
+  };
+  D('good-edge-cases-4b', artistHtml(false), artistWire(false));
+  D('good-edge-cases-4f', artistHtml(true), artistWire(true));
+
+  csInit(cs);
+  };
+  if (window.csDemo) go(); else document.addEventListener('DOMContentLoaded', go);
+})();
+
+</script>

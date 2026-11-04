@@ -1,0 +1,27 @@
+<div class="stage tall" data-demo="eff-loop">
+      <div class="p25-loop">
+        <div class="p25-ring" id="p25-ring">
+          <svg class="p25-arcs" id="p25-arcs" viewBox="0 0 340 320" aria-hidden="true" focusable="false">
+            <defs>
+              <marker id="p25-arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" class="p25-arrowhead"/></marker>
+              <marker id="p25-arrow-back" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" class="p25-arrowhead-back"/></marker>
+            </defs>
+          </svg>
+          <ol class="p25-stages" id="p25-stages" aria-label="Stages of the loop"></ol>
+          <div class="p25-center">
+            <p class="p25-round" id="p25-round">Round 1</p>
+            <button class="btn btn-secondary p25-next" type="button" id="p25-next">Next stage</button>
+          </div>
+          <p class="p25-back">↺ Learn feeds the next Problem</p>
+        </div>
+        <div class="surface p25-detail" id="p25-detail" aria-live="polite">
+          <div class="p25-d-head"><h4 id="p25-d-name"></h4><span class="p25-owner" id="p25-d-owner"></span></div>
+          <dl class="p25-dl">
+            <dt>Input</dt><dd id="p25-d-in"></dd>
+            <dt>Output</dt><dd id="p25-d-out"></dd>
+            <dt>Lost work on tab close</dt><dd id="p25-d-ex"></dd>
+          </dl>
+        </div>
+      </div>
+      <p class="try"><b>Try it:</b> pick a stage to see what goes in, what comes out and who owns it. Use Next stage (or the arrow keys on a stage) to walk around. After Learn, the loop comes back to Problem for round 2.</p>
+    </div>

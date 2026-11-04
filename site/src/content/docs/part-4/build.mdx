@@ -1,0 +1,304 @@
+---
+title: "Build in small, reviewable steps"
+description: "Plan before any code, then build in small steps that each end with a check."
+eyebrow: "Chapter 29"
+sidebar:
+  label: "Build in steps"
+---
+
+import Raw from '../../../components/Raw.astro';
+import Learned from '../../../components/Learned.astro';
+import Runtime from '../../../components/Runtime.astro';
+import F0 from '../../../fragments/ch-build/0.html?raw';
+import F1 from '../../../fragments/ch-build/1.html?raw';
+import F2 from '../../../fragments/ch-build/2.html?raw';
+import F3 from '../../../fragments/ch-build/3.html?raw';
+import F4 from '../../../fragments/ch-build/4.html?raw';
+import F5 from '../../../fragments/ch-build/5.html?raw';
+import F6 from '../../../fragments/ch-build/6.html?raw';
+import F7 from '../../../fragments/ch-build/7.html?raw';
+import F8 from '../../../fragments/ch-build/8.html?raw';
+import F9 from '../../../fragments/ch-build/9.html?raw';
+import F10 from '../../../fragments/ch-build/10.html?raw';
+import F11 from '../../../fragments/ch-build/11.html?raw';
+import F12 from '../../../fragments/ch-build/12.html?raw';
+import F13 from '../../../fragments/ch-build/13.html?raw';
+import F14 from '../../../fragments/ch-build/14.html?raw';
+import F15 from '../../../fragments/ch-build/15.html?raw';
+import F16 from '../../../fragments/ch-build/16.html?raw';
+import F17 from '../../../fragments/ch-build/17.html?raw';
+import F18 from '../../../fragments/ch-build/18.html?raw';
+import F19 from '../../../fragments/ch-build/19.html?raw';
+import F20 from '../../../fragments/ch-build/20.html?raw';
+import F21 from '../../../fragments/ch-build/21.html?raw';
+
+<Runtime at="start" />
+
+<section class="dfg-chapter" id="ch-build">
+
+Plan before any code, then build in small steps that each end with a check. Agents can run most of the checks, but the calls on what people will see stay yours.
+
+<article class="entry essay" id="eff-small-steps" data-entry data-name="Small steps">
+
+<div class="entry-head">
+
+## Plan, then take small steps \{#eff-small-steps-h\}
+
+<Learned id="eff-small-steps" />
+
+</div>
+
+Before an agent writes code, agree on a plan with it, for example in Claude Code’s plan mode. Then build one small change at a time, and check each change before the next one starts.
+
+Small steps keep mistakes cheap: when a step fails review, only that step goes back. In one big change, a problem in one part sends the whole change back, and it’s harder to find.
+
+<Raw html={F0} />
+
+### Rules \{#eff-small-steps-rules\}
+
+Four rules keep small steps useful.
+
+<div class="cs essay-cs">
+
+<section class="rule" id="eff-small-steps-rule-1">
+
+#### 1. Plan before code \{#eff-small-steps-rule-1-h\}
+
+If you ask an agent to build a whole feature from one prompt, it makes every decision on its own, and you find the wrong ones in review, after the code is written. Ask for a plan first and read it, because changing a step in the plan takes a sentence, and changing it in code can take a day.
+
+<Raw html={F1} />
+
+</section>
+
+<section class="rule" id="eff-small-steps-rule-2">
+
+#### 2. Slice so each step works \{#eff-small-steps-rule-2-h\}
+
+Steps sliced by layer, such as database, then server, then screen, leave nothing to try until the last step lands. Problems then show up all at once, and nobody knows which step caused them. Slice so each step leaves the app working and gives you something to try. If a step can’t stand on its own, merge it behind a feature flag, a switch that keeps new code turned off for people, until the step that completes it lands.
+
+<Raw html={F2} />
+
+</section>
+
+<section class="rule" id="eff-small-steps-rule-3">
+
+#### 3. Give every step a check \{#eff-small-steps-rule-3-h\}
+
+Without a check, a step is “done” when the agent stops typing, so a broken step looks the same as a working one, and the next step builds on it. Write the check into the plan next to each step: a unit test, an end-to-end spec, a screenshot or you trying it. A step is done when its check passes.
+
+<Raw html={F3} />
+
+</section>
+
+<section class="rule" id="eff-small-steps-rule-4">
+
+#### 4. Finish one step before the next \{#eff-small-steps-rule-4-h\}
+
+Open questions about a step don’t go away when the next step starts. Later steps build on the answer, so a late answer can undo several steps of work. Finish the review of one step, open questions included, before the next one starts.
+
+<Raw html={F4} />
+
+</section>
+
+<Raw html={F5} />
+
+</div>
+
+### In real products \{#eff-small-steps-products\}
+
+<Raw html={F6} />
+
+</article>
+
+<article class="entry essay" id="eff-agent-verification" data-entry data-name="Agent checks">
+
+<div class="entry-head">
+
+## Let agents prove their work \{#eff-agent-verification-h\}
+
+<Learned id="eff-agent-verification" />
+
+</div>
+
+When an agent says it’s done, ask it to show the proof: which unit tests ran, the end-to-end specs for the screens it changed, screenshots before and after, and a clean type check. Then you can see what was checked and what wasn’t.
+
+Proof isn’t the same as trying the change. Checks cover only what someone thought to test, so the proof tells you where the agent looked. Trying the change yourself, as in [Check output that looks finished](/part-4/decide/#eff-spot-plausible), covers the rest.
+
+<Raw html={F7} />
+
+### Rules \{#eff-agent-verification-rules\}
+
+Four rules keep this proof useful.
+
+<div class="cs essay-cs">
+
+<section class="rule" id="eff-agent-verification-rule-1">
+
+#### 1. Ask what ran, and see the output \{#eff-agent-verification-rule-1-h\}
+
+“All tests pass” is also true when no tests ran. A new test file can be empty, or the agent can run a folder that doesn’t touch the change. Ask which tests ran and have the agent paste the output. Also read the test diff: an agent can make a failing test pass by changing what the test expects.
+
+<Raw html={F8} />
+
+</section>
+
+<section class="rule" id="eff-agent-verification-rule-2">
+
+#### 2. Run the end-to-end specs for visible changes \{#eff-agent-verification-rule-2-h\}
+
+Unit tests check logic, not screens, so a change can pass every unit test and still move a button people rely on, or break a flow another screen depends on. For anything people see, run the end-to-end specs that touch the changed screens, and compare screenshots from before and after.
+
+<Raw html={F9} />
+
+</section>
+
+<section class="rule" id="eff-agent-verification-rule-3">
+
+#### 3. Get screenshots for each theme, width and state \{#eff-agent-verification-rule-3-h\}
+
+A screenshot in one theme at one width shows only the case that was easiest to check. Ask for light and dark, wide and narrow, and the states that matter, such as empty, error and long names. Each one catches different problems, as [Let an agent run design QA](/part-4/evaluate/#eff-design-qa) shows.
+
+<Raw html={F10} />
+
+</section>
+
+<section class="rule" id="eff-agent-verification-rule-4">
+
+#### 4. Try it yourself anyway \{#eff-agent-verification-rule-4-h\}
+
+Green checks only mean that nothing tested broke, so a case nobody thought of still gets through. Before you approve, [try it in the real app](/part-4/loop/#eff-loop) for a few minutes, the way people will.
+
+<Raw html={F11} />
+
+</section>
+
+<Raw html={F12} />
+
+</div>
+
+### In real products \{#eff-agent-verification-products\}
+
+<Raw html={F13} />
+
+</article>
+
+<article class="entry essay" id="eff-ux-calls" data-entry data-name="UX calls">
+
+<div class="entry-head">
+
+## Call out what people will see \{#eff-ux-calls-h\}
+
+<Learned id="eff-ux-calls" />
+
+</div>
+
+Every change people will see is a design decision: the wording, the spacing, which kind of dialog appears. An agent makes these choices for you if you let it, so treat each one as a proposal: decide on it, then name it in the pull request.
+
+This keeps the decisions with the people who own them. When the pull request describes each visible change, reviewers can judge it, but a change it doesn’t mention gets approved without anyone deciding on it.
+
+<Raw html={F14} />
+
+### Rules \{#eff-ux-calls-rules\}
+
+Four rules keep these calls visible.
+
+<div class="cs essay-cs">
+
+<section class="rule" id="eff-ux-calls-rule-1">
+
+#### 1. Decide on each visible choice \{#eff-ux-calls-rule-1-h\}
+
+An agent fills every gap with a default: generic wording, the nearest dialog, a button that says OK. Each default looks reasonable on its own, so it ships without anyone choosing it. List the choices people will see and decide on each one: keep it, change it or drop it.
+
+<Raw html={F15} />
+
+</section>
+
+<section class="rule" id="eff-ux-calls-rule-2">
+
+#### 2. Keep side changes out \{#eff-ux-calls-rule-2-h\}
+
+Agents often change things on the way: a font size, a color, a label in another screen. Buried in a bigger pull request, these changes ship without review, because the description doesn’t mention them. Drop them, or move them into their own pull request with their own note.
+
+<Raw html={F16} />
+
+</section>
+
+<section class="rule" id="eff-ux-calls-rule-3">
+
+#### 3. Lead with what people will notice \{#eff-ux-calls-rule-3-h\}
+
+Reviewers and teammates read the first lines of a description. If those lines list files and functions, they have to work out from the code what changes for people. Start with what people will notice, in their words, and put the code notes under it.
+
+<Raw html={F17} />
+
+</section>
+
+<section class="rule" id="eff-ux-calls-rule-4">
+
+#### 4. Check before saying “no visible change” \{#eff-ux-calls-rule-4-h\}
+
+Refactors and shared components often change how things look by a few pixels or a color, and saying “no visible change” without checking hides that from reviewers. Compare screenshots from before and after, and skim the diff for new strings, styles and components. If anything differs, describe it as a visible change.
+
+<Raw html={F18} />
+
+</section>
+
+<Raw html={F19} />
+
+</div>
+
+### In real products \{#eff-ux-calls-products\}
+
+<Raw html={F20} />
+
+</article>
+
+<Raw html={F21} />
+
+<aside class="in-short" id="ch-build-in-short" aria-labelledby="ch-build-in-short-h" data-pagefind-ignore>
+
+## In short \{#ch-build-in-short-h\}
+
+<div class="is-grid">
+
+<div>
+
+<a class="is-e" href="#eff-small-steps">Plan, then take small steps</a>
+
+1. [Plan before code](#eff-small-steps-rule-1)
+2. [Slice so each step works](#eff-small-steps-rule-2)
+3. [Give every step a check](#eff-small-steps-rule-3)
+4. [Finish one step before the next](#eff-small-steps-rule-4)
+
+</div>
+
+<div>
+
+<a class="is-e" href="#eff-agent-verification">Let agents prove their work</a>
+
+1. [Ask what ran, and see the output](#eff-agent-verification-rule-1)
+2. [Run the end-to-end specs for visible changes](#eff-agent-verification-rule-2)
+3. [Get screenshots for each theme, width and state](#eff-agent-verification-rule-3)
+4. [Try it yourself anyway](#eff-agent-verification-rule-4)
+
+</div>
+
+<div>
+
+<a class="is-e" href="#eff-ux-calls">Call out what people will see</a>
+
+1. [Decide on each visible choice](#eff-ux-calls-rule-1)
+2. [Keep side changes out](#eff-ux-calls-rule-2)
+3. [Lead with what people will notice](#eff-ux-calls-rule-3)
+4. [Check before saying “no visible change”](#eff-ux-calls-rule-4)
+
+</div>
+
+</div>
+
+</aside>
+
+</section>
+
+<Runtime chapter="ch-build" />

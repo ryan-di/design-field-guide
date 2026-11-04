@@ -1,0 +1,76 @@
+<div class="fm" data-fm>
+  <div class="seg fm-seg" role="radiogroup" aria-label="Way to do it">
+    <input type="radio" name="fm-pat-constraints" id="fm-pat-constraints-1" value="list" checked><label for="fm-pat-constraints-1">List</label>
+    <input type="radio" name="fm-pat-constraints" id="fm-pat-constraints-2" value="limits"><label for="fm-pat-constraints-2">Limits</label>
+    <input type="radio" name="fm-pat-constraints" id="fm-pat-constraints-3" value="off"><label for="fm-pat-constraints-3">Turned off</label>
+    <input type="radio" name="fm-pat-constraints" id="fm-pat-constraints-4" value="split"><label for="fm-pat-constraints-4">Split fields</label>
+  </div>
+  <div class="fm-stage" data-fm-stage></div>
+  <p class="fig-cap" data-fm-when aria-live="polite"></p>
+  
+  <script>
+  (() => {
+    const fm = document.currentScript.closest('[data-fm]'), stage = fm.querySelector('[data-fm-stage]'), when = fm.querySelector('[data-fm-when]');
+    const icon = n => '<svg class="icon"><use href="#i-' + n + '"/></svg>';
+    const frame = (title, body) => '<div class="app-frame fm-frame"><div class="app-bar"><span>' + title + '</span></div><div class="app-body">' + body + '</div></div>';
+    const SIZES = [['s', 'Small', 13], ['m', 'Medium', 15], ['l', 'Large', 18], ['xl', 'Extra large', 21]];
+    const TAKEN = [2, 3, 10, 11, 12, 19, 20, 27, 28, 29];
+    const F = {
+      list: {
+        html: frame('Reader · Text size', '<label class="cs-f">Text size<select class="select" data-sz>' + SIZES.map((s, i) => '<option value="' + s[2] + '"' + (i === 1 ? ' selected' : '') + '>' + s[1] + '</option>').join('') + '</select></label><p class="fmc-read" data-read>It was late when the train finally left the station, and the town lights slid past the window one by one.</p>'),
+        use: 'Use it when the valid values are few and known.',
+        more: 'People only see choices that work, so they never type a wrong one.',
+        wire: s => { const z = s.querySelector('[data-sz]'); z.addEventListener('change', () => { s.querySelector('[data-read]').style.fontSize = z.value + 'px'; }); }
+      },
+      limits: {
+        html: frame('Concert tickets', '<span class="field-label">Tickets</span><div class="fmc-step"><button class="icon-btn" type="button" aria-label="One fewer" data-m>' + icon('minus') + '</button><b data-n aria-live="polite">2</b><button class="icon-btn" type="button" aria-label="One more" data-p>' + icon('plus') + '</button></div><p class="field-help" data-h>Up to 6 tickets per order.</p>'),
+        use: 'Use it for a count or an amount within a range.',
+        more: 'The buttons stop at the limits, and the text says what the limit is.',
+        wire: s => {
+          let n = 2;
+          const out = s.querySelector('[data-n]'), m = s.querySelector('[data-m]'), p = s.querySelector('[data-p]');
+          const draw = () => { out.textContent = n; m.disabled = n <= 1; p.disabled = n >= 6; };
+          m.addEventListener('click', () => { n = Math.max(1, n - 1); draw(); if (m.disabled) p.focus(); });
+          p.addEventListener('click', () => { n = Math.min(6, n + 1); draw(); if (p.disabled) m.focus(); });
+          draw();
+        }
+      },
+      off: {
+        html: frame('Cinema · Screen 2', '<div class="fmc-screen" aria-hidden="true"></div><div class="fmc-seats">' + Array.from({ length: 32 }, (_, i) => '<button class="fmc-seat" type="button" aria-label="Seat ' + (i + 1) + (TAKEN.includes(i) ? ', taken' : '') + '" aria-pressed="false"' + (TAKEN.includes(i) ? ' disabled' : '') + '></button>').join('') + '</div><div class="fmc-key"><span><i></i>Free</span><span><i class="t"></i>Taken</span><span><i class="s"></i>Yours</span></div><p class="cs-meta" data-out></p>'),
+        use: 'Use it when some options exist but can’t be chosen right now.',
+        more: 'People still see the whole picture, and the key says why some choices are off.',
+        wire: s => s.querySelector('.fmc-seats').addEventListener('click', e => {
+          const b = e.target.closest('.fmc-seat'); if (!b || b.disabled) return;
+          b.setAttribute('aria-pressed', String(b.getAttribute('aria-pressed') !== 'true'));
+          const n = s.querySelectorAll('.fmc-seat[aria-pressed="true"]').length;
+          s.querySelector('[data-out]').textContent = n ? n + (n === 1 ? ' seat' : ' seats') + ' selected.' : '';
+        })
+      },
+      split: {
+        html: frame('Sign in · Check your phone', '<span class="field-label">Enter the 6-digit code we sent you</span><div class="fmc-code">' + Array.from({ length: 6 }, (_, i) => '<input class="input" inputmode="numeric" maxlength="1" autocomplete="off" aria-label="Digit ' + (i + 1) + ' of 6">').join('') + '</div><p class="cs-meta" data-out></p>'),
+        use: 'Use it for a value with a fixed shape, like a 6-digit code.',
+        more: 'Each box takes one digit, so the length and the format can’t go wrong.',
+        wire: s => {
+          const ins = [...s.querySelectorAll('.fmc-code input')], out = s.querySelector('[data-out]');
+          const check = () => { const v = ins.map(i => i.value).join(''); out.textContent = v.length === 6 ? 'Code ' + v + ' entered.' : ''; };
+          ins.forEach((inp, i) => {
+            inp.addEventListener('input', () => {
+              const digits = inp.value.replace(/\D/g, '');
+              if (digits.length > 1) { digits.slice(0, 6 - i).split('').forEach((c, k) => { ins[i + k].value = c; }); ins[Math.min(5, i + digits.length - 1)].focus(); }
+              else { inp.value = digits; if (digits && i < 5) ins[i + 1].focus(); }
+              check();
+            });
+            inp.addEventListener('keydown', e => { if (e.key === 'Backspace' && !inp.value && i > 0) ins[i - 1].focus(); });
+          });
+        }
+      }
+    };
+    const show = k => {
+      stage.innerHTML = F[k].html; F[k].wire(stage);
+      when.innerHTML = '<b>' + fm.querySelector('.fm-seg input:checked + label').textContent + '.</b> ' + F[k].use + ' ' + F[k].more;
+    };
+    fm.querySelectorAll('.fm-seg input').forEach(i => i.addEventListener('change', () => show(i.value)));
+    show('list');
+  })();
+  </script>
+</div>

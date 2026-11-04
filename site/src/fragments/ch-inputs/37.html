@@ -1,0 +1,168 @@
+<script>
+(() => {
+  const cs = document.currentScript.closest('.cs');
+  const D = (k, html, wire) => csDemo(cs.querySelector('[data-d="' + k + '"]'), html, wire);
+  const icon = n => '<svg class="icon sm"><use href="#i-' + n + '"/></svg>';
+
+  /* A plain select-style dropdown: a button that opens a list. */
+  const ddHtml = (aria, cur, items, extra) => '<div class="cb-dd"><button class="cb-trig" type="button" aria-haspopup="listbox" aria-expanded="false" aria-label="' + aria + ': ' + cur + '" data-trig><span data-cur>' + cur + '</span><i class="cb-chev" aria-hidden="true"></i></button>' +
+    '<ul class="listbox surface cb-pop" role="listbox" aria-label="' + aria + '" hidden>' + items.map(it => '<li role="option" tabindex="-1" data-v="' + it.v + '" aria-selected="' + (it.v === cur) + '">' + (it.html || it.v) + '</li>').join('') + '</ul>' + (extra || '') + '</div>';
+  const ddWire = (d, aria, onPick, onOpen) => {
+    const wrap = d.querySelector('.cb-dd'), trig = wrap.querySelector('[data-trig]'), pop = wrap.querySelector('.cb-pop'), cur = trig.querySelector('[data-cur]');
+    const opts = () => Array.from(pop.querySelectorAll('[role=option]'));
+    const focusOpt = li => { if (!li) return; li.focus({ preventScroll: true }); if (li.offsetTop < pop.scrollTop || li.offsetTop + li.offsetHeight > pop.scrollTop + pop.clientHeight) pop.scrollTop = li.offsetTop - 6; };
+    const open = () => { pop.hidden = false; trig.setAttribute('aria-expanded', 'true'); const o = opts(); pop.scrollTop = 0; focusOpt(o.find(x => x.getAttribute('aria-selected') === 'true') || o[0]); if (onOpen) onOpen(); };
+    const close = refocus => { pop.hidden = true; trig.setAttribute('aria-expanded', 'false'); if (refocus) trig.focus({ preventScroll: true }); };
+    const pick = li => { opts().forEach(o => o.setAttribute('aria-selected', String(o === li))); cur.textContent = li.dataset.v; trig.setAttribute('aria-label', aria + ': ' + li.dataset.v); close(true); onPick(li.dataset.v); };
+    trig.addEventListener('click', () => (pop.hidden ? open() : close()));
+    trig.addEventListener('keydown', e => { if (e.key === 'ArrowDown' && pop.hidden) { e.preventDefault(); open(); } });
+    pop.addEventListener('click', e => { const li = e.target.closest('[role=option]'); if (li) pick(li); });
+    pop.addEventListener('keydown', e => {
+      const o = opts(), i = o.indexOf(e.target);
+      if (e.key === 'ArrowDown' || e.key === 'ArrowUp') { e.preventDefault(); focusOpt(o[Math.max(0, Math.min(o.length - 1, i + (e.key === 'ArrowDown' ? 1 : -1)))]); }
+      else if (e.key === 'Home' || e.key === 'End') { e.preventDefault(); focusOpt(e.key === 'Home' ? o[0] : o[o.length - 1]); }
+      else if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); if (i >= 0) pick(o[i]); }
+      else if (e.key === 'Escape') { e.preventDefault(); close(true); }
+      else if (e.key === 'Tab') close();
+    });
+    wrap.addEventListener('focusout', e => { if (!wrap.contains(e.relatedTarget)) close(); });
+  };
+  const seg = (name, items, on, aria) => '<div class="cb-seg" role="radiogroup" aria-label="' + aria + '">' + items.map(v => '<label><input type="radio" name="' + name + '" value="' + v + '"' + (v === on ? ' checked' : '') + '><span>' + v + '</span></label>').join('') + '</div>';
+
+  /* 1. Too few */
+  const PRI = ['Low', 'Normal', 'High', 'Urgent'];
+  const fewHtml = (key, fixed) => '<div class="cs-form cb-task"><b class="cb-h">Fix the sign-in bug</b><span class="cs-meta">Due Friday · Maya Lee</span>' +
+    '<div class="cs-f"><span>Priority</span>' + (fixed ? seg(key, PRI, 'Normal', 'Priority') : ddHtml('Priority', 'Normal', PRI.map(v => ({ v })))) + '</div>' +
+    '<p class="cs-meta" data-n></p></div>';
+  const fewWire = fixed => d => {
+    const n = d.querySelector('[data-n]');
+    let clicks = 0;
+    const tick = () => { n.textContent = 'Clicks so far: ' + clicks; };
+    if (fixed) d.querySelectorAll('input').forEach(r => r.addEventListener('change', () => { clicks++; tick(); }));
+    else {
+      ddWire(d, 'Priority', () => {});
+      d.querySelector('[data-trig]').addEventListener('click', () => { clicks++; tick(); });
+      d.querySelector('.cb-pop').addEventListener('click', e => { if (e.target.closest('[role=option]')) { clicks++; tick(); } });
+      d.querySelector('.cb-pop').addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { clicks++; tick(); } }, true);
+    }
+    tick();
+  };
+  D('combobox-1b', fewHtml('combobox-1b', false), fewWire(false));
+  D('combobox-1f', fewHtml('combobox-1f', true), fewWire(true));
+
+  /* 2. Long list */
+  const FONTS = ['Abel', 'Abril Fatface', 'Acme', 'Alegreya', 'Alfa Slab One', 'Amatic SC', 'Anton', 'Archivo', 'Arial', 'Arimo', 'Arvo', 'Asap', 'Assistant', 'Barlow', 'Bebas Neue', 'Bitter', 'Cabin', 'Cairo', 'Caveat', 'Chivo', 'Cinzel', 'Comfortaa', 'Cormorant', 'Crimson Text', 'Dancing Script', 'Dosis', 'EB Garamond', 'Exo 2', 'Fira Sans', 'Fjalla One', 'Georgia', 'Heebo', 'Hind', 'IBM Plex Sans', 'Inconsolata', 'Inter', 'Josefin Sans', 'Jost', 'Kanit', 'Karla', 'Lato', 'Lexend', 'Libre Baskerville', 'Libre Franklin', 'Lobster', 'Lora', 'Manrope', 'Merriweather', 'Montserrat', 'Mukta', 'Mulish', 'Noto Sans', 'Noto Serif', 'Nunito', 'Open Sans', 'Oswald', 'Outfit', 'Overpass', 'Oxygen', 'Pacifico', 'Playfair Display', 'Poppins', 'Prompt', 'PT Sans', 'PT Serif', 'Quicksand', 'Rajdhani', 'Raleway', 'Red Hat Display', 'Righteous', 'Roboto', 'Roboto Condensed', 'Roboto Mono', 'Roboto Slab', 'Rubik', 'Satisfy', 'Signika', 'Source Code Pro', 'Source Sans 3', 'Space Grotesk', 'Space Mono', 'Teko', 'Titillium Web', 'Ubuntu', 'Varela Round', 'Work Sans', 'Zilla Slab'];
+  const RECENT = ['Roboto', 'Lora', 'Open Sans'];
+  const doc = '<div class="cb-doc"><b>Day 1: Lisbon</b><div class="line" style="width:92%"></div><div class="line" style="width:78%"></div><div class="line" style="width:85%"></div><div class="line" style="width:60%"></div></div>';
+  const fontHtml = fixed => '<div class="app-frame" style="width:min(380px,100%)"><div class="app-bar"><span>Trip notes</span></div><div class="app-body cb-body"><div class="cb-tool"><span class="cs-meta">Font</span>' +
+    (fixed
+      ? '<div class="cb-dd"><button class="cb-trig" type="button" aria-haspopup="dialog" aria-expanded="false" aria-label="Font: Arial" data-trig><span data-cur>Arial</span><i class="cb-chev" aria-hidden="true"></i></button>' +
+        '<div class="cb-fpop surface" hidden><div class="cb-search">' + icon('search') + '<input class="input" data-q role="combobox" aria-label="Search fonts" aria-expanded="true" aria-autocomplete="list" autocomplete="off" placeholder="Search fonts"></div><ul class="listbox cb-flist" role="listbox" aria-label="Fonts"></ul></div></div>'
+      : ddHtml('Font', 'Arial', FONTS.map(v => ({ v })))) +
+    '</div>' + doc + '</div></div>';
+  const fontWireB = d => ddWire(d, 'Font', () => {});
+  const fontWireF = d => {
+    const wrap = d.querySelector('.cb-dd'), trig = d.querySelector('[data-trig]'), cur = trig.querySelector('[data-cur]'), pop = d.querySelector('.cb-fpop'), q = d.querySelector('[data-q]'), ul = d.querySelector('.cb-flist');
+    let list = [], act = 0, chosen = 'Arial';
+    const render = () => {
+      const v = q.value.trim().toLowerCase(), m = f => f.toLowerCase().includes(v);
+      const rec = RECENT.filter(m), all = FONTS.filter(f => m(f) && !RECENT.includes(f));
+      list = rec.concat(all); act = Math.max(0, list.indexOf(chosen));
+      if (!list.length) { ul.innerHTML = '<li class="none">No fonts match “' + q.value.replace(/[<&"]/g, '') + '”</li>'; return; }
+      const li = f => '<li role="option" data-v="' + f + '">' + f + (f === chosen ? icon('check') : '') + '</li>';
+      ul.innerHTML = (rec.length ? '<li class="group" role="presentation">Recent</li>' + rec.map(li).join('') : '') +
+        '<li class="group" role="presentation">' + (v ? 'All fonts · ' + all.length + (all.length === 1 ? ' match' : ' matches') : 'All fonts') + '</li>' + all.map(li).join('');
+      mark(false);
+    };
+    const opts = () => Array.from(ul.querySelectorAll('[role=option]'));
+    const mark = scroll => {
+      opts().forEach((li, i) => {
+        li.setAttribute('aria-selected', String(i === act));
+        if (scroll && i === act && (li.offsetTop < ul.scrollTop || li.offsetTop + li.offsetHeight > ul.scrollTop + ul.clientHeight)) ul.scrollTop = li.offsetTop - 30;
+      });
+    };
+    const open = () => { q.value = ''; render(); ul.scrollTop = 0; pop.hidden = false; trig.setAttribute('aria-expanded', 'true'); q.focus({ preventScroll: true }); };
+    const close = refocus => { pop.hidden = true; trig.setAttribute('aria-expanded', 'false'); if (refocus) trig.focus({ preventScroll: true }); };
+    const pick = f => { chosen = f; cur.textContent = f; trig.setAttribute('aria-label', 'Font: ' + f); close(true); };
+    trig.addEventListener('click', () => (pop.hidden ? open() : close()));
+    q.addEventListener('input', () => { render(); act = 0; mark(true); ul.scrollTop = 0; });
+    q.addEventListener('keydown', e => {
+      if (e.key === 'ArrowDown' || e.key === 'ArrowUp') { e.preventDefault(); if (list.length) { act = (act + (e.key === 'ArrowDown' ? 1 : -1) + list.length) % list.length; mark(true); } }
+      else if (e.key === 'Enter') { e.preventDefault(); if (list[act]) pick(list[act]); }
+      else if (e.key === 'Escape') { e.preventDefault(); close(true); }
+    });
+    ul.addEventListener('mousedown', e => e.preventDefault());
+    ul.addEventListener('click', e => { const li = e.target.closest('[role=option]'); if (li) pick(li.dataset.v); });
+    wrap.addEventListener('focusout', e => { if (!wrap.contains(e.relatedTarget)) close(); });
+  };
+  D('combobox-2b', fontHtml(false), fontWireB);
+  D('combobox-2f', fontHtml(true), fontWireF);
+
+  /* 3. Compare looks */
+  const THEMES = [['Atlas', 'a'], ['Juno', 'd'], ['Nova', 'b'], ['Orbit', 'c']];
+  const slide = t => '<i class="t"></i><i class="s"></i><i class="s short"></i>';
+  const themeHtml = (fixed) => '<div class="app-frame" style="width:min(380px,100%)"><div class="app-bar"><span>Slides</span></div><div class="app-body cb-body">' +
+    (fixed
+      ? '<div class="cs-f"><span>Theme</span><div class="cb-gal" role="group" aria-label="Theme">' + THEMES.map((t, i) => '<button type="button" class="cb-th" aria-pressed="' + (i === 0) + '" data-v="' + t[0] + '"><span class="cb-mini" style="background:var(--thumb-' + t[1] + ')">' + slide() + '</span>' + t[0] + '</button>').join('') + '</div></div>'
+      : '<div class="cb-tool"><span class="cs-meta">Theme</span>' + ddHtml('Theme', 'Atlas', THEMES.map(t => ({ v: t[0] }))) + '</div>') +
+    '<div class="cb-slide" data-slide style="background:var(--thumb-a)">' + slide() + '</div><p class="cs-meta" data-n></p></div></div>';
+  const themeWire = fixed => d => {
+    const sl = d.querySelector('[data-slide]'), n = d.querySelector('[data-n]'), tried = new Set(['Atlas']);
+    const tick = () => { n.textContent = 'Themes tried: ' + tried.size; };
+    const apply = v => { sl.style.background = 'var(--thumb-' + THEMES.find(t => t[0] === v)[1] + ')'; tried.add(v); tick(); };
+    if (fixed) d.querySelectorAll('.cb-th').forEach(b => b.addEventListener('click', () => { d.querySelectorAll('.cb-th').forEach(x => x.setAttribute('aria-pressed', String(x === b))); apply(b.dataset.v); }));
+    else ddWire(d, 'Theme', apply);
+    tick();
+  };
+  D('combobox-3b', themeHtml(false), themeWire(false));
+  D('combobox-3f', themeHtml(true), themeWire(true));
+
+  /* 4. Several picks */
+  const PEOPLE = [['Sam Lee', 'sam@mail.com'], ['Priya Nair', 'priya@mail.com'], ['Lena Ortiz', 'lena@mail.com'], ['Tom Baker', 'tom@mail.com']];
+  const person = p => '<span class="cb-pp">' + p[0] + '<small>' + p[1] + '</small></span>';
+  const mailHtml = fixed => '<div class="app-frame" style="width:min(380px,100%)"><div class="app-bar"><span>New message</span></div><div class="app-body cb-body cb-mail">' +
+    '<div class="cb-to"><span class="cs-meta">To</span>' +
+    (fixed
+      ? '<div class="cb-dd cb-chips"><span data-chips class="cb-chiplist"></span><input class="cb-add" data-q role="combobox" aria-label="Add people" aria-expanded="false" aria-autocomplete="list" autocomplete="off" placeholder="Add people"><ul class="listbox surface cb-pop" role="listbox" aria-label="Contacts" hidden></ul></div>'
+      : ddHtml('To', 'Pick someone', PEOPLE.map(p => ({ v: p[0], html: person(p) })))) +
+    '</div><div class="cb-to"><span class="cs-meta">Subject</span><span>Photos from the trip</span></div><div class="line" style="width:88%"></div><div class="line" style="width:70%"></div>' +
+    '<p class="cb-goes" data-goes></p></div></div>';
+  const mailWire = fixed => d => {
+    const goes = d.querySelector('[data-goes]');
+    const show = names => { goes.innerHTML = 'Goes to: <b>' + (names.length ? names.join(', ') : 'nobody yet') + '</b>'; };
+    if (!fixed) { ddWire(d, 'To', v => show([v])); show([]); return; }
+    const wrap = d.querySelector('.cb-dd'), q = d.querySelector('[data-q]'), ul = d.querySelector('.cb-pop'), chips = d.querySelector('[data-chips]');
+    let picked = [], list = [], act = 0;
+    const renderChips = () => {
+      chips.innerHTML = picked.map(n => '<span class="cb-chip">' + n + '<button type="button" aria-label="Remove ' + n + '" data-rm="' + n + '">' + icon('x') + '</button></span>').join('');
+      chips.querySelectorAll('[data-rm]').forEach(b => b.addEventListener('click', () => { picked = picked.filter(x => x !== b.dataset.rm); renderChips(); show(picked); q.focus({ preventScroll: true }); render(); }));
+    };
+    const mark = () => ul.querySelectorAll('[role=option]').forEach((li, i) => li.setAttribute('aria-selected', String(i === act)));
+    const render = () => {
+      const v = q.value.trim().toLowerCase();
+      list = PEOPLE.filter(p => !picked.includes(p[0]) && (p[0] + ' ' + p[1]).toLowerCase().includes(v)); act = 0;
+      ul.innerHTML = list.length ? list.map(p => '<li role="option" data-v="' + p[0] + '">' + person(p) + '</li>').join('') : '<li class="none">' + (v ? 'No contacts match' : 'Everyone is added') + '</li>';
+      mark(); ul.hidden = false; q.setAttribute('aria-expanded', 'true');
+    };
+    const close = () => { ul.hidden = true; q.setAttribute('aria-expanded', 'false'); };
+    const add = n => { if (!n) return; picked.push(n); q.value = ''; renderChips(); show(picked); render(); };
+    q.addEventListener('focus', render);
+    q.addEventListener('input', render);
+    q.addEventListener('keydown', e => {
+      if (e.key === 'ArrowDown' || e.key === 'ArrowUp') { e.preventDefault(); if (ul.hidden) return render(); if (list.length) { act = (act + (e.key === 'ArrowDown' ? 1 : -1) + list.length) % list.length; mark(); } }
+      else if (e.key === 'Enter') { e.preventDefault(); if (!ul.hidden && list[act]) add(list[act][0]); }
+      else if (e.key === 'Escape') close();
+      else if (e.key === 'Backspace' && !q.value && picked.length) { picked.pop(); renderChips(); show(picked); render(); }
+    });
+    ul.addEventListener('mousedown', e => e.preventDefault());
+    ul.addEventListener('click', e => { const li = e.target.closest('[role=option]'); if (li) add(li.dataset.v); });
+    wrap.addEventListener('focusout', e => { if (!wrap.contains(e.relatedTarget)) close(); });
+    show(picked);
+  };
+  D('combobox-4b', mailHtml(false), mailWire(false));
+  D('combobox-4f', mailHtml(true), mailWire(true));
+
+  csInit(cs);
+})();
+
+  </script>

@@ -1,0 +1,322 @@
+---
+title: "Scared to click"
+description: "When an action feels risky, people hesitate: they try fewer settings, explore less and learn the tool more slowly, because any click might cost them work."
+eyebrow: "Chapter 9"
+sidebar:
+  label: "Scared to click"
+---
+
+import Raw from '../../../components/Raw.astro';
+import Learned from '../../../components/Learned.astro';
+import Runtime from '../../../components/Runtime.astro';
+import F0 from '../../../fragments/ch-safety/0.html?raw';
+import F1 from '../../../fragments/ch-safety/1.html?raw';
+import F2 from '../../../fragments/ch-safety/2.html?raw';
+import F3 from '../../../fragments/ch-safety/3.html?raw';
+import F4 from '../../../fragments/ch-safety/4.html?raw';
+import F5 from '../../../fragments/ch-safety/5.html?raw';
+import F6 from '../../../fragments/ch-safety/6.html?raw';
+import F7 from '../../../fragments/ch-safety/7.html?raw';
+import F8 from '../../../fragments/ch-safety/8.html?raw';
+import F9 from '../../../fragments/ch-safety/9.html?raw';
+import F10 from '../../../fragments/ch-safety/10.html?raw';
+import F11 from '../../../fragments/ch-safety/11.html?raw';
+import F12 from '../../../fragments/ch-safety/12.html?raw';
+import F13 from '../../../fragments/ch-safety/13.html?raw';
+import F14 from '../../../fragments/ch-safety/14.html?raw';
+import F15 from '../../../fragments/ch-safety/15.html?raw';
+import F16 from '../../../fragments/ch-safety/16.html?raw';
+import F17 from '../../../fragments/ch-safety/17.html?raw';
+import F18 from '../../../fragments/ch-safety/18.html?raw';
+import F19 from '../../../fragments/ch-safety/19.html?raw';
+import F20 from '../../../fragments/ch-safety/20.html?raw';
+import F21 from '../../../fragments/ch-safety/21.html?raw';
+import F22 from '../../../fragments/ch-safety/22.html?raw';
+import F23 from '../../../fragments/ch-safety/23.html?raw';
+
+<Runtime at="start" />
+
+<section class="dfg-chapter" id="ch-safety">
+
+When an action feels risky, people hesitate: they try fewer settings, explore less and learn the tool more slowly, because any click might cost them work. The patterns in this chapter all make actions safe to try. Undo takes the cost away after the fact, preview shows the result before it happens, and version history keeps a way back to any earlier point.
+
+<article class="entry essay" id="pat-undo" data-entry data-name="Undo">
+
+<div class="entry-head">
+
+## Undo instead of “Are you sure?” \{#pat-undo-h\}
+
+<Learned id="pat-undo" />
+
+</div>
+
+Undo lets people act at once and take the action back afterwards. The app deletes, moves or sends right away and keeps a way back open, so a wrong click costs a second instead of lost work.
+
+A confirm dialog asks “Are you sure?” before the action, when people haven’t seen the result yet, and after a few of them people click through without reading. Undo works after the action, when people can see what they did.
+
+<Raw html={F0} />
+
+### Ways to do it \{#pat-undo-ways\}
+
+Undo comes in four common forms. They differ in how long the way back stays open and where people find it.
+
+<Raw html={F1} />
+
+### Rules \{#pat-undo-rules\}
+
+Four rules keep undo useful.
+
+<div class="cs essay-cs">
+
+<section class="rule" id="pat-undo-rule-1">
+
+#### 1. Plan where deleted things go \{#pat-undo-rule-1-h\}
+
+Undo only works if the deleted thing still exists somewhere. If the app removes it for real and Undo is added later, Undo can only rebuild a rough copy, and people get back a name without the details they cared about. Plan for it in the data model from the start: mark items as deleted and keep them until the way back closes. [Version history](#pat-version-history) uses the same idea.
+
+<Raw html={F2} />
+
+</section>
+
+<section class="rule" id="pat-undo-rule-2">
+
+#### 2. Keep Undo open long enough \{#pat-undo-rule-2-h\}
+
+People often notice a mistake a few seconds late, after they look back at the screen, so an Undo that leaves after two seconds is already gone. Keep it until the next action, or for several seconds after people return to the page. Pause any timer while the pointer or focus is on the toast.
+
+<Raw html={F3} />
+
+</section>
+
+<section class="rule" id="pat-undo-rule-3">
+
+#### 3. Keep a confirm for what can’t be undone \{#pat-undo-rule-3-h\}
+
+Some actions can’t be reversed, such as emptying the trash, sending money or sharing with other people, and without a question one slip loses things for good. Ask first for these actions, and only these. Name the consequence in the question and put the action on the button, such as “Delete 12 files”. See [Dialog](/part-3/dialogs/#dialog).
+
+<Raw html={F4} />
+
+</section>
+
+<section class="rule" id="pat-undo-rule-4">
+
+#### 4. Give more than one way back \{#pat-undo-rule-4-h\}
+
+A [toast](/part-3/feedback/#toast) is easy to miss and leaves after a while, so if Undo lives only there, people who missed it have no way back. Also support Ctrl+Z (⌘Z on Mac) and an Undo item in a menu that names what it will undo. After Undo, put focus on the restored item so keyboard users can carry on.
+
+<Raw html={F5} />
+
+</section>
+
+<Raw html={F6} />
+
+</div>
+
+### In real products \{#pat-undo-products\}
+
+<Raw html={F7} />
+
+</article>
+
+<article class="entry essay" id="pat-preview" data-entry data-name="Preview">
+
+<div class="entry-head">
+
+## Preview before commit \{#pat-preview-h\}
+
+<Learned id="pat-preview" />
+
+</div>
+
+A preview shows what a change will do before it’s applied. People try a setting on their own content, see the result, and then apply it or go back, and nothing changes until they say so.
+
+It suits changes that are slow, costly or hard to reverse. For quick changes that are easy to take back, [undo](#pat-undo) is lighter: the change happens at once, and people step back if they don’t like it.
+
+<Raw html={F8} />
+
+### Ways to do it \{#pat-preview-ways\}
+
+Previews come in three common forms, which differ in where the result shows.
+
+<Raw html={F9} />
+
+### Rules \{#pat-preview-rules\}
+
+Four rules keep previews useful.
+
+<div class="cs essay-cs">
+
+<section class="rule" id="pat-preview-rule-1">
+
+#### 1. Make the preview match the result \{#pat-preview-rule-1-h\}
+
+A preview is only useful if people can trust it. When it’s drawn differently from the real result, small differences slip in, like text that fits in the preview and is cut off in the result, and people stop trusting it. Draw the preview with the same code as the final output, and if it can’t match, label it “Approximate preview”.
+
+<Raw html={F10} />
+
+</section>
+
+<section class="rule" id="pat-preview-rule-2">
+
+#### 2. Keep the preview fast \{#pat-preview-rule-2-h\}
+
+People adjust a setting by watching the result, so if the preview trails behind the control, they overshoot, wait and adjust again, and the control feels sticky. Show a quick rough version right away and finish it when the full one is ready, and hold back slow work while a slider is still moving.
+
+<Raw html={F11} />
+
+</section>
+
+<section class="rule" id="pat-preview-rule-3">
+
+#### 3. Show that it’s a preview \{#pat-preview-rule-3-h\}
+
+People forget they’re in a preview, leave, and believe the change was applied, then find out later that it never happened. Mark the preview with a label and an outline, and keep Apply and Cancel in view the whole time. Put the label in text so screen readers announce it too, and ask before people leave with changes that aren’t applied.
+
+<Raw html={F12} />
+
+</section>
+
+<section class="rule" id="pat-preview-rule-4">
+
+#### 4. Skip it for small changes \{#pat-preview-rule-4-h\}
+
+A preview step on every setting turns each change into two clicks, so people get slower and stop reading the previews. Apply cheap, reversible changes at once and offer [undo](#pat-undo), and keep preview-then-apply for changes that are slow, costly or hard to reverse.
+
+<Raw html={F13} />
+
+</section>
+
+<Raw html={F14} />
+
+</div>
+
+### In real products \{#pat-preview-products\}
+
+<Raw html={F15} />
+
+</article>
+
+<article class="entry essay" id="pat-version-history" data-entry data-name="Version history">
+
+<div class="entry-head">
+
+## Version history & soft delete \{#pat-version-history-h\}
+
+<Learned id="pat-version-history" />
+
+</div>
+
+Version history keeps earlier versions of a document so people can go back to one. A trash does the same for deleted items, which wait there for a while before they’re gone. Both let people make big changes without fear of losing what worked.
+
+Where [undo](#pat-undo) covers the last few seconds, version history covers days and weeks, and it still works after the app was closed.
+
+<Raw html={F16} />
+
+### Ways to do it \{#pat-version-history-ways\}
+
+There are four common forms, which differ in what they cover: a whole document, one value or deleted items.
+
+<Raw html={F17} />
+
+### Rules \{#pat-version-history-rules\}
+
+Four rules keep version history useful.
+
+<div class="cs essay-cs">
+
+<section class="rule" id="pat-version-history-rule-1">
+
+#### 1. Name versions by what changed \{#pat-version-history-rule-1-h\}
+
+A list of times says when something changed, not what changed, so people open one version after another to find the one they want. Describe each version by its change, such as “Added the menu”. Write that line automatically, and let people rename the versions that matter.
+
+<Raw html={F18} />
+
+</section>
+
+<section class="rule" id="pat-version-history-rule-2">
+
+#### 2. Restore as a new version \{#pat-version-history-rule-2-h\}
+
+If restoring an old version deletes everything newer, one wrong restore loses days of work, and people avoid restoring at all. Add the restored version on top as the newest one, so everything newer stays in the history and the restore itself can be undone.
+
+<Raw html={F19} />
+
+</section>
+
+<section class="rule" id="pat-version-history-rule-3">
+
+#### 3. Say what restoring will change \{#pat-version-history-rule-3-h\}
+
+A time doesn’t say what will happen to the current document, so people restore and then find parts missing that they wanted to keep. Show a short summary of the difference next to the Restore button, such as “Removes 2 slides and brings back the old title”. Put it in text, so screen readers read it too.
+
+<Raw html={F20} />
+
+</section>
+
+<section class="rule" id="pat-version-history-rule-4">
+
+#### 4. Say when the trash empties \{#pat-version-history-rule-4-h\}
+
+A trash that empties without warning removes things people still expect to find, and one that never empties grows until nobody can find anything in it. Empty it after a set time, such as 30 days, say so in the trash itself, and show how long each item has left.
+
+<Raw html={F21} />
+
+</section>
+
+<Raw html={F22} />
+
+</div>
+
+### In real products \{#pat-version-history-products\}
+
+<Raw html={F23} />
+
+</article>
+
+<aside class="in-short" id="ch-safety-in-short" aria-labelledby="ch-safety-in-short-h" data-pagefind-ignore>
+
+## In short \{#ch-safety-in-short-h\}
+
+<div class="is-grid">
+
+<div>
+
+<a class="is-e" href="#pat-undo">Undo instead of “Are you sure?”</a>
+
+1. [Plan where deleted things go](#pat-undo-rule-1)
+2. [Keep Undo open long enough](#pat-undo-rule-2)
+3. [Keep a confirm for what can’t be undone](#pat-undo-rule-3)
+4. [Give more than one way back](#pat-undo-rule-4)
+
+</div>
+
+<div>
+
+<a class="is-e" href="#pat-preview">Preview before commit</a>
+
+1. [Make the preview match the result](#pat-preview-rule-1)
+2. [Keep the preview fast](#pat-preview-rule-2)
+3. [Show that it’s a preview](#pat-preview-rule-3)
+4. [Skip it for small changes](#pat-preview-rule-4)
+
+</div>
+
+<div>
+
+<a class="is-e" href="#pat-version-history">Version history & soft delete</a>
+
+1. [Name versions by what changed](#pat-version-history-rule-1)
+2. [Restore as a new version](#pat-version-history-rule-2)
+3. [Say what restoring will change](#pat-version-history-rule-3)
+4. [Say when the trash empties](#pat-version-history-rule-4)
+
+</div>
+
+</div>
+
+</aside>
+
+</section>
+
+<Runtime chapter="ch-safety" />

@@ -1,0 +1,44 @@
+<div class="note comfy cw-wrap">
+      <div class="seg cw-seg" role="radiogroup" aria-label="Example">
+        <input type="radio" name="cw-pat-preview-w" id="cw-pat-preview-w-1" value="photoshop" checked><label for="cw-pat-preview-w-1">Photoshop</label>
+        <input type="radio" name="cw-pat-preview-w" id="cw-pat-preview-w-2" value="github"><label for="cw-pat-preview-w-2">GitHub</label>
+        <input type="radio" name="cw-pat-preview-w" id="cw-pat-preview-w-3" value="word"><label for="cw-pat-preview-w-3">Word</label>
+        <input type="radio" name="cw-pat-preview-w" id="cw-pat-preview-w-4" value="uber"><label for="cw-pat-preview-w-4">Uber</label>
+      </div>
+      <div class="cw" data-cw-view role="img" aria-label=""></div>
+      <p class="cw-cap" data-cw-cap aria-live="polite"></p>
+      
+      <script>
+      (() => {
+        const wrap = document.currentScript.closest('.cw-wrap');
+        const view = wrap.querySelector('[data-cw-view]'), cap = wrap.querySelector('[data-cw-cap]');
+        const line = w => '<i class="cw-line" style="width:' + w + '%"></i>';
+        const cursor = '<svg class="cw-prev-cur" viewBox="0 0 16 20" aria-hidden="true"><path d="M1.5 1.5v15l4-3.6 2.6 5.6 2.6-1.2-2.6-5.4h5.4z"/></svg>';
+        const ride = (name, eta, price, on) => '<div class="cw-prev-ride' + (on ? ' on' : '') + '"><i></i><span><b>' + name + '</b><small>' + eta + '</small></span><em>' + price + '</em></div>';
+        const S = {
+          photoshop: { html: '<div class="cw-prev-win"><div class="cw-prev-ps"><div class="thumb cw-prev-img"></div>' +
+              '<div class="cw-prev-dlg"><b>Blur</b><div class="cw-prev-mid"><span class="cw-prev-sq"><i class="thumb"></i></span><span class="cw-prev-btns"><span class="btn btn-primary">OK</span><span class="btn btn-secondary">Cancel</span><span class="cw-prev-chk">Preview</span></span></div>' +
+              '<span class="cw-prev-sl">Radius<em>4.0 px</em><i></i></span></div></div></div>',
+            alt: 'A blurred image next to a small Blur dialog. The dialog has a preview square, a Radius slider at 4.0 px, a ticked Preview checkbox, and OK and Cancel buttons.',
+            cap: 'Photoshop: filter dialogs show the effect on the image as values change, with a Preview checkbox to compare before and after. Nothing is applied until OK.' },
+          github: { html: '<div class="cw-prev-win"><div class="cw-prev-gh"><div class="cw-prev-tabs"><span>Write</span><span class="on">Preview</span></div>' +
+              '<div class="cw-prev-md"><b>Steps to reproduce</b><ol><li>Open the settings page</li><li>Run <code>npm test</code></li></ol>' + line(70) + '</div>' +
+              '<div class="cw-prev-foot"><span class="btn btn-primary">Comment</span></div></div></div>',
+            alt: 'A comment box with Write and Preview tabs. Preview is open and shows the comment formatted: a bold heading, a numbered list and a code word. A Comment button sits below.',
+            cap: 'GitHub: comment boxes have Write and Preview tabs, so the formatting can be checked before anyone else sees it.' },
+          word: { html: '<div class="cw-prev-win"><div class="cw-prev-rib"><span class="cw-prev-sty"><span>AaBbCc</span><small>Normal</small></span><span class="cw-prev-sty"><span class="h1">AaBbC</span><small>Heading 1</small></span><span class="cw-prev-sty on"><span class="tt">AaB</span><small>Title</small>' + cursor + '</span></div>' +
+              '<div class="cw-prev-doc"><span class="cw-prev-live">Spring newsletter</span>' + line(96) + line(88) + line(92) + line(54) + '</div></div>',
+            alt: 'A style gallery with Normal, Heading 1 and Title. The pointer rests on Title, and the selected line in the document, Spring newsletter, is shown in the Title style while the pointer stays there.',
+            cap: 'Word: resting the pointer on a style or font shows it on your text. Moving away puts it back, and only a click applies it.' },
+          uber: { html: '<div class="cw-prev-phone"><div class="cw-prev-map"><svg viewBox="0 0 200 70" preserveAspectRatio="none" aria-hidden="true"><path d="M20 56 C 60 56, 70 20, 110 26 S 160 14, 182 14" fill="none" stroke="var(--ui-text)" stroke-width="3" stroke-linecap="round"/></svg></div>' +
+              ride('Standard', '4 min away', '$14.20', true) + ride('Comfort', '6 min away', '$17.80') + ride('Large', '9 min away', '$22.50') +
+              '<span class="btn btn-primary">Confirm Standard</span></div>',
+            alt: 'A phone showing a route on a map and three ride options, each with its wait time and price: Standard, Comfort and Large. Standard is picked, and the button below says Confirm Standard.',
+            cap: 'Uber: before you confirm, each ride option shows its price and how soon it arrives.' }
+        };
+        const render = k => { view.innerHTML = S[k].html; view.setAttribute('aria-label', 'Sketch: ' + S[k].alt); cap.textContent = S[k].cap; };
+        wrap.querySelectorAll('input[name="cw-pat-preview-w"]').forEach(r => r.addEventListener('change', () => render(r.value)));
+        render('photoshop');
+      })();
+      </script>
+    </div>

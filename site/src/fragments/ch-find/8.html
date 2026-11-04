@@ -1,0 +1,17 @@
+<div class="stage tall" data-demo="pat-search-filters">
+      <div class="surface p13-lib">
+        <div class="p13-field">
+          <label class="field-label" for="p13-q">Search files</label>
+          <div class="p13-qwrap"><svg class="icon"><use href="#i-search"/></svg><input class="input" id="p13-q" type="search" autocomplete="off" spellcheck="false" placeholder="Name or type"></div>
+        </div>
+        <div class="p13-chips" role="group" aria-label="Filter by type">
+          <button type="button" class="p13-chip" aria-pressed="false" data-type="checkpoint"><svg class="icon sm"><use href="#i-check"/></svg>Documents</button>
+          <button type="button" class="p13-chip" aria-pressed="false" data-type="lora"><svg class="icon sm"><use href="#i-check"/></svg>Photos</button>
+          <button type="button" class="p13-chip" aria-pressed="false" data-type="upscaler"><svg class="icon sm"><use href="#i-check"/></svg>Videos</button>
+        </div>
+        <div class="p13-status"><p id="p13-count"></p><button class="btn btn-ghost" type="button" data-clear hidden>Clear filters</button></div>
+        <div class="p13-results" id="p13-results"></div>
+      </div>
+      <p class="p13-sr" aria-live="polite" data-live></p>
+      <p class="try"><b>Try it:</b> turn on Photos, then type “portrait”: one match is hidden by the filter, and the panel says so. Then type “detial”. Clear the box to see recents, and pick a file to move it to the top.</p>
+    </div>

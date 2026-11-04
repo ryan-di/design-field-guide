@@ -1,0 +1,104 @@
+<script>
+(() => {
+  const cs = document.currentScript.closest('.cs');
+  const D = (k, html, wire) => csDemo(cs.querySelector('[data-d="' + k + '"]'), html, wire);
+  const warn = '<svg class="icon" style="width:15px;height:15px"><use href="#i-warn"/></svg>';
+  const msg = text => '<p class="field-msg">' + warn + '<span>' + text + '</span></p>';
+  const isEmail = v => /^\S+@\S+\.\S+$/.test(v);
+
+  /* 1. Off-screen */
+  const offHtml = fixed => '<div class="cs-form" data-box style="height:290px;overflow:auto">' + (fixed ? '<div data-sum></div>' : '') +
+    '<label class="cs-f">Full name<input class="input" value="Maya Lee"></label>' +
+    '<label class="cs-f">Email<input class="input" data-email placeholder="you@example.com"></label><div class="cs-msgs" data-emsg></div>' +
+    '<label class="cs-f">Street<input class="input" value="12 Harbor Rd"></label>' +
+    '<label class="cs-f">City<input class="input" value="Lisbon"></label>' +
+    '<label class="cs-f">Postcode<input class="input" value="1100-148"></label>' +
+    '<button class="btn btn-primary" type="button" data-submit>Place order</button><p class="cs-ok" data-ok></p></div>';
+  const offWire = fixed => d => {
+    const box = d.querySelector('[data-box]'), email = d.querySelector('[data-email]'), em = d.querySelector('[data-emsg]'), ok = d.querySelector('[data-ok]');
+    let touched = false;
+    const toBottom = () => { if (!touched) box.scrollTop = box.scrollHeight; };
+    box.addEventListener('pointerdown', () => { touched = true; }); box.addEventListener('focusin', () => { touched = true; });
+    toBottom(); d.closest('.cs-case').addEventListener('cs:show', toBottom);
+    if ('IntersectionObserver' in window) new IntersectionObserver((es, o) => { if (es[0].isIntersecting) { toBottom(); o.disconnect(); } }).observe(box);
+    const clear = () => { email.setAttribute('aria-invalid', 'false'); em.innerHTML = ''; const s = d.querySelector('[data-sum]'); if (s) s.innerHTML = ''; };
+    d.querySelector('[data-submit]').addEventListener('click', () => {
+      const bad = !isEmail(email.value.trim());
+      email.setAttribute('aria-invalid', String(bad));
+      em.innerHTML = bad ? msg('Enter an email so we can send tracking.') : '';
+      ok.textContent = bad ? '' : 'Order placed.';
+      if (!fixed || !bad) { if (fixed) d.querySelector('[data-sum]').innerHTML = ''; return; }
+      const sum = d.querySelector('[data-sum]');
+      sum.innerHTML = '<div class="cs-sum" tabindex="-1" role="alert">' + warn + '<span>1 problem: <button class="cs-link" type="button">Email is missing</button></span></div>';
+      box.scrollTop = 0; sum.firstChild.focus({ preventScroll: true });
+      sum.querySelector('.cs-link').addEventListener('click', () => email.focus());
+    });
+    email.addEventListener('input', () => { if (email.getAttribute('aria-invalid') === 'true' && isEmail(email.value.trim())) clear(); });
+  };
+  D('im1b', offHtml(false), offWire(false));
+  D('im1f', offHtml(true), offWire(true));
+
+  /* 2. Pile-up */
+  const ER = [[v => v.length > 0, 'Email is required.'], [v => v.includes('@'), 'Email must contain @.'], [v => /@[^@\s]+/.test(v), 'Add the part after @.'], [v => /@[^@\s]+\.[^@\s]+$/.test(v), 'Must include a domain, like mail.com.'], [v => isEmail(v), 'Must be a valid email address.']];
+  const PR = [[v => v.length >= 8, 'Use at least 8 characters.'], [v => /\d/.test(v), 'Add at least one number.'], [v => /[A-Z]/.test(v), 'Add at least one capital letter.'], [v => /[^A-Za-z0-9]/.test(v), 'Add at least one symbol.']];
+  const pileHtml = '<div class="cs-form"><label class="cs-f">Email<input class="input" data-e value="maya@"></label><div class="cs-msgs" data-em></div>' +
+    '<label class="cs-f">Password<input class="input" data-p value="abc"></label><div class="cs-msgs" data-pm></div>' +
+    '<button class="btn btn-primary" type="button" data-submit>Create account</button><p class="cs-ok" data-ok></p></div>';
+  const pileWire = fixed => d => {
+    const e = d.querySelector('[data-e]'), p = d.querySelector('[data-p]'), em = d.querySelector('[data-em]'), pm = d.querySelector('[data-pm]'), ok = d.querySelector('[data-ok]');
+    const fails = (rules, v) => rules.filter(r => !r[0](v)).map(r => r[1]);
+    d.querySelector('[data-submit]').addEventListener('click', () => {
+      const fe = fails(ER, e.value.trim()), fp = fails(PR, p.value);
+      e.setAttribute('aria-invalid', String(!!fe.length)); p.setAttribute('aria-invalid', String(!!fp.length));
+      if (fixed) {
+        em.innerHTML = fe.length ? msg(e.value.includes('@') ? 'Finish the address, like maya@mail.com.' : fe[0]) : '';
+        pm.innerHTML = fp.length ? msg(fp[0]) : '';
+      } else {
+        em.innerHTML = fe.map(msg).join(''); pm.innerHTML = fp.map(msg).join('');
+      }
+      ok.textContent = fe.length || fp.length ? '' : 'Account created.';
+    });
+  };
+  D('im2b', pileHtml, pileWire(false));
+  D('im2f', pileHtml, pileWire(true));
+
+  /* 3. Too early */
+  const phHtml = '<div class="cs-form"><label class="cs-f">Phone<input class="input" data-ph inputmode="numeric" placeholder="10 digits"></label><span class="field-help">We’ll text you a code.</span><div class="cs-msgs" data-m></div></div>';
+  const phOk = v => v.replace(/\D/g, '').length === 10;
+  const phWire = fixed => d => {
+    const ph = d.querySelector('[data-ph]'), m = d.querySelector('[data-m]');
+    const show = bad => { ph.setAttribute('aria-invalid', String(bad)); m.innerHTML = bad ? msg('Phone number must be 10 digits.') : ''; };
+    if (!fixed) { ph.addEventListener('input', () => show(!phOk(ph.value))); return; }
+    ph.addEventListener('blur', () => show(ph.value.trim() !== '' && !phOk(ph.value)));
+    ph.addEventListener('input', () => { if (ph.getAttribute('aria-invalid') === 'true' && phOk(ph.value)) show(false); });
+  };
+  D('im3b', phHtml, phWire(false));
+  D('im3f', phHtml, phWire(true));
+
+  /* 4. Vague */
+  const dtHtml = '<div class="cs-form"><div style="display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:8px">' +
+    '<label class="cs-f">Check-in<input class="input" type="date" data-in value="2026-11-12" style="padding-inline:8px"></label>' +
+    '<label class="cs-f">Check-out<input class="input" type="date" data-out value="2026-11-10" style="padding-inline:8px"></label></div>' +
+    '<div class="cs-msgs" data-m></div><button class="btn btn-primary" type="button" data-submit>Search stays</button><p class="cs-ok" data-ok></p></div>';
+  const fmt = iso => { const d = new Date(iso + 'T12:00:00'); return d.getDate() + ' ' + d.toLocaleString('en', { month: 'short' }); };
+  const dtWire = fixed => d => {
+    const a = d.querySelector('[data-in]'), b = d.querySelector('[data-out]'), m = d.querySelector('[data-m]'), ok = d.querySelector('[data-ok]');
+    const check = () => {
+      const bad = !a.value || !b.value || b.value <= a.value;
+      b.setAttribute('aria-invalid', String(bad)); ok.textContent = '';
+      if (!bad) { m.innerHTML = ''; const n = Math.round((new Date(b.value) - new Date(a.value)) / 864e5); ok.textContent = 'Searching stays for ' + n + (n === 1 ? ' night…' : ' nights…'); return; }
+      if (!fixed) { m.innerHTML = msg('Invalid date.'); return; }
+      const next = new Date(a.value + 'T12:00:00'); next.setDate(next.getDate() + 1);
+      const iso = next.getFullYear() + '-' + String(next.getMonth() + 1).padStart(2, '0') + '-' + String(next.getDate()).padStart(2, '0');
+      m.innerHTML = msg('Check-out must be after check-in (' + fmt(a.value) + ').') + '<button class="btn btn-secondary cs-sm" type="button" data-fix style="align-self:flex-start">Set check-out to ' + fmt(iso) + '</button>';
+      m.querySelector('[data-fix]').addEventListener('click', () => { b.value = iso; check(); });
+    };
+    d.querySelector('[data-submit]').addEventListener('click', check);
+  };
+  D('im4b', dtHtml, dtWire(false));
+  D('im4f', dtHtml, dtWire(true));
+
+  csInit(cs);
+})();
+
+  </script>

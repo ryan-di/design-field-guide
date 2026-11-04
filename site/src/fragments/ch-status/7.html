@@ -1,0 +1,127 @@
+<script>
+(() => {
+  const cs = document.currentScript.closest('.cs');
+  /* Part 2 sits before the shared case helpers in the book, so wait for them when needed. */
+  const run = () => {
+  const D = (k, html, wire) => csDemo(cs.querySelector('[data-d="' + k + '"]'), html, wire);
+  const icon = n => '<svg class="icon sm" aria-hidden="true"><use href="#i-' + n + '"/></svg>';
+  const css = document.createElement('style');
+  css.textContent = `
+#pat-instant-feedback .if-app{width:min(340px,100%);text-align:left}
+#pat-instant-feedback .if-album{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:5px}
+#pat-instant-feedback .if-album .thumb{aspect-ratio:1;border-radius:5px}
+#pat-instant-feedback .if-share{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+#pat-instant-feedback .if-share .input{flex:1 1 170px}
+#pat-instant-feedback .if-share .input{font:400 13px var(--font-mono);padding:8px 10px;color:var(--ui-muted)}
+#pat-instant-feedback .if-share .btn{flex:none;min-width:112px;justify-content:center}
+#pat-instant-feedback .if-note{font-size:13.5px;text-align:center;max-width:320px;margin:0}
+#pat-instant-feedback .if-note:empty{display:none}
+#pat-instant-feedback .if-cart{position:relative;display:inline-flex;align-items:center;gap:4px;font:500 12.5px var(--font-body);color:var(--ui-muted)}
+#pat-instant-feedback .if-cart b{min-width:18px;height:18px;border-radius:9px;background:var(--ui-hover);color:var(--ui-text);font:700 11px/18px var(--font-body);text-align:center;padding:0 4px}
+#pat-instant-feedback .if-cart b.bump{background:var(--ui-sel);color:var(--ui-on-sel)}
+#pat-instant-feedback .if-prod{display:flex;flex-direction:column;gap:8px}
+#pat-instant-feedback .if-prod .thumb{height:110px;aspect-ratio:auto;border-radius:8px}
+#pat-instant-feedback .if-prod .row{display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap}
+#pat-instant-feedback .if-prod .btn{min-width:130px;justify-content:center}
+#pat-instant-feedback .if-todo .check{padding:7px 0;border-bottom:1px solid var(--ui-border);font-size:14px}
+#pat-instant-feedback .if-todo .check:last-of-type{border-bottom:0}
+#pat-instant-feedback .if-todo .check:has(input:checked) span{text-decoration:line-through;color:var(--ui-muted)}
+#pat-instant-feedback .if-com{display:flex;flex-direction:column;gap:6px;max-height:150px;overflow:auto}
+#pat-instant-feedback .if-c{font-size:13.5px;padding:6px 9px;border-radius:9px;background:var(--ui-hover)}
+#pat-instant-feedback .if-c b{font-weight:600;margin-right:4px}
+#pat-instant-feedback .if-c.dup{box-shadow:inset 0 0 0 1.5px var(--ui-danger)}
+#pat-instant-feedback .if-post{display:flex;gap:8px;flex-wrap:wrap}
+#pat-instant-feedback .if-post .input{flex:1 1 170px}
+#pat-instant-feedback .if-post .input{padding:8px 10px;font-size:14px}
+#pat-instant-feedback .if-post .btn{flex:none;min-width:104px;justify-content:center}
+#pat-instant-feedback .cs-toasts .toast{font-size:13.5px;padding:7px 10px}
+`;
+  cs.appendChild(css);
+
+  /* 1. Flashes by: copy link */
+  const copyHtml = '<div class="app-frame if-app"><div class="app-bar"><span>Share “Lisbon 2026”</span></div><div class="app-body"><div class="if-album"><i class="thumb"></i><i class="thumb b"></i><i class="thumb c"></i></div>' +
+    '<div class="if-share"><input class="input" value="photos.example/lisbon-26" readonly aria-label="Album link"><button class="btn btn-secondary cs-sm" type="button" data-copy>Copy link</button></div></div></div><p class="if-note" data-note aria-live="polite"></p>';
+  const copyWire = fixed => (d, t) => {
+    const b = d.querySelector('[data-copy]'), note = d.querySelector('[data-note]');
+    let presses = 0, timer = null;
+    b.addEventListener('click', () => {
+      presses++;
+      b.innerHTML = icon('check') + 'Copied'; b.classList.add('is-success');
+      note.textContent = presses > 1 ? 'You pressed it ' + presses + ' times.' : '';
+      if (timer) clearTimeout(timer);
+      timer = t.after(() => { b.textContent = 'Copy link'; b.classList.remove('is-success'); }, fixed ? 2000 : 250);
+    });
+  };
+  D('pat-instant-feedback-1b', copyHtml, copyWire(false));
+  D('pat-instant-feedback-1f', copyHtml, copyWire(true));
+
+  /* 2. Far away: add to cart */
+  const cartHtml = '<div class="app-frame if-app"><div class="app-bar"><span>Shop</span><span class="if-cart" aria-live="polite">Cart <b data-n>0</b></span></div><div class="app-body if-prod"><i class="thumb b"></i><b>Wireless headphones</b>' +
+    '<div class="row"><span>$79.00</span><button class="btn btn-primary cs-sm" type="button" data-add>Add to cart</button></div></div></div><p class="if-note" data-note></p>';
+  const cartWire = fixed => (d, t) => {
+    const b = d.querySelector('[data-add]'), n = d.querySelector('[data-n]'), note = d.querySelector('[data-note]');
+    let count = 0, timer = null;
+    b.addEventListener('click', () => {
+      count++; n.textContent = String(count);
+      if (count > 1) note.textContent = count + ' headphones are in the cart now.';
+      if (!fixed) return;
+      n.classList.add('bump');
+      b.innerHTML = icon('check') + 'Added'; b.classList.add('is-success');
+      if (timer) clearTimeout(timer);
+      timer = t.after(() => { b.textContent = 'Add another'; b.classList.remove('is-success'); n.classList.remove('bump'); }, 2000);
+    });
+  };
+  D('pat-instant-feedback-2b', cartHtml, cartWire(false));
+  D('pat-instant-feedback-2f', cartHtml, cartWire(true));
+
+  /* 3. Everything loud: to-do list */
+  const todoHtml = '<div class="app-frame if-app"><div class="app-bar"><span>Weekend</span><button class="btn btn-secondary cs-sm" type="button" data-share>Share with Sam</button></div><div class="app-body if-todo">' +
+    ['Buy plants', 'Call grandma', 'Fix the bike', 'Book a table'].map(x => '<label class="check"><input type="checkbox"><span>' + x + '</span></label>').join('') + '</div></div>';
+  const todoWire = fixed => (d, t) => {
+    d.querySelectorAll('input[type="checkbox"]').forEach(c => c.addEventListener('change', () => {
+      if (!fixed) csToast(d, t, 'Task updated!', { ms: 6000 });
+    }));
+    d.querySelector('[data-share]').addEventListener('click', e => {
+      e.target.disabled = true; e.target.textContent = 'Shared';
+      csToast(d, t, 'List shared with Sam. Sam can edit it.', { ms: 6000 });
+    });
+  };
+  D('pat-instant-feedback-3b', todoHtml, todoWire(false));
+  D('pat-instant-feedback-3f', todoHtml, todoWire(true));
+
+  /* 4. Repeat clicks: post a comment */
+  const postHtml = '<div class="app-frame if-app"><div class="app-bar"><span>Recipe · Lemon pasta</span><span class="cs-meta" data-n>1 comment</span></div><div class="app-body"><div class="if-com" data-list><p class="if-c"><b>Ana</b>Made it twice this week!</p></div>' +
+    '<div class="if-post"><input class="input" value="Lovely with extra basil" aria-label="Comment" data-in><button class="btn btn-primary cs-sm" type="button" data-post>Post</button></div></div></div><p class="if-note" data-note aria-live="polite"></p>';
+  const postWire = fixed => (d, t) => {
+    const b = d.querySelector('[data-post]'), list = d.querySelector('[data-list]'), input = d.querySelector('[data-in]'), n = d.querySelector('[data-n]'), note = d.querySelector('[data-note]');
+    let busy = false, sent = 0;
+    const add = text => {
+      const p = document.createElement('p'); p.className = 'if-c';
+      const dup = Array.from(list.querySelectorAll('.if-c')).some(x => x.textContent === 'You' + text);
+      if (dup) p.classList.add('dup');
+      p.innerHTML = '<b>You</b>'; p.append(text); list.appendChild(p);
+      const k = list.children.length; n.textContent = k + ' comments';
+      if (dup) note.textContent = 'Your comment was posted twice.';
+    };
+    b.addEventListener('click', () => {
+      const text = input.value.trim() || 'Lovely with extra basil';
+      if (fixed) {
+        if (busy) { note.textContent = 'Still posting. The extra click was ignored.'; return; }
+        busy = true; b.setAttribute('aria-disabled', 'true'); b.classList.add('busy');
+        b.innerHTML = '<span class="spinner" aria-hidden="true"></span>Posting…';
+        t.after(() => { busy = false; b.removeAttribute('aria-disabled'); b.classList.remove('busy'); b.textContent = 'Post'; add(text); input.value = ''; }, 1200);
+        return;
+      }
+      sent++;
+      t.after(() => { add(text); if (--sent === 0) input.value = ''; }, 1200);
+    });
+  };
+  D('pat-instant-feedback-4b', postHtml, postWire(false));
+  D('pat-instant-feedback-4f', postHtml, postWire(true));
+
+  csInit(cs);
+  };
+  if (window.csDemo) run(); else document.addEventListener('DOMContentLoaded', run);
+})();
+
+</script>

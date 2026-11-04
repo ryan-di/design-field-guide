@@ -1,0 +1,156 @@
+<script>
+(() => {
+  const cs = document.currentScript.closest('.cs');
+  const D = (k, html, wire) => csDemo(cs.querySelector('[data-d="' + k + '"]'), html, wire);
+  const icon = n => '<svg class="icon" style="width:16px;height:16px"><use href="#i-' + n + '"/></svg>';
+  const msg = text => '<p class="field-msg">' + icon('warn') + '<span>' + text + '</span></p>';
+
+  /* 1. Known format: a date typed as text */
+  const MON = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+  const DAY = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+  const TODAY = new Date(2026, 9, 23);
+  const fmt = dt => DAY[dt.getDay()] + ', ' + dt.getDate() + ' ' + MON[dt.getMonth()] + ' ' + dt.getFullYear();
+  const mk = (d, m, y) => {
+    if (m < 0 || m > 11 || d < 1) return null;
+    let dt = new Date(y || 2026, m, d);
+    if (dt.getMonth() !== m) return null;
+    if (!y && dt < TODAY) dt = new Date(2027, m, d);
+    return dt;
+  };
+  const yr = s => (s ? (s.length === 2 ? 2000 + +s : +s) : 0);
+  const mon = s => MON.findIndex(m => s.toLowerCase().startsWith(m.toLowerCase()));
+  /* returns every date the text could mean */
+  const readings = raw => {
+    const v = raw.trim().replace(/^[a-z]{3},?\s+/i, '');
+    let r = v.match(/^(\d{1,2})\s*[\/.-]\s*(\d{1,2})(?:\s*[\/.-]\s*(\d{2}|\d{4}))?$/);
+    if (r) {
+      const a = +r[1], b = +r[2], y = yr(r[3]);
+      const out = [mk(a, b - 1, y), mk(b, a - 1, y)].filter(Boolean);
+      return out.length === 2 && out[0].getTime() === out[1].getTime() ? [out[0]] : out;
+    }
+    r = v.match(/^(\d{1,2})\s+([a-z]{3,})\.?,?(?:\s+(\d{4}))?$/i) || v.match(/^([a-z]{3,})\.?\s+(\d{1,2}),?(?:\s+(\d{4}))?$/i);
+    if (r) {
+      const num = /^\d/.test(r[1]) ? +r[1] : +r[2], m = mon(/^\d/.test(r[1]) ? r[2] : r[1]);
+      const dt = m < 0 ? null : mk(num, m, yr(r[3]));
+      return dt ? [dt] : [];
+    }
+    return [];
+  };
+  const dateHtml = fixed => '<div class="cs-form"><span class="tf-h">Hotels in Lisbon</span>' +
+    '<label class="cs-f">Check-in<input class="input" data-in placeholder="Date" autocomplete="off"></label>' +
+    (fixed ? '<div data-read aria-live="polite"></div>' : '') +
+    '<button class="btn btn-primary" type="button" data-go>Search hotels</button><p class="cs-meta" data-out aria-live="polite"></p></div>';
+  D('text-field-1b', dateHtml(false), d => {
+    const inp = d.querySelector('[data-in]'), out = d.querySelector('[data-out]');
+    d.querySelector('[data-go]').addEventListener('click', () => {
+      /* this site always reads day/month, and never says so */
+      const dm = inp.value.match(/^\s*(\d{1,2})\s*[\/.-]\s*(\d{1,2})/);
+      const dt = dm ? mk(+dm[1], +dm[2] - 1, 0) : readings(inp.value)[0];
+      out.textContent = dt ? '24 hotels from ' + fmt(dt) : 'Enter a valid date.';
+    });
+  });
+  D('text-field-1f', dateHtml(true), d => {
+    const inp = d.querySelector('[data-in]'), out = d.querySelector('[data-out]'), read = d.querySelector('[data-read]');
+    let chosen = null;
+    const show = () => {
+      out.textContent = '';
+      const r = chosen ? [chosen] : readings(inp.value);
+      if (!inp.value.trim()) { read.innerHTML = ''; return r; }
+      if (r.length === 1) { read.innerHTML = '<p class="tf-read">' + icon('check') + '<span>' + fmt(r[0]) + '</span></p>'; return r; }
+      if (!r.length) { read.innerHTML = '<p class="tf-read tf-quiet">Type a date, like 11 Dec.</p>'; return r; }
+      read.innerHTML = '<p class="tf-read">“' + inp.value.trim().replace(/[<&]/g, '') + '” could be two days. Which one?</p><div class="tf-pick"></div>';
+      r.forEach(dt => {
+        const b = document.createElement('button'); b.type = 'button'; b.className = 'btn btn-secondary cs-sm'; b.textContent = fmt(dt).replace(/ \d{4}$/, '');
+        b.addEventListener('click', () => { chosen = dt; inp.value = fmt(dt); show(); inp.focus(); });
+        read.querySelector('.tf-pick').appendChild(b);
+      });
+      return r;
+    };
+    inp.addEventListener('input', () => { chosen = null; show(); });
+    d.querySelector('[data-go]').addEventListener('click', () => {
+      const r = show();
+      if (r.length === 1) out.textContent = '24 hotels from ' + fmt(r[0]);
+      else if (r.length > 1) { out.textContent = 'Pick the date you mean first.'; read.querySelector('.tf-pick button').focus(); }
+      else { inp.focus(); }
+    });
+  });
+
+  /* 2. Placeholder as label: autofill swaps two values */
+  const FIELDS = [['Street', '12 Harbor Rd'], ['Apt / suite', '1100-148'], ['City', 'Lisbon'], ['Postcode', '4B']];
+  const addrHtml = fixed => '<div class="cs-form"><div class="tf-top"><span class="tf-h">Delivery address</span>' +
+    '<button class="btn btn-secondary cs-sm" type="button" data-fill>Use saved address</button></div>' +
+    FIELDS.map(([lab], i) => fixed
+      ? '<label class="cs-f">' + lab + '<input class="input" data-f="' + i + '"' + (i === 1 ? ' placeholder="Optional"' : '') + '></label>'
+      : '<input class="input" data-f="' + i + '" placeholder="' + lab + '" aria-label="' + lab + '">').join('') +
+    '<p class="cs-ok" data-ok aria-live="polite"></p></div>';
+  const addrWire = (d) => {
+    const ins = Array.from(d.querySelectorAll('[data-f]')), ok = d.querySelector('[data-ok]');
+    const check = () => { ok.textContent = ins[1].value.trim().toUpperCase() === '4B' && ins[3].value.trim() === '1100-148' ? 'Looks right now.' : ''; };
+    d.querySelector('[data-fill]').addEventListener('click', () => { ins.forEach((x, i) => { x.value = FIELDS[i][1]; }); check(); });
+    ins.forEach(x => x.addEventListener('input', check));
+  };
+  D('text-field-2b', addrHtml(false), addrWire);
+  D('text-field-2f', addrHtml(true), addrWire);
+
+  /* 3. Long text */
+  const REVIEW = 'Fits well and the fabric is soft, but the sleeves run long, so size down if you’re between sizes.';
+  const MAX = 160;
+  const revHtml = fixed => '<div class="cs-form"><span class="tf-h">Linen shirt · Your review</span>' +
+    '<div class="tf-stars" aria-label="4 of 5 stars">★★★★<span>★</span></div>' +
+    (fixed
+      ? '<label class="cs-f">Review<textarea class="input tf-grow" data-r rows="2" maxlength="' + MAX + '"></textarea></label><span class="tf-count" data-c aria-live="polite"></span>'
+      : '<label class="cs-f">Review<input class="input" data-r maxlength="' + MAX + '"></label>') +
+    '<button class="btn btn-primary" type="button" data-post>Post review</button><p class="cs-ok" data-ok></p></div>';
+  const revWire = fixed => d => {
+    const r = d.querySelector('[data-r]'), c = d.querySelector('[data-c]'), ok = d.querySelector('[data-ok]');
+    r.value = REVIEW;
+    const fit = () => {
+      if (!fixed) return;
+      r.style.height = 'auto'; r.style.height = r.scrollHeight + 3 + 'px';
+      const n = r.value.length;
+      c.textContent = n + ' / ' + MAX + (n >= MAX ? ' · limit reached' : '');
+      c.classList.toggle('over', n >= MAX - 10);
+    };
+    fit();
+    /* hidden demos have no size yet: refit once the box gets a width, and when the width changes */
+    let w = 0;
+    if (fixed) new ResizeObserver(() => { if (r.clientWidth && r.clientWidth !== w) { w = r.clientWidth; fit(); } }).observe(r);
+    r.addEventListener('input', () => { ok.textContent = ''; fit(); });
+    d.querySelector('[data-post]').addEventListener('click', () => { ok.textContent = 'Review posted.'; });
+  };
+  D('text-field-3b', revHtml(false), revWire(false));
+  D('text-field-3f', revHtml(true), revWire(true));
+
+  /* 4. No fix offered */
+  const TAKEN = ['maya.lee', 'mayalee', 'maya_lee', 'maya', 'maya.l', 'mlee', 'maya.lee1'];
+  const free = base => { let n = 2; while (TAKEN.includes(base + n)) n++; return base + n; };
+  const userHtml = '<div class="cs-form"><span class="tf-h">Create your account</span>' +
+    '<label class="cs-f">Username<input class="input" data-u value="maya.lee" autocomplete="off" spellcheck="false"></label><div class="cs-msgs" data-m></div>' +
+    '<button class="btn btn-primary" type="button" data-go>Create account</button><p class="cs-ok" data-ok aria-live="polite"></p></div>';
+  const userWire = fixed => d => {
+    const u = d.querySelector('[data-u]'), m = d.querySelector('[data-m]'), ok = d.querySelector('[data-ok]');
+    const problem = v => {
+      if (v.length < 3) return 'Use at least 3 characters.';
+      if (!/^[a-z0-9._]+$/i.test(v)) return 'Use only letters, numbers, dots and underscores.';
+      if (TAKEN.includes(v.toLowerCase())) return 'taken';
+      return '';
+    };
+    d.querySelector('[data-go]').addEventListener('click', () => {
+      const v = u.value.trim(), p = problem(v);
+      u.setAttribute('aria-invalid', String(!!p)); ok.textContent = p ? '' : 'Account created for ' + v + '.';
+      if (!p) { m.innerHTML = ''; return; }
+      if (!fixed) { m.innerHTML = msg('Invalid username.'); return; }
+      if (p !== 'taken') { m.innerHTML = msg(p); return; }
+      const s = free(v.toLowerCase());
+      m.innerHTML = msg('That username is taken. Try ‘' + s + '’.') + '<button class="btn btn-secondary cs-sm" type="button" data-use style="align-self:flex-start">Use ' + s + '</button>';
+      m.querySelector('[data-use]').addEventListener('click', () => { u.value = s; u.setAttribute('aria-invalid', 'false'); m.innerHTML = ''; u.focus(); });
+    });
+    u.addEventListener('input', () => { ok.textContent = ''; });
+  };
+  D('text-field-4b', userHtml, userWire(false));
+  D('text-field-4f', userHtml, userWire(true));
+
+  csInit(cs);
+})();
+
+  </script>

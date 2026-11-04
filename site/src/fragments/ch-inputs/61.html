@@ -1,0 +1,49 @@
+<div class="note comfy cw-wrap"><p>Notice how each picker gives a fast path for the common case and a way to be exact: presets, context inside the calendar, or plain typing.</p>
+  <div class="seg cw-seg" role="radiogroup" aria-label="Example">
+    <input type="radio" name="cw-picker-w" id="cw-picker-w-1" value="gmail" checked><label for="cw-picker-w-1">Gmail</label>
+    <input type="radio" name="cw-picker-w" id="cw-picker-w-2" value="flights"><label for="cw-picker-w-2">Google Flights</label>
+    <input type="radio" name="cw-picker-w" id="cw-picker-w-3" value="figma"><label for="cw-picker-w-3">Figma</label>
+    <input type="radio" name="cw-picker-w" id="cw-picker-w-4" value="todoist"><label for="cw-picker-w-4">Todoist</label>
+  </div>
+  <div class="cw" data-cw-view role="img" aria-label=""></div>
+  <p class="cw-cap" data-cw-cap aria-live="polite"></p>
+  
+  <script>
+  (() => {
+    const wrap = document.currentScript.closest('.cw-wrap');
+    const view = wrap.querySelector('[data-cw-view]'), cap = wrap.querySelector('[data-cw-cap]');
+    const ic = id => '<svg class="icon sm"><use href="#i-' + id + '"/></svg>';
+    const svg = inner => '<svg class="icon sm" viewBox="0 0 24 24">' + inner + '</svg>';
+    const cal = svg('<rect x="4" y="5" width="16" height="15" rx="2"/><path d="M4 10h16M9 3v4M15 3v4"/>');
+    const drop = svg('<path d="M14.5 5.5l4 4M17 3.5a2.1 2.1 0 0 1 3 3l-2 2-3-3zM15 8l-9 9-1 3 3-1 9-9"/>');
+    const flag = svg('<path d="M5 21V4h11l-2 4 2 4H5"/>');
+    const caret = '<i class="cw-wpk-caret"></i>';
+    const opt = (t, when, on) => '<span class="cw-wpk-opt' + (on ? ' on' : '') + '">' + t + '<small>' + when + '</small></span>';
+    const prices = [248, 231, 189, 176, 214, 262, 255, 240, 182, 171, 198, 236, 270, 251];
+    const days = ['S', 'M', 'T', 'W', 'T', 'F', 'S'].map(d => '<i>' + d + '</i>').join('')
+      + prices.map((p, i) => { const d = 11 + i; const cls = d === 14 || d === 18 ? ' end' : (d > 14 && d < 18 ? ' mid' : '');
+        return '<span class="cw-wpk-d' + cls + '">' + d + '<small class="' + (p < 200 ? 'lo' : '') + '">' + p + '</small></span>'; }).join('');
+    const S = {
+      gmail: { html: '<div class="cw-wpk-pane"><b>Schedule send</b>' + opt('Tomorrow morning', 'Oct 24, 8:00 AM', true) + opt('Tomorrow afternoon', 'Oct 24, 1:00 PM') + opt('Monday morning', 'Oct 26, 8:00 AM')
+          + '<span class="cw-wpk-hr"></span>' + opt(cal + 'Pick date and time', '') + '</div>',
+        alt: 'A Schedule send menu with three presets, each showing its date and time: tomorrow morning, tomorrow afternoon and Monday morning. Below a line, an item opens a full date and time picker.',
+        cap: 'Gmail: Schedule send offers a few presets like tomorrow morning, each with its exact date and time, and a full picker for anything else. Most picks take one click.' },
+      flights: { html: '<div class="cw-wpk-pane"><div class="cw-wpk-trip"><span><small>Departure</small>Wed, Oct 14</span><span><small>Return</small>Sun, Oct 18</span></div><b>October <small style="font-weight:400;color:var(--ui-muted);font-size:11.5px">· prices in $</small></b><div class="cw-wpk-cal">' + days + '</div></div>',
+        alt: 'A two-week calendar with a price in dollars under every day. Cheaper days are shown in a different color. A trip from the 14th to the 18th is selected.',
+        cap: 'Google Flights: the date picker shows a price under each day, with the cheaper days in a different color. People pick dates with the cost in view.' },
+      figma: { html: '<div class="cw-wpk-pane"><span class="cw-wpk-area"><i></i></span><span class="cw-wpk-hue"><i></i></span>'
+          + '<div class="cw-wpk-hex"><span class="cw-wpk-ib on">' + drop + '</span><span class="cw-wpk-fld k">Hex ▾</span><span class="cw-wpk-fld on">E7B49B' + caret + '</span><span class="cw-wpk-fld">100%</span></div></div>',
+        alt: 'A color picker: a color area with a handle, a hue strip, and below them an eyedropper button, a hex field being typed in, and an opacity field.',
+        cap: 'Figma: the color picker pairs a color area with a hex field and an eyedropper. People can point, type the exact code, or take a color from the canvas.' },
+      todoist: { html: '<div class="cw-wpk-pane"><div class="cw-wpk-task"><span>Call the printer <span class="cw-wpk-hl">tomorrow 3pm</span>' + caret + '</span>'
+          + '<span class="cw-wpk-chips"><span class="cw-wpk-chip on">' + cal + 'Tomorrow 3:00 PM</span><span class="cw-wpk-chip">' + flag + 'Priority</span></span></div>'
+          + '<div class="cw-wpk-acts"><span class="btn btn-ghost cw-wpk-btn">Cancel</span><span class="btn btn-primary cw-wpk-btn">Add task</span></div></div>',
+        alt: 'A new task being typed: Call the printer tomorrow 3pm. The words tomorrow 3pm are highlighted, and a due date chip below already says Tomorrow 3:00 PM.',
+        cap: 'Todoist: typing a date in plain words, like “tomorrow 3pm”, highlights it and sets the due date. People who know the date never open a calendar.' }
+    };
+    const render = k => { view.innerHTML = S[k].html; view.setAttribute('aria-label', 'Sketch: ' + S[k].alt); cap.textContent = S[k].cap; };
+    wrap.querySelectorAll('input[name="cw-picker-w"]').forEach(r => r.addEventListener('change', () => render(r.value)));
+    render('gmail');
+  })();
+  </script>
+</div>

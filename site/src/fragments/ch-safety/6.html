@@ -1,0 +1,190 @@
+<script>
+(() => {
+  const cs = document.currentScript.closest('.cs');
+  /* Part 2 sits before the shared case helpers in the book, so wait for them when needed. */
+  const run = () => {
+  const D = (k, html, wire) => csDemo(cs.querySelector('[data-d="' + k + '"]'), html, wire);
+  const icon = n => '<svg class="icon sm"><use href="#i-' + n + '"/></svg>';
+  const css = document.createElement('style');
+  css.textContent = `
+#pat-undo .pu-app{width:min(340px,100%)}
+#pat-undo .pu-app .app-body{gap:0;padding:6px 14px}
+#pat-undo .pu-c{display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid var(--ui-border);font-size:14px}
+#pat-undo .pu-c:last-child{border-bottom:0}
+#pat-undo .pu-c .grow{flex:1;min-width:0;display:flex;flex-direction:column;gap:2px}
+#pat-undo .pu-c .grow > *{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#pat-undo .pu-av{flex:none;width:32px;height:32px;border-radius:50%;display:grid;place-items:center;background:var(--ui-sel-soft);color:var(--ui-text);font:600 12.5px var(--font-body)}
+#pat-undo .pu-c.pu-bad .pu-av{background:var(--ui-hover);color:var(--ui-muted)}
+#pat-undo .pu-c.pu-bad .cs-meta{color:var(--ui-danger)}
+#pat-undo .pu-c .icon-btn{width:34px;height:34px;flex:none}
+#pat-undo .pu-note{font-size:13.5px;color:var(--ui-text);text-align:center;max-width:320px;min-height:20px;margin:0}
+#pat-undo .pu-note:empty{display:none}
+#pat-undo .pu-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px;padding:10px}
+#pat-undo .pu-ph{position:relative;border:0;padding:0;cursor:pointer;aspect-ratio:1;border-radius:6px;display:grid;place-items:center;color:var(--ui-text)}
+#pat-undo .pu-ph .icon{position:absolute;right:5px;top:5px;opacity:.85;background:var(--ui-surface);border-radius:6px;padding:3px;width:24px;height:24px}
+#pat-undo .pu-ph:hover .icon,#pat-undo .pu-ph:focus-visible .icon{opacity:1}
+#pat-undo .pu-ph:focus-visible{outline:3px solid var(--ui-sel);outline-offset:2px}
+#pat-undo .pu-gap{aspect-ratio:1;border-radius:6px;border:1.5px dashed var(--ui-border)}
+#pat-undo .pu-file{display:flex;align-items:center;gap:8px;padding:7px 0;border-bottom:1px solid var(--ui-border);font-size:14px}
+#pat-undo .pu-file:last-child{border-bottom:0}
+#pat-undo .pu-file .icon{color:var(--ui-muted)}
+#pat-undo .pu-file .grow{flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#pat-undo .pu-empty{padding:18px 0;text-align:center;color:var(--ui-muted);font-size:14px}
+#pat-undo .pu-mail{display:flex;align-items:center;gap:8px;padding:8px 0;border-bottom:1px solid var(--ui-border);font-size:14px}
+#pat-undo .pu-mail:last-child{border-bottom:0}
+#pat-undo .pu-mail .grow{flex:1;min-width:0;display:flex;flex-direction:column}
+#pat-undo .pu-mail .grow > *{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#pat-undo .pu-rel{position:relative;overflow:visible}
+#pat-undo .pu-edit{position:absolute;top:44px;left:10px;z-index:2;min-width:min(250px,calc(100% - 20px));background:var(--ui-surface);border:1px solid var(--ui-border);border-radius:9px;box-shadow:var(--ui-shadow);padding:4px;display:flex;flex-direction:column}
+#pat-undo .pu-edit[hidden]{display:none}
+#pat-undo .pu-mi{all:unset;cursor:pointer;display:flex;justify-content:space-between;gap:12px;padding:7px 9px;border-radius:6px;font:500 13.5px var(--font-body);color:var(--ui-text)}
+#pat-undo .pu-mi:hover,#pat-undo .pu-mi:focus-visible{background:var(--ui-hover)}
+#pat-undo .pu-mi:focus-visible{outline:2px solid var(--ui-sel)}
+#pat-undo .pu-mi[aria-disabled="true"]{color:var(--ui-muted);cursor:default}
+#pat-undo .pu-mi kbd{font:500 12px var(--font-mono);color:var(--ui-muted)}
+#pat-undo .pu-back{animation:pu-flash 1.4s ease-out}
+@keyframes pu-flash{from{background:var(--ui-sel-soft)}}
+`;
+  cs.appendChild(css);
+
+  /* 1. Undo added late: contacts */
+  const PEOPLE = [['Maya Chen', 'MC', '+1 415 555 0132', 'maya@chen.me'], ['Omar Haddad', 'OH', '+1 212 555 0187', 'omar.h@mail.com'], ['Lena Fischer', 'LF', '+49 30 5550 214', 'lena@fischer.de']];
+  const person = (p, bad) => '<div class="pu-c' + (bad ? ' pu-bad' : '') + '" data-name="' + p[0] + '"><span class="pu-av">' + (bad ? '?' : p[1]) + '</span><span class="grow"><b>' + p[0] + '</b><span class="cs-meta">' +
+    (bad ? 'No phone · No email' : p[2] + ' · ' + p[3]) + '</span></span><button class="icon-btn" type="button" aria-label="Delete ' + p[0] + '">' + icon('trash') + '</button></div>';
+  const contactsHtml = '<div class="app-frame pu-app"><div class="app-bar"><span>Contacts</span><span class="cs-meta" data-n>3 contacts</span></div><div class="app-body" data-list>' +
+    PEOPLE.map(p => person(p)).join('') + '</div></div><p class="pu-note" data-note></p>';
+  const contactsWire = fixed => (d, t) => {
+    const list = d.querySelector('[data-list]'), note = d.querySelector('[data-note]'), n = d.querySelector('[data-n]');
+    const count = () => { const k = list.children.length; n.textContent = k + (k === 1 ? ' contact' : ' contacts'); };
+    list.addEventListener('click', e => {
+      const b = e.target.closest('button'); if (!b) return;
+      const row = b.closest('.pu-c'), idx = Array.from(list.children).indexOf(row), p = PEOPLE.find(x => x[0] === row.dataset.name);
+      const next = row.nextElementSibling || row.previousElementSibling;
+      row.remove(); count(); note.textContent = '';
+      if (next) next.querySelector('button').focus();
+      csToast(d, t, p[0] + ' deleted', { ms: 6000, replace: true, action: { label: 'Undo', run: () => {
+        list.insertAdjacentHTML('beforeend', person(p, !fixed));
+        const back = list.lastElementChild;
+        if (fixed) { list.insertBefore(back, list.children[idx] || null); back.classList.add('pu-back'); }
+        count();
+        back.querySelector('button').focus();
+        note.textContent = fixed ? p[0] + ' is back in place, with the number and email.' : p[0] + ' is back, but the number and email are gone.';
+      } } });
+    });
+  };
+  D('pat-undo-1b', contactsHtml, contactsWire(false));
+  D('pat-undo-1f', contactsHtml, contactsWire(true));
+
+  /* 2. Undo window too short: photos */
+  const TONES = ['', 'b', 'c', 'b', 'c', ''];
+  const photosHtml = '<div class="app-frame pu-app"><div class="app-bar"><span>Photos · Summer</span><span class="cs-meta" data-n>6 photos</span></div><div class="pu-grid" data-grid>' +
+    TONES.map((c, i) => '<button class="thumb pu-ph ' + c + '" type="button" aria-label="Delete photo ' + (i + 1) + '" data-i="' + i + '">' + icon('trash') + '</button>').join('') + '</div></div><p class="pu-note" data-note></p>';
+  const photosWire = fixed => (d, t) => {
+    const grid = d.querySelector('[data-grid]'), note = d.querySelector('[data-note]'), n = d.querySelector('[data-n]');
+    const count = () => { const k = grid.querySelectorAll('.pu-ph').length; n.textContent = k + (k === 1 ? ' photo' : ' photos'); };
+    let gone = null;
+    grid.addEventListener('click', e => {
+      const ph = e.target.closest('.pu-ph'); if (!ph) return;
+      const gap = document.createElement('span'); gap.className = 'pu-gap';
+      ph.replaceWith(gap); count(); note.textContent = '';
+      const next = grid.querySelector('.pu-ph'); if (next) next.focus();
+      const me = { ph, gap, undone: false };
+      gone = me;
+      csToast(d, t, 'Photo deleted', { ms: fixed ? 0 : 2000, replace: true, action: { label: 'Undo', run: () => {
+        me.undone = true; gap.replaceWith(ph); count(); ph.focus(); note.textContent = 'The photo is back.';
+      } } });
+      if (!fixed) t.after(() => { if (gone === me && !me.undone) note.textContent = 'Undo is gone. The photo stays deleted.'; }, 2200);
+    });
+  };
+  D('pat-undo-2b', photosHtml, photosWire(false));
+  D('pat-undo-2f', photosHtml, photosWire(true));
+
+  /* 3. Irreversible: empty trash */
+  const FILES = ['Tax return 2025.pdf', 'Lease agreement.pdf', 'Wedding photos.zip', 'Old resume.docx'];
+  const trashHtml = '<div class="app-frame pu-app pu-rel"><div class="app-bar"><span>Trash · 12 files</span><button class="btn btn-secondary cs-sm" type="button" data-empty>Empty Trash</button></div><div class="app-body" data-list>' +
+    FILES.map(f => '<div class="pu-file"><svg class="icon sm"><use href="#i-folder"/></svg><span class="grow">' + f + '</span></div>').join('') +
+    '<div class="pu-file"><span class="grow cs-meta">and 8 more</span></div></div></div><p class="pu-note" data-note></p>';
+  const trashWire = fixed => d => {
+    const list = d.querySelector('[data-list]'), note = d.querySelector('[data-note]'), btn = d.querySelector('[data-empty]'), bar = d.querySelector('.app-bar span');
+    const empty = () => {
+      list.innerHTML = '<div class="pu-empty">Trash is empty.</div>'; bar.textContent = 'Trash · 0 files'; btn.disabled = true;
+      note.textContent = fixed ? '12 files deleted for good. You were asked first.' : '12 files deleted for good, including Tax return 2025.pdf. There’s no way back.';
+    };
+    btn.addEventListener('click', () => {
+      if (!fixed) { empty(); return; }
+      const m = document.createElement('div'); m.className = 'cs-modal';
+      m.innerHTML = '<div class="cs-dlg" role="alertdialog" aria-modal="true" aria-label="Delete 12 files for good?"><b>Delete 12 files for good?</b><p>They can’t be recovered. This includes Tax return 2025.pdf.</p>' +
+        '<div class="acts"><button class="btn btn-secondary cs-sm" type="button" data-no>Cancel</button><button class="btn btn-danger cs-sm" type="button" data-yes>Delete 12 files</button></div></div>';
+      d.appendChild(m);
+      const close = () => { m.remove(); btn.focus(); };
+      m.querySelector('[data-no]').addEventListener('click', () => { close(); note.textContent = 'Nothing was deleted.'; });
+      m.querySelector('[data-yes]').addEventListener('click', () => { m.remove(); empty(); });
+      m.addEventListener('keydown', e => { if (e.key === 'Escape') { e.stopPropagation(); close(); note.textContent = 'Nothing was deleted.'; } });
+      m.querySelector('[data-no]').focus();
+    });
+  };
+  D('pat-undo-3b', trashHtml, trashWire(false));
+  D('pat-undo-3f', trashHtml, trashWire(true));
+
+  /* 4. Only in the toast: email archive */
+  const MAILS = [['Sam Ortiz', 'Lunch on Friday?'], ['Bank', 'Your statement is ready'], ['Lena', 'Photos from the hike']];
+  const mailRow = m => '<div class="pu-mail" data-s="' + m[1] + '"><span class="grow"><b>' + m[0] + '</b><span class="cs-meta">' + m[1] + '</span></span><button class="btn btn-secondary cs-sm" type="button" aria-label="Archive ' + m[1] + '">Archive</button></div>';
+  const mailHtml = fixed => '<div class="app-frame pu-app pu-rel"><div class="app-bar"><span>Inbox</span>' +
+    (fixed ? '<button class="btn btn-ghost cs-sm" type="button" aria-expanded="false" data-edit>Edit</button>' : '') + '</div>' +
+    (fixed ? '<div class="pu-edit" data-editpop hidden><button class="pu-mi" type="button" data-undo aria-disabled="true"><span data-ul>Undo</span><kbd>' + (/Mac|iP/.test(navigator.platform) ? '⌘Z' : 'Ctrl+Z') + '</kbd></button></div>' : '') +
+    '<div class="app-body" data-list>' + MAILS.map(mailRow).join('') + '</div></div><p class="pu-note" data-note></p>';
+  const mailWire = fixed => (d, t) => {
+    const list = d.querySelector('[data-list]'), note = d.querySelector('[data-note]');
+    const stack = [];
+    const pop = d.querySelector('[data-editpop]'), editBtn = d.querySelector('[data-edit]'), mi = d.querySelector('[data-undo]');
+    const syncMenu = () => {
+      if (!fixed) return;
+      const last = stack[stack.length - 1];
+      d.querySelector('[data-ul]').textContent = last ? 'Undo archive “' + last.m[1] + '”' : 'Undo';
+      mi.setAttribute('aria-disabled', String(!last));
+    };
+    const setOpen = on => { if (!fixed) return; pop.hidden = !on; editBtn.setAttribute('aria-expanded', String(on)); };
+    const undo = how => {
+      const last = stack.pop(); if (!last) return;
+      if (last.toast && last.toast.isConnected) last.toast.remove();
+      list.insertBefore(last.row, list.children[last.idx] || null);
+      last.row.classList.remove('pu-back'); void last.row.offsetWidth; last.row.classList.add('pu-back');
+      last.row.querySelector('button').focus();
+      note.textContent = '“' + last.m[1] + '” is back in the inbox (' + how + ').';
+      syncMenu();
+    };
+    list.addEventListener('click', e => {
+      const b = e.target.closest('button'); if (!b) return;
+      const row = b.closest('.pu-mail'), idx = Array.from(list.children).indexOf(row), m = MAILS.find(x => x[1] === row.dataset.s);
+      const next = row.nextElementSibling || row.previousElementSibling;
+      row.remove(); note.textContent = '';
+      const frame = d.querySelector('.app-frame');
+      if (next) next.querySelector('button').focus(); else { frame.tabIndex = -1; frame.focus(); }
+      const entry = { row, idx, m };
+      stack.push(entry);
+      entry.toast = csToast(d, t, 'Conversation archived', { ms: 3000, action: { label: 'Undo', run: () => { const i = stack.indexOf(entry); if (i > -1) { stack.splice(i, 1); stack.push(entry); undo('Undo in the message'); } } } });
+      syncMenu();
+    });
+    const frame0 = d.querySelector('.app-frame');
+    frame0.addEventListener('keydown', e => {
+      if (!(e.ctrlKey || e.metaKey) || e.shiftKey || e.altKey || (e.key || '').toLowerCase() !== 'z') return;
+      e.preventDefault();
+      if (!fixed) { note.textContent = stack.length ? 'Nothing happened. The email stays archived.' : 'Nothing to undo yet.'; return; }
+      if (!stack.length) { note.textContent = 'Nothing to undo yet.'; return; }
+      undo('keyboard shortcut');
+    });
+    if (!fixed) return;
+    editBtn.addEventListener('click', () => { setOpen(pop.hidden); if (!pop.hidden) mi.focus(); });
+    mi.addEventListener('click', () => { if (!stack.length) return; setOpen(false); undo('Edit menu'); });
+    pop.addEventListener('keydown', e => { if (e.key === 'Escape') { setOpen(false); editBtn.focus(); } });
+    frame0.addEventListener('click', e => { if (!pop.hidden && !e.target.closest('[data-editpop],[data-edit]')) setOpen(false); });
+  };
+  D('pat-undo-4b', mailHtml(false), mailWire(false));
+  D('pat-undo-4f', mailHtml(true), mailWire(true));
+
+  csInit(cs);
+  };
+  if (window.csDemo) run(); else document.addEventListener('DOMContentLoaded', run);
+})();
+
+</script>

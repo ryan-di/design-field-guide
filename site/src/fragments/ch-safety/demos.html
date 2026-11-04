@@ -1,0 +1,241 @@
+<script>
+(() => {
+  const { $, $$, store, demo, toast } = window.dfg;
+
+  /* js-21-safety.js */
+demo('pat-undo', st => {
+  const list = $('[data-list]', st);
+  const rows = $$('.p11-row', list);
+  const dlg = $('#p11-undo-dlg', st), dlgName = $('[data-dlg-name]', st);
+  const delOut = $('[data-del]', st), intOut = $('[data-int]', st);
+  const empty = $('[data-empty]', st), resetBtn = $('[data-act="reset"]', st);
+  let mode = 'confirm', deleted = 0, interruptions = 0, pending = null, undoStack = [];
+  const nameOf = row => row.dataset.name;
+  const render = () => {
+    delOut.textContent = String(deleted);
+    intOut.textContent = String(interruptions);
+    empty.hidden = list.children.length > 0;
+  };
+  const removeRow = row => {
+    const next = row.nextElementSibling || row.previousElementSibling;
+    row.remove();
+    deleted++;
+    render();
+    if (next) $('button', next).focus(); else resetBtn.focus();
+  };
+  const restore = entry => {
+    const i = undoStack.indexOf(entry);
+    if (i < 0 || entry.row.isConnected) return;
+    undoStack.splice(i, 1);
+    const at = Number(entry.row.dataset.i);
+    const before = $$('.p11-row', list).find(r => Number(r.dataset.i) > at);
+    list.insertBefore(entry.row, before || null);
+    deleted--;
+    render();
+    entry.row.classList.add('p11-back');
+    setTimeout(() => entry.row.classList.remove('p11-back'), 1400);
+    $('button', entry.row).focus();
+    toast(st, 'Restored “' + nameOf(entry.row) + '”', { duration: 2500 });
+  };
+  list.addEventListener('click', e => {
+    const btn = e.target.closest('button');
+    if (!btn) return;
+    const row = btn.closest('.p11-row');
+    if (mode === 'undo') {
+      const entry = { row };
+      undoStack.push(entry);
+      removeRow(row);
+      entry.t = toast(st, '“' + nameOf(row) + '” deleted', { duration: 8000, action: { label: 'Undo', run: () => restore(entry) } });
+      return;
+    }
+    pending = row;
+    interruptions++;
+    render();
+    dlgName.textContent = '“' + nameOf(row) + '”';
+    dlg.returnValue = '';
+    if (typeof dlg.showModal === 'function') dlg.showModal(); else dlg.setAttribute('open', '');
+  });
+  dlg.addEventListener('close', () => {
+    const row = pending;
+    pending = null;
+    if (!row) return;
+    if (dlg.returnValue === 'delete') { removeRow(row); toast(st, '“' + nameOf(row) + '” deleted for good'); }
+    else $('button', row).focus();
+  });
+  st.addEventListener('keydown', e => {
+    if (mode !== 'undo' || !(e.ctrlKey || e.metaKey) || e.shiftKey || e.altKey || (e.key || '').toLowerCase() !== 'z') return;
+    const entry = undoStack[undoStack.length - 1];
+    if (!entry) return;
+    e.preventDefault();
+    if (entry.t && entry.t.isConnected) entry.t.remove();
+    restore(entry);
+  });
+  const reset = () => {
+    undoStack.forEach(en => { if (en.t && en.t.isConnected) en.t.remove(); });
+    undoStack = [];
+    list.replaceChildren(...rows);
+    deleted = 0;
+    interruptions = 0;
+    render();
+  };
+  resetBtn.addEventListener('click', () => { reset(); $('button', rows[0]).focus(); });
+  $$('input[name="p11-undo-mode"]', st).forEach(r => r.addEventListener('change', () => { mode = r.value; reset(); }));
+  render();
+});
+
+demo('pat-preview', st => {
+  const S = 0.1;
+  const ratios = { '4:3': [4, 3], '1:1': [1, 1], '3:4': [3, 4], '16:9': [16, 9] };
+  const view = $('[data-view]', st), img = $('[data-img]', st), was = $('[data-was]', st);
+  const chip = $('[data-chip]', st), dims = $('[data-dims]', st), out = $('[data-out]', st);
+  const range = $('#p11-rs-long', st);
+  const radios = $$('input[name="p11-rs-shape"]', st);
+  const applyBtn = $('[data-act="apply"]', st), cancelBtn = $('[data-act="cancel"]', st);
+  let applied = { shape: '4:3', long: 1024 };
+  let draft = { shape: applied.shape, long: applied.long };
+  const size = s => {
+    const [a, b] = ratios[s.shape];
+    const r8 = n => Math.round(n / 8) * 8;
+    return a >= b ? [s.long, r8(s.long * b / a)] : [r8(s.long * a / b), s.long];
+  };
+  const txt = d => d[0] + ' × ' + d[1];
+  const render = () => {
+    const now = size(applied), next = size(draft);
+    const pendingChange = now[0] !== next[0] || now[1] !== next[1];
+    img.style.width = next[0] * S + 'px';
+    img.style.height = next[1] * S + 'px';
+    was.style.width = now[0] * S + 'px';
+    was.style.height = now[1] * S + 'px';
+    was.hidden = !pendingChange;
+    chip.hidden = !pendingChange;
+    view.classList.toggle('is-preview', pendingChange);
+    dims.textContent = pendingChange ? 'Now ' + txt(now) + ' (dashed)\nPreview ' + txt(next) : txt(now) + ' · no changes';
+    out.textContent = draft.long + ' px';
+    applyBtn.disabled = !pendingChange;
+    cancelBtn.disabled = !pendingChange;
+  };
+  const syncControls = () => {
+    range.value = String(draft.long);
+    radios.forEach(r => { r.checked = r.value === draft.shape; });
+  };
+  range.addEventListener('input', () => { draft.long = Number(range.value); render(); });
+  radios.forEach(r => r.addEventListener('change', () => { if (r.checked) { draft.shape = r.value; render(); } }));
+  applyBtn.addEventListener('click', () => {
+    applied = { shape: draft.shape, long: draft.long };
+    render();
+    range.focus();
+    toast(st, 'Image resized to ' + txt(size(applied)));
+  });
+  cancelBtn.addEventListener('click', () => {
+    draft = { shape: applied.shape, long: applied.long };
+    syncControls();
+    render();
+    range.focus();
+    toast(st, 'Preview discarded. Still ' + txt(size(applied)));
+  });
+  render();
+});
+
+demo('pat-version-history', st => {
+  const listEl = $('[data-vers]', st), sum = $('[data-sum]', st), restoreBtn = $('[data-act="restore"]', st);
+  const trashEl = $('[data-trash]', st), tcount = $('[data-tcount]', st), trashSummary = $('.p11-trash summary', st);
+  const KEEP_DAYS = 30;
+  const vers = [
+    { n: 4, when: 'Today, 14:20', note: 'Added a day trip to Sintra', s: { model: 'Casa Alfama', steps: 5, up: true } },
+    { n: 3, when: 'Today, 11:05', note: 'Switched the hotel to Casa Alfama', s: { model: 'Casa Alfama', steps: 5, up: false } },
+    { n: 2, when: 'Yesterday, 18:40', note: 'Made the trip 5 days instead of 4', s: { model: 'Hotel Baixa', steps: 5, up: false } },
+    { n: 1, when: 'Yesterday, 09:12', note: 'First draft', s: { model: 'Hotel Baixa', steps: 4, up: false } }
+  ];
+  const trash = [{ name: 'Packing list', ago: 3 }, { name: 'Old budget draft', ago: 12 }];
+  let sel = 4;
+  const el = (tag, cls, text) => {
+    const e = document.createElement(tag);
+    if (cls) e.className = cls;
+    if (text != null) e.textContent = text;
+    return e;
+  };
+  const changes = (from, to) => {
+    const outList = [];
+    if (from.model !== to.model) outList.push('Switch the hotel to ' + to.model);
+    if (from.steps !== to.steps) outList.push('Change the trip from ' + from.steps + ' to ' + to.steps + ' days');
+    if (from.up !== to.up) outList.push(to.up ? 'Add the day trip to Sintra' : 'Remove the day trip to Sintra');
+    return outList;
+  };
+  const renderVers = () => {
+    listEl.replaceChildren(...vers.map((v, i) => {
+      const lab = el('label', 'p11-ver' + (v.n === sel ? ' is-sel' : ''));
+      const r = el('input');
+      r.type = 'radio'; r.name = 'p11-ver'; r.value = String(v.n); r.checked = v.n === sel;
+      const body = el('span');
+      body.append(el('b', null, 'v' + v.n + ' · ' + v.note), el('small', null, v.when + (i === 0 ? ' · Current' : '')));
+      lab.append(r, body);
+      return lab;
+    }));
+  };
+  const renderSum = () => {
+    const v = vers.find(x => x.n === sel), cur = vers[0];
+    const diff = changes(cur.s, v.s);
+    sum.replaceChildren();
+    if (v === cur) {
+      sum.append(el('p', null, 'v' + v.n + ' is the current version. Pick an older one to see what restoring would change.'));
+      restoreBtn.disabled = true;
+      return;
+    }
+    if (!diff.length) {
+      sum.append(el('p', null, 'v' + v.n + ' matches the current version, so restoring would change nothing.'));
+      restoreBtn.disabled = true;
+      return;
+    }
+    const head = el('p');
+    head.append(el('b', null, 'Restoring v' + v.n + ' will:'));
+    const ul = el('ul');
+    diff.concat('Save the result as v' + (cur.n + 1) + '. v' + cur.n + ' and every other version stay in the history.').forEach(t => ul.append(el('li', null, t)));
+    sum.append(head, ul);
+    restoreBtn.disabled = false;
+  };
+  listEl.addEventListener('change', e => {
+    if (!e.target.matches('input[name="p11-ver"]')) return;
+    sel = Number(e.target.value);
+    $$('.p11-ver', listEl).forEach(l => l.classList.toggle('is-sel', $('input', l).checked));
+    renderSum();
+  });
+  restoreBtn.addEventListener('click', () => {
+    const v = vers.find(x => x.n === sel), cur = vers[0];
+    if (!v || v === cur) return;
+    const nv = { n: cur.n + 1, when: 'Just now', note: 'Restored v' + v.n, s: { model: v.s.model, steps: v.s.steps, up: v.s.up } };
+    vers.unshift(nv);
+    sel = nv.n;
+    renderVers();
+    renderSum();
+    $('input', listEl).focus();
+    toast(st, 'Restored v' + v.n + ' as v' + nv.n + '. Nothing was deleted.');
+  });
+  const renderTrash = () => {
+    tcount.textContent = String(trash.length);
+    if (!trash.length) { trashEl.replaceChildren(el('p', 'p11-muted', 'Trash is empty.')); return; }
+    trashEl.replaceChildren(...trash.map(t => {
+      const row = el('div', 'p11-trash-row');
+      const info = el('span');
+      info.append(el('b', null, t.name), el('small', null, 'Deleted ' + t.ago + ' days ago · ' + (KEEP_DAYS - t.ago) + ' days left'));
+      const b = el('button', 'btn btn-secondary p11-sm', 'Restore');
+      b.type = 'button';
+      b.setAttribute('aria-label', 'Restore ' + t.name);
+      b.addEventListener('click', () => {
+        trash.splice(trash.indexOf(t), 1);
+        renderTrash();
+        const nextBtn = $('button', trashEl);
+        (nextBtn || trashSummary).focus();
+        toast(st, '“' + t.name + '” is back in Documents');
+      });
+      row.append(info, b);
+      return row;
+    }));
+  };
+  renderVers();
+  renderSum();
+  renderTrash();
+});
+
+
+})();
+</script>

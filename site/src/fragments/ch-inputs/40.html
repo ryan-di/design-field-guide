@@ -1,0 +1,65 @@
+<div class="fm" data-fm>
+  
+  <div class="seg fm-seg" role="radiogroup" aria-label="Form">
+    <input type="radio" name="fm-slider" id="fm-slider-1" value="plain" checked><label for="fm-slider-1">Plain</label>
+    <input type="radio" name="fm-slider" id="fm-slider-2" value="number"><label for="fm-slider-2">With a number</label>
+    <input type="radio" name="fm-slider" id="fm-slider-3" value="range"><label for="fm-slider-3">Range</label>
+    <input type="radio" name="fm-slider" id="fm-slider-4" value="steps"><label for="fm-slider-4">Steps</label>
+  </div>
+  <div class="fm-stage" data-fm-stage></div>
+  <p class="fig-cap" data-fm-when aria-live="polite"></p>
+  <script>
+  (() => {
+    const fm = document.currentScript.closest('[data-fm]'), stage = fm.querySelector('[data-fm-stage]'), when = fm.querySelector('[data-fm-when]');
+    const PRICES = [3, 5, 8, 12, 15, 18, 16, 13, 10, 8, 6, 5, 4, 3, 2, 2];
+    const SIZES = [13, 15, 17, 20, 23];
+    const F = {
+      plain: {
+        html: '<div class="lf-card surface"><b>Edit photo</b><div class="thumb lf-photo" data-ph></div><div class="lf-head"><span>Brightness</span></div><input type="range" min="-50" max="50" value="0" aria-label="Brightness" data-r><div class="lf-ends"><span>Darker</span><span>Brighter</span></div></div>',
+        use: 'Use it when people judge the result by eye or by ear, like brightness or volume. Show the effect live while they drag, because the number itself matters less.',
+        wire: s => { const r = s.querySelector('[data-r]'), ph = s.querySelector('[data-ph]'); const upd = () => { ph.style.filter = 'brightness(' + (1 + r.value / 100) + ')'; r.setAttribute('aria-valuetext', (r.value > 0 ? '+' : '') + r.value); }; r.addEventListener('input', upd); upd(); }
+      },
+      number: {
+        html: '<div class="lf-card surface"><b>Export photo</b><div class="lf-head"><span>Quality</span><output data-size></output></div><div class="lf-row"><input type="range" min="1" max="100" value="80" aria-label="Quality" data-r><input class="input" type="number" min="1" max="100" value="80" aria-label="Quality, exact number" data-n></div><div class="lf-ends"><span>Smaller file</span><span>Sharper photo</span></div></div>',
+        use: 'Use it when people sometimes need an exact value, like a quality setting. Typing a number moves the slider, and dragging updates the number.',
+        wire: s => {
+          const r = s.querySelector('[data-r]'), n = s.querySelector('[data-n]'), o = s.querySelector('[data-size]');
+          const upd = v => { o.textContent = 'About ' + (0.3 + Math.pow(v / 100, 2) * 4.2).toFixed(1) + ' MB'; };
+          r.addEventListener('input', () => { n.value = r.value; upd(+r.value); });
+          n.addEventListener('input', () => { const v = Math.round(+n.value); if (n.value !== '' && v >= 1 && v <= 100) { r.value = v; upd(v); } });
+          n.addEventListener('change', () => { n.value = r.value; });
+          upd(80);
+        }
+      },
+      range: {
+        html: '<div class="lf-card surface"><b>Price per night</b><div class="lf-head"><span data-lab></span><output data-count></output></div><div class="lf-hist" aria-hidden="true">' + PRICES.map(h => '<i style="height:' + h * 2.4 + 'px"></i>').join('') + '</div><div class="lf-two"><div class="lf-rail"><div class="lf-fill" data-fill></div></div><input type="range" min="0" max="400" step="10" value="60" aria-label="Minimum price" data-lo><input type="range" min="0" max="400" step="10" value="220" aria-label="Maximum price" data-hi></div><div class="lf-ends"><span>$0</span><span>$400+</span></div></div>',
+        use: 'Use it to set a minimum and a maximum, like a price filter. Show both values, and how many results are left, while people drag.',
+        wire: s => {
+          const lo = s.querySelector('[data-lo]'), hi = s.querySelector('[data-hi]'), fill = s.querySelector('[data-fill]'), lab = s.querySelector('[data-lab]'), cnt = s.querySelector('[data-count]'), bars = s.querySelectorAll('.lf-hist i');
+          const upd = e => {
+            if (+lo.value > +hi.value - 20) { if (e && e.target === lo) lo.value = +hi.value - 20; else hi.value = +lo.value + 20; }
+            const a = +lo.value, b = +hi.value;
+            fill.style.left = a / 4 + '%'; fill.style.right = (100 - b / 4) + '%';
+            lab.textContent = '$' + a + ' – $' + b + (b === 400 ? '+' : '');
+            let n = 0; bars.forEach((x, i) => { const p = i * 25 + 12; const on = p >= a && p <= b; x.classList.toggle('on', on); if (on) n += PRICES[i]; });
+            cnt.textContent = n + ' stays';
+            lo.setAttribute('aria-valuetext', '$' + a); hi.setAttribute('aria-valuetext', '$' + b);
+          };
+          [lo, hi].forEach(r => r.addEventListener('input', upd)); upd();
+        }
+      },
+      steps: {
+        html: '<div class="lf-card surface"><b>Display</b><div class="lf-head"><span>Text size</span></div><input type="range" min="0" max="4" step="1" value="2" aria-label="Text size" data-r><div class="lf-ticks" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></div><div class="lf-size" aria-hidden="true"><span>A</span><span>A</span></div><div class="lf-prev" data-prev><b>Sam Ortiz</b>Lunch on Friday? There’s a new place near the station.</div></div>',
+        use: 'Use it when only a few values make sense, like text size. The handle snaps to each step, and tick marks show where the steps are.',
+        wire: s => { const r = s.querySelector('[data-r]'), p = s.querySelector('[data-prev]'); const upd = () => { p.style.fontSize = SIZES[r.value] + 'px'; r.setAttribute('aria-valuetext', ['Smallest', 'Small', 'Default', 'Large', 'Largest'][r.value]); }; r.addEventListener('input', upd); upd(); }
+      }
+    };
+    const show = k => {
+      stage.innerHTML = F[k].html; F[k].wire(stage);
+      when.innerHTML = '<b>' + fm.querySelector('.fm-seg input:checked + label').textContent + '.</b> ' + F[k].use;
+    };
+    fm.querySelectorAll('.fm-seg input').forEach(i => i.addEventListener('change', () => show(i.value)));
+    show('plain');
+  })();
+  </script>
+</div>

@@ -1,0 +1,53 @@
+<div class="fm" data-fm>
+  <div class="seg fm-seg" role="radiogroup" aria-label="Form">
+    <input type="radio" name="fm-banner" id="fm-banner-1" value="info" checked><label for="fm-banner-1">Info</label>
+    <input type="radio" name="fm-banner" id="fm-banner-2" value="warn"><label for="fm-banner-2">Warning</label>
+    <input type="radio" name="fm-banner" id="fm-banner-3" value="error"><label for="fm-banner-3">Error</label>
+    <input type="radio" name="fm-banner" id="fm-banner-4" value="section"><label for="fm-banner-4">In a section</label>
+  </div>
+  <div class="fm-stage" data-fm-stage></div>
+  <p class="fig-cap" data-fm-when aria-live="polite"></p>
+  <script>
+  (() => {
+    const fm = document.currentScript.closest('[data-fm]'), stage = fm.querySelector('[data-fm-stage]'), when = fm.querySelector('[data-fm-when]');
+    const icon = n => '<svg class="icon"><use href="#i-' + n + '"/></svg>';
+    const lines = '<div class="line" style="width:72%"></div><div class="line" style="width:88%"></div><div class="line" style="width:54%"></div>';
+    const frame = (title, top, body) => '<div class="app-frame fm-frame"><div class="app-bar"><span>' + title + '</span></div>' + top + '<div class="app-body">' + body + '</div></div>';
+    const bn = (cls, ic, text, extra) => '<div class="banner fm-bn ' + cls + '" role="status">' + icon(ic) + '<span class="grow">' + text + '</span>' + (extra || '') + '</div>';
+    const F = {
+      info: {
+        html: frame('Family budget (shared copy)', bn('', 'info', 'You’re viewing a shared copy. Your changes won’t affect the original.', '<button class="icon-btn fm-x" type="button" aria-label="Close" data-close>' + icon('x') + '</button>'), lines + '<p class="cs-meta" data-out></p>'),
+        use: 'Use it for a state that changes what people can do, when nothing is wrong.',
+        close: 'People can close it once they’ve read it, and it shouldn’t come back.',
+        wire: s => s.querySelector('[data-close]').addEventListener('click', () => { s.querySelector('.fm-bn').remove(); s.querySelector('[data-out]').textContent = 'Closed. It won’t come back for this file.'; })
+      },
+      warn: {
+        html: frame('Photos', bn('fm-warn', 'warn', 'Your free trial ends in 3 days. After that, new photos won’t back up.', '<button class="btn btn-secondary cs-sm" type="button" data-act>Choose a plan</button>'), lines + '<p class="cs-meta" data-out></p>'),
+        use: 'Use it when something will become a problem soon unless people act.',
+        close: 'They can put it off for now, but it returns as the date gets closer and goes once they act.',
+        wire: s => s.querySelector('[data-act]').addEventListener('click', () => { s.querySelector('.fm-bn').remove(); s.querySelector('[data-out]').textContent = 'Plan chosen. The banner is gone because the state ended.'; })
+      },
+      error: {
+        html: frame('Music', bn('fm-err', 'warn', 'Your payment failed. Update your card to keep listening offline.', '<button class="btn btn-secondary cs-sm" type="button" data-act>Update card</button>'), lines + '<p class="cs-meta" data-out></p>'),
+        use: 'Use it when something is wrong right now and affects the whole app.',
+        close: 'It can’t be closed. It stays until the problem is fixed, then leaves on its own.',
+        wire: s => s.querySelector('[data-act]').addEventListener('click', e => { e.target.disabled = true; e.target.textContent = 'Updating…'; const g = gen; setTimeout(() => { if (g !== gen) return; const b = s.querySelector('.fm-bn'); if (b) b.remove(); s.querySelector('[data-out]').textContent = 'Card updated. The banner left on its own.'; }, 700); })
+      },
+      section: {
+        html: frame('Settings', '', '<div class="fm-card"><b>Sign-in and security</b>' + bn('fm-in', 'info', 'These settings are managed by your company.') + '<label class="switch fm-row"><span class="grow">Two-step sign-in</span><input type="checkbox" role="switch" checked disabled></label><label class="switch fm-row"><span class="grow">Remember this device</span><input type="checkbox" role="switch" disabled></label></div><div class="fm-card"><b>Appearance</b><label class="switch fm-row"><span class="grow">Dark mode</span><input type="checkbox" role="switch"></label></div>'),
+        use: 'Use it when the state only affects one part of the page. It sits at the top of that part.',
+        close: 'It usually can’t be closed, because it explains why the controls below it are locked.',
+        wire: () => {}
+      }
+    };
+    let gen = 0;
+    const show = k => {
+      gen++;
+      stage.innerHTML = F[k].html; F[k].wire(stage);
+      when.innerHTML = '<b>' + fm.querySelector('.fm-seg input:checked + label').textContent + '.</b> ' + F[k].use + ' ' + F[k].close;
+    };
+    fm.querySelectorAll('.fm-seg input').forEach(i => i.addEventListener('change', () => show(i.value)));
+    show('info');
+  })();
+  </script>
+</div>

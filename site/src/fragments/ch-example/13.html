@@ -1,0 +1,50 @@
+<div class="note comfy cw-wrap"><p>Notice that each tool does one job well and hands its result to the next, instead of one tool doing everything.</p>
+      <div class="seg cw-seg" role="radiogroup" aria-label="Example">
+        <input type="radio" name="cw-eff-toolkit-w" id="cw-eff-toolkit-w-1" value="linear" checked><label for="cw-eff-toolkit-w-1">Linear</label>
+        <input type="radio" name="cw-eff-toolkit-w" id="cw-eff-toolkit-w-2" value="figma"><label for="cw-eff-toolkit-w-2">Figma</label>
+        <input type="radio" name="cw-eff-toolkit-w" id="cw-eff-toolkit-w-3" value="vercel"><label for="cw-eff-toolkit-w-3">Vercel</label>
+        <input type="radio" name="cw-eff-toolkit-w" id="cw-eff-toolkit-w-4" value="github"><label for="cw-eff-toolkit-w-4">GitHub</label>
+      </div>
+      <div class="cw" data-cw-view role="img" aria-label=""></div>
+      <p class="cw-cap" data-cw-cap aria-live="polite"></p>
+      
+      <script>
+      (() => {
+        const wrap = document.currentScript.closest('.cw-wrap');
+        const view = wrap.querySelector('[data-cw-view]'), cap = wrap.querySelector('[data-cw-cap]');
+        const ic = id => '<svg class="icon sm" aria-hidden="true"><use href="#i-' + id + '"/></svg>';
+        const line = w => '<i class="cw-line" style="width:' + w + '%"></i>';
+        const chain = on => '<ol class="cw-etk-chain" aria-hidden="true">' + ['Plan', 'Design', 'Preview', 'Merge'].map((j, i) => '<li' + (i === on ? ' class="on"' : '') + '><span>' + j + '</span></li>').join('') + '</ol>';
+        const kv = (k, v) => '<div class="cw-etk-kv"><span>' + k + '</span><code>' + v + '</code></div>';
+        const ck = (name, meta, req, wait) => '<div class="cw-etk-ck' + (wait ? ' wait' : '') + '">' + ic(wait ? 'dots' : 'check') + '<span>' + name + ' <em>' + meta + '</em></span>' + (req ? '<span class="cw-etk-req">Required</span>' : '<span></span>') + '</div>';
+        const S = {
+          linear: { html: chain(0) + '<div class="cw-etk-win"><div class="cw-etk-bar"><span class="cw-etk-id">WEB-214</span><span class="grow"></span><span class="cw-etk-pill sel"><i></i>In progress</span></div>' +
+              '<div class="cw-etk-body"><span class="cw-etk-ttl">Search results cut off on phones</span>' + line(92) + line(74) +
+              '<div class="cw-etk-link">' + ic('layers') + '<span>Pull request opened<em>web-214-search-results</em></span></div>' +
+              '<div class="cw-etk-log"><span>Moved to In progress when the PR opened</span><span>Moves to Done when it merges</span></div></div></div>',
+            alt: 'An issue, Search results cut off on phones, marked In progress. A linked pull request sits under the description, from a branch named after the issue. A log says it moved to In progress when the PR opened and moves to Done when it merges.',
+            cap: 'Linear: the issue holds the problem and the plan. When a branch or pull request names the issue, Linear links them and moves the issue along as the PR opens and merges, so the plan follows the code without anyone updating it.' },
+          figma: { html: chain(1) + '<div class="cw-etk-win"><div class="cw-etk-bar"><b>Search results</b><span class="grow"></span><span class="cw-etk-pill ok">' + ic('check') + 'Ready for dev</span></div>' +
+              '<div class="cw-etk-dev"><div class="cw-etk-canvas"><div class="cw-etk-frame"><span class="cw-etk-red"><em>16</em></span>' + line(80) + line(60) + line(70) + '<span class="btn btn-primary">Show all</span></div></div>' +
+              '<div class="cw-etk-insp"><b>Inspect</b>' + kv('Padding', '16') + kv('Gap', '8') + kv('Fill', 'surface') + kv('Text', 'body-md') + kv('Radius', 'radius-sm') + '</div></div></div>',
+            alt: 'A design file in a developer view. A frame called Search results is marked Ready for dev. The selected frame shows a red 16 for its padding, and an Inspect panel lists padding 16, gap 8, fill surface, text body-md and radius radius-sm.',
+            cap: 'Figma: designers mark frames “Ready for dev”, and the build takes its exact spacing, colors and variables from Dev Mode instead of guessing them from a screenshot.' },
+          vercel: { html: chain(2) + '<div class="cw-etk-win"><div class="cw-etk-bar"><span class="cw-etk-av">' + ic('cube') + '</span><b>bot</b><span class="cw-etk-push">commented on the pull request</span></div>' +
+              '<div class="cw-etk-body"><div class="cw-etk-tbl"><span class="h">Project</span><span class="h">Status</span><span class="h">Preview</span>' +
+              '<span>web</span><span class="cw-etk-pill ok">Ready</span><u>Visit preview</u>' +
+              '<span>docs</span><span class="cw-etk-pill ok">Ready</span><u>Visit preview</u></div>' +
+              '<span class="cw-etk-push">Updated with each new push to the branch.</span></div></div>',
+            alt: 'A bot comment on a pull request with a small table: projects web and docs, each Ready, each with a Visit preview link. A note says it updates with each new push.',
+            cap: 'Vercel: a bot posts a preview link on every pull request, and each new push updates it, so the link people click always shows the latest build.' },
+          github: { html: chain(3) + '<div class="cw-etk-win"><div class="cw-etk-bar"><b>Checks</b><span class="grow"></span><span class="cw-etk-push">1 waiting</span></div>' +
+              '<div class="cw-etk-body"><div class="cw-etk-checks">' + ck('Unit tests', 'passed', true) + ck('Lint', 'passed', true) + ck('Preview deploy', 'ready') + ck('Visual review', 'waiting', true, true) + '</div>' +
+              '<div class="cw-etk-merge"><span class="btn btn-primary">Merge</span><span>Required checks must pass first</span></div></div></div>',
+            alt: 'A pull request’s checks: unit tests passed and required, lint passed and required, preview deploy ready, visual review waiting and required. The Merge button is off until required checks pass.',
+            cap: 'GitHub: a pull request gathers a separate tool for each check, like tests, lint, a preview and visual review, so each job reports its result in one place.' }
+        };
+        const render = k => { view.innerHTML = S[k].html; view.setAttribute('aria-label', 'Sketch: ' + S[k].alt); cap.textContent = S[k].cap; };
+        wrap.querySelectorAll('input[name="cw-eff-toolkit-w"]').forEach(r => r.addEventListener('change', () => render(r.value)));
+        render('linear');
+      })();
+      </script>
+    </div>

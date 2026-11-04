@@ -1,0 +1,33 @@
+<div class="stage tall p14-stage" data-demo="pat-contextual-hints">
+      <div class="seg" role="radiogroup" aria-label="Way of teaching">
+        <input type="radio" name="p14-mode" id="p14-mode-tour" value="tour" checked><label for="p14-mode-tour">Product tour</label>
+        <input type="radio" name="p14-mode" id="p14-mode-hint" value="hint"><label for="p14-mode-hint">Contextual hint</label>
+      </div>
+      <div class="mini-app">
+        <div class="app-bar" data-bar>
+          <span>Kitchen ideas</span>
+          <button class="btn btn-primary p14-sm" type="button" data-act="run">Share</button>
+        </div>
+        <div class="mini-canvas" data-canvas>
+          <button class="p14-surface" type="button">Empty board</button>
+          <div class="p14-layer" aria-live="polite"></div>
+        </div>
+        <div class="p14-tour" data-tour>
+          <div class="p14-card surface" role="dialog" aria-labelledby="p14-tour-title">
+            <p class="p14-step" data-step>Step 1 of 5</p>
+            <p class="p14-ttl" id="p14-tour-title" data-ttl>Welcome</p>
+            <p class="p14-body" data-body></p>
+            <div class="row p14-tour-nav">
+              <button class="btn btn-ghost p14-sm" type="button" data-act="skip">Skip tour</button>
+              <button class="btn btn-primary p14-sm" type="button" data-act="next">Next</button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <button class="btn btn-ghost" type="button" data-act="reset" hidden>Reset hint</button>
+        <button class="btn btn-ghost" type="button" data-act="restart">Restart tour</button>
+      </div>
+      <p class="result" data-out aria-live="polite"></p>
+      <p class="try"><b>Try it:</b> click through the tour, then try to remember step 3 when you need it. Switch to Contextual hint and click the empty board once: a hint on adding a note appears beside that spot, and after “Got it” it stays gone, even after a reload. Double-click instead and you never see it, because you already know how to add a note.</p>
+    </div>

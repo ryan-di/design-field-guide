@@ -1,0 +1,41 @@
+<div class="note comfy cw-wrap">
+  <div class="seg cw-seg" role="radiogroup" aria-label="Example">
+    <input type="radio" name="cw-good-train-your-eye-w" id="cw-good-train-your-eye-w-1" value="mobbin" checked><label for="cw-good-train-your-eye-w-1">Mobbin</label>
+    <input type="radio" name="cw-good-train-your-eye-w" id="cw-good-train-your-eye-w-2" value="figma"><label for="cw-good-train-your-eye-w-2">Figma</label>
+    <input type="radio" name="cw-good-train-your-eye-w" id="cw-good-train-your-eye-w-3" value="devtools"><label for="cw-good-train-your-eye-w-3">Chrome DevTools</label>
+    <input type="radio" name="cw-good-train-your-eye-w" id="cw-good-train-your-eye-w-4" value="pinterest"><label for="cw-good-train-your-eye-w-4">Pinterest</label>
+  </div>
+  <div class="cw" data-cw-view role="img" aria-label=""></div>
+  <p class="cw-cap" data-cw-cap aria-live="polite"></p>
+  
+  <script>
+  (() => {
+    const wrap = document.currentScript.closest('.cw-wrap');
+    const view = wrap.querySelector('[data-cw-view]'), cap = wrap.querySelector('[data-cw-cap]');
+    const L = w => '<i class="cw-line" style="width:' + w + '"></i>';
+    const shot = (round, a, b, cta) => '<div class="cw-gte-shot"><i class="cw-gte-art" style="border-radius:' + round + '"></i>' + L(a) + L(b) + '<i class="cw-gte-cta" style="width:' + cta + '"></i></div>';
+    const board = (name, cls) => '<span' + (cls ? ' class="' + cls + '"' : '') + '>' + (cls === 'add' ? '' : '<i></i>') + name + '</span>';
+    const S = {
+      mobbin: { html: '<div class="cw-gte-chips"><em class="on">Empty state</em><em>Sign up</em><em>Checkout</em><em>Search</em></div><div class="cw-gte-shots">' +
+          shot('50%', '80%', '60%', '70%') + shot('22%', '70%', '75%', '80%') + shot('50%', '85%', '50%', '60%') + shot('8%', '65%', '70%', '75%') + '</div>',
+        alt: 'A filter set to Empty state, and four phone screenshots from different apps, each showing its own empty state with a picture, two lines of text and a button.',
+        cap: 'Mobbin: a library of screenshots from real apps, filed by app, by flow and by pattern such as empty states. You can line up how many products answered the same problem.' },
+      figma: { html: '<div class="cw-gte-fig"><div class="cw-gte-card"><span class="cw-gte-av"></span><span class="cw-gte-txt">' + L('70%') + L('100%') + '</span>' +
+          '<span class="cw-gte-m h"><em>32</em></span></div><div class="cw-gte-keys"><kbd>⌥ Option</kbd>held while pointing at the text</div></div>',
+        alt: 'A card with an avatar selected. The text is hovered while Option is held, and a red guide shows 32 pixels between the avatar and the text.',
+        cap: 'Figma: select a layer and hold Option (Alt on Windows) while pointing at another to see the distance between them. Copying a design becomes measuring it, not guessing.' },
+      devtools: { html: '<div class="cw-gte-dt"><div class="cw-gte-page">' + L('60%') + L('85%') + '<span class="cw-gte-tip">button 96 × 36</span><span class="cw-gte-mg"><span class="cw-gte-pd"><span class="cw-gte-ct">Save</span></span></span></div>' +
+          '<div class="cw-gte-css"><span><b>.btn</b> {</span><span class="ed">  padding: 10px 16px;</span><span>  font-weight: 600;</span><span>  border-radius: 10px;</span><span>}</span></div></div>',
+        alt: 'A web page with a Save button highlighted: its content, padding and margin shown in different tints, and a label with its size. Beside it the styles: padding 10px 16px, font-weight 600, border-radius 10px.',
+        cap: 'Chrome DevTools: inspect any element on a live site to read its exact spacing, font and colors, then change a value in place to see why it was chosen.' },
+      pinterest: { html: '<div class="cw-gte-pin"><div class="cw-gte-img"><span class="cw-gte-save">Save</span></div><div class="surface cw-gte-boards"><b>Save to board</b>' +
+          board('Empty states', 'on') + board('Long names') + board('Bulk delete') + board('Loading') + board('+ New board', 'add') + '</div></div>',
+        alt: 'An image with a Save button, and a list of boards to save it to, named by problem: Empty states, Long names, Bulk delete, Loading.',
+        cap: 'Pinterest: you save each image to a board you name. A board named for a problem, like “Empty states”, becomes a reference you can open when that problem comes up.' }
+    };
+    const render = k => { view.innerHTML = S[k].html; view.setAttribute('aria-label', 'Sketch: ' + S[k].alt); cap.textContent = S[k].cap; };
+    wrap.querySelectorAll('input[name="cw-good-train-your-eye-w"]').forEach(r => r.addEventListener('change', () => render(r.value)));
+    render('mobbin');
+  })();
+  </script>
+</div>

@@ -1,0 +1,129 @@
+<script>
+  (() => {
+    const sec = document.currentScript.closest('section');
+
+    /* Worked example stepper */
+    const ex = sec.querySelector('[data-demo="eff-worked-example"]');
+    const names = ['Brief', 'Context pack', 'Three directions', 'Decision', 'Build plan and checks', 'Evaluation plan', 'What was learned'];
+    const who = [
+      ['Name the person, the moment and what stops them. Write “done when”.', 'Draft the brief from threads you paste in. You cut it down.'],
+      ['Say what’s in scope and what isn’t.', 'Read the repo, tickets and Figma in parallel, and summarize each in a few lines.'],
+      ['Ask for directions that differ, not three versions of one idea.', 'Each subagent prototypes one direction. One page shows all three.'],
+      ['Pick the criteria from the brief, score the directions yourself, then decide.', 'Score them separately. You look again wherever the two disagree.'],
+      ['Approve the plan and the PR’s behavior list.', 'Build in a worktree, write the tests, open the PR.'],
+      ['Say what you’ll watch for, and when you’ll look.', 'Run the checks on every change.'],
+      ['Write one lesson for next time.', 'Count what happened in the session.']
+    ];
+    const steps = [...ex.querySelectorAll('.p31-step')], panes = [...ex.querySelectorAll('.p31-pane')];
+    const title = ex.querySelector('#p31-ex-title'), you = ex.querySelector('#p31-ex-you'), ag = ex.querySelector('#p31-ex-ag');
+    const prev = ex.querySelector('#p31-ex-prev'), next = ex.querySelector('#p31-ex-next');
+    let cur = 0;
+    const go = (i, focus) => {
+      cur = Math.max(0, Math.min(6, i));
+      steps.forEach((b, j) => { b.classList.toggle('done', j < cur); if (j === cur) b.setAttribute('aria-current', 'step'); else b.removeAttribute('aria-current'); });
+      panes.forEach((p, j) => { p.hidden = j !== cur; });
+      title.innerHTML = 'Stage ' + (cur + 1) + ' of 7 · <b>' + names[cur] + '</b>';
+      you.textContent = who[cur][0]; ag.textContent = who[cur][1];
+      prev.disabled = cur === 0;
+      next.disabled = cur === 6;
+      if (focus) steps[cur].focus();
+    };
+    steps.forEach((b, j) => {
+      b.addEventListener('click', () => go(j));
+      b.addEventListener('keydown', e => {
+        const d = { ArrowRight: 1, ArrowDown: 1, ArrowLeft: -1, ArrowUp: -1 }[e.key];
+        if (d) { e.preventDefault(); go(cur + d, true); }
+        else if (e.key === 'Home') { e.preventDefault(); go(0, true); }
+        else if (e.key === 'End') { e.preventDefault(); go(6, true); }
+      });
+    });
+    prev.addEventListener('click', () => { go(cur - 1); if (prev.disabled) next.focus(); });
+    next.addEventListener('click', () => { go(cur + 1); if (next.disabled) prev.focus(); });
+
+    /* Scored decision */
+    const weight = ex.querySelector('#p31-ex-weight'), verdict = ex.querySelector('#p31-ex-verdict');
+    const rows = [...ex.querySelectorAll('.p31-score tbody tr')];
+    rows.forEach(r => r.querySelectorAll('td[data-s]').forEach(td => {
+      const s = +td.dataset.s;
+      td.textContent = '●'.repeat(s) + '○'.repeat(5 - s);
+      td.setAttribute('aria-label', s + ' of 5');
+    }));
+    const score = () => {
+      const w = weight.checked, t = [0, 0, 0];
+      rows.forEach(r => r.querySelectorAll('td[data-s]').forEach((td, k) => { t[k] += +td.dataset.s * (w && r.hasAttribute('data-w') ? 2 : 1); }));
+      ex.querySelector('.p31-x').hidden = !w;
+      const best = Math.max(...t);
+      ex.querySelectorAll('td[data-t]').forEach(td => { const k = +td.dataset.t; td.textContent = t[k]; td.classList.toggle('win', t[k] === best); });
+      verdict.textContent = w
+        ? 'C wins: nothing is lost, even after the toast is gone. Keep B’s Undo for the moment right after closing. Record why in the ticket.'
+        : 'B wins on points, but its work is gone once the toast fades. The brief says never lose work, so that criterion should count more.';
+    };
+    weight.addEventListener('change', score);
+    score();
+    go(0);
+
+    /* Toolkit */
+    const tk = sec.querySelector('[data-demo="eff-toolkit"]');
+    const J = {
+      frame: { t: ['lin', 'code'], how: 'Write the brief in the Linear ticket: who, what they’re trying to do, what stops them. Claude Code can draft it from threads you paste in.', eg: 'one paragraph naming people who tidy tabs and lose changes, with a “done when” line.' },
+      context: { t: ['code', 'figma', 'lin'], how: 'Send Claude Code subagents in parallel to read the repo and past tickets. Pull frames and tokens from Figma through its connector.', eg: 'a one-page pack: how tabs close, how saving works, related tickets, the tab frames.' },
+      explore: { t: ['code', 'art'], how: 'Ask subagents for clearly different directions, one each, and put them side by side on one artifact page.', eg: 'ask on close, close then Undo, and keep a draft.' },
+      proto: { t: ['art', 'code'], how: 'Make a clickable page as an artifact and share the link. If it needs the real app, prototype in a git worktree instead.', eg: 'a page where you close a tab and see each direction play out.' },
+      decide: { t: ['art', 'lin'], how: 'Score the options against criteria from the brief on a shared page. Record the decision and why in the ticket.', eg: 'C, with B’s Undo, once “never loses work” counted twice.' },
+      build: { t: ['code'], how: 'Start in plan mode and agree on the plan. Then build in a worktree, so several agents can work at once without clashing.', eg: 'one worktree, draft on close, restore on reopen, Undo toast.' },
+      verify: { t: ['vt', 'pw', 'code'], how: 'Vitest for the logic, Playwright for the flow people use, with screenshots. Claude Code can run both and report what failed.', eg: 'three unit tests for the draft, two end-to-end specs for close and reopen.' },
+      review: { t: ['gh', 'code'], how: 'Open a GitHub PR that leads with what changes for people, then the checks. Claude Code can read review comments and make the fixes.', eg: 'reviewers checked the behavior list first, then the code.' },
+      share: { t: ['art', 'lin', 'gh'], how: 'Publish a short artifact page with before and after, and link it from the ticket and the PR.', eg: 'a before and after page linked from the ticket, so support knows what changed.' }
+    };
+    const tnames = { code: 'Claude Code', art: 'Claude artifacts', figma: 'Figma connector', pw: 'Playwright', vt: 'Vitest', gh: 'GitHub PRs', lin: 'Linear' };
+    const jobs = [...tk.querySelectorAll('.p31-job')];
+    const pick = k => {
+      jobs.forEach(b => b.setAttribute('aria-pressed', String(b.dataset.job === k)));
+      tk.querySelectorAll('.p31-tools li').forEach(li => li.classList.toggle('on', J[k].t.includes(li.dataset.tool)));
+      tk.querySelector('#p31-tk-use').textContent = 'Use: ' + J[k].t.map(t => tnames[t]).join(' + ');
+      tk.querySelector('#p31-tk-how').textContent = J[k].how;
+      tk.querySelector('#p31-tk-eg').innerHTML = '<b>Tab close:</b> ' + J[k].eg;
+    };
+    jobs.forEach(b => b.addEventListener('click', () => pick(b.dataset.job)));
+    pick('frame');
+
+    /* Switchers */
+    const switcher = (wrap, name, S, first) => {
+      if (!wrap) return;
+      const view = wrap.querySelector('[data-cw-view]'), cap = wrap.querySelector('[data-cw-cap]');
+      const render = k => { view.innerHTML = S[k].html; view.setAttribute('aria-label', 'Sketch: ' + S[k].alt); cap.textContent = S[k].cap; };
+      wrap.querySelectorAll('input[name="' + name + '"]').forEach(r => r.addEventListener('change', () => render(r.value)));
+      render(first);
+    };
+    const st = (n, label, text, cls) => '<div class="cw-ex-st' + (cls ? ' ' + cls : '') + '"><b>' + n + ' ' + label + '</b>' + text + '</div>';
+    const strip = a => '<div class="cw-ex-strip">' + a.join('') + '</div>';
+    switcher(null, 'cw-eff-ex-sc', {
+      tiny: { html: strip([st(1, 'Brief', 'One line in the PR'), st(2, 'Context', 'Where the text shows'), st(3, 'Directions', 'Skip', 'skip'), st(4, 'Decision', 'Skip', 'skip'), st(5, 'Build', 'One commit'), st(6, 'Evaluate', 'Check it in the app'), st(7, 'Learned', 'Skip', 'skip')]),
+        alt: 'Seven stages. Directions, Decision and Learned are skipped. The rest are one line each.',
+        cap: 'Tiny copy fix: a one-line brief, the change, a look in the app. With only one sensible answer, skipping directions is right.' },
+      tab: { html: strip([st(1, 'Brief', 'Ticket paragraph', 'big'), st(2, 'Context', 'One-page pack', 'big'), st(3, 'Directions', 'Three prototypes', 'big'), st(4, 'Decision', 'Scored, in ticket', 'big'), st(5, 'Build', 'One worktree, one PR', 'big'), st(6, 'Evaluate', 'Specs + 5 sessions', 'big'), st(7, 'Learned', 'Tally + one lesson', 'big')]),
+        alt: 'All seven stages in use, each with a small artifact, as in the demo above.',
+        cap: 'Tab close: every stage is used, and each leaves one small artifact, as in the demo above.' },
+      area: { html: strip([st(1, 'Brief', 'Research first', 'big'), st(2, 'Context', 'Pack per area', 'big'), st(3, 'Directions', 'Five or more', 'big'), st(4, 'Decision', 'With design and PM', 'big'), st(5, 'Build', 'Several PRs', 'big'), st(6, 'Evaluate', 'Release in steps', 'big'), st(7, 'Learned', 'Shared write-up', 'big')]),
+        alt: 'All seven stages, each bigger: research first, five or more directions, a decision with design and PM, several PRs.',
+        cap: 'New feature area: the same stages, each bigger. Research feeds the brief, more directions are worth exploring, and the build splits into several PRs.' },
+      after: { html: '<span class="cw-ex-loop">7 → 1: a report comes in</span>' + strip([st(1, 'Brief', 'Old drafts pile up', 'big'), st(2, 'Context', 'Reuse the pack'), st(3, 'Directions', 'Skip', 'skip'), st(4, 'Decision', 'Pick a limit'), st(5, 'Build', 'Small PR'), st(6, 'Evaluate', 'Add a spec'), st(7, 'Learned', 'Add to the ticket')]),
+        alt: 'A loop from stage 7 back to stage 1. The new brief is about old drafts piling up; the context pack is reused and directions are skipped.',
+        cap: 'After release: a report says old drafts pile up. It starts again at the brief, small this time, and reuses the context pack.' }
+    }, 'tiny');
+
+    const row = (tool, use) => '<div class="cw-tk-row' + (use ? '' : ' off') + '"><b>' + tool + '</b><span>' + (use || 'Not needed') + '</span></div>';
+    const rowsOf = a => '<div class="cw-tk-rows">' + a.join('') + '</div>';
+    switcher(null, 'cw-eff-tk-sc', {
+      tiny: { html: rowsOf([row('Claude Code', 'Find the string, change it, run the tests'), row('Claude artifacts'), row('Figma connector'), row('Playwright'), row('Vitest', 'Only if a test checks the text'), row('GitHub PRs', 'One small PR'), row('Linear')]),
+        alt: 'Only Claude Code and a GitHub PR are used, and Vitest if a test checks the text. The other tools are not needed.',
+        cap: 'Tiny copy fix: Claude Code and one PR. Opening Figma or a prototype page would cost more than the fix.' },
+      tab: { html: rowsOf([row('Claude Code', 'Subagents, plan mode, one worktree'), row('Claude artifacts', 'Three directions on one page'), row('Figma connector', 'Tab and dialog frames, tokens'), row('Playwright', 'Close and reopen specs'), row('Vitest', 'Draft save and restore'), row('GitHub PRs', 'Behaviors first, then checks'), row('Linear', 'Brief, decision, tally')]),
+        alt: 'All seven tools are used, each for one job in the tab-close problem.',
+        cap: 'Tab close: every tool has one clear job, from the brief in Linear to the specs in Playwright.' },
+      area: { html: rowsOf([row('Claude Code', 'Many subagents, several worktrees'), row('Claude artifacts', 'Prototypes and a deck for the team'), row('Figma connector', 'Read new frames as design lands'), row('Playwright', 'A spec per main flow'), row('Vitest', 'Tests per store and helper'), row('GitHub PRs', 'Several PRs, small each'), row('Linear', 'A project with linked tickets')]),
+        alt: 'All tools used more heavily: several worktrees, a deck, a Linear project and several PRs.',
+        cap: 'New feature area: the same tools, used more. Several worktrees run at once, and the decision gets its own deck for the team.' }
+    }, 'tiny');
+  })();
+  </script>

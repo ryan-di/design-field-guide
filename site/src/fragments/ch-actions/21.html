@@ -1,0 +1,51 @@
+<div class="note comfy cw-wrap"><p>Notice that in each product a link and a button sit side by side.</p>
+  <div class="seg cw-seg" role="radiogroup" aria-label="Example">
+    <input type="radio" name="cw-link-vs-button-w" id="cw-link-vs-button-w-1" value="docs" checked><label for="cw-link-vs-button-w-1">Google Docs</label>
+    <input type="radio" name="cw-link-vs-button-w" id="cw-link-vs-button-w-2" value="gh"><label for="cw-link-vs-button-w-2">GitHub</label>
+    <input type="radio" name="cw-link-vs-button-w" id="cw-link-vs-button-w-3" value="yt"><label for="cw-link-vs-button-w-3">YouTube</label>
+    <input type="radio" name="cw-link-vs-button-w" id="cw-link-vs-button-w-4" value="amazon"><label for="cw-link-vs-button-w-4">Amazon</label>
+  </div>
+  <div class="cw" data-cw-view role="img" aria-label=""></div>
+  <p class="cw-cap" data-cw-cap aria-live="polite"></p>
+  
+  <script>
+  (() => {
+    const wrap = document.currentScript.closest('.cw-wrap');
+    const view = wrap.querySelector('[data-cw-view]'), cap = wrap.querySelector('[data-cw-cap]');
+    const svg = inner => '<svg class="icon sm" viewBox="0 0 24 24">' + inner + '</svg>';
+    const globe = svg('<circle cx="12" cy="12" r="8"/><path d="M4 12h16M12 4c3 3 3 13 0 16M12 4c-3 3-3 13 0 16"/>');
+    const copy = svg('<rect x="8" y="8" width="12" height="12" rx="2"/><path d="M16 8V4H4v12h4"/>');
+    const pen = svg('<path d="M4 20l1-4L16 5l3 3L8 19z"/>');
+    const unlink = svg('<path d="M10 14l-1.5 1.5a3.5 3.5 0 0 1-5-5L5 9M14 10l1.5-1.5a3.5 3.5 0 0 1 5 5L19 15M8 4v2M4 8h2M16 20v-2M20 16h-2"/>');
+    const thumb = svg('<path d="M7 11v9H4v-9zM7 11l4-7c1.5 0 2.5 1 2 3l-1 3h6a2 2 0 0 1 2 2.3l-1.2 6a2 2 0 0 1-2 1.7H7"/>');
+    const share = svg('<path d="M14 5l7 7-7 7M21 12H10a6 6 0 0 0-6 6"/>');
+    const a = (t, plain) => '<span class="cw-wlb-a' + (plain ? ' plain' : '') + '">' + t + '</span>';
+    const b = (kind, t, extra) => '<span class="btn btn-' + kind + ' cw-wlb-sm' + (extra || '') + '">' + t + '</span>';
+    const key = (links, buttons) => '<div class="cw-wlb-key"><span><i class="cw-wlb-k l">Link</i>' + links + '</span><span><i class="cw-wlb-k">Button</i>' + buttons + '</span></div>';
+    const S = {
+      docs: { html: '<div class="cw-wlb-pane"><i class="cw-line" style="width:92%"></i><span>Read the ' + a('style guide') + ' before you start.</span>'
+          + '<div class="cw-wlb-pop"><span>' + globe + a('example.com/style-guide') + '</span><span>' + '<span class="cw-wlb-ib">' + copy + '</span><span class="cw-wlb-ib">' + pen + '</span><span class="cw-wlb-ib">' + unlink + '</span></span></div>'
+          + '<i class="cw-line" style="width:70%"></i></div>' + key('the address', 'copy, edit, remove'),
+        alt: 'A document line with an underlined link. Clicked, it shows a small card: the web address as a link on top, and three small buttons below to copy, edit and remove it.',
+        cap: 'Google Docs: links in the text are underlined. In the card that opens on one, the address is a link, while copy, edit and remove are buttons.' },
+      gh: { html: '<div class="cw-wlb-pane"><span class="cw-wlb-who"><i class="cw-wlb-av"></i><b>ana</b> commented</span>'
+          + '<span>Same crash as ' + a('#42') + '. ' + a('@ben', true) + ', can you check the export path?</span>'
+          + '<div class="cw-wlb-acts">' + b('secondary', 'Close issue', ' sec') + b('primary', 'Comment') + '</div></div>' + key('#42, @ben', 'Close issue, Comment'),
+        alt: 'An issue comment that mentions #42 and @ben as links. Below it, two buttons: Close issue and Comment.',
+        cap: 'GitHub: in a comment, issue numbers like #42 and @mentions are links to other pages. Comment and Close issue change things here, so they are buttons.' },
+      yt: { html: '<div class="cw-wlb-pane" style="width:min(380px,100%)"><i class="cw-wlb-vid"></i><b style="font-size:13px">How to shoot the night sky</b>'
+          + '<div class="cw-wlb-row"><i class="cw-wlb-av b"></i><span class="cw-wlb-ch">' + a('Night Skies', true) + '<small>Channel</small></span>' + b('primary', 'Subscribe', ' cw-wlb-pill')
+          + b('secondary', thumb, ' sec cw-wlb-pill') + b('secondary', share + 'Share', ' sec cw-wlb-pill') + '</div></div>' + key('channel name', 'Subscribe, like, share'),
+        alt: 'A video with its title. Below, the channel name is a link, and next to it are a Subscribe button and like and share buttons.',
+        cap: 'YouTube: under a video, the channel name is a link to the channel’s page. Subscribe is a button: it changes something without leaving the video.' },
+      amazon: { html: '<div class="cw-wlb-pane"><div class="cw-wlb-item"><i class="cw-wlb-img"></i><span>' + a('Ceramic pour-over coffee dripper, 1 to 2 cups', true)
+          + '<span class="cw-wlb-stars">★★★★☆</span><b>$24.99</b>' + b('primary', 'Add to cart', ' cw-wlb-pill') + '</span></div></div>' + key('product title', 'Add to cart'),
+        alt: 'A search result: a product picture, a product title as a link, a star rating, a price, and an Add to cart button.',
+        cap: 'Amazon: in search results, each product title is a link, so it can open in a new tab for comparing. Add to cart is a button that acts right where you are.' }
+    };
+    const render = k => { view.innerHTML = S[k].html; view.setAttribute('aria-label', 'Sketch: ' + S[k].alt); cap.textContent = S[k].cap; };
+    wrap.querySelectorAll('input[name="cw-link-vs-button-w"]').forEach(r => r.addEventListener('change', () => render(r.value)));
+    render('docs');
+  })();
+  </script>
+</div>

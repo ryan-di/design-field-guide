@@ -1,0 +1,46 @@
+<div class="note comfy cw-wrap"><p>Notice where the bigger gaps fall: between groups, never inside them.</p>
+  <div class="seg cw-seg" role="radiogroup" aria-label="Example">
+    <input type="radio" name="cw-good-proximity-w" id="cw-good-proximity-w-1" value="ios" checked><label for="cw-good-proximity-w-1">iOS Settings</label>
+    <input type="radio" name="cw-good-proximity-w" id="cw-good-proximity-w-2" value="slack"><label for="cw-good-proximity-w-2">Slack</label>
+    <input type="radio" name="cw-good-proximity-w" id="cw-good-proximity-w-3" value="ig"><label for="cw-good-proximity-w-3">Instagram</label>
+    <input type="radio" name="cw-good-proximity-w" id="cw-good-proximity-w-4" value="yt"><label for="cw-good-proximity-w-4">YouTube</label>
+  </div>
+  <div class="cw cw-gpx-view" data-cw-view role="img" aria-label=""></div>
+  <p class="cw-cap" data-cw-cap aria-live="polite"></p>
+  
+  <script>
+  (() => {
+    const wrap = document.currentScript.closest('.cw-wrap');
+    const view = wrap.querySelector('[data-cw-view]'), cap = wrap.querySelector('[data-cw-cap]');
+    const sv = body => '<svg class="icon" viewBox="0 0 24 24" aria-hidden="true">' + body + '</svg>';
+    const set = (label, value, color) => '<div class="cw-gpx-set"><i class="cw-gpx-ico" style="background:var(' + color + ')"></i><span>' + label + (value === 'sw' ? '<i class="cw-gpx-sw"></i>' : value ? '<em>' + value + ' ›</em>' : '<em>›</em>') + '</span></div>';
+    const grp = rows => '<div class="cw-gpx-grp">' + rows.join('') + '</div>';
+    const msg = (av, name, time, lines) => '<div class="cw-gpx-msg"><span class="av' + av + '"></span><b>' + name + '<small>' + time + '</small></b>' + lines.map(l => '<span>' + l + '</span>').join('') + '</div>';
+    const vid = (c, dur, title, ch, meta) => '<div class="cw-gpx-vid"><span class="cw-gpx-thumb' + c + '"><small>' + dur + '</small></span><div class="cw-gpx-meta"><i></i><b>' + title + '</b><span>' + ch + '</span><span>' + meta + '</span></div></div>';
+    const S = {
+      ios: { html: '<div class="cw-gpx-phone"><div class="cw-gpx-ios"><b>Settings</b>' +
+          grp([set('Airplane Mode', 'sw', '--accent'), set('Wi-Fi', 'Home', '--ui-sel'), set('Bluetooth', 'On', '--ui-sel')]) +
+          grp([set('Notifications', '', '--ui-danger'), set('Sounds', '', '--ui-danger'), set('Focus', '', '--thumb-a')]) +
+          grp([set('General', '', '--ui-muted'), set('Display', '', '--ui-sel')]) + '</div></div>',
+        alt: 'A settings list in three rounded groups with clear gaps between them: Airplane Mode, Wi-Fi and Bluetooth; Notifications, Sounds and Focus; General and Display. Rows inside a group touch, split by thin lines.',
+        cap: 'iOS Settings: rows sit in rounded groups, with a clear gap between groups. Wi-Fi and Bluetooth read as one set and Notifications starts the next, with no heading needed.' },
+      slack: { html: '<div class="cw-gpx-win"><div class="cw-gpx-bar"># design</div><div class="cw-gpx-chat">' +
+          msg('', 'Ana', '10:02', ['Pushed the fix for export.', 'Can someone review it?', 'It’s a small one.']) + msg(' b', 'Ben', '10:05', ['On it.']) + msg(' c', 'Cy', '10:09', ['Looks good to me.', 'Merging after lunch.']) + '</div></div>',
+        alt: 'A channel. Ana’s three messages stack tightly under one name and picture. Ben’s and Cy’s messages each start lower, after a bigger gap, with their own name and picture.',
+        cap: 'Slack: messages one person sends in a row stack under a single name, with tight spacing. A new person gets a name, a picture and more space above.' },
+      ig: { html: '<div class="cw-gpx-phone cw-gpx-ig"><div class="cw-gpx-ig-head"><i></i><b>alex</b>⋯</div><div class="cw-gpx-ig-photo"></div>' +
+          '<div class="cw-gpx-ig-acts">' + sv('<path d="M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.6-7 10-7 10z"/>') + sv('<path d="M20 11.5a8 8 0 1 1-3.4-6.6A8 8 0 0 1 20 11.5zM20 11.5V20l-3.4-2.6"/>') +
+          sv('<path d="M21 3L3 10l7 3 3 7 8-17zM10 13l11-10"/>') + '<span class="end">' + sv('<path d="M6 3h12v18l-6-4.5L6 21z"/>') + '</span></div>' +
+          '<div class="cw-gpx-ig-text"><b>1,204 likes</b><span><b>alex</b> Sunset walk by the river</span><small>View all 12 comments</small></div></div>',
+        alt: 'A photo post. Below the photo, heart, comment and share icons sit together on the left. The save icon sits alone at the far right. Likes, caption and comments follow in a tight block.',
+        cap: 'Instagram: under a post, like, comment and share sit together on the left, and save sits alone on the right. The gap says save is a different kind of action.' },
+      yt: { html: '<div class="cw-gpx-yt">' + vid('', '12:04', 'Baking bread at home', 'Kitchen Notes', '24K views · 2 days ago') + vid(' b', '8:31', 'A quiet hike in the hills', 'Trail Days', '9K views · 1 week ago') + vid(' c', '21:47', 'Fixing an old bike', 'Garage Hour', '51K views · 3 weeks ago') + '</div>',
+        alt: 'A grid of video cards with no borders. Each card’s thumbnail, title, channel and view count sit tight together, with a wider gap between cards.',
+        cap: 'YouTube: a video’s thumbnail, title, channel and view count sit tight together, with wider gaps between videos. The grid reads as separate cards without any borders.' }
+    };
+    const render = k => { view.innerHTML = S[k].html; view.setAttribute('aria-label', 'Sketch: ' + S[k].alt); cap.textContent = S[k].cap; };
+    wrap.querySelectorAll('input[name="cw-good-proximity-w"]').forEach(r => r.addEventListener('change', () => render(r.value)));
+    render('ios');
+  })();
+  </script>
+</div>

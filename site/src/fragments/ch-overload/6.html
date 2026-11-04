@@ -1,0 +1,134 @@
+<script>
+(() => {
+  const cs = document.currentScript.closest('.cs');
+  const run = () => {
+    const D = (k, html, wire) => csDemo(cs.querySelector('[data-d="' + k + '"]'), html, wire);
+    const st = document.createElement('style');
+    st.textContent = `
+#pat-progressive-disclosure .pd-card{width:min(360px,100%);background:var(--ui-surface);border:1px solid var(--ui-border);border-radius:12px;box-shadow:var(--ui-shadow);padding:12px 14px;display:flex;flex-direction:column;gap:9px;text-align:left;font-size:14px}
+#pat-progressive-disclosure .pd-card > b{font-size:15px}
+#pat-progressive-disclosure .pd-card .field{width:100%;gap:4px}
+#pat-progressive-disclosure .pd-card .input,#pat-progressive-disclosure .pd-card .select{padding:7px 10px;font-size:14px}
+#pat-progressive-disclosure .pd-line{display:flex;gap:8px;align-items:baseline;border-bottom:1px solid var(--ui-border);padding:5px 0}
+#pat-progressive-disclosure .pd-line span:first-child{color:var(--ui-muted);width:52px;flex:none}
+#pat-progressive-disclosure .pd-tg{align-self:flex-start;text-align:left}
+#pat-progressive-disclosure .pd-box{display:flex;flex-direction:column;gap:2px;border:1px solid var(--ui-border);border-radius:9px;padding:4px 10px;background:var(--ui-bg)}
+#pat-progressive-disclosure .pd-box .switch{padding:6px 0;font-size:14px}
+#pat-progressive-disclosure .pd-acts{display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap}
+#pat-progressive-disclosure .pd-q{display:flex;gap:6px}
+#pat-progressive-disclosure .pd-q .input{flex:1}
+#pat-progressive-disclosure .pd-chips{display:flex;flex-wrap:wrap;gap:6px;align-items:center}
+#pat-progressive-disclosure .pd-chip{display:inline-flex;align-items:center;gap:4px;border-radius:999px;background:var(--ui-sel-soft);color:var(--ui-text);border:1px solid var(--ui-sel);padding:2px 4px 2px 10px;font-size:13px;font-weight:600}
+#pat-progressive-disclosure .pd-chip button{all:unset;cursor:pointer;width:20px;height:20px;border-radius:50%;display:grid;place-items:center}
+#pat-progressive-disclosure .pd-chip button:focus-visible{outline:2px solid var(--ui-sel)}
+#pat-progressive-disclosure .pd-res{display:flex;flex-direction:column}
+#pat-progressive-disclosure .pd-res .cs-row .thumb{width:30px;aspect-ratio:1;flex:none}
+#pat-progressive-disclosure .pd-stat{font:500 12.5px var(--font-mono);color:var(--ui-muted)}
+#pat-progressive-disclosure .pd-photo{display:flex;align-items:center;gap:10px}
+#pat-progressive-disclosure .pd-photo .thumb{width:54px;aspect-ratio:4/3;flex:none}
+`;
+    cs.prepend(st);
+    const icon = n => '<svg class="icon sm"><use href="#i-' + n + '"/></svg>';
+    const sw = (l, on, attr) => '<label class="switch"><span class="grow">' + l + '</span><input type="checkbox" role="switch"' + (on ? ' checked' : '') + (attr ? ' ' + attr : '') + '></label>';
+    const toggle = (d, label, openLabel) => {
+      const b = d.querySelector('[data-tg]'), box = d.querySelector('[data-box]');
+      const set = open => { box.hidden = !open; b.setAttribute('aria-expanded', String(open)); b.textContent = open ? openLabel : label; };
+      b.addEventListener('click', () => set(box.hidden));
+      return set;
+    };
+
+    /* 1. Say what's hidden */
+    const mail = label => '<div class="pd-card"><b>New email</b><div class="pd-line"><span>To</span><span>Sam Okafor</span></div><div class="pd-line"><span>Subject</span><span>Notes from Tuesday</span></div>' +
+      '<button class="btn btn-ghost cs-sm pd-tg" type="button" aria-expanded="false" data-tg>' + label + '</button>' +
+      '<div class="pd-box" data-box hidden>' + sw('Send later: tomorrow, 8:00', false) + sw('High priority', false) + sw('Ask for a read receipt', false) + '</div>' +
+      '<div class="pd-acts"><span></span><span class="btn btn-primary cs-sm">Send</span></div></div>';
+    D('pat-progressive-disclosure-1b', mail('More options'), d => toggle(d, 'More options', 'Fewer options'));
+    const L1 = 'More options (3): send later, priority, read receipt';
+    D('pat-progressive-disclosure-1f', mail(L1), d => toggle(d, L1, 'Fewer options'));
+
+    /* 2. Let experts skip the click */
+    const exp = fixed => '<div class="pd-card"><b>Export photos</b><div class="pd-photo"><i class="thumb" data-th></i><span><b data-name>IMG_2041.jpg</b><br><span class="cs-meta" data-of>Photo 1 of 5</span></span></div>' +
+      '<label class="field"><span class="field-label">Size</span><select class="select"><option>Full size</option><option>Large, 2048 px</option></select></label>' +
+      '<button class="btn btn-ghost cs-sm pd-tg" type="button" aria-expanded="false" data-tg>Advanced (2)</button>' +
+      '<div class="pd-box" data-box hidden>' + sw('Remove location', true) + sw('Keep original date', true) + '</div>' +
+      (fixed ? '<label class="check" style="font-size:13.5px"><input type="checkbox" data-always><span>Always show advanced settings<small>Shortcut: Alt+A</small></span></label>' : '') +
+      '<div class="pd-acts"><span class="pd-stat" data-n>Clicks on Advanced: 0</span><button class="btn btn-primary cs-sm" type="button" data-go>Export</button></div></div>';
+    const expWire = fixed => d => {
+      const set = toggle(d, 'Advanced (2)', 'Hide advanced'), box = d.querySelector('[data-box]'), n = d.querySelector('[data-n]');
+      let clicks = 0, photo = 1, remembered = false;
+      const count = () => { clicks++; n.textContent = 'Clicks on Advanced: ' + clicks; };
+      d.querySelector('[data-tg]').addEventListener('click', () => { count(); remembered = !box.hidden; });
+      d.querySelector('[data-go]').addEventListener('click', () => {
+        if (photo >= 5) return;
+        photo++;
+        d.querySelector('[data-name]').textContent = 'IMG_' + (2040 + photo) + '.jpg';
+        d.querySelector('[data-of]').textContent = 'Photo ' + photo + ' of 5' + (photo === 5 ? ', last one' : '');
+        d.querySelector('[data-th]').className = 'thumb' + ['', ' b', ' c'][photo % 3];
+        set(fixed ? remembered || d.querySelector('[data-always]').checked : false);
+      });
+      if (fixed) {
+        const always = d.querySelector('[data-always]');
+        always.addEventListener('change', () => { if (always.checked) set(true); });
+        d.addEventListener('keydown', e => {
+          if (e.altKey && (e.code === 'KeyA' || e.key === 'a' || e.key === 'A')) { e.preventDefault(); set(box.hidden); remembered = !box.hidden; }
+        });
+      }
+    };
+    D('pat-progressive-disclosure-2b', exp(false), expWire(false));
+    D('pat-progressive-disclosure-2f', exp(true), expWire(true));
+
+    /* 3. Split by what people change */
+    const ev = fixed => '<div class="pd-card"><b>New event</b>' +
+      '<label class="field"><span class="field-label">Title</span><input class="input" value="Team lunch" autocomplete="off"></label>' +
+      '<div class="pd-line"><span>When</span><span>Thu 12:30 – 13:30</span></div>' +
+      (fixed ? '<div class="pd-box">' + sw('Add video call', false, 'data-vc') + '</div>' : '') +
+      '<button class="btn btn-ghost cs-sm pd-tg" type="button" aria-expanded="false" data-tg>' + (fixed ? 'More options (3)' : 'More options (4)') + '</button>' +
+      '<div class="pd-box" data-box hidden>' + (fixed ? '' : sw('Add video call', false, 'data-vc')) + sw('Busy for others', true) + sw('Private', false) + sw('Color: blue', false) + '</div>' +
+      '<span class="pd-stat">' + (fixed ? 'More options opened in 6% of new events.' : 'More options opened in 82% of new events. Most changed inside: video call.') + '</span>' +
+      '<div class="pd-acts"><span class="pd-stat" data-n></span><button class="btn btn-primary cs-sm" type="button" data-go>Create</button></div></div>';
+    const evWire = fixed => (d, t) => {
+      const set = toggle(d, fixed ? 'More options (3)' : 'More options (4)', 'Fewer options');
+      d.querySelector('[data-go]').addEventListener('click', () => {
+        const vc = d.querySelector('[data-vc]');
+        csToast(d, t, vc.checked ? 'Team lunch created, with a video call.' : 'Team lunch created, without a video call.', { replace: true });
+        vc.checked = false; set(false);
+      });
+    };
+    D('pat-progressive-disclosure-3b', ev(false), evWire(false));
+    D('pat-progressive-disclosure-3f', ev(true), evWire(true));
+
+    /* 4. Show what hidden settings changed */
+    const LAMPS = ['Clip-on lamp, €18', 'Arm desk lamp, €34', 'LED desk lamp, €45', 'Brass desk lamp, €79'];
+    const shop = fixed => '<div class="pd-card"><b>Shop</b><div class="pd-q"><input class="input" value="desk lamp" aria-label="Search the shop" autocomplete="off"><button class="btn btn-primary cs-sm" type="button" data-go>Search</button></div>' +
+      '<div class="pd-chips"><button class="btn btn-ghost cs-sm pd-tg" type="button" aria-expanded="false" data-tg>Filters</button><span data-sum></span></div>' +
+      '<div class="pd-box" data-box hidden><label class="field"><span class="field-label">Price</span><select class="select" data-price><option value="any">Any price</option><option value="20" selected>Under €20</option><option value="50">Under €50</option></select></label></div>' +
+      '<div class="pd-res" data-res></div></div>';
+    const shopWire = fixed => d => {
+      toggle(d, 'Filters', 'Hide filters');
+      const price = d.querySelector('[data-price]'), sum = d.querySelector('[data-sum]'), res = d.querySelector('[data-res]');
+      let searched = false;
+      const max = () => price.value === 'any' ? 999 : Number(price.value);
+      const render = () => {
+        if (fixed) {
+          sum.innerHTML = price.value === 'any' ? '' : '<span class="pd-chip">' + price.options[price.selectedIndex].text + '<button type="button" aria-label="Clear price filter" data-clr>' + icon('x') + '</button></span>';
+          const c = sum.querySelector('[data-clr]');
+          if (c) c.addEventListener('click', () => { price.value = 'any'; render(); d.querySelector('[data-tg]').focus(); });
+        }
+        if (!searched) return;
+        const hits = LAMPS.filter(l => Number(l.split('€')[1]) < max());
+        res.innerHTML = '<span class="pd-stat">' + hits.length + (hits.length === 1 ? ' result' : ' results') + '</span>' + hits.map((h, i) => '<div class="cs-row"><i class="thumb' + ['', ' b', ' c'][i % 3] + '"></i><span class="grow">' + h + '</span></div>').join('');
+      };
+      d.querySelector('[data-go]').addEventListener('click', () => { searched = true; render(); });
+      price.addEventListener('change', render);
+      render();
+    };
+    D('pat-progressive-disclosure-4b', shop(false), shopWire(false));
+    D('pat-progressive-disclosure-4f', shop(true), shopWire(true));
+
+    csInit(cs);
+  };
+  /* csDemo and csInit are defined further down the book, so wait for them */
+  if (window.csDemo) run(); else document.addEventListener('DOMContentLoaded', run);
+})();
+
+</script>

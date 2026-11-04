@@ -1,0 +1,124 @@
+<script>
+(() => {
+  const cs = document.currentScript.closest('.cs');
+  /* Part 1 sits above the shared case helpers in the book, so wait for them. */
+  const run = () => {
+  const D = (k, html, wire) => csDemo(cs.querySelector('[data-d="' + k + '"]'), html, wire);
+  const css = document.createElement('style');
+  css.textContent = `
+#good-spacing-rhythm .sr-sw{padding:0;gap:10px;font-size:14px}
+#good-spacing-rhythm .sr-out{font:500 12.5px/1.45 var(--font-mono);color:var(--ui-muted);text-align:center;max-width:min(320px,100%);min-height:18px;margin:0}
+#good-spacing-rhythm .sr-card{position:relative;width:min(290px,100%);display:flex;flex-direction:column;background:var(--ui-surface);border:1px solid var(--ui-border);border-radius:12px;box-shadow:var(--ui-shadow);padding:0 16px;color:var(--ui-text);text-align:left}
+#good-spacing-rhythm .sr-card[data-m="b"]{padding:0 14px}
+#good-spacing-rhythm .sr-gap{display:block;position:relative;flex:none}
+#good-spacing-rhythm [data-show="on"] .sr-gap{background:color-mix(in srgb,var(--ui-sel) 22%,transparent)}
+#good-spacing-rhythm [data-show="on"] .sr-gap::after{content:attr(data-g);position:absolute;right:-12px;top:50%;transform:translateY(-50%);font:600 10.5px/1 var(--font-mono);color:var(--ui-on-sel);background:var(--ui-sel);border-radius:4px;padding:2px 4px;z-index:1}
+#good-spacing-rhythm .sr-t{font:700 16px/1.25 var(--font-body)}
+#good-spacing-rhythm .sr-p{margin:0;font-size:13.5px;line-height:1.4;color:var(--ui-muted)}
+#good-spacing-rhythm .sr-ing{display:flex;justify-content:space-between;font-size:13.5px;line-height:20px}
+#good-spacing-rhythm .sr-ing span{color:var(--ui-muted)}
+#good-spacing-rhythm .sr-card .btn{align-self:flex-start}
+#good-spacing-rhythm .sr-bk{position:relative;width:min(300px,100%);display:flex;flex-direction:column;gap:8px;background:var(--ui-surface);border:1px solid var(--ui-border);border-radius:12px;box-shadow:var(--ui-shadow);padding:16px 0;color:var(--ui-text);text-align:left;font-size:14px}
+#good-spacing-rhythm .sr-bk > *{display:block;margin-right:16px}
+#good-spacing-rhythm .sr-bk .sr-t{font-size:15.5px}
+#good-spacing-rhythm .sr-bk .sr-price{display:flex;justify-content:space-between;font-weight:600;border-top:1px solid var(--ui-border);padding-top:8px}
+#good-spacing-rhythm .sr-bk .sr-note{font-size:13px;color:var(--ui-ok)}
+#good-spacing-rhythm .sr-bk .sr-note.ind{border-left:2px solid var(--ui-ok);padding-left:8px;margin-left:32px}
+#good-spacing-rhythm .sr-bk .btn{align-self:flex-start}
+#good-spacing-rhythm .sr-ln{position:absolute;top:0;bottom:0;width:0;border-left:1.5px dashed var(--ui-danger);pointer-events:none}
+#good-spacing-rhythm .sr-ln.ok{border-left-color:var(--ui-sel)}
+#good-spacing-rhythm .sr-mu{width:min(320px,100%)}
+#good-spacing-rhythm .sr-body{max-height:236px;overflow:auto;padding:0 14px 8px;background:var(--ui-surface)}
+#good-spacing-rhythm .sr-body:focus-visible{outline:3px solid var(--ui-sel);outline-offset:-3px}
+#good-spacing-rhythm .sr-h{margin:0;padding:12px 0 4px;font:600 12px var(--font-mono);letter-spacing:.06em;text-transform:uppercase;color:var(--ui-muted)}
+#good-spacing-rhythm .sr-row{all:unset;box-sizing:border-box;position:relative;width:100%;display:flex;align-items:center;gap:10px;cursor:pointer;border-bottom:1px solid var(--ui-border);color:var(--ui-text);font-size:14px}
+#good-spacing-rhythm .sr-row:focus-visible{outline:2px solid var(--ui-sel);outline-offset:-2px}
+#good-spacing-rhythm .sr-row:hover{background:var(--ui-hover)}
+#good-spacing-rhythm .sr-th{flex:none;border-radius:5px;background:linear-gradient(135deg,var(--thumb-a),var(--thumb-b))}
+#good-spacing-rhythm .sr-th.b{background:linear-gradient(135deg,var(--thumb-c),var(--thumb-a))}
+#good-spacing-rhythm .sr-th.c{background:linear-gradient(135deg,var(--thumb-d),var(--thumb-b))}
+#good-spacing-rhythm .sr-row .grow{flex:1;min-width:0;display:flex;flex-direction:column;line-height:1.25}
+#good-spacing-rhythm .sr-row small{font-size:12px;color:var(--ui-muted)}
+#good-spacing-rhythm .sr-row.tight{padding:2px 0;gap:6px;font-size:13px}
+#good-spacing-rhythm .sr-row.tight .sr-th{width:22px;height:22px}
+#good-spacing-rhythm .sr-row.tight small{display:none}
+#good-spacing-rhythm .sr-row.roomy{padding:16px 0;gap:16px}
+#good-spacing-rhythm .sr-row.roomy .sr-th{width:44px;height:44px}
+#good-spacing-rhythm .sr-row.mid{padding:8px 0;gap:8px}
+#good-spacing-rhythm .sr-row.mid .sr-th{width:32px;height:32px}
+#good-spacing-rhythm [data-show="on"] .sr-row::after{content:attr(data-h);position:absolute;right:0;top:50%;transform:translateY(-50%);font:600 10.5px/1 var(--font-mono);color:var(--ui-on-sel);background:var(--ui-sel);border-radius:4px;padding:2px 4px}
+#good-spacing-rhythm .sr-now{font:500 12px var(--font-mono);color:var(--ui-muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0}
+`;
+  cs.prepend(css);
+
+  const sw = label => '<label class="switch sr-sw"><span>' + label + '</span><input type="checkbox" role="switch" data-sw></label>';
+
+  /* 1. Gaps from one scale */
+  const recipe = g => {
+    const gap = n => '<i class="sr-gap" style="height:' + n + 'px" data-g="' + n + '"></i>';
+    const ing = (a, b) => '<div class="sr-ing">' + a + '<span>' + b + '</span></div>';
+    return '<div class="sr-card" data-m="' + g.m + '">' + gap(g.top) + '<b class="sr-t">Lemon pasta</b>' + gap(g.title) +
+      '<span class="cs-meta">20 min · 2 servings</span>' + gap(g.meta) + '<p class="sr-p">Quick, bright and made from what’s in the cupboard.</p>' + gap(g.desc) +
+      ing('Spaghetti', '200 g') + gap(g.r1) + ing('Lemons', '2') + gap(g.r2) + ing('Parmesan', '50 g') + gap(g.btn) +
+      '<button class="btn btn-primary cs-sm" type="button" data-add>Add to shopping list</button>' + gap(g.bot) + '</div>' + sw('Show gaps') + '<p class="sr-out" aria-live="polite" data-out></p>';
+  };
+  const wireRecipe = scale => d => {
+    const out = d.querySelector('[data-out]'), card = d.querySelector('.sr-card');
+    d.querySelector('[data-sw]').addEventListener('change', e => {
+      card.dataset.show = e.target.checked ? 'on' : '';
+      if (!e.target.checked) { out.textContent = ''; return; }
+      const v = [...new Set([...card.querySelectorAll('.sr-gap')].map(g => Number(g.dataset.g)))].sort((a, b) => a - b);
+      out.textContent = 'Gap sizes: ' + v.join(', ') + ' px. ' + (scale ? v.length + ' steps, all from one scale.' : v.length + ' different values.');
+    });
+    d.querySelector('[data-add]').addEventListener('click', e => { e.target.textContent = 'Added 3 items'; });
+  };
+  D('good-spacing-rhythm-1b', recipe({ m: 'b', top: 13, title: 3, meta: 9, desc: 13, r1: 7, r2: 11, btn: 19, bot: 15 }), wireRecipe(false));
+  D('good-spacing-rhythm-1f', recipe({ m: 'f', top: 16, title: 4, meta: 8, desc: 16, r1: 8, r2: 8, btn: 24, bot: 16 }), wireRecipe(true));
+
+  /* 2. Edges */
+  const booking = fixed => {
+    const m = n => ' style="margin-left:' + (fixed ? 16 : n) + 'px"';
+    return '<div class="sr-bk" data-card><b class="sr-t" data-e' + m(16) + '>Hotel Mar, Lisbon</b><span class="cs-meta" data-e' + m(18) + '>2 nights · 12–14 May</span>' +
+      '<span data-e' + m(15) + '>2 guests, 1 room</span><div class="sr-price" data-e' + m(13) + '><span>Total</span><span>€248</span></div>' +
+      '<span class="sr-note' + (fixed ? ' ind' : '') + '" data-e' + (fixed ? '' : m(20)) + '>Free cancellation until 10 May</span>' +
+      '<button class="btn btn-primary cs-sm" type="button" data-e' + m(16) + ' data-go>Reserve</button></div>' + sw('Show edges') + '<p class="sr-out" aria-live="polite" data-out></p>';
+  };
+  const wireBooking = fixed => d => {
+    const card = d.querySelector('[data-card]'), out = d.querySelector('[data-out]');
+    d.querySelector('[data-sw]').addEventListener('change', e => {
+      card.querySelectorAll('.sr-ln').forEach(l => l.remove());
+      if (!e.target.checked) { out.textContent = ''; return; }
+      const left = card.getBoundingClientRect().left + card.clientLeft;
+      const xs = [...new Set([...card.querySelectorAll('[data-e]')].map(el => Math.round(el.getBoundingClientRect().left - left)))].sort((a, b) => a - b);
+      xs.forEach(x => { const l = document.createElement('i'); l.className = 'sr-ln' + (fixed ? ' ok' : ''); l.style.left = x + 'px'; card.appendChild(l); });
+      out.textContent = fixed ? 'Left edges on ' + xs.length + ' lines: ' + xs[0] + ' px for everything, ' + xs[xs.length - 1] + ' px for the indented note.' : 'Left edges on ' + xs.length + ' lines: ' + xs.join(', ') + ' px.';
+    });
+    d.querySelector('[data-go]').addEventListener('click', e => { e.target.textContent = 'Reserved'; });
+  };
+  D('good-spacing-rhythm-2b', booking(false), wireBooking(false));
+  D('good-spacing-rhythm-2f', booking(true), wireBooking(true));
+
+  /* 3. Density */
+  const LISTS = [['Your playlists', [['Morning mix', '24 songs', ''], ['Road trip', '31 songs', ' b'], ['Focus', '18 songs', ' c']]],
+    ['Recently played', [['Blue Hours', 'Album · Nora Lind', ' b'], ['Late Trains', 'Album · The Pines', ' c'], ['Kitchen radio', 'Playlist · 40 songs', '']]]];
+  const music = (a, b) => '<div class="app-frame sr-mu"><div class="app-bar"><span>Music</span><span class="sr-now" aria-live="polite" data-now></span></div>' +
+    '<div class="sr-body" tabindex="0" role="region" aria-label="Library" data-list>' + LISTS.map((L, i) => '<p class="sr-h">' + L[0] + '</p>' +
+      L[1].map(r => '<button class="sr-row ' + (i ? b : a) + '" type="button" data-play="' + r[0] + '"><span class="sr-th' + r[2] + '"></span><span class="grow"><span>' + r[0] + '</span><small>' + r[1] + '</small></span></button>').join('')).join('') +
+    '</div></div>' + sw('Show row heights');
+  const wireMusic = d => {
+    const list = d.querySelector('[data-list]'), now = d.querySelector('[data-now]');
+    d.querySelectorAll('[data-play]').forEach(r => r.addEventListener('click', () => { now.textContent = 'Playing: ' + r.dataset.play; }));
+    d.querySelector('[data-sw]').addEventListener('change', e => {
+      list.dataset.show = e.target.checked ? 'on' : '';
+      list.querySelectorAll('.sr-row').forEach(r => { r.dataset.h = r.offsetHeight + ' px'; });
+    });
+  };
+  D('good-spacing-rhythm-3b', music('tight', 'roomy'), wireMusic);
+  D('good-spacing-rhythm-3f', music('mid', 'mid'), wireMusic);
+
+  csInit(cs);
+  };
+  if (window.csDemo) run(); else document.addEventListener('DOMContentLoaded', run);
+})();
+
+</script>

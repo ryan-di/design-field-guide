@@ -1,0 +1,173 @@
+<script>
+(() => {
+  const cs = document.currentScript.closest('.cs');
+  /* Part 1 sits above the shared case helpers in the book, so wait for them. */
+  const run = () => {
+  const D = (k, html, wire) => csDemo(cs.querySelector('[data-d="' + k + '"]'), html, wire);
+  const css = document.createElement('style');
+  css.textContent = `
+#good-contrast .ct-sw{padding:0;gap:10px;font-size:14px}
+#good-contrast .ct-out{font:500 12.5px/1.45 var(--font-mono);color:var(--ui-muted);text-align:center;max-width:min(330px,100%);min-height:18px;margin:0}
+#good-contrast .ct-card{position:relative;width:min(310px,100%);display:flex;flex-direction:column;gap:8px;background:var(--ui-surface);border:1px solid var(--ui-border);border-radius:12px;box-shadow:var(--ui-shadow);padding:16px;color:var(--ui-text);text-align:left;overflow:hidden}
+#good-contrast .ct-card p{margin:0;font-size:14.5px;line-height:1.45}
+#good-contrast .ct-h{font:700 17px/1.25 var(--font-body)}
+#good-contrast .ct-cap{font-size:12.5px}
+#good-contrast [data-m="b"] .ct-body{color:color-mix(in srgb,var(--ui-text) 36%,var(--ui-surface))}
+#good-contrast [data-m="b"] .ct-cap{color:color-mix(in srgb,var(--ui-text) 30%,var(--ui-surface))}
+#good-contrast [data-m="f"] .ct-cap{color:var(--ui-muted)}
+#good-contrast .ct-glare{position:absolute;inset:0;background:linear-gradient(115deg,rgba(255,255,255,.5),rgba(255,255,255,.38) 55%,rgba(255,255,255,.46));pointer-events:none}
+#good-contrast .ct-glare[hidden]{display:none}
+#good-contrast .ct-bank{width:min(320px,100%);background:var(--ui-surface);border:1px solid var(--ui-border);border-radius:12px;box-shadow:var(--ui-shadow);padding:6px 14px;text-align:left}
+#good-contrast .ct-bank.grey{filter:grayscale(1)}
+#good-contrast .ct-tx{display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid var(--ui-border);font-size:14px}
+#good-contrast .ct-tx:last-child{border-bottom:0}
+#good-contrast .ct-tx .grow{flex:1;min-width:0;display:flex;flex-direction:column;line-height:1.3}
+#good-contrast .ct-tx small{font-size:12px;color:var(--ui-muted)}
+#good-contrast .ct-amt{font:600 14px var(--font-mono);white-space:nowrap;display:inline-flex;align-items:center;gap:4px}
+#good-contrast .ct-amt.in{color:var(--ui-ok)}
+#good-contrast .ct-amt.out{color:var(--ui-danger)}
+#good-contrast .ct-amt .icon{width:14px;height:14px}
+#good-contrast .ct-seats{display:flex;flex-direction:column;gap:6px;align-items:center;background:var(--ui-surface);border:1px solid var(--ui-border);border-radius:12px;box-shadow:var(--ui-shadow);padding:12px 14px;width:min(320px,100%)}
+#good-contrast .ct-screen{width:80%;height:6px;border-radius:3px;background:var(--ui-border);margin-bottom:6px}
+#good-contrast .ct-srow{display:flex;gap:5px;align-items:center}
+#good-contrast .ct-srow > b{width:14px;font:600 11px var(--font-mono);color:var(--ui-muted)}
+#good-contrast .ct-aisle{width:12px}
+#good-contrast .ct-seat{all:unset;box-sizing:border-box;width:28px;height:26px;border-radius:6px 6px 4px 4px;display:grid;place-items:center;cursor:pointer;border:2px solid transparent}
+#good-contrast .ct-seat:focus-visible{outline:3px solid var(--ui-text);outline-offset:1px}
+#good-contrast .ct-seat .icon{width:14px;height:14px;stroke-width:3}
+#good-contrast .ct-legend{display:flex;gap:12px;flex-wrap:wrap;justify-content:center;font-size:12.5px;margin-top:4px}
+#good-contrast .ct-legend span{display:inline-flex;align-items:center;gap:5px}
+#good-contrast .ct-legend i{width:14px;height:13px;border-radius:4px 4px 3px 3px;border:2px solid transparent;box-sizing:border-box}
+#good-contrast .ct-themes{display:inline-flex;gap:4px;padding:3px;border-radius:9px;background:var(--ui-hover);border:1px solid var(--ui-border)}
+#good-contrast .ct-themes button{all:unset;cursor:pointer;padding:5px 12px;border-radius:7px;font:600 13px var(--font-body);color:var(--ui-muted)}
+#good-contrast .ct-themes button[aria-pressed="true"]{background:var(--ui-surface);color:var(--ui-text);box-shadow:0 1px 3px rgba(0,0,0,.18)}
+#good-contrast .ct-themes button:focus-visible{outline:2px solid var(--ui-sel)}
+#good-contrast .ct-ev{width:min(300px,100%);border-radius:12px;padding:14px 16px;display:flex;flex-direction:column;gap:4px;text-align:left;border:1px solid;box-shadow:var(--ui-shadow);transition:background .2s,color .2s}
+#good-contrast .ct-ev b{font-size:16px}
+#good-contrast .ct-ev span{font-size:14px}
+#good-contrast .ct-ev small{font-size:13px;line-height:1.4;margin-top:4px}
+`;
+  cs.prepend(css);
+
+  const icon = n => '<svg class="icon sm" aria-hidden="true"><use href="#i-' + n + '"/></svg>';
+  const sw = label => '<label class="switch ct-sw"><span>' + label + '</span><input type="checkbox" role="switch" data-sw></label>';
+  const parse = c => {
+    let m = c.match(/rgba?\(([^)]+)\)/);
+    if (m) return m[1].split(/[\s,/]+/).filter(Boolean).slice(0, 3).map(Number);
+    m = c.match(/color\(srgb ([^)]+)\)/);
+    if (m) return m[1].trim().split(/\s+/).slice(0, 3).map(v => Math.round(parseFloat(v) * 255));
+    return [0, 0, 0];
+  };
+  const hex = h => [1, 3, 5].map(i => parseInt(h.slice(i, i + 2), 16));
+  const lin = v => { v /= 255; return v <= 0.04045 ? v / 12.92 : Math.pow((v + 0.055) / 1.055, 2.4); };
+  const lum = c => 0.2126 * lin(c[0]) + 0.7152 * lin(c[1]) + 0.0722 * lin(c[2]);
+  const ratio = (a, b) => { const x = lum(a), y = lum(b); return (Math.max(x, y) + 0.05) / (Math.min(x, y) + 0.05); };
+  const fmt = r => (Math.floor(r * 10) / 10).toFixed(1) + ' : 1';
+
+  /* 1. Pale body text */
+  const mail = m => '<div class="ct-card" data-m="' + m + '"><span class="ct-cap">Market Street Shop · Order 4821</span><b class="ct-h">Your order is on its way</b>' +
+    '<p class="ct-body">Arrives Thursday between 9:00 and 13:00.</p><p class="ct-body">Delivery to 12 Rua Nova, 2nd floor, Lisbon. Ring the bell marked “Silva”.</p>' +
+    '<span class="ct-cap">2 items · Paid by card</span><i class="ct-glare" hidden></i></div>' + sw('Bright sunlight') + '<p class="ct-out" data-out></p>';
+  const wireMail = d => {
+    const card = d.querySelector('.ct-card'), out = d.querySelector('[data-out]'), glare = d.querySelector('.ct-glare');
+    const measure = () => {
+      const bg = parse(getComputedStyle(card).backgroundColor);
+      const b = ratio(parse(getComputedStyle(card.querySelector('.ct-body')).color), bg), c = ratio(parse(getComputedStyle(card.querySelector('.ct-cap')).color), bg);
+      out.textContent = 'Body text ' + fmt(b) + ', caption ' + fmt(c) + '. ' + (b >= 4.5 && c >= 4.5 ? 'Both pass 4.5 : 1.' : 'Both need 4.5 : 1.');
+    };
+    d.querySelector('[data-sw]').addEventListener('change', e => { glare.hidden = !e.target.checked; });
+    measure();
+    /* Remeasure when the reader switches the book’s theme; stop once this demo is rebuilt. */
+    try { const o = new MutationObserver(() => { if (d.contains(card)) measure(); else o.disconnect(); }); o.observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] }); } catch (e) { /* ignore */ }
+  };
+  D('good-contrast-1b', mail('b'), wireMail);
+  D('good-contrast-1f', mail('f'), wireMail);
+
+  /* 2. Color alone */
+  const arrow = dir => '<svg class="icon" viewBox="0 0 24 24" aria-hidden="true">' + (dir === 'in' ? '<path d="M17 7L7 17M7 9v8h8"/>' : '<path d="M7 17L17 7M9 7h8v8"/>') + '</svg>';
+  const TX = [['in', 'Salary', 'Acme Ltd', '2,450.00'], ['out', 'Groceries', 'Corner market', '64.20'], ['in', 'Ana Silva', 'Dinner split', '18.50'], ['out', 'Rent', 'Monthly', '900.00'], ['out', 'Train tickets', 'Lisbon–Porto', '42.00']];
+  const bank = fixed => '<div class="ct-bank" data-list>' + TX.map(r => '<div class="ct-tx"><span class="grow"><span>' + r[1] + '</span><small>' + (fixed ? (r[0] === 'in' ? 'Received' : 'Paid') + ' · ' : '') + r[2] + '</small></span>' +
+    '<span class="ct-amt ' + r[0] + '">' + (fixed ? arrow(r[0]) + (r[0] === 'in' ? '+' : '−') : '') + '€' + r[3] + '</span></div>').join('') + '</div>' + sw('Remove color');
+  const wireBank = d => d.querySelector('[data-sw]').addEventListener('change', e => d.querySelector('[data-list]').classList.toggle('grey', e.target.checked));
+  D('good-contrast-2b', bank(false), wireBank);
+  D('good-contrast-2f', bank(true), wireBank);
+
+  /* 3. Red and green of the same lightness */
+  const M = [[0.367322, 0.860646, -0.227968], [0.280085, 0.672501, 0.047413], [-0.01182, 0.04294, 0.968881]];
+  const toS = v => { v = Math.max(0, Math.min(1, v)); return Math.round(255 * (v <= 0.0031308 ? 12.92 * v : 1.055 * Math.pow(v, 1 / 2.4) - 0.055)); };
+  const sim = h => { const c = hex(h).map(lin); return 'rgb(' + M.map(r => toS(r[0] * c[0] + r[1] * c[1] + r[2] * c[2])).join(',') + ')'; };
+  const PAL = {
+    b: { free: { bg: '#4c8f44', bd: '#4c8f44', fg: '#ffffff' }, taken: { bg: '#d4573f', bd: '#d4573f', fg: '#ffffff' }, mine: { bg: '#2f5da8', bd: '#2f5da8', fg: '#ffffff' } },
+    f: { free: { bg: '#d7ecd2', bd: '#3f8a3a', fg: '#1b1d24' }, taken: { bg: '#5b2a20', bd: '#5b2a20', fg: '#ffffff' }, mine: { bg: '#2f5da8', bd: '#2f5da8', fg: '#ffffff' } }
+  };
+  const TAKEN = ['A1', 'A2', 'A5', 'B3', 'B4', 'C1', 'C6', 'D2', 'D3', 'D4'];
+  const seats = m => {
+    let h = '<div class="ct-seats" data-map><span class="ct-screen" aria-hidden="true"></span>';
+    ['A', 'B', 'C', 'D'].forEach(r => {
+      h += '<div class="ct-srow"><b aria-hidden="true">' + r + '</b>';
+      for (let n = 1; n <= 6; n++) {
+        if (n === 4) h += '<span class="ct-aisle"></span>';
+        const k = r + n, st = TAKEN.includes(k) ? 'taken' : 'free';
+        h += '<button class="ct-seat" type="button" data-seat="' + k + '" data-st="' + st + '"></button>';
+      }
+      h += '</div>';
+    });
+    h += '<div class="ct-legend"><span><i data-lg="free"></i>Free</span><span><i data-lg="taken"></i>Taken</span><span><i data-lg="mine"></i>Your seat</span></div></div>' + sw('Red-green color blindness') + '<p class="ct-out" aria-live="polite" data-out>Pick a free seat.</p>';
+    return h;
+  };
+  const wireSeats = m => d => {
+    const P = PAL[m], out = d.querySelector('[data-out]'), sim1 = d.querySelector('[data-sw]');
+    const paint = (el, st) => {
+      const p = P[st], c = h => sim1.checked ? sim(h) : h;
+      el.style.background = c(p.bg); el.style.borderColor = c(p.bd); el.style.color = c(p.fg);
+    };
+    const render = () => {
+      d.querySelectorAll('[data-seat]').forEach(s => {
+        const st = s.dataset.st;
+        paint(s, st);
+        s.innerHTML = m === 'f' && st === 'taken' ? icon('x') : m === 'f' && st === 'mine' ? icon('check') : '';
+        s.setAttribute('aria-label', 'Seat ' + s.dataset.seat + ', ' + (st === 'mine' ? 'your seat' : st));
+      });
+      d.querySelectorAll('[data-lg]').forEach(i => paint(i, i.dataset.lg));
+    };
+    d.querySelectorAll('[data-seat]').forEach(s => s.addEventListener('click', () => {
+      if (s.dataset.st === 'taken') { out.textContent = 'Seat ' + s.dataset.seat + ' is taken. Pick another one.'; return; }
+      d.querySelectorAll('[data-st="mine"]').forEach(x => { x.dataset.st = 'free'; });
+      s.dataset.st = 'mine';
+      out.textContent = 'Your seat: ' + s.dataset.seat + '.';
+      render();
+    }));
+    sim1.addEventListener('change', render);
+    render();
+  };
+  D('good-contrast-3b', seats('b'), wireSeats('b'));
+  D('good-contrast-3f', seats('f'), wireSeats('f'));
+
+  /* 4. Both themes */
+  const TH = {
+    b: { light: { bg: '#ffffff', bd: '#d5d6dc', fg: '#1b1d24', cap: '#5e616b' }, dark: { bg: '#22242b', bd: '#3b3e48', fg: '#ece7dc', cap: '#5e616b' } },
+    f: { light: { bg: '#ffffff', bd: '#d5d6dc', fg: '#1b1d24', cap: '#5e616b' }, dark: { bg: '#22242b', bd: '#3b3e48', fg: '#ece7dc', cap: '#a9a49a' } }
+  };
+  const event = '<div class="ct-themes" role="group" aria-label="Card theme"><button type="button" aria-pressed="true" data-th="light">Light</button><button type="button" aria-pressed="false" data-th="dark">Dark</button></div>' +
+    '<div class="ct-ev" data-ev><b>Dentist</b><span>Tuesday 14 May, 9:30</span><small>Bring your insurance card. Arrive 10 minutes early, or the slot goes to the next person.</small></div><p class="ct-out" aria-live="polite" data-out></p>';
+  const wireEvent = m => d => {
+    const ev = d.querySelector('[data-ev]'), out = d.querySelector('[data-out]');
+    const set = k => {
+      const p = TH[m][k];
+      ev.style.background = p.bg; ev.style.borderColor = p.bd; ev.style.color = p.fg; ev.querySelector('small').style.color = p.cap;
+      d.querySelectorAll('[data-th]').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.th === k)));
+      const r = ratio(hex(p.cap), hex(p.bg));
+      out.textContent = (k === 'light' ? 'Light' : 'Dark') + ' theme: caption ' + fmt(r) + (r >= 4.5 ? ', passes.' : ', fails 4.5 : 1.');
+    };
+    d.querySelectorAll('[data-th]').forEach(b => b.addEventListener('click', () => set(b.dataset.th)));
+    set('light');
+  };
+  D('good-contrast-4b', event, wireEvent('b'));
+  D('good-contrast-4f', event, wireEvent('f'));
+
+  csInit(cs);
+  };
+  if (window.csDemo) run(); else document.addEventListener('DOMContentLoaded', run);
+})();
+
+</script>

@@ -1,0 +1,32 @@
+<div class="stage tall" data-demo="pat-undo">
+      <div class="seg" role="radiogroup" aria-label="How delete works">
+        <input type="radio" name="p11-undo-mode" id="p11-undo-m-confirm" value="confirm" checked><label for="p11-undo-m-confirm">Confirm dialog</label>
+        <input type="radio" name="p11-undo-mode" id="p11-undo-m-undo" value="undo"><label for="p11-undo-m-undo">Undo</label>
+      </div>
+      <div class="surface p11-wf">
+        <div class="p11-wf-head">
+          <b>Notes</b>
+          <p class="p11-meta"><span>Deleted: <b data-del>0</b></span><span>Interruptions: <b data-int>0</b></span></p>
+        </div>
+        <ul class="p11-list" data-list aria-label="Notes">
+          <li class="p11-row" data-i="0" data-name="Grocery list"><span><b>Grocery list</b><small>Edited today</small></span><button class="icon-btn" type="button" aria-label="Delete Grocery list"><svg class="icon sm"><use href="#i-trash"/></svg></button></li>
+          <li class="p11-row" data-i="1" data-name="Trip to Lisbon"><span><b>Trip to Lisbon</b><small>Edited yesterday</small></span><button class="icon-btn" type="button" aria-label="Delete Trip to Lisbon"><svg class="icon sm"><use href="#i-trash"/></svg></button></li>
+          <li class="p11-row" data-i="2" data-name="Book club picks"><span><b>Book club picks</b><small>Edited 3 days ago</small></span><button class="icon-btn" type="button" aria-label="Delete Book club picks"><svg class="icon sm"><use href="#i-trash"/></svg></button></li>
+          <li class="p11-row" data-i="3" data-name="Gift ideas"><span><b>Gift ideas</b><small>Edited last week</small></span><button class="icon-btn" type="button" aria-label="Delete Gift ideas"><svg class="icon sm"><use href="#i-trash"/></svg></button></li>
+        </ul>
+        <div class="p11-empty" data-empty hidden><span>No notes left.</span><button class="btn btn-ghost" type="button" data-act="reset">Reset the list</button></div>
+      </div>
+      <dialog class="ui-dialog" id="p11-undo-dlg" aria-labelledby="p11-undo-dlg-title">
+        <form method="dialog">
+          <div class="dlg-body">
+            <h4 id="p11-undo-dlg-title">Delete <span data-dlg-name>this note</span>?</h4>
+            <p>Are you sure? This can’t be undone.</p>
+          </div>
+          <div class="dlg-actions">
+            <button class="btn btn-secondary" value="cancel" type="submit" autofocus>Cancel</button>
+            <button class="btn btn-danger" value="delete" type="submit">Delete</button>
+          </div>
+        </form>
+      </dialog>
+      <p class="try"><b>Try it:</b> in Confirm dialog mode, delete three notes and watch the interruptions add up. Switch to Undo and do the same, then press Undo on a toast or Ctrl+Z (⌘Z on Mac). Each note comes back in its old place.</p>
+    </div>

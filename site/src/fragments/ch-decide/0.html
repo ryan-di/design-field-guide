@@ -1,0 +1,15 @@
+<div class="stage tall" data-demo="eff-decision-matrix">
+      <div class="p28-dm">
+        <div class="surface p28-dm-w" role="group" aria-labelledby="p28-dm-wh">
+          <p class="p28-h" id="p28-dm-wh">Weights from the brief</p>
+          <div class="p28-wrow"><label for="p28-dm-w-loss">Prevents loss</label><input type="range" id="p28-dm-w-loss" data-k="loss" min="0" max="3" step="1" value="3"><output for="p28-dm-w-loss">×3</output></div>
+          <div class="p28-wrow"><label for="p28-dm-w-int">No interruption</label><input type="range" id="p28-dm-w-int" data-k="int" min="0" max="3" step="1" value="2"><output for="p28-dm-w-int">×2</output></div>
+          <div class="p28-wrow"><label for="p28-dm-w-eff">Low effort</label><input type="range" id="p28-dm-w-eff" data-k="eff" min="0" max="3" step="1" value="1"><output for="p28-dm-w-eff">×1</output></div>
+          <div class="p28-wrow"><label for="p28-dm-w-fit">Fits the system</label><input type="range" id="p28-dm-w-fit" data-k="fit" min="0" max="3" step="1" value="2"><output for="p28-dm-w-fit">×2</output></div>
+          <div class="p28-dm-foot"><span class="p28-help">Scores 1–5, higher is better.</span><button class="btn btn-ghost p28-small" type="button" id="p28-dm-reset">Reset to the brief</button></div>
+        </div>
+        <ul class="p28-dm-list" id="p28-dm-list" aria-label="Directions and their weighted totals"></ul>
+        <p class="p28-dm-note" id="p28-dm-note" role="status"></p>
+      </div>
+      <p class="try"><b>Try it:</b> with the brief’s weights, Keep drafts leads. Raise Low effort to 3 and watch the winner change, then set No interruption to 0.</p>
+    </div>

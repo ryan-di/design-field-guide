@@ -1,0 +1,124 @@
+<script>
+(() => {
+  const cs = document.currentScript.closest('.cs');
+  const D = (k, html, wire) => csDemo(cs.querySelector('[data-d="' + k + '"]'), html, wire);
+  const icon = n => '<svg class="icon sm"><use href="#i-' + n + '"/></svg>';
+  const warn = '<svg class="icon" style="width:15px;height:15px"><use href="#i-warn"/></svg>';
+  const msg = text => '<p class="field-msg">' + warn + '<span>' + text + '</span></p>';
+  const frame = (title, body, cls) => '<div class="app-frame tb-fr' + (cls ? ' ' + cls : '') + '"><div class="app-bar"><span>' + title + '</span></div><div class="app-body">' + body + '</div></div>';
+  const tablist = (label, names, cls) => '<div class="tablist' + (cls ? ' ' + cls : '') + '" role="tablist" aria-label="' + label + '">' +
+    names.map(n => '<button class="tab" role="tab" type="button">' + n + '</button>').join('') + '</div>';
+  const panel = (label, body) => '<div class="tb-panel" role="tabpanel" aria-label="' + label + '" tabindex="0">' + body + '</div>';
+  /* ARIA tabs: click or arrow keys; onPick runs on every real switch. */
+  const wireTabs = (root, onPick) => {
+    const tabs = Array.from(root.querySelectorAll('[role="tab"]')), panels = Array.from(root.querySelectorAll('[role="tabpanel"]'));
+    let cur = -1;
+    const pick = (i, focus) => {
+      if (i === cur) return; const first = cur < 0; cur = i;
+      tabs.forEach((b, k) => { const on = k === i; b.setAttribute('aria-selected', String(on)); b.tabIndex = on ? 0 : -1; });
+      panels.forEach((p, k) => { p.hidden = k !== i; });
+      if (focus) tabs[i].focus();
+      if (!first && onPick) onPick(i);
+    };
+    tabs.forEach((b, i) => {
+      b.addEventListener('click', () => pick(i));
+      b.addEventListener('keydown', e => {
+        const k = { ArrowRight: i + 1, ArrowLeft: i - 1, Home: 0, End: tabs.length - 1 }[e.key];
+        if (k === undefined) return; e.preventDefault(); pick((k + tabs.length) % tabs.length, true);
+      });
+    });
+    pick(0);
+    return { pick };
+  };
+
+  /* 1. Comparing */
+  const ROOMS = [['Standard', '22 m²', '$120', 'No', 'No'], ['Deluxe', '30 m²', '$165', 'Yes', 'No'], ['Suite', '42 m²', '$240', 'Yes', 'Yes']];
+  const ATTR = ['Size', 'Per night', 'Breakfast', 'Balcony'];
+  D('tabs-1b', frame('Harbor Hotel · Choose a room', tablist('Rooms', ROOMS.map(r => r[0])) +
+    ROOMS.map(r => panel(r[0], ATTR.map((a, i) => '<div class="kv">' + a + ' <b>' + r[i + 1] + '</b></div>').join(''))).join('') +
+    '<p class="cs-meta" data-n>Tab switches: 0</p>'), d => {
+    let n = 0; const out = d.querySelector('[data-n]');
+    wireTabs(d, () => { n++; out.textContent = 'Tab switches: ' + n; });
+  });
+  D('tabs-1f', frame('Harbor Hotel · Choose a room', '<table class="tb-cmp"><thead><tr><td></td>' + ROOMS.map(r => '<th scope="col">' + r[0] + '</th>').join('') + '</tr></thead><tbody>' +
+    ATTR.map((a, i) => '<tr><th scope="row">' + a + '</th>' + ROOMS.map(r => '<td>' + r[i + 1] + '</td>').join('') + '</tr>').join('') + '</tbody></table>'), () => {});
+
+  /* 2. Too many */
+  const SETS = ['Account', 'Profile', 'Privacy', 'Notifications', 'Billing', 'Security', 'Devices', 'Language', 'Help'];
+  const setBody = n => n === 'Language'
+    ? '<b>Language</b><label class="cs-f">App language<select class="select"><option>English</option><option>Español</option><option>Français</option><option>Deutsch</option></select></label>'
+    : '<b>' + n + '</b><div class="line" style="width:86%"></div><div class="line" style="width:64%"></div><div class="line" style="width:74%"></div>';
+  D('tabs-2b', frame('Settings', tablist('Settings', SETS, 'tb-many') + SETS.map(n => panel(n, setBody(n))).join('')), d => { wireTabs(d); });
+  D('tabs-2f', frame('Settings', '<div class="tb-split"><div class="tb-nav" role="list" aria-label="Settings">' +
+    SETS.map(n => '<button type="button" role="listitem">' + n + '</button>').join('') + '</div><div class="tb-sbody" data-body></div></div>', 'tb-flush'), d => {
+    const btns = d.querySelectorAll('.tb-nav button'), body = d.querySelector('[data-body]');
+    const show = i => { btns.forEach((b, k) => { if (k === i) b.setAttribute('aria-current', 'page'); else b.removeAttribute('aria-current'); }); body.innerHTML = setBody(SETS[i]); };
+    btns.forEach((b, i) => b.addEventListener('click', () => show(i)));
+    show(0);
+  });
+
+  /* 3. Steps as tabs */
+  const STEPS = ['Address', 'Shipping', 'Payment'];
+  const stepBody = (i, nm) => [
+    '<label class="cs-f">Street<input class="input" data-street placeholder="Street and number"></label><div class="cs-msgs" data-sm></div><label class="cs-f">City<input class="input" value="Lisbon"></label>',
+    '<label class="tb-opt"><input type="radio" name="' + nm + '" checked><span><b>Standard</b> · free · 3–5 days</span></label><label class="tb-opt"><input type="radio" name="' + nm + '"><span><b>Express</b> · $9 · tomorrow</span></label>',
+    '<div class="kv">Card <b>Visa ending 4242</b></div><div class="kv">Total <b>$54.20</b></div><div class="cs-msgs" data-pm></div>'
+  ][i];
+  D('tabs-3b', frame('Checkout', tablist('Checkout', STEPS.map((s, i) => '<span class="tb-num">' + (i + 1) + ' </span>' + s)) +
+    STEPS.map((s, i) => panel(s, stepBody(i, 'tabs-ship-b') + (i === 2 ? '<button class="btn btn-primary" type="button" data-pay>Pay $54.20</button><p class="cs-ok" data-ok></p>' : ''))).join('')), d => {
+    wireTabs(d);
+    const st = d.querySelector('[data-street]'), pm = d.querySelector('[data-pm]'), ok = d.querySelector('[data-ok]'), sm = d.querySelector('[data-sm]');
+    d.querySelector('[data-pay]').addEventListener('click', () => {
+      const bad = !st.value.trim();
+      st.setAttribute('aria-invalid', String(bad));
+      pm.innerHTML = bad ? msg('We can’t ship without an address. Add a street on the Address tab.') : '';
+      sm.innerHTML = bad ? msg('Enter a street address.') : '';
+      ok.textContent = bad ? '' : 'Order placed.';
+    });
+    st.addEventListener('input', () => { if (st.value.trim()) { st.setAttribute('aria-invalid', 'false'); sm.innerHTML = ''; pm.innerHTML = ''; } });
+  });
+  D('tabs-3f', frame('Checkout', '<ol class="tb-steps">' + STEPS.map((s, i) => '<li><span class="d">' + (i + 1) + '</span>' + s + '</li>').join('') + '</ol>' +
+    STEPS.map((s, i) => '<div class="tb-panel" data-step hidden>' + stepBody(i, 'tabs-ship-f') + '</div>').join('') +
+    '<div class="tb-nextrow"><button class="btn btn-secondary" type="button" data-back>Back</button><button class="btn btn-primary" type="button" data-next>Next</button></div><p class="cs-ok" data-ok></p>'), d => {
+    const lis = d.querySelectorAll('.tb-steps li'), steps = d.querySelectorAll('[data-step]'), back = d.querySelector('[data-back]'), next = d.querySelector('[data-next]');
+    const st = d.querySelector('[data-street]'), sm = d.querySelector('[data-sm]'), ok = d.querySelector('[data-ok]');
+    let s = 0;
+    const show = () => {
+      lis.forEach((li, i) => {
+        li.className = i < s ? 'done' : i === s ? 'cur' : '';
+        li.querySelector('.d').innerHTML = i < s ? icon('check') : String(i + 1);
+        if (i === s) li.setAttribute('aria-current', 'step'); else li.removeAttribute('aria-current');
+      });
+      steps.forEach((p, i) => { p.hidden = i !== s; });
+      back.hidden = s === 0; next.textContent = s === 2 ? 'Pay $54.20' : 'Next';
+    };
+    next.addEventListener('click', () => {
+      if (s === 0 && !st.value.trim()) { st.setAttribute('aria-invalid', 'true'); sm.innerHTML = msg('Enter a street address.'); st.focus(); return; }
+      if (s === 2) { ok.textContent = 'Order placed.'; next.disabled = true; back.disabled = true; return; }
+      s++; show();
+    });
+    back.addEventListener('click', () => { s--; show(); });
+    st.addEventListener('input', () => { if (st.value.trim()) { st.setAttribute('aria-invalid', 'false'); sm.innerHTML = ''; } });
+    show();
+  });
+
+  /* 4. Thin tabs */
+  const F = {
+    Details: '<label class="cs-f">Title<input class="input" value="Team lunch"></label>',
+    Guests: '<div class="cs-f">Invited<div class="tb-chips"><span>Lena</span><span>Sam</span><span>Maya</span></div></div>',
+    Reminder: '<label class="cs-f">Remind me<select class="select"><option>10 minutes before</option><option>30 minutes before</option><option>1 hour before</option></select></label>'
+  };
+  const foot = '<div class="tb-foot"><button class="btn btn-primary" type="button" data-save>Save event</button><span class="cs-meta" data-n>Clicks: 0</span></div><p class="cs-ok" data-ok></p>';
+  const thinWire = fixed => d => {
+    let n = 0; const out = d.querySelector('[data-n]'), ok = d.querySelector('[data-ok]');
+    const tick = () => { n++; out.textContent = 'Clicks: ' + n; };
+    if (!fixed) wireTabs(d, tick);
+    d.querySelector('[data-save]').addEventListener('click', () => { tick(); ok.textContent = 'Event saved.'; });
+  };
+  D('tabs-4b', frame('New event', tablist('Event', Object.keys(F)) + Object.keys(F).map(k => panel(k, F[k])).join('') + foot), thinWire(false));
+  D('tabs-4f', frame('New event', Object.keys(F).map(k => '<h4 class="tb-h">' + k + '</h4>' + F[k]).join('') + foot), thinWire(true));
+
+  csInit(cs);
+})();
+
+  </script>

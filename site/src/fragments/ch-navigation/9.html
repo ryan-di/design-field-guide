@@ -1,0 +1,117 @@
+<div class="fm" data-fm>
+  
+  <div class="seg fm-seg" role="radiogroup" aria-label="Form">
+    <input type="radio" name="fm-breadcrumbs" id="fm-breadcrumbs-1" value="full" checked><label for="fm-breadcrumbs-1">Full path</label>
+    <input type="radio" name="fm-breadcrumbs" id="fm-breadcrumbs-2" value="menus"><label for="fm-breadcrumbs-2">With menus</label>
+    <input type="radio" name="fm-breadcrumbs" id="fm-breadcrumbs-3" value="parent"><label for="fm-breadcrumbs-3">Parent only</label>
+  </div>
+  <div class="fm-stage" data-fm-stage></div>
+  <p class="fig-cap" data-fm-when aria-live="polite"></p>
+  <script>
+  (() => {
+    const fm = document.currentScript.closest('[data-fm]'), stage = fm.querySelector('[data-fm-stage]'), when = fm.querySelector('[data-fm-when]');
+    const icon = (n, cls) => '<svg class="icon sm' + (cls ? ' ' + cls : '') + '"><use href="#i-' + n + '"/></svg>';
+    const lines = '<div class="line" style="width:86%"></div><div class="line" style="width:64%"></div><div class="line" style="width:74%"></div>';
+    const title = t => '<h5 class="bc-title" tabindex="-1">' + t + '</h5>';
+    const row = (go, ic, label) => '<button type="button" class="bc-row" data-go="' + go + '">' + icon(ic) + '<span class="grow">' + label + '</span></button>';
+    const app = (ic, name, body) => '<div class="bc-app"><div class="bc-top">' + icon(ic) + name + '</div><div class="bc-body" data-body>' + body + '</div></div>';
+    // Draws the page for a path, wires every [data-go], and moves focus to the title when the person navigated.
+    const pager = (s, render) => {
+      const body = s.querySelector('[data-body]');
+      const go = (p, focus) => {
+        body.innerHTML = render(p, go);
+        body.querySelectorAll('[data-go]').forEach(b => b.addEventListener('click', () => go(b.dataset.go, true)));
+        if (focus) body.querySelector('.bc-title').focus({ preventScroll: true });
+      };
+      return go;
+    };
+
+    // Full path: a folder tree. A path is the folder names joined with "/".
+    const DRIVE = { 'My drive': { Family: { Recipes: ['Pancakes.doc', 'Soup.doc'], Holidays: { '2026': ['Flights.pdf', 'Packing list.doc'], '2025': ['Photos.zip'] } }, Work: ['Budget.xlsx', 'Notes.doc'] } };
+    const fullPage = p => {
+      const names = p.split('/'), node = names.reduce((n, k) => n[k], DRIVE);
+      const trail = '<nav class="bc-trail" aria-label="Breadcrumb"><ol>' + names.map((n, i) => '<li>' + (i === names.length - 1 ? '<span class="bc-cur" aria-current="page">' + n + '</span>' : '<button type="button" class="bc-link" data-go="' + names.slice(0, i + 1).join('/') + '">' + n + '</button>') + '</li>').join('') + '</ol></nav>';
+      const list = Array.isArray(node) ? node.map(f => '<div class="bc-file">' + icon('book') + f + '</div>').join('') : Object.keys(node).map(k => row(p + '/' + k, 'folder', k)).join('');
+      return trail + title(names[names.length - 1]) + '<div>' + list + '</div>';
+    };
+
+    // With menus: places. A path is "", "Country" or "Country/City".
+    const EU = { Portugal: ['Lisbon', 'Porto', 'Faro'], Spain: ['Madrid', 'Seville', 'Valencia'], Italy: ['Rome', 'Florence', 'Naples'] };
+    const kidsOf = p => p ? EU[p] : Object.keys(EU);
+    const menuPage = p => {
+      const parts = p ? p.split('/') : [], levels = ['Europe'].concat(parts);
+      const keyAt = i => parts.slice(0, i).join('/');
+      const trail = '<nav class="bc-trail bcf-menus" aria-label="Breadcrumb"><ol>' + levels.map((n, i) => {
+        if (i === levels.length - 1) return '<li><span class="bc-cur" aria-current="page">' + n + '</span></li>';
+        const kids = kidsOf(keyAt(i)), next = parts[i];
+        return '<li><button type="button" class="bc-link" data-go="' + keyAt(i) + '">' + n + '</button>' +
+          '<button type="button" class="bcf-sep" aria-haspopup="true" aria-expanded="false" aria-label="Places in ' + n + '" data-sep>›</button>' +
+          '<div class="bc-menu" data-sibs hidden>' + kids.map(k => '<button type="button" data-go="' + (i ? keyAt(i) + '/' : '') + k + '"' + (k === next ? ' aria-current="true"' : '') + '>' + k + (k === next ? icon('check', 'bcf-tick') : '') + '</button>').join('') + '</div></li>';
+      }).join('') + '</ol></nav>';
+      const name = levels[levels.length - 1];
+      const body = parts.length === 2 ? '<div class="bcf-lines"><p class="cs-meta">3 hotels</p>' + lines + '</div>' : kidsOf(p).map(k => row((p ? p + '/' : '') + k, 'folder', k)).join('');
+      return trail + title(name) + '<div>' + body + '</div>';
+    };
+    const wireMenus = s => {
+      const go = pager(s, menuPage);
+      const body = s.querySelector('[data-body]');
+      let open = null;
+      const close = back => { if (!open) return; const o = open; open = null; o.pop.hidden = true; o.btn.setAttribute('aria-expanded', 'false'); if (back) o.btn.focus(); };
+      body.addEventListener('click', e => {
+        const sep = e.target.closest('[data-sep]');
+        if (sep) {
+          const was = open && open.btn === sep; close(false);
+          if (was) return;
+          open = { btn: sep, pop: sep.nextElementSibling }; open.pop.hidden = false; sep.setAttribute('aria-expanded', 'true');
+          (open.pop.querySelector('[aria-current]') || open.pop.querySelector('button')).focus();
+        } else if (open && !open.pop.contains(e.target)) close(false);
+      });
+      body.addEventListener('keydown', e => {
+        if (!open || !open.pop.contains(e.target)) return;
+        const items = Array.from(open.pop.querySelectorAll('button')), i = items.indexOf(e.target);
+        if (e.key === 'Escape') { e.preventDefault(); e.stopPropagation(); close(true); }
+        else if (e.key === 'ArrowDown' || e.key === 'ArrowUp') { e.preventDefault(); items[(i + (e.key === 'ArrowDown' ? 1 : items.length - 1)) % items.length].focus(); }
+      });
+      body.addEventListener('focusout', e => { if (open && !open.btn.parentNode.contains(e.relatedTarget)) close(false); });
+      go('Portugal/Lisbon');
+    };
+
+    // Parent only: a help centre on a phone. A path is "", "Topic" or "Topic/Article".
+    const HELP = { Billing: ['Change your card', 'Get a refund', 'Download invoices'], Account: ['Change password', 'Delete account'], Orders: ['Track an order', 'Return an item'] };
+    const parentPage = p => {
+      const parts = p ? p.split('/') : [];
+      const up = parts.length ? '<nav aria-label="Breadcrumb"><button type="button" class="bc-back" data-go="' + parts.slice(0, -1).join('/') + '">‹ ' + (parts.length === 2 ? parts[0] : 'Help centre') + '</button></nav>' : '';
+      const name = parts.length ? parts[parts.length - 1] : 'Help centre';
+      const body = parts.length === 2 ? '<div class="bcf-lines">' + lines + '<div class="line" style="width:52%"></div></div>' : (parts.length ? HELP[p].map(a => row(p + '/' + a, 'book', a)) : Object.keys(HELP).map(t => row(t, 'folder', t))).join('');
+      return up + title(name) + '<div>' + body + '</div>';
+    };
+
+    const F = {
+      full: {
+        html: app('folder', 'Drive', ''),
+        use: 'Use it when pages sit three or more levels deep, like folders or a shop’s departments.',
+        more: 'Every level is a link except the last, which is the page people are on.',
+        wire: s => pager(s, fullPage)('My drive/Family/Holidays/2026')
+      },
+      menus: {
+        html: app('home', 'Hotels', ''),
+        use: 'Use it when people often move between neighbors, like cities in one country.',
+        more: 'The arrow after a level lists what’s inside it, so people can go sideways without going up first.',
+        wire: wireMenus
+      },
+      parent: {
+        html: '<div class="bcf-phone"><div class="bc-top">' + icon('info') + 'Help</div><div class="bc-body" data-body></div></div>',
+        use: 'Use it on phones, where a full trail would wrap onto several lines.',
+        more: 'It names the level above, so people know where the link goes before they tap it.',
+        wire: s => pager(s, parentPage)('Billing/Change your card')
+      }
+    };
+    const show = k => {
+      stage.innerHTML = F[k].html; F[k].wire(stage);
+      when.innerHTML = '<b>' + fm.querySelector('.fm-seg input:checked + label').textContent + '.</b> ' + F[k].use + ' ' + F[k].more;
+    };
+    fm.querySelectorAll('.fm-seg input').forEach(i => i.addEventListener('change', () => show(i.value)));
+    show('full');
+  })();
+  </script>
+</div>

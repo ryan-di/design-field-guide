@@ -1,0 +1,302 @@
+<script>
+  (() => {
+    const sec = document.currentScript.closest('section');
+
+    /* ---------- Watch a few people ---------- */
+    (() => {
+      const stage = sec.querySelector('[data-demo="eff-quick-sessions"]');
+      const taskV = stage.querySelector('#p30-qs-task-v'), qV = stage.querySelector('#p30-qs-q-v');
+      const TASK = {
+        feature: ['bad', 'Leads them.', ' It names the banner, so you’ll never learn whether they’d find it on their own.'],
+        hint: ['bad', 'Gives away the answer.', ' It says the work can come back, so you won’t see what they expect.'],
+        goal: ['good', 'Good.', ' A real goal in their words, with no hint about the solution.']
+      };
+      const showTask = () => {
+        const v = stage.querySelector('input[name="p30-qs-task"]:checked').value, t = TASK[v];
+        taskV.innerHTML = '<b class="p30-' + t[0] + '">' + t[1] + '</b>' + t[2];
+      };
+      stage.querySelectorAll('input[name="p30-qs-task"]').forEach(r => r.addEventListener('change', showTask));
+      const qs = [...stage.querySelectorAll('input[data-lead]')].concat([...stage.querySelectorAll('fieldset:nth-of-type(3) input:not([data-lead])')]);
+      const showQ = () => {
+        stage.querySelectorAll('.p30-lead').forEach(e => e.remove());
+        let lead = 0;
+        stage.querySelectorAll('input[data-lead]').forEach(c => {
+          if (!c.checked) return;
+          lead++;
+          const s = document.createElement('span'); s.className = 'p30-lead'; s.textContent = 'Leading: ' + c.dataset.lead;
+          c.nextElementSibling.appendChild(s);
+        });
+        qV.innerHTML = lead ? '<b class="p30-bad">' + lead + ' leading question' + (lead > 1 ? 's' : '') + '.</b> Ask open questions about what they expected and did.' : '<b class="p30-good">Good.</b> Open questions only.';
+      };
+      qs.forEach(c => c.addEventListener('change', showQ));
+
+      const PROBS = [
+        { t: 'Looked for the work in the menu first', s: [1, 3, 4, 5] },
+        { t: 'Didn’t notice the banner', s: [1, 3, 4] },
+        { t: 'Read “Discard” as “close this banner”', s: [2, 4] },
+        { t: 'Banner covered the tabs on a small window', s: [5] }
+      ];
+      const NOTES = [
+        'Session 1: opened the menu to find the work and never saw the banner.',
+        'Session 2: saw the banner, pressed Discard to hide it, lost the changes.',
+        'Session 3: checked the menu, then spotted the banner after a while.',
+        'Session 4: missed the banner, then pressed Discard when it caught their eye.',
+        'Session 5: went to the menu first. The banner hid the tabs on their small window.'
+      ];
+      const tally = stage.querySelector('#p30-qs-tally'), note = stage.querySelector('#p30-qs-note');
+      const log = stage.querySelector('#p30-qs-log'), dots = stage.querySelectorAll('.p30-dots i');
+      let n = 0;
+      const render = () => {
+        tally.innerHTML = '';
+        PROBS.map(p => ({ t: p.t, c: p.s.filter(x => x <= n).length })).filter(p => p.c).sort((a, b) => b.c - a.c).forEach(p => {
+          const li = document.createElement('li');
+          if (n === 5) li.className = p.c >= 3 ? 'hot' : p.c === 1 ? 'mute' : '';
+          li.innerHTML = '<span></span><b>' + p.c + ' of ' + n + '</b>';
+          li.firstChild.textContent = p.t;
+          tally.appendChild(li);
+        });
+        dots.forEach((d, i) => d.classList.toggle('on', i < n));
+        note.textContent = n === 0 ? 'No sessions yet.' : n < 5 ? NOTES[n - 1] : NOTES[4] + ' Fix first: what happened to 3 or more of 5. One-offs go in the notes, not the backlog.';
+        log.textContent = n < 5 ? 'Log session ' + (n + 1) : 'All 5 logged';
+        log.disabled = n >= 5;
+      };
+      log.addEventListener('click', () => { if (n < 5) { n++; render(); } });
+      stage.querySelector('#p30-qs-reset').addEventListener('click', () => { n = 0; render(); log.focus(); });
+      showTask(); showQ(); render();
+    })();
+
+    /* ---------- Measure against the brief ---------- */
+    (() => {
+      const stage = sec.querySelector('[data-demo="eff-measure"]');
+      const C = {
+        back: { crit: 'People who close a tab with unsaved changes get their work back.', name: 'Work comes back', opts: [
+          ['views', 'Banner views', 'vanity', 'It goes up every time the banner shows, even if nobody gets anything back.'],
+          ['clicks', 'Restore clicks', 'part', 'Closer, but a click isn’t kept work. Someone may restore and then throw it away.'],
+          ['rate', 'Restored drafts per closed tab with changes', 'good', 'It counts the outcome against every chance for it. It moves only if work really comes back.']
+        ] },
+        reports: { crit: 'Fewer people report losing work.', name: 'Fewer reports', opts: [
+          ['help', 'Visits to the help page about autosave', 'vanity', 'It rises if people are confused and if they are just curious. It can’t tell which.'],
+          ['support', 'Support reports about lost work, per month', 'good', 'This is the problem itself. It’s slow and noisy, so read the reports too, not just the count.'],
+          ['saved', 'Total workflows saved', 'vanity', 'It grows with usage, whatever happens to lost work.']
+        ] },
+        slow: { crit: 'People who close a tab on purpose aren’t slowed down.', name: 'No slowdown', opts: [
+          ['shown', 'Number of banners shown', 'vanity', 'It only says the banner appeared, not whether it got in anyone’s way.'],
+          ['discard', 'How often people pick Discard', 'part', 'Many Discards could mean the banner is noise, or just people who meant to close. On its own it can’t tell.'],
+          ['time', 'Time from closing to the next action, for people who discard', 'good', 'A guardrail: it should stay flat. If it grows, the banner is in the way.']
+        ] }
+      };
+      const LABEL = { good: 'Answers it', vanity: 'Vanity', part: 'Partial' };
+      const pick = { back: null, reports: null, slow: null };
+      const crit = stage.querySelector('#p30-me-crit'), opts = stage.querySelector('#p30-me-opts');
+      const verdict = stage.querySelector('#p30-me-verdict'), plan = stage.querySelector('#p30-me-plan');
+      const cur = () => stage.querySelector('input[name="p30-me-c"]:checked').value;
+      const say = (k, id) => {
+        const o = C[k].opts.find(x => x[0] === id);
+        if (!o) { verdict.textContent = 'Pick a number to see what it really tells you.'; return; }
+        verdict.innerHTML = '<span class="p30-pill ' + o[2] + '">' + LABEL[o[2]] + '</span>' + o[3];
+      };
+      const renderPlan = () => {
+        plan.innerHTML = '';
+        Object.keys(C).forEach(k => {
+          const o = C[k].opts.find(x => x[0] === pick[k]);
+          const good = o && o[2] === 'good';
+          const li = document.createElement('li');
+          if (good) li.className = 'set';
+          li.innerHTML = '<b></b><span></span>';
+          li.children[0].textContent = C[k].crit;
+          li.children[1].textContent = good ? o[1] : o ? 'Not yet: “' + o[1] + '” doesn’t answer it' : 'No number yet';
+          plan.appendChild(li);
+        });
+      };
+      const renderOpts = () => {
+        const k = cur();
+        crit.textContent = C[k].crit;
+        opts.innerHTML = '';
+        C[k].opts.forEach(o => {
+          const l = document.createElement('label'); l.className = 'check';
+          const r = document.createElement('input'); r.type = 'radio'; r.name = 'p30-me-sig'; r.value = o[0]; r.checked = pick[k] === o[0];
+          const s = document.createElement('span'); s.textContent = o[1];
+          r.addEventListener('change', () => { pick[k] = o[0]; say(k, o[0]); renderPlan(); });
+          l.append(r, s); opts.appendChild(l);
+        });
+        say(k, pick[k]);
+      };
+      stage.querySelectorAll('input[name="p30-me-c"]').forEach(r => r.addEventListener('change', renderOpts));
+      renderOpts(); renderPlan();
+    })();
+
+    /* ---------- Agent-run design QA ---------- */
+    (() => {
+      const stage = sec.querySelector('[data-demo="eff-design-qa"]');
+      const frame = stage.querySelector('#p30-qa-frame'), list = stage.querySelector('#p30-qa-list');
+      const sum = stage.querySelector('#p30-qa-sum'), run = stage.querySelector('#p30-qa-run');
+      const CHECKS = [
+        { k: 'light', n: 'Contrast, light theme', issue: false, ok: 'All text meets 4.5:1 in the light screenshots.' },
+        { k: 'dark', n: 'Contrast, dark theme', issue: true, find: 'In the dark screenshot, “Restore” is muted link text on the banner and falls below 4.5:1. It also looks less important than Discard.', fix: 'Make Restore the primary button, using the theme’s primary tokens.', ok: 'All text meets 4.5:1 in the dark screenshots.' },
+        { k: 'focus', n: 'Keyboard focus order', issue: true, find: 'Tab reaches Discard before Restore, though Restore comes first on screen.', fix: 'Put Restore first in the markup. Don’t reorder with CSS or a positive tabindex.', ok: 'Tab goes message, Restore, Discard, in reading order.' },
+        { k: 'wrap', n: 'Width 360px', issue: true, find: 'At 360px the file name is cut off and the buttons are squeezed against the edge.', fix: 'Let the buttons wrap under the message on narrow screens.', ok: 'At 360px the message wraps and the buttons sit below it.' },
+        { k: 'states', n: 'All states rendered', issue: true, find: 'Screenshots exist for restoring, restored and a long file name. There is none for “restore failed”.', fix: 'Add the failed state to the test fixtures so it gets a screenshot.', ok: 'All four states have screenshots, including restore failed.' },
+        { k: 'sr', n: 'Screen reader announcement', issue: false, ok: 'The banner is a status region and is announced once when it appears.' }
+      ];
+      const fixed = {};
+      let state = 'idle', ran = {}, timer;
+      const reduce = () => window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      const open = k => { const c = CHECKS.find(x => x.k === k); return state === 'done' && c.issue && !fixed[k] && ran[k]; };
+      const num = k => CHECKS.findIndex(x => x.k === k) + 1;
+      const mk = k => open(k) ? '<i class="p30-qa-mk" aria-hidden="true">' + num(k) + '</i>' : '';
+
+      const renderFrame = () => {
+        const narrow = stage.querySelector('input[name="p30-qa-w"]:checked').value === 'narrow';
+        frame.classList.toggle('narrow', narrow);
+        const restoreCls = fixed.dark ? 'pri' : 'low';
+        const tabR = fixed.focus ? 'tab 1' : 'tab 2', tabD = fixed.focus ? 'tab 2' : 'tab 1';
+        const showTab = state === 'done';
+        const tabCls = !fixed.focus ? ' class="bad"' : '';
+        const btn = (cls, label, tab, key) => '<span class="p30-qa-b"><span class="' + cls + '">' + label + '</span>' + (showTab ? '<small' + tabCls + '>' + tab + '</small>' : '') + mk(key) + '</span>';
+        frame.innerHTML =
+          '<div class="p30-qa-tabs"><span class="on">Portrait upscale.json</span><span>Inpaint.json</span></div>' +
+          '<div class="banner p30-qa-ban' + (fixed.wrap ? ' fixw' : '') + '"><svg class="icon sm" aria-hidden="true"><use href="#i-info"/></svg>' +
+          '<div class="grow">Unsaved changes found for Portrait upscale.json</div>' +
+          '<span class="p30-qa-acts">' + btn(restoreCls, 'Restore', tabR, 'dark') + btn('', 'Discard', tabD, 'focus') + '</span>' + (narrow ? mk('wrap').replace('p30-qa-mk', 'p30-qa-mk wrap') : '') + '</div>' +
+          '<div class="p30-qa-body"><i style="width:70%"></i><i style="width:45%"></i><i style="width:58%"></i></div>';
+        const parts = ['Preview of the restore banner at ' + (narrow ? '360px' : 'a wide') + ' width.'];
+        parts.push(fixed.dark ? 'Restore is a primary button.' : 'Restore is muted link text.');
+        if (state === 'done') parts.push(fixed.focus ? 'Tab order: Restore, then Discard.' : 'Tab order: Discard, then Restore.');
+        if (narrow) parts.push(fixed.wrap ? 'The buttons wrap below the message.' : 'The message is cut off and the buttons are squeezed.');
+        frame.setAttribute('aria-label', parts.join(' '));
+      };
+
+      const renderList = () => {
+        list.innerHTML = '';
+        CHECKS.forEach((c, i) => {
+          const li = document.createElement('li');
+          const r = ran[c.k];
+          const bad = r && c.issue && !fixed[c.k], pend = c.issue && fixed[c.k];
+          li.className = r === 'run' ? 'run' : r ? (bad ? 'issue' : 'pass') : '';
+          const st = r === 'run' ? '' : !r ? (i + 1) : bad ? (i + 1) : '✓';
+          const word = r === 'run' ? 'Checking…' : !r ? 'Waiting' : bad ? 'Issue' : pend ? 'Fixed' : 'Pass';
+          li.innerHTML = '<span class="st" aria-hidden="true">' + st + '</span><span class="nm"><span></span><em>' + word + '</em></span>';
+          li.querySelector('.nm span').textContent = c.n;
+          if (r && r !== 'run') {
+            const p = document.createElement('p'); p.className = 'dt';
+            if (bad) { p.innerHTML = '<span></span> <b>Fix:</b> <span></span>'; p.children[0].textContent = c.find; p.children[2].textContent = c.fix; }
+            else p.textContent = pend ? 'Fixed. Run the checks again to confirm.' : c.ok;
+            li.appendChild(p);
+            if (bad) {
+              const b = document.createElement('button'); b.type = 'button'; b.className = 'btn btn-secondary';
+              b.textContent = 'Apply fix'; b.setAttribute('aria-label', 'Apply fix: ' + c.n);
+              b.addEventListener('click', () => {
+                fixed[c.k] = true; renderAll();
+                const left = CHECKS.filter(x => x.issue && !fixed[x.k]).length;
+                sum.textContent = 'Fixed “' + c.n + '”. ' + (left ? left + ' issue' + (left > 1 ? 's' : '') + ' left.' : 'All fixed. Run the checks again to confirm.');
+                const next = list.querySelector('li.issue .btn'); (next || run).focus();
+              });
+              li.appendChild(b);
+            }
+          }
+          list.appendChild(li);
+        });
+      };
+      const renderAll = () => { renderFrame(); renderList(); };
+
+      run.addEventListener('click', () => {
+        clearTimeout(timer);
+        const confirm = CHECKS.some(c => fixed[c.k]);
+        if (confirm) CHECKS.forEach(c => { if (fixed[c.k]) c.issue = false; });
+        ran = {}; state = 'running'; run.disabled = true; sum.textContent = 'Taking screenshots in light and dark, wide and 360px…';
+        let i = 0;
+        const step = () => {
+          if (i > 0) ran[CHECKS[i - 1].k] = 'done';
+          if (i < CHECKS.length) { ran[CHECKS[i].k] = 'run'; renderList(); i++; timer = setTimeout(step, reduce() ? 0 : 280); return; }
+          state = 'done'; run.disabled = false; run.textContent = 'Run checks again';
+          const issues = CHECKS.filter(c => c.issue && !fixed[c.k]).length;
+          sum.textContent = CHECKS.length + ' checks: ' + (CHECKS.length - issues) + ' pass, ' + issues + ' issue' + (issues === 1 ? '' : 's') + '.' + (issues ? ' Check two of them yourself before fixing.' : ' Ready for review.');
+          renderAll();
+          run.focus();
+        };
+        step();
+      });
+      stage.querySelector('#p30-qa-reset').addEventListener('click', () => {
+        clearTimeout(timer); ran = {}; state = 'idle';
+        CHECKS.forEach(c => { if (fixed[c.k]) c.issue = true; delete fixed[c.k]; });
+        run.disabled = false; run.textContent = 'Run checks'; sum.textContent = 'Not run yet.'; renderAll(); run.focus();
+      });
+      stage.querySelectorAll('input[name="p30-qa-w"]').forEach(r => r.addEventListener('change', renderFrame));
+      renderAll();
+    })();
+
+
+    /* ---------- In Comfy switchers for sessions and measure ---------- */
+    const mkSwitch = (sel, name, S, first) => {
+      const wrap = sec.querySelector(sel);
+      if (!wrap) return;
+      const view = wrap.querySelector('[data-cw-view]'), cap = wrap.querySelector('[data-cw-cap]');
+      const render = k => { view.innerHTML = S[k].html; view.setAttribute('aria-label', 'Sketch: ' + S[k].alt); cap.textContent = S[k].cap; };
+      wrap.querySelectorAll('input[name="' + name + '"]').forEach(r => r.addEventListener('change', () => render(r.value)));
+      render(first);
+    };
+    const ui = (title, body) => '<div class="cw-ev-ui"><b>' + title + '</b>' + body + '</div>';
+    const BAN = '<div class="cw-ev-ban">Unsaved changes found <u>Restore</u> <u>Discard</u></div><i class="cw-line"></i>';
+    const SEARCH = '<span class="cw-qs-in">upscale</span><div class="cw-qs-res"><span class="on">Upscale image</span><span>Upscale with model</span><span>Latent upscale</span></div>';
+    const TPL = '<div class="cw-qs-cards"><i></i><i></i><i></i><i></i><i></i><i></i></div>';
+    const COPY = '<span><s>Discard changes?</s></span><span>Close without saving? Your changes will be lost.</span>';
+    const qs = (watch, ask) => '<div class="cw-ev-list cw-qs-list"><b>Watch</b>' + watch.map(x => '<span>' + x + '</span>').join('') + '<b>Ask after</b>' + ask.map(x => '<span class="ask">' + x + '</span>').join('') + '</div>';
+    mkSwitch('.cw-qs-wrap', 'cw-eff-qs', {
+      restore: { html: '<div class="cw-ev-row">' + ui('Workflow tab', BAN) + qs(['Do they notice the banner?', 'Where do they look first?'], ['What did you expect when you closed it?']) + '</div>',
+        alt: 'The restore banner in a workflow tab. Watch: do they notice the banner, where do they look first. Ask after: what did you expect when you closed it.',
+        cap: 'Tab-close restore: task “close the tab, then carry on where you left off”. Watch whether they notice the banner and where they look first.' },
+      search: { html: '<div class="cw-ev-row">' + ui('Add a node', SEARCH) + qs(['Which words do they type?', 'Do they scan or give up?'], ['What were you looking for?']) + '</div>',
+        alt: 'A node search box with “upscale” typed and three results. Watch: which words they type, do they scan or give up. Ask after: what were you looking for.',
+        cap: 'Node search: task “make this image bigger”, without naming a node. Write down the words they type; those are the words search must know.' },
+      templates: { html: '<div class="cw-ev-row">' + ui('Templates', TPL) + qs(['How do they choose one?', 'Does the first run work?'], ['What did you hope this would make?']) + '</div>',
+        alt: 'A grid of template cards. Watch: how they choose one, does the first run work. Ask after: what did you hope this would make.',
+        cap: 'Template picker: task “make a short video from a photo”. Watch how they choose, then whether their first run gets an output.' },
+      copy: { html: '<div class="cw-ev-row">' + ui('Close tab dialog', COPY) + qs(['Nothing: skip sessions'], ['A teammate reads it once']) + '</div>',
+        alt: 'A dialog with old text crossed out and new text. Watch: nothing, skip sessions. Ask: a teammate reads it once.',
+        cap: 'Copy change: sessions are overkill. A teammate’s read and screenshots at every width are enough, unless the words are about losing work.' }
+    }, 'restore');
+    const ms = items => '<div class="cw-ev-list cw-ms-list"><b>Measure</b>' + items.map(x => '<span class="' + (x[0] ? 'y' : 'n') + '">' + (x[0] ? x[1] : '<s>' + x[1] + '</s>') + '</span>').join('') + '</div>';
+    mkSwitch('.cw-ms-wrap', 'cw-eff-ms', {
+      restore: { html: '<div class="cw-ev-row">' + ui('Workflow tab', BAN) + ms([[1, 'Restored drafts per closed tab with changes'], [1, 'Lost-work reports'], [0, 'Times the dialog was shown']]) + '</div>',
+        alt: 'The restore banner. Measure: restored drafts per closed tab with changes, lost-work reports. Times the dialog was shown is marked vanity.',
+        cap: 'Tab close: count restored drafts per tab closed with changes. “Dialog shown” only grows with use; it can’t say whether work came back.' },
+      search: { html: '<div class="cw-ev-row">' + ui('Add a node', SEARCH) + ms([[1, 'Time from opening search to adding a node'], [1, 'Searches with no node added'], [0, 'Number of searches']]) + '</div>',
+        alt: 'Node search. Measure: time from opening search to adding a node, searches with no node added. Number of searches is marked vanity.',
+        cap: 'Node search: time from opening search to adding a node, and how often people leave with nothing. More searches could mean worse results.' },
+      templates: { html: '<div class="cw-ev-row">' + ui('Templates', TPL) + ms([[1, 'First successful run from a template'], [1, 'Runs that fail on a missing model'], [0, 'Template gallery opens']]) + '</div>',
+        alt: 'Template cards. Measure: first successful run from a template, runs that fail on a missing model. Template gallery opens is marked vanity.',
+        cap: 'Templates: count people who get a first successful run from a template. Opening the gallery says nothing about whether it worked.' },
+      copy: { html: '<div class="cw-ev-row">' + ui('Close tab dialog', COPY) + '<div class="cw-ev-list cw-ms-list"><b>Measure</b><span>No new number</span><span>Screenshots, all widths</span></div></div>',
+        alt: 'A dialog with new text. Measure: no new number; screenshots at all widths instead.',
+        cap: 'Copy fix: no metric needed. Adding events for a wording change costs more than it tells you. Check it reads well and wraps at every width.' }
+    }, 'restore');
+
+    /* ---------- In Comfy switcher ---------- */
+    (() => {
+      const wrap = null; if (!wrap) return;
+      const view = wrap.querySelector('[data-cw-view]'), cap = wrap.querySelector('[data-cw-cap]');
+      const ev = items => '<div class="cw-ev-list"><b>Evidence</b>' + items.map(x => '<span class="' + (x[0] ? 'y' : 'n') + '">' + x[1] + '</span>').join('') + '</div>';
+      const ui = (title, body) => '<div class="cw-ev-ui"><b>' + title + '</b>' + body + '</div>';
+      const S = {
+        copy: { html: '<div class="cw-ev-row">' + ui('Close tab dialog', '<span><s>Discard changes?</s></span><span>Close without saving? Your changes will be lost.</span><i class="cw-line"></i>') + ev([[1, 'Screenshots, all widths'], [1, 'A teammate reads it'], [0, 'Sessions'], [0, 'New metric']]) + '</div>',
+          alt: 'A dialog with its old text crossed out and new text below. Evidence: screenshots and a teammate read, yes; sessions and a new metric, no.',
+          cap: 'Copy tweak: screenshots at every width (long words wrap) and a second reader are enough. Sessions only if the words carry risk.' },
+        flow: { html: '<div class="cw-ev-row">' + ui('Share workflow', '<div class="cw-ev-steps"><span class="on">1 Pick</span><span>2 Options</span><span>3 Link</span></div><i class="cw-line"></i><i class="cw-line"></i>') + ev([[1, '5 sessions first'], [1, 'Design QA'], [1, 'Metric: finished flows'], [0, 'A teammate read only']]) + '</div>',
+          alt: 'A three-step flow: Pick, Options, Link. Evidence: five sessions first, design QA, and a metric for finished flows.',
+          cap: 'New flow: watch five people try it before measuring anything. Count finished flows once it works for them.' },
+        perf: { html: '<div class="cw-ev-row">' + ui('Open a large workflow', '<span class="cw-ev-time"><i class="old" style="width:80%"></i>before</span><span class="cw-ev-time"><i style="width:35%"></i>after</span>') + ev([[1, 'Before/after timing'], [1, 'Same workflow, slow machine'], [1, 'States still render'], [0, 'Sessions']]) + '</div>',
+          alt: 'Two timing bars, before and after, for opening a large workflow. Evidence: before and after timing on the same workflow and a slow machine, states still render; no sessions.',
+          cap: 'Performance change: time it before and after on the same large workflow, on a slower machine too. “Feels faster” isn’t evidence.' },
+        default: { html: '<div class="cw-ev-row">' + ui('Settings', '<span class="cw-ev-tog">Close tabs without asking <i></i></span><i class="cw-line"></i>') + ev([[1, 'Guardrail number set first'], [1, 'Small group first, if possible'], [1, 'Watch support reports'], [1, 'Sessions with long-time users']]) + '</div>',
+          alt: 'A setting turned on by default. Evidence: a guardrail number set first, a small group first if possible, support reports, sessions with long-time users.',
+          cap: 'Risky default change: decide which number must not get worse before release, start small if you can, and talk to people who relied on the old default.' },
+        restore: { html: '<div class="cw-ev-row">' + ui('Workflow tab', '<div class="cw-ev-ban">Unsaved changes found <u>Restore</u> <u>Discard</u></div><i class="cw-line"></i>') + ev([[1, 'Sessions: is it noticed?'], [1, 'Restored drafts per closed tab'], [1, 'Design QA: dark, 360px'], [1, 'Lost-work reports']]) + '</div>',
+          alt: 'The restore banner in a workflow tab. Evidence: sessions, restored drafts per closed tab, design QA, and lost-work reports, all yes.',
+          cap: 'Draft restore: all three. Sessions show whether people notice it, the restore rate shows whether work comes back, and design QA catches dark mode and 360px.' }
+      };
+      const render = k => { view.innerHTML = S[k].html; view.setAttribute('aria-label', 'Sketch: ' + S[k].alt); cap.textContent = S[k].cap; };
+      wrap.querySelectorAll('input[name="cw-eff-ev"]').forEach(r => r.addEventListener('change', () => render(r.value)));
+      render('copy');
+    })();
+  })();
+  </script>

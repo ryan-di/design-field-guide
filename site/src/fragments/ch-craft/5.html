@@ -1,0 +1,170 @@
+<script>
+(() => {
+  const cs = document.currentScript.closest('.cs');
+  /* This entry sits before the shared case helpers in the book, so start once they exist. */
+  const go = () => {
+  const D = (k, html, wire) => csDemo(cs.querySelector('[data-d="' + k + '"]'), html, wire);
+  const css = document.createElement('style');
+  css.textContent = [
+    '#good-motion .gm-frame{position:relative;width:min(340px,100%);overflow:clip}',
+    '#good-motion .gm-frame .app-body{min-height:230px}',
+    '#good-motion .gm-sheet{position:absolute;left:0;right:0;bottom:0;z-index:2;display:flex;flex-direction:column;gap:4px;padding:12px;background:var(--ui-raised);border-top:1px solid var(--ui-border);border-radius:14px 14px 0 0;box-shadow:var(--ui-shadow);transform:translateY(105%);transition-property:transform}',
+    '#good-motion .gm-sheet.gm-open{transform:none}',
+    '#good-motion .gm-sheet b{font-size:13.5px;color:var(--ui-muted);font-weight:600}',
+    '#good-motion .gm-sheet .btn{justify-content:flex-start}',
+    '#good-motion .gm-busy-note{color:var(--ui-danger)}',
+    '#good-motion .gm-list{width:min(320px,100%)}',
+    '#good-motion .gm-add{display:flex;gap:8px}',
+    '#good-motion .gm-add .input{padding:7px 10px;font-size:14px}',
+    '#good-motion .gm-add .btn{flex:none}',
+    '#good-motion .gm-rows .cs-row{padding:7px 6px;border-radius:6px}',
+    '@keyframes gmo-bounce{0%,100%{transform:none}30%{transform:translateY(-7px)}60%{transform:translateY(3px)}}',
+    '@keyframes gmo-wiggle{0%,100%{transform:none}25%{transform:rotate(-3deg)}75%{transform:rotate(3deg)}}',
+    '@keyframes gmo-pulse{0%,100%{transform:none}50%{transform:scale(1.07)}}',
+    '@keyframes gmo-in{from{opacity:0;transform:translateX(-12px);background:var(--ui-sel-soft)}30%{opacity:1;transform:none;background:var(--ui-sel-soft)}to{background:transparent}}',
+    '#good-motion .gm-bounce{animation:gmo-bounce .6s ease-in-out both}',
+    '#good-motion .gm-wiggle{display:inline-block;animation:gmo-wiggle .5s ease-in-out 2}',
+    '#good-motion .gm-pulse{animation:gmo-pulse 1.2s ease-in-out infinite}',
+    '#good-motion .gm-new{animation:gmo-in 1.4s ease-out both}',
+    '#good-motion .gm-chip{display:inline-flex;align-items:center;gap:6px;font:600 12.5px var(--font-body);padding:4px 9px;border-radius:999px;background:var(--ui-sel-soft);color:var(--ui-text)}',
+    '#good-motion .gm-hotels{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}',
+    '#good-motion .gm-hotel{all:unset;cursor:pointer;display:flex;flex-direction:column;gap:4px;font-size:13.5px;color:var(--ui-text);border-radius:8px}',
+    '#good-motion .gm-hotel:focus-visible{outline:3px solid var(--ui-sel);outline-offset:2px}',
+    '#good-motion .gm-hotel .thumb{display:block}',
+    '#good-motion .gm-detail{position:absolute;inset:0;z-index:2;background:var(--ui-bg);display:flex;flex-direction:column;gap:8px;padding:12px;font-size:14px}',
+    '#good-motion .gm-detail .thumb{aspect-ratio:auto;height:110px;display:block;flex:none}',
+    '#good-motion .gm-zoom{transition:transform .5s cubic-bezier(.2,.8,.2,1),opacity .5s ease-out}',
+    '#good-motion .gm-zoom.gm-from{transform:scale(.3);opacity:.2}',
+    '#good-motion .gm-fade{transition:opacity .15s ease-out}',
+    '#good-motion .gm-fade.gm-from{opacity:0}',
+    '#good-motion .gm-song{display:flex;gap:12px;align-items:center}',
+    '#good-motion .gm-song .thumb{width:72px;flex:none}',
+    '#good-motion .gm-q{transition-duration:.4s}'
+  ].join('\n');
+  cs.prepend(css);
+  const shown = d => !d.closest('.cs-case').hidden && !d.closest('.cs-side').hidden;
+
+  /* 1. Slow and blocking */
+  const MAIL = [['Ana', 'Lunch on Friday?'], ['Bank', 'Your statement is ready'], ['Sam', 'Photos from the trip'], ['Shop', 'Your order has shipped']];
+  const inboxHtml = '<div class="app-frame gm-frame" data-frame><div class="app-bar"><span>Inbox</span><span class="cs-meta" data-time>0.0 s</span></div>' +
+    '<div class="app-body" data-list>' + MAIL.map(m => '<div class="cs-row"><span class="grow"><b>' + m[0] + '</b> · ' + m[1] + '</span><button class="btn btn-secondary cs-sm" type="button" data-move>Move</button></div>').join('') + '</div>' +
+    '<div class="gm-sheet" data-sheet inert aria-hidden="true"><b>Move to</b><button class="btn btn-ghost cs-sm" type="button" data-arch>Archive</button><button class="btn btn-ghost cs-sm" type="button" data-cancel>Cancel</button></div></div>' +
+    '<p class="cs-meta" aria-live="polite" data-out></p>';
+  const inboxWire = ms => (d, t) => {
+    const frame = d.querySelector('[data-frame]'), sheet = d.querySelector('[data-sheet]'), time = d.querySelector('[data-time]'), out = d.querySelector('[data-out]');
+    sheet.style.transitionDuration = ms + 'ms';
+    sheet.style.transitionTimingFunction = 'cubic-bezier(0,0,.2,1)';
+    let row = null, start = 0, busy = false, blocked = 0;
+    const block = () => {
+      if (ms < 300) return;
+      busy = true; frame.classList.add('gm-busy');
+      t.after(() => { busy = false; frame.classList.remove('gm-busy'); }, ms);
+    };
+    const setOpen = on => {
+      sheet.classList.toggle('gm-open', on);
+      if (on) { sheet.removeAttribute('inert'); sheet.setAttribute('aria-hidden', 'false'); sheet.querySelector('[data-arch]').focus({ preventScroll: true }); }
+      else { sheet.setAttribute('inert', ''); sheet.setAttribute('aria-hidden', 'true'); }
+      block();
+    };
+    const tickOn = () => { if (!start) { start = performance.now(); t.every(() => { if (start && shown(d)) time.textContent = ((performance.now() - start) / 1000).toFixed(1) + ' s'; }, 100); } };
+    const note = () => { blocked++; out.textContent = 'Click ignored: the sheet is still moving. (' + blocked + ')'; out.classList.add('gm-busy-note'); };
+    frame.addEventListener('click', e => { if (busy && e.target.closest('button')) note(); }, true);
+    d.querySelectorAll('[data-move]').forEach(b => b.addEventListener('click', () => { if (busy) return; tickOn(); row = b.closest('.cs-row'); setOpen(true); }));
+    d.querySelector('[data-cancel]').addEventListener('click', () => { if (busy) return; setOpen(false); const m = row && row.querySelector('[data-move]'); if (m) m.focus({ preventScroll: true }); });
+    d.querySelector('[data-arch]').addEventListener('click', () => {
+      if (busy || !row) return;
+      row.remove(); row = null; setOpen(false);
+      const left = d.querySelectorAll('[data-move]');
+      if (left.length) left[0].focus({ preventScroll: true });
+      else {
+        const s = ((performance.now() - start) / 1000).toFixed(1);
+        start = 0; time.textContent = s + ' s';
+        out.classList.remove('gm-busy-note');
+        out.textContent = 'All four archived in ' + s + ' s' + (blocked ? ', with ' + blocked + ' clicks ignored.' : '.');
+      }
+    });
+  };
+  D('good-motion-1b', inboxHtml, inboxWire(600));
+  D('good-motion-1f', inboxHtml, inboxWire(180));
+
+  /* 2. Decoration */
+  const ITEMS = ['Apples', 'Bread', 'Eggs', 'Rice', 'Tomatoes'];
+  const listHtml = fixed => '<div class="cs-form gm-list"><b><span data-title>Groceries</span></b><div class="gm-add"><input class="input" value="Milk" aria-label="Item" autocomplete="off">' +
+    '<button class="btn btn-primary cs-sm' + (fixed ? '' : ' gm-pulse') + '" type="button" data-add>Add</button></div><div class="gm-rows" data-rows></div><p class="cs-meta" aria-live="polite" data-out></p></div>';
+  const listWire = fixed => d => {
+    const rows = d.querySelector('[data-rows]'), input = d.querySelector('input'), out = d.querySelector('[data-out]'), title = d.querySelector('[data-title]');
+    const items = ITEMS.slice();
+    const replay = (el, cls) => { el.classList.remove(cls); void el.offsetWidth; el.classList.add(cls); };
+    const draw = added => {
+      rows.innerHTML = items.map(x => '<div class="cs-row"><span class="grow">' + x + '</span></div>').join('');
+      if (!added) return;
+      if (fixed) { replay(rows.children[items.indexOf(added)], 'gm-new'); return; }
+      Array.from(rows.children).forEach((r, i) => { r.style.animationDelay = (i * 40) + 'ms'; replay(r, 'gm-bounce'); });
+      replay(title, 'gm-wiggle');
+    };
+    const add = () => {
+      const v = input.value.trim();
+      if (!v) return;
+      const name = v.charAt(0).toUpperCase() + v.slice(1);
+      if (!items.includes(name)) { items.push(name); items.sort((a, b) => a.localeCompare(b)); }
+      draw(name); input.value = '';
+      out.textContent = name + ' added to the list.';
+    };
+    d.querySelector('[data-add]').addEventListener('click', add);
+    input.addEventListener('keydown', e => { if (e.key === 'Enter') add(); });
+    draw(fixed ? null : 'Apples');
+  };
+  D('good-motion-2b', listHtml(false), listWire(false));
+  D('good-motion-2f', listHtml(true), listWire(true));
+
+  /* 3. Reduced motion */
+  const HOTELS = [['Casa Azul', '€84 a night', ''], ['Hotel Mar', '€112 a night', ' b']];
+  const hotelHtml = '<div class="app-frame gm-frame" data-frame><div class="app-bar"><span>Hotels in Porto</span><span class="gm-chip">Reduce motion: on</span></div>' +
+    '<div class="app-body"><div class="gm-hotels">' + HOTELS.map((h, i) => '<button class="gm-hotel" type="button" data-h="' + i + '"><span class="thumb' + h[2] + '"></span><b>' + h[0] + '</b><span class="cs-meta">' + h[1] + '</span></button>').join('') + '</div></div></div>';
+  const hotelWire = fixed => (d, t) => {
+    const frame = d.querySelector('[data-frame]'), cls = fixed ? 'gm-fade' : 'gm-zoom', dur = fixed ? 150 : 500;
+    d.querySelectorAll('[data-h]').forEach(b => b.addEventListener('click', () => {
+      const h = HOTELS[b.dataset.h], fr = frame.getBoundingClientRect(), r = b.getBoundingClientRect();
+      const det = document.createElement('div');
+      det.className = 'gm-detail ' + cls + ' gm-from';
+      det.setAttribute('role', 'region'); det.setAttribute('aria-label', h[0]);
+      det.style.transformOrigin = (r.left - fr.left + r.width / 2) + 'px ' + (r.top - fr.top + r.height / 2) + 'px';
+      det.innerHTML = '<button class="btn btn-ghost cs-sm" type="button" data-back style="align-self:flex-start">Back</button><span class="thumb' + h[2] + '"></span><b>' + h[0] + '</b><span class="cs-meta">' + h[1] + ' · 4.6 ★</span><div class="line" style="width:80%"></div>';
+      frame.appendChild(det);
+      void det.offsetWidth; det.classList.remove('gm-from');
+      const back = det.querySelector('[data-back]'); back.focus({ preventScroll: true });
+      back.addEventListener('click', () => { det.classList.add('gm-from'); t.after(() => { det.remove(); b.focus({ preventScroll: true }); }, dur); });
+    }));
+  };
+  D('good-motion-3b', hotelHtml, hotelWire(false));
+  D('good-motion-3f', hotelHtml, hotelWire(true));
+
+  /* 4. Easing */
+  const EASE = { out: 'cubic-bezier(0,0,.2,1)', in: 'cubic-bezier(.5,0,1,1)' };
+  const queueHtml = fixed => '<div class="app-frame gm-frame" data-frame><div class="app-bar"><span>Now playing</span><span class="cs-meta">Road trip mix</span></div>' +
+    '<div class="app-body"><div class="gm-song"><span class="thumb c"></span><span><b>Song title</b><br><span class="cs-meta">Artist · 2:41 / 3:58</span></span></div>' +
+    '<button class="btn btn-secondary cs-sm" type="button" aria-expanded="false" data-q style="align-self:flex-start">Show queue</button></div>' +
+    '<div class="gm-sheet gm-q" data-sheet inert aria-hidden="true"><b>Up next</b>' + ['Second song', 'Third song', 'Fourth song'].map(s => '<div class="cs-row"><span class="grow">' + s + '</span></div>').join('') +
+    '<button class="btn btn-ghost cs-sm" type="button" data-hide style="align-self:flex-start">Hide queue</button></div></div>' +
+    '<p class="cs-meta">Opens with ' + (fixed ? 'ease-out' : 'ease-in') + ' · closes with ' + (fixed ? 'ease-in' : 'ease-out') + '</p>';
+  const queueWire = fixed => d => {
+    const sheet = d.querySelector('[data-sheet]'), q = d.querySelector('[data-q]');
+    const set = on => {
+      sheet.style.transitionTimingFunction = (on === fixed) ? EASE.out : EASE.in;
+      sheet.classList.toggle('gm-open', on);
+      q.setAttribute('aria-expanded', String(on));
+      if (on) { sheet.removeAttribute('inert'); sheet.setAttribute('aria-hidden', 'false'); sheet.querySelector('[data-hide]').focus({ preventScroll: true }); }
+      else { sheet.setAttribute('inert', ''); sheet.setAttribute('aria-hidden', 'true'); q.focus({ preventScroll: true }); }
+    };
+    q.addEventListener('click', () => set(true));
+    d.querySelector('[data-hide]').addEventListener('click', () => set(false));
+  };
+  D('good-motion-4b', queueHtml(false), queueWire(false));
+  D('good-motion-4f', queueHtml(true), queueWire(true));
+
+  csInit(cs);
+  };
+  if (window.csDemo) go(); else document.addEventListener('DOMContentLoaded', go);
+})();
+
+</script>

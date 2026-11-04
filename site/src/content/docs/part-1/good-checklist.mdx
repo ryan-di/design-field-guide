@@ -1,0 +1,32 @@
+---
+title: "Before you ship, ask these"
+description: "A review checklist built from this part."
+eyebrow: "Checklist"
+sidebar:
+  label: "Before you ship"
+---
+
+import Raw from '../../../components/Raw.astro';
+import Learned from '../../../components/Learned.astro';
+import Runtime from '../../../components/Runtime.astro';
+import F0 from '../../../fragments/ch-good-checklist/0.html?raw';
+
+<Runtime at="start" />
+
+<section class="dfg-chapter" id="ch-good-checklist">
+
+A review checklist built from this part. Tick through it on your next change. Each question links to the entry that explains it. Ticks here reset when you leave the page.
+
+<Raw html={F0} />
+
+<div id="part-1-next" class="part-bridge">
+
+<p class="eyebrow">Next · Part 2</p>
+
+This part was about judgment: telling whether a design is good, and why. The next part starts from problems instead of principles. Every pattern in it has a cost, and the judgment from this part tells you when it’s worth paying.
+
+</div>
+
+</section>
+
+<Runtime chapter="ch-good-checklist" />

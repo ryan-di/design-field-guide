@@ -1,0 +1,39 @@
+<div class="note comfy cw-wrap">
+      <div class="seg cw-seg" role="radiogroup" aria-label="Example">
+        <input type="radio" name="cw-pat-optimistic-ui-w" id="cw-pat-optimistic-ui-w-1" value="linear" checked><label for="cw-pat-optimistic-ui-w-1">Linear</label>
+        <input type="radio" name="cw-pat-optimistic-ui-w" id="cw-pat-optimistic-ui-w-2" value="instagram"><label for="cw-pat-optimistic-ui-w-2">Instagram</label>
+        <input type="radio" name="cw-pat-optimistic-ui-w" id="cw-pat-optimistic-ui-w-3" value="imessage"><label for="cw-pat-optimistic-ui-w-3">iMessage</label>
+      </div>
+      <div class="cw" data-cw-view role="img" aria-label=""></div>
+      <p class="cw-cap" data-cw-cap aria-live="polite"></p>
+      
+      <script>
+      (() => {
+        const wrap = document.currentScript.closest('.cw-wrap');
+        const view = wrap.querySelector('[data-cw-view]'), cap = wrap.querySelector('[data-cw-cap]');
+        const ic = id => '<svg class="icon sm"><use href="#i-' + id + '"/></svg>';
+        const line = w => '<i class="cw-line" style="width:' + w + '%"></i>';
+        const row = (st, id, title, on) => '<div class="cw-opt-row' + (on ? ' on' : '') + '"><i class="cw-opt-st ' + st + '"></i><small>' + id + '</small><b>' + title + '</b></div>';
+        const heart = cls => '<svg viewBox="0 0 24 24" class="' + (cls || '') + '"><path d="M12 20s-7.5-4.6-7.5-10A4.3 4.3 0 0 1 12 7.4 4.3 4.3 0 0 1 19.5 10C19.5 15.4 12 20 12 20z"/></svg>';
+        const bubble = '<svg viewBox="0 0 24 24"><path d="M20 12a8 8 0 0 1-11.6 7.1L4 20l1.1-4A8 8 0 1 1 20 12z"/></svg>';
+        const send = '<svg viewBox="0 0 24 24"><path d="M21 4L10 14M21 4l-6.5 16-4.5-6-6-4.5z"/></svg>';
+        const S = {
+          linear: { html: '<div class="cw-opt-win"><div class="cw-opt-list">' + row('done', 'ENG-29', 'Dark mode colors') + row('', 'ENG-35', 'Empty state for search') + row('', 'ENG-41', 'Fix login redirect') + row('prog', 'ENG-38', 'Faster image upload', true) + '</div>' +
+              '<div class="cw-opt-menu"><span><i class="cw-opt-st"></i>Todo<i></i></span><span class="on"><i class="cw-opt-st prog"></i>In Progress' + ic('check') + '</span><span><i class="cw-opt-st done"></i>Done<i></i></span></div></div>',
+            alt: 'An issue list. Under the last issue, its status menu shows In Progress just picked, and the row already shows the new status icon, with no spinner.',
+            cap: 'Linear: changing an issue’s status, assignee or priority shows at once, and the change syncs in the background. Nothing waits on a spinner.' },
+          instagram: { html: '<div class="cw-opt-phone"><span class="cw-opt-head"><i class="cw-opt-av"></i>' + line(40) + '</span><div class="thumb c cw-opt-photo"></div>' +
+              '<span class="cw-opt-acts">' + heart('liked') + bubble + send + '</span><span class="cw-opt-likes">125 likes</span>' + line(80) + '</div>',
+            alt: 'A phone post with a photo. The heart under it is filled in and the count reads 125 likes.',
+            cap: 'Instagram: the heart fills and the count goes up the moment you tap.' },
+          imessage: { html: '<div class="cw-opt-phone"><div class="cw-opt-chat"><span class="cw-opt-b in">Are you coming tonight?</span><span class="cw-opt-b out">Yes, leaving now</span><span class="cw-opt-meta">Delivered</span>' +
+              '<span class="cw-opt-fail"><span class="cw-opt-b out">Be there at 8</span><span class="cw-opt-bang">!</span></span><span class="cw-opt-meta bad">Not Delivered</span></div><div class="cw-opt-sheet"><span>Try Again</span><span>Cancel</span></div></div>',
+            alt: 'A phone chat. One sent message is marked Delivered. The last one has a red exclamation icon next to it and the words Not Delivered. Tapping the icon opened a small sheet with Try Again.',
+            cap: 'iMessage: a sent message appears in the thread at once. If it fails, it stays in place, marked Not Delivered with a red icon, and tapping it offers to try again.' }
+        };
+        const render = k => { view.innerHTML = S[k].html; view.setAttribute('aria-label', 'Sketch: ' + S[k].alt); cap.textContent = S[k].cap; };
+        wrap.querySelectorAll('input[name="cw-pat-optimistic-ui-w"]').forEach(r => r.addEventListener('change', () => render(r.value)));
+        render('linear');
+      })();
+      </script>
+    </div>

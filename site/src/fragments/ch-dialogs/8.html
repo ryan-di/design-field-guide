@@ -1,0 +1,43 @@
+<div class="note comfy cw-wrap"><p>Notice which actions get a dialog at all, and that the buttons say what will happen.</p>
+      <div class="seg cw-seg" role="radiogroup" aria-label="Example">
+        <input type="radio" name="cw-dialog-w" id="cw-dialog-w-1" value="macos" checked><label for="cw-dialog-w-1">macOS</label>
+        <input type="radio" name="cw-dialog-w" id="cw-dialog-w-2" value="github"><label for="cw-dialog-w-2">GitHub</label>
+        <input type="radio" name="cw-dialog-w" id="cw-dialog-w-3" value="whatsapp"><label for="cw-dialog-w-3">WhatsApp</label>
+        <input type="radio" name="cw-dialog-w" id="cw-dialog-w-4" value="gmail"><label for="cw-dialog-w-4">Gmail</label>
+      </div>
+      <div class="cw" data-cw-view role="img" aria-label=""></div>
+      <p class="cw-cap" data-cw-cap aria-live="polite"></p>
+      
+      <script>
+      (() => {
+        const wrap = document.currentScript.closest('.cw-wrap');
+        const view = wrap.querySelector('[data-cw-view]'), cap = wrap.querySelector('[data-cw-cap]');
+        const ic = id => '<svg class="icon sm"><use href="#i-' + id + '"/></svg>';
+        const ln = w => '<i class="cw-dlgw-ln"' + (w ? ' style="width:' + w + '"' : '') + '></i>';
+        const btn = (t, kind) => '<span class="btn btn-' + kind + '">' + t + '</span>';
+        const row = () => '<div class="cw-dlgw-row"><i class="cw-dlgw-box2"></i><i class="cw-dlgw-ln cw-dlgw-from"></i><i class="cw-dlgw-ln cw-dlgw-subj"></i></div>';
+        const S = {
+          macos: { html: '<div class="cw-dlgw-win"><div class="cw-dlgw-title"><i></i><i></i><i></i><span>Untitled</span></div><div class="cw-dlgw-page">' + ln('80%') + ln('92%') + ln('64%') + ln('88%') + ln('50%') + '</div>' +
+              '<div class="cw-dlgw-box cw-dlgw-sheet"><b>Save changes before closing?</b>' + ln('90%') + '<div class="cw-dlgw-acts">' + btn('Don’t Save', 'secondary') + '<span class="grow"></span>' + btn('Cancel', 'secondary') + btn('Save', 'primary') + '</div></div></div>',
+            alt: 'A document window with a sheet under its title bar asking to save changes before closing, with three buttons: Don’t Save, Cancel and Save.',
+            cap: 'macOS: when an app asks before closing a document with unsaved changes, the buttons say Save, Don’t Save and Cancel, so people can answer without reading the message.' },
+          github: { html: '<div class="cw-dlgw-win tall"><div class="cw-dlgw-page">' + ln('40%') + ln('86%') + ln('70%') + ln('90%') + '</div><div class="cw-dlgw-scrim"></div>' +
+              '<div class="cw-dlgw-box cw-dlgw-gh"><div class="cw-dlgw-hd"><b>Delete my-app</b>' + ic('x') + '</div><div class="cw-dlgw-in"><span class="cw-dlgw-warn">' + ic('warn') + 'This can’t be undone.</span>' + ln('92%') + ln('74%') +
+              '<span class="cw-dlgw-lab">To confirm, type <code>my-app</code></span><span class="cw-dlgw-field">my-app</span>' + btn('Delete this repository', 'danger') + '</div></div></div>',
+            alt: 'A dimmed page behind a dialog titled Delete my-app. It warns that this can’t be undone, asks people to type the repository name, and has a red Delete this repository button.',
+            cap: 'GitHub: deleting a repository can’t be undone, so the dialog spells out what will be lost and asks people to type the repository’s name before the delete button works.' },
+          whatsapp: { html: '<div class="cw-dlgw-phone"><div class="cw-dlgw-chat"><span class="cw-dlgw-bub"></span><span class="cw-dlgw-bub me"></span><span class="cw-dlgw-bub"></span><span class="cw-dlgw-bub me"></span></div><div class="cw-dlgw-scrim"></div>' +
+              '<div class="cw-dlgw-box cw-dlgw-wa"><b>Delete message?</b><span class="cw-dlgw-tbtn danger">Delete for everyone</span><span class="cw-dlgw-tbtn danger">Delete for me</span><span class="cw-dlgw-tbtn">Cancel</span></div></div>',
+            alt: 'A phone chat, dimmed, with a small dialog: Delete message? Three stacked buttons: Delete for everyone, Delete for me, Cancel.',
+            cap: 'WhatsApp: deleting a message you sent asks who it should disappear for. Each button names its outcome, so the choice is clear without any extra text.' },
+          gmail: { html: '<div class="cw-dlgw-win">' + row() + row() + '<i class="cw-dlgw-gone"></i>' + row() + row() + row() +
+              '<div class="cw-dlgw-toast"><div class="toast">Archived<span class="toast-action">Undo</span></div></div></div>',
+            alt: 'An inbox list with a line where an email just left. No dialog. A message in the bottom corner says Archived, with Undo.',
+            cap: 'Gmail: archiving or deleting an email doesn’t ask first. It happens at once, and a toast in the corner offers Undo for a few seconds.' }
+        };
+        const render = k => { view.innerHTML = S[k].html; view.setAttribute('aria-label', 'Sketch: ' + S[k].alt); cap.textContent = S[k].cap; };
+        wrap.querySelectorAll('input[name="cw-dialog-w"]').forEach(r => r.addEventListener('change', () => render(r.value)));
+        render('macos');
+      })();
+      </script>
+    </div>

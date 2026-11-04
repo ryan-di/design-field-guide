@@ -1,0 +1,225 @@
+---
+title: "Blank screen"
+description: "The first minutes decide whether people stay."
+eyebrow: "Chapter 12"
+sidebar:
+  label: "Blank screen"
+---
+
+import Raw from '../../../components/Raw.astro';
+import Learned from '../../../components/Learned.astro';
+import Runtime from '../../../components/Runtime.astro';
+import F0 from '../../../fragments/ch-blank/0.html?raw';
+import F1 from '../../../fragments/ch-blank/1.html?raw';
+import F2 from '../../../fragments/ch-blank/2.html?raw';
+import F3 from '../../../fragments/ch-blank/3.html?raw';
+import F4 from '../../../fragments/ch-blank/4.html?raw';
+import F5 from '../../../fragments/ch-blank/5.html?raw';
+import F6 from '../../../fragments/ch-blank/6.html?raw';
+import F7 from '../../../fragments/ch-blank/7.html?raw';
+import F8 from '../../../fragments/ch-blank/8.html?raw';
+import F9 from '../../../fragments/ch-blank/9.html?raw';
+import F10 from '../../../fragments/ch-blank/10.html?raw';
+import F11 from '../../../fragments/ch-blank/11.html?raw';
+import F12 from '../../../fragments/ch-blank/12.html?raw';
+import F13 from '../../../fragments/ch-blank/13.html?raw';
+import F14 from '../../../fragments/ch-blank/14.html?raw';
+import F15 from '../../../fragments/ch-blank/15.html?raw';
+
+<Runtime at="start" />
+
+<section class="dfg-chapter" id="ch-blank">
+
+The first minutes decide whether people stay. An empty page gives no clue where to start, what a finished result looks like or how the tools work. The [empty state](/part-3/states/#empty-state) in Part 3 covers the message on an empty screen. This chapter is about getting people moving: hand them something that already works, and teach the next step at the moment they need it.
+
+<article class="entry essay" id="pat-templates" data-entry data-name="Templates">
+
+<div class="entry-head">
+
+## Templates and starter content \{#pat-templates-h\}
+
+<Learned id="pat-templates" />
+
+</div>
+
+Templates and starter content give people a working example to start from, instead of an empty page. People see what a finished result looks like and change it into their own, so they reach a first result faster and see what the product can do.
+
+Where a [preset](/part-2/overload/#pat-presets) fills in settings, a template gives a whole starting document, with content people are meant to replace. After a template opens, move focus to the first thing to change.
+
+<Raw html={F0} />
+
+### Ways to do it \{#pat-templates-ways\}
+
+There are four common ways to give people a start. They differ in where the start comes from: a gallery of templates, a filled-in example in a new account, people’s own past work, or a few one-click starts on an empty page.
+
+<Raw html={F1} />
+
+### Rules \{#pat-templates-rules\}
+
+Four rules keep templates useful.
+
+<div class="cs essay-cs">
+
+<section class="rule" id="pat-templates-rule-1">
+
+#### 1. Offer a few different starts \{#pat-templates-rule-1-h\}
+
+If every template works the same way, people take it as the only way and fit their content into it, even when it doesn’t suit them. Offer a few starts that differ in kind, and say in one line what each is good for, so people pick by goal and see the range of what the product can do.
+
+<Raw html={F2} />
+
+</section>
+
+<section class="rule" id="pat-templates-rule-2">
+
+#### 2. Keep templates up to date \{#pat-templates-rule-2-h\}
+
+Templates go stale: an old year, renamed features, a chart type that no longer works. A broken template is often someone’s first experience of the product, so own templates like features: give each one an owner, check it with every release, and update or retire it.
+
+<Raw html={F3} />
+
+</section>
+
+<section class="rule" id="pat-templates-rule-3">
+
+#### 3. Mark what to change \{#pat-templates-rule-3-h\}
+
+A good example looks finished, so people can’t tell which parts are theirs to change, and the example text they miss ends up in what they send. Mark the parts meant to be edited with words and a border, not color alone, and add one line that names the first thing to do.
+
+<Raw html={F4} />
+
+</section>
+
+<section class="rule" id="pat-templates-rule-4">
+
+#### 4. Keep a blank start one click away \{#pat-templates-rule-4-h\}
+
+People who know what they want don’t need a template, and if every new file opens a gallery first, they click past it each time. Keep “Blank” as an equal choice next to the templates, one click away.
+
+<Raw html={F5} />
+
+</section>
+
+<Raw html={F6} />
+
+</div>
+
+### In real products \{#pat-templates-products\}
+
+<Raw html={F7} />
+
+</article>
+
+<article class="entry essay" id="pat-contextual-hints" data-entry data-name="Contextual hints">
+
+<div class="entry-head">
+
+## Contextual hints over tours \{#pat-contextual-hints-h\}
+
+<Learned id="pat-contextual-hints" />
+
+</div>
+
+A contextual hint teaches one thing at the moment people need it, next to the thing it explains. It appears after a related action, such as a first click on an empty whiteboard, and stays away once people know the thing, so people who already know it never see it.
+
+A product tour works the other way round: it explains everything up front, before people have a reason to care. Most people skip it, and the rest forget it by the time they get stuck.
+
+<Raw html={F8} />
+
+### Ways to do it \{#pat-contextual-hints-ways\}
+
+Hints range from quiet to loud. Placeholder text sits inside an empty field. A help icon waits until people ask. A callout points at one control, once. A nudge appears after people do something the long way and offers the short way. Pick the quietest one that still reaches people at the right moment.
+
+<Raw html={F9} />
+
+### Rules \{#pat-contextual-hints-rules\}
+
+Four rules keep contextual hints useful.
+
+<div class="cs essay-cs">
+
+<section class="rule" id="pat-contextual-hints-rule-1">
+
+#### 1. Show one hint at a time \{#pat-contextual-hints-rule-1-h\}
+
+When every feature gets its own hint, they all show up at once. People can’t tell which one matters, the bubbles sit on top of the things they wanted to use, and they close them all without reading. Show one hint, right after people do the related thing, and skip hints for things they already use.
+
+<Raw html={F10} />
+
+</section>
+
+<section class="rule" id="pat-contextual-hints-rule-2">
+
+#### 2. Remember when people close a hint \{#pat-contextual-hints-rule-2-h\}
+
+A closed hint that comes back tells people their choice didn’t count, and after the second time they close hints without reading them, new ones included. Remember every closed hint, ideally with the account so it holds on every device, and give people one place to see the tips again.
+
+<Raw html={F11} />
+
+</section>
+
+<section class="rule" id="pat-contextual-hints-rule-3">
+
+#### 3. Keep the target in view \{#pat-contextual-hints-rule-3-h\}
+
+A hint is about one control. If it sits on top of that control, people have to close the hint before they can try what it explains, and by then they have half forgotten it. Place the hint beside the control and point at it. Keep the control usable, and don’t move keyboard focus into the hint.
+
+<Raw html={F12} />
+
+</section>
+
+<section class="rule" id="pat-contextual-hints-rule-4">
+
+#### 4. Keep key help somewhere else too \{#pat-contextual-hints-rule-4-h\}
+
+Once a hint is closed, it’s gone, so if it was the only place that explained something, people who need it later have nowhere to look. Write the same help in the help pages or a help panel, and link there from the hint so people know where to find it again.
+
+<Raw html={F13} />
+
+</section>
+
+<Raw html={F14} />
+
+</div>
+
+### In real products \{#pat-contextual-hints-products\}
+
+<Raw html={F15} />
+
+</article>
+
+<aside class="in-short" id="ch-blank-in-short" aria-labelledby="ch-blank-in-short-h" data-pagefind-ignore>
+
+## In short \{#ch-blank-in-short-h\}
+
+<div class="is-grid">
+
+<div>
+
+<a class="is-e" href="#pat-templates">Templates and starter content</a>
+
+1. [Offer a few different starts](#pat-templates-rule-1)
+2. [Keep templates up to date](#pat-templates-rule-2)
+3. [Mark what to change](#pat-templates-rule-3)
+4. [Keep a blank start one click away](#pat-templates-rule-4)
+
+</div>
+
+<div>
+
+<a class="is-e" href="#pat-contextual-hints">Contextual hints over tours</a>
+
+1. [Show one hint at a time](#pat-contextual-hints-rule-1)
+2. [Remember when people close a hint](#pat-contextual-hints-rule-2)
+3. [Keep the target in view](#pat-contextual-hints-rule-3)
+4. [Keep key help somewhere else too](#pat-contextual-hints-rule-4)
+
+</div>
+
+</div>
+
+</aside>
+
+</section>
+
+<Runtime chapter="ch-blank" />

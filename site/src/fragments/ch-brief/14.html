@@ -1,0 +1,124 @@
+<script>
+(() => {
+  const cs = document.currentScript.closest('.cs');
+  const D = (k, html, wire) => csDemo(cs.querySelector('[data-d="' + k + '"]'), html, wire);
+  const P = '#eff-context-pack ';
+  const st = document.createElement('style');
+  st.textContent = [
+    '.cp-card{width:min(400px,100%);display:flex;flex-direction:column;gap:10px;text-align:left;background:var(--ui-surface);border:1px solid var(--ui-border);border-radius:12px;padding:14px;box-shadow:var(--ui-shadow);color:var(--ui-text);font-size:14px;line-height:1.45}',
+    '.cp-k{font:600 11px var(--font-mono);letter-spacing:.08em;text-transform:uppercase;color:var(--ui-muted)}',
+    '.cp-me{background:var(--ui-sel-soft);border-radius:12px;padding:8px 11px;display:flex;flex-direction:column;gap:3px}',
+    '.cp-me code,.cp-code{font:500 12.5px var(--font-mono)}',
+    '.cp-code{background:var(--ui-bg);border:1px solid var(--ui-border);border-radius:8px;padding:7px 9px;white-space:pre-wrap;word-break:break-word}',
+    '.cp-acts{display:flex;gap:8px;flex-wrap:wrap;align-items:center}',
+    '.cp-row{display:flex;gap:8px;flex-wrap:wrap;align-items:center;justify-content:flex-end;border-top:1px solid var(--ui-border);padding-top:10px}',
+    '.cp-row .btn{outline-offset:2px}',
+    '.cp-made{all:unset;cursor:pointer;font:400 13px Georgia,serif;padding:5px 9px;border-radius:2px;background:var(--ui-danger);color:var(--ui-on-danger)}',
+    '.cp-made:focus-visible{outline:none}',
+    '.cp-danger{background:var(--ui-danger);color:var(--ui-on-danger)}',
+    '.cp-res{display:flex;flex-direction:column;gap:4px}',
+    '.cp-res:empty,.cp-ag:empty{display:none}',
+    '.cp-ag{display:flex;flex-direction:column;gap:5px;border-left:3px solid var(--ui-sel);padding:2px 0 2px 10px}',
+    '.cp-bad{color:var(--ui-danger)}',
+    '.cp-good{color:var(--ui-ok)}',
+    '.cp-att{display:flex;flex-direction:column;gap:4px}',
+    '.cp-att span{display:flex;gap:6px;align-items:center;font-size:13.5px}',
+    '.cp-att .icon{width:15px;height:15px;color:var(--ui-muted)}',
+    '.cp-meter{display:flex;flex-direction:column;gap:4px;font:500 12.5px var(--font-mono);color:var(--ui-muted)}',
+    '.cp-meter i{display:block;height:8px;border-radius:4px;background:var(--ui-skel);overflow:hidden}',
+    '.cp-meter i b{display:block;height:100%;background:var(--ui-sel)}',
+    '.cp-meter.full i b{background:var(--ui-danger)}',
+    '.cp-two{display:grid;grid-template-columns:1fr 1fr;gap:10px}',
+    '.cp-two > div{display:flex;flex-direction:column;gap:5px;min-width:0}',
+    '.cp-trip{display:flex;gap:8px;align-items:center;border:1px solid var(--ui-border);border-radius:10px;padding:7px;background:var(--ui-bg);box-shadow:var(--ui-shadow);min-width:0}',
+    '.cp-trip .thumb{width:38px;flex:none;border-radius:6px}',
+    '.cp-trip b{font-size:13px;display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}',
+    '.cp-trip small{font-size:11.5px;color:var(--ui-muted)}',
+    '.cp-trip.off{flex-direction:column;align-items:stretch;gap:4px;border-radius:3px;box-shadow:0 8px 18px rgba(0,0,0,.22)}',
+    '.cp-trip.off .thumb{width:100%;aspect-ratio:3/1}',
+    '.cp-trip.off b{font-weight:500;font-size:14px}',
+    '.cp-trip.off small{color:var(--ui-sel)}',
+    '.cp-chip{align-self:flex-start;display:inline-flex;gap:6px;align-items:center;font:600 12px var(--font-body);border:1px solid var(--ui-border);border-radius:999px;padding:3px 9px;background:var(--ui-surface)}',
+    '.cp-chip .icon{width:14px;height:14px}',
+    '.cp-tasks{display:flex;flex-direction:column;gap:6px}',
+    '.cp-task{display:flex;flex-direction:column;gap:3px;border:1px solid var(--ui-border);border-radius:9px;padding:7px 10px;background:var(--ui-bg)}',
+    '.cp-task small{font:500 12px var(--font-mono);color:var(--ui-muted)}',
+    '.cp-task small.miss{color:var(--ui-danger)}'
+  ].map(r => r.replace(/^[^{]+/, s => s.split(',').map(x => P + x.trim()).join(','))).join('\n');
+  cs.appendChild(st);
+  const ic = n => '<svg class="icon"><use href="#i-' + n + '"/></svg>';
+
+  /* 1. Assumes the design system */
+  const dsHtml = fixed => '<div class="cp-card"><span class="cp-k">Request</span><div class="cp-me"><span>Add a Delete account button to Settings, next to Sign out.</span>' +
+    (fixed ? '<span>Tokens: <code>src/styles/tokens.css</code></span><span>Reuse <code>src/components/Button.vue</code>, variant <code>danger</code>. Don’t build new buttons.</span>' : '') + '</div>' +
+    '<span class="cp-k">What the agent wrote</span><div class="cp-code">' +
+    (fixed ? '&lt;Button variant="danger"&gt;Delete account&lt;/Button&gt;' : '&lt;button style="background:#e53935;\n  border-radius:2px;font-family:Georgia;\n  outline:none"&gt;Delete account&lt;/button&gt;') + '</div>' +
+    '<span class="cp-k">In the app</span><div class="cp-row"><button class="btn btn-secondary cs-sm" type="button">Sign out</button>' +
+    (fixed ? '<button class="btn cs-sm cp-danger" type="button">Delete account</button>' : '<button class="cp-made" type="button">Delete account</button>') + '</div>' +
+    '<p class="cs-meta" data-out aria-live="polite"></p></div>';
+  const dsWire = fixed => d => {
+    const out = d.querySelector('[data-out]');
+    d.querySelectorAll('.cp-row button').forEach((b, i) => b.addEventListener('focus', () => {
+      out.textContent = i === 0 ? 'Focus is on Sign out. Press Tab again.' : (fixed ? 'Focus is on Delete account. Same ring as Sign out.' : 'Focus is on Delete account, but there’s no ring to show it.');
+    }));
+  };
+  D('eff-context-pack-1b', dsHtml(false), dsWire(false));
+  D('eff-context-pack-1f', dsHtml(true), dsWire(true));
+
+  /* 2. Pasting everything */
+  const packHtml = fixed => '<div class="cp-card"><span class="cp-k">Request: add a Create account screen</span><span class="cp-k">Attached</span><div class="cp-att">' +
+    (fixed ? '<span>' + ic('book') + 'Login.vue and Profile.vue, two similar screens</span><span>' + ic('image') + 'Figma: the sign-up flow, 4 frames</span><span>' + ic('book') + 'Copy rules: the forms section</span>'
+      : '<span>' + ic('folder') + 'The whole repo, 4,120 files</span><span>' + ic('image') + 'Figma: all 38 pages</span><span>' + ic('book') + 'Every page of the team wiki</span>') + '</div>' +
+    '<div class="cp-meter' + (fixed ? '' : ' full') + '"><span>' + (fixed ? 'Context used: 12%' : 'Context used: 100%. The end got cut off.') + '</span><i><b style="width:' + (fixed ? 12 : 100) + '%"></b></i></div>' +
+    '<div class="cp-acts"><button class="btn btn-primary cs-sm" type="button" data-go>Send to agent</button></div><div class="cp-ag" data-ag aria-live="polite"></div></div>';
+  const packWire = fixed => (d, t) => {
+    const ag = d.querySelector('[data-ag]');
+    d.querySelector('[data-go]').addEventListener('click', e => {
+      e.target.disabled = true; ag.innerHTML = '<span class="cs-meta">Agent is working…</span>';
+      t.after(() => {
+        ag.innerHTML = fixed
+          ? '<span class="cp-k">Agent</span><span>Followed Login.vue: same layout, same field components, the frames’ wording.</span><span class="cp-good">It looks like the screens next to it.</span>'
+          : '<span class="cp-k">Agent</span><span>Used the 2023 onboarding screens as the example.</span><span class="cp-bad">Those screens were replaced last year. The request at the end of the pile was cut off, too.</span>';
+      }, 600);
+    });
+  };
+  D('eff-context-pack-2b', packHtml(false), packWire(false));
+  D('eff-context-pack-2f', packHtml(true), packWire(true));
+
+  /* 3. Words only */
+  const trip = off => '<div class="cp-trip' + (off ? ' off' : '') + '"><span class="thumb b"></span><span><b>Lisbon</b><small>12–16 Nov</small></span></div>';
+  const lookHtml = fixed => '<div class="cp-card"><span class="cp-k">Request</span><div class="cp-me">' +
+    (fixed ? '<span>Build the trip card from this frame.</span><span class="cp-chip">' + ic('image') + 'Figma frame: Trips / Card</span>'
+      : '<span>A card with a small image on the left, the title in bold, a gray date under it and a soft shadow.</span>') + '</div>' +
+    '<div class="cp-two"><div><span class="cp-k">The design</span>' + trip(false) + '</div><div><span class="cp-k">Agent made</span>' + trip(!fixed) + '</div></div>' +
+    '<span class="' + (fixed ? 'cp-good' : 'cp-bad') + '">' + (fixed ? 'Same as the design. The agent read sizes and colors from the frame.' : 'Image on top, title not bold, date in blue, heavy shadow. Each is one reading of the words.') + '</span></div>';
+  D('eff-context-pack-3b', lookHtml(false), () => {});
+  D('eff-context-pack-3f', lookHtml(true), () => {});
+
+  /* 4. Rebuilding the pack each time */
+  const TASKS = [['Add a Rename option to photos', 'Rename photo? · Rename / Cancel', true], ['Add an empty state to Albums', 'No albums yet. Create one to group your photos.', true], ['Let people delete several photos at once', ['Are you sure? · OK / Cancel', 'Delete 3 photos? · Delete / Cancel'], false]];
+  const repHtml = fixed => '<div class="cp-card">' + (fixed ? '<span class="cp-chip">' + ic('book') + 'CLAUDE.md: tokens, components, copy rules. Read every session.</span>' : '<span class="cs-meta">Each request starts with pasted rules.</span>') +
+    '<div class="cp-tasks" data-tasks></div><div class="cp-acts"><button class="btn btn-primary cs-sm" type="button" data-next>Next task</button></div><div class="cp-res" data-res aria-live="polite"></div></div>';
+  const repWire = fixed => d => {
+    const box = d.querySelector('[data-tasks]'), res = d.querySelector('[data-res]'), btn = d.querySelector('[data-next]');
+    let n = 0;
+    btn.addEventListener('click', () => {
+      const [name, out, full] = TASKS[n];
+      const pasted = fixed ? '' : (full ? '<small>Pasted: tokens, components, copy rules</small>' : '<small class="miss">Pasted: tokens, components. Copy rules forgotten.</small>');
+      const o = Array.isArray(out) ? out[fixed ? 1 : 0] : out;
+      box.insertAdjacentHTML('beforeend', '<div class="cp-task"><b>' + (n + 1) + '. ' + name + '</b>' + pasted + '<span>“' + o + '”</span></div>');
+      n++;
+      if (n === TASKS.length) {
+        btn.disabled = true;
+        res.innerHTML = fixed ? '<span class="cp-good">All three follow the copy rule: say what will happen. The rules came from CLAUDE.md each time.</span>'
+          : '<span class="cp-bad">Task 3 breaks the copy rule: “OK” doesn’t say what will happen.</span>';
+      }
+    });
+  };
+  D('eff-context-pack-4b', repHtml(false), repWire(false));
+  D('eff-context-pack-4f', repHtml(true), repWire(true));
+
+  csInit(cs);
+})();
+
+</script>

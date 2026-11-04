@@ -1,0 +1,255 @@
+<script>
+  (() => {
+    const sec = document.currentScript.closest('section');
+    const $ = (s, r = sec) => r.querySelector(s);
+
+    /* sketch primitives */
+    const sk = inner => '<span class="p27-sk" aria-hidden="true">' + inner + '</span>';
+    const tabs = arr => '<span class="p27-tabs">' + arr.map(t => '<span class="p27-tab' + (t.on ? ' on' : '') + (t.ghost ? ' ghost' : '') + '">' + t.n + (t.dot ? '<i class="p27-dot"></i>' : '') + '</span>').join('') + '</span>';
+    const ln = w => '<i class="p27-ln" style="width:' + w + '%"></i>';
+    const dlg = (t, a, b) => '<span class="p27-dlg"><b>' + t + '</b><span class="p27-mbs"><span class="p27-mb pri">' + a + '</span><span class="p27-mb">' + b + '</span></span></span>';
+    const tst = (t, a) => '<span class="p27-tst">' + t + (a ? '<u>' + a + '</u>' : '') + '</span>';
+    const rows = (h, list) => '<span class="p27-rows">' + (h ? '<span class="p27-h">' + h + '</span>' : '') + list.map(r => '<span class="p27-row"><span>' + r[0] + '</span>' + (r[1] || '') + '</span>').join('') + '</span>';
+    const bar = p => '<span class="bar"><i style="width:' + p + '%"></i></span>';
+
+    const DIRS = {
+      confirm: { name: 'Confirm on close', bet: 'People will answer a clear question.', brief: 'Ask before anything is lost.',
+        sk: tabs([{ n: 'Portrait', on: 1, dot: 1 }, { n: 'Upscale' }]) + dlg('Save changes?', 'Save', 'Don’t save') },
+      autosave: { name: 'Autosave and restore', bet: 'Nobody should have to decide.', brief: 'Never ask. Never lose anything.',
+        sk: tabs([{ n: 'Portrait', on: 1 }, { n: 'Upscale' }]) + '<span class="p27-mut">Draft saved just now</span>' + ln(80) + ln(55) },
+      undo: { name: 'Undo the close', bet: 'Closing by mistake is rare, so make it cheap.', brief: 'Let people take the close back.',
+        sk: tabs([{ n: 'Upscale', on: 1 }]) + ln(70) + tst('Tab closed', 'Undo') },
+      history: { name: 'Recover from history', bet: 'People notice the loss later.', brief: 'Work for someone who notices tomorrow.',
+        sk: rows('Recently closed', [['Portrait · 2 min', '<u>Restore</u>'], ['Upscale · 1 h']]) },
+      draft: { name: 'Keep the tab as a draft', bet: 'The tab itself is the reminder.', brief: 'Closing never removes unsaved work.',
+        sk: tabs([{ n: 'Upscale', on: 1 }, { n: 'Portrait · draft', ghost: 1 }]) + ln(75) + ln(50) },
+      warn: { name: 'Warn early', bet: 'Seeing “unsaved” early prevents the loss.', brief: 'Prevent it, don’t recover from it.',
+        sk: tabs([{ n: 'Portrait', on: 1, dot: 1 }, { n: 'Upscale' }]) + '<span class="p27-tip">Unsaved changes</span>' + ln(65) }
+    };
+
+    /* ---------- entry 1: explore wide ---------- */
+    (() => {
+      const stage = $('[data-demo="eff-explore-wide"]');
+      const grid = $('#p27-ew-grid', stage), cap = $('#p27-ew-cap', stage), status = $('#p27-ew-status', stage);
+      const order = ['confirm', 'autosave', 'undo', 'history', 'draft', 'warn'];
+      const caps = {
+        1: 'One direction: the first idea, a confirm dialog. You can polish it, but you can’t see what it ruled out.',
+        3: 'Three directions: ask, save silently, or undo. Now there’s something to compare.',
+        6: 'Six directions: some are wrong, and that’s fine. Each was cheap, and the wrong ones show where the edges are.'
+      };
+      const kept = new Set();
+      let n = 1;
+      const updateStatus = () => {
+        const k = order.slice(0, n).filter(id => kept.has(id)).length;
+        status.textContent = n === 1 ? 'Nothing to compare yet.' : (k ? 'Keeping ' + k + ' of ' + n + '.' + (k > 3 ? ' That’s a lot to take further; try two or three.' : ' Take these further.') : 'Keeping 0 of ' + n + '. Keep two or three.');
+      };
+      const render = () => {
+        grid.innerHTML = '';
+        order.slice(0, n).forEach(id => {
+          const d = DIRS[id];
+          const card = document.createElement('div');
+          card.className = 'surface p27-card' + (kept.has(id) ? ' kept' : '');
+          card.innerHTML = sk(d.sk) + '<b>' + d.name + '</b><p class="p27-bet">Bet: ' + d.bet + '</p><p class="p27-brief"><span>Brief</span>“' + d.brief + '”</p>';
+          const btn = document.createElement('button');
+          btn.type = 'button'; btn.className = 'btn btn-secondary p27-keep';
+          btn.textContent = 'Keep'; btn.setAttribute('aria-pressed', String(kept.has(id)));
+          btn.setAttribute('aria-label', 'Keep ' + d.name);
+          btn.hidden = n === 1;
+          btn.addEventListener('click', () => {
+            kept.has(id) ? kept.delete(id) : kept.add(id);
+            btn.setAttribute('aria-pressed', String(kept.has(id)));
+            card.classList.toggle('kept', kept.has(id));
+            updateStatus();
+          });
+          card.appendChild(btn);
+          grid.appendChild(card);
+        });
+        cap.textContent = caps[n];
+        updateStatus();
+      };
+      stage.querySelectorAll('input[name="p27-ew-count"]').forEach(r => r.addEventListener('change', () => { n = +r.value; render(); }));
+      render();
+    })();
+
+    /* ---------- entry 2: named axes ---------- */
+    (() => {
+      const stage = $('[data-demo="eff-axes"]');
+      $('.p27-vers', stage).innerHTML = [
+        ['Version A', 'Save changes?', 'Save', 'Don’t save'],
+        ['Version B', 'Save your changes?', 'Save', 'Discard'],
+        ['Version C', 'Unsaved changes', 'Save now', 'Don’t save']
+      ].map(v => '<div class="p27-ver"><span>' + v[0] + '</span>' + sk(tabs([{ n: 'Portrait', on: 1, dot: 1 }]) + dlg(v[1], v[2], v[3])) + '</div>').join('');
+
+      const AX = {
+        loud: { name: 'How loud', levels: ['Silent', 'Nudge', 'Blocking'] },
+        where: { name: 'Where', levels: ['On the tab', 'Toast', 'Panel'] },
+        when: { name: 'When', levels: ['Before close', 'At close', 'On reopen'] }
+      };
+      // [short, detail, odd?] indexed [first axis level][second axis level]
+      const M = {
+        'loud|where': [
+          [['Dot on the tab', 'A small dot on the tab shows unsaved changes. Nothing else.'], ['Draft note fades', 'Closing keeps a draft, and a quiet note fades in and out.'], ['Drafts in the panel', 'Closed work quietly appears in a Drafts list in the side panel.']],
+          [['Tab warns on hover', 'Hovering the close button shows “Unsaved changes” right on the tab.'], ['Undo toast', '“Tab closed · Undo” shows for a few seconds after closing.'], ['Panel opens to Recent', 'After a close, the side panel opens on Recently closed.']],
+          [['Tab asks Save or Discard', 'The tab itself turns into a small Save or Discard choice before it closes.'], ['Toast that waits', 'A toast stays until people pick Save or Discard. Odd: toasts aren’t meant to block, which is why a dialog fits better.', 1], ['Save dialog', 'A dialog holds the close: Save, Don’t save, Cancel.']]
+        ],
+        'loud|when': [
+          [['Autosave as you go', 'Every change is saved as a draft while people work.'], ['Close keeps a draft', 'Closing saves a draft without asking.'], ['Reopen restores quietly', 'Opening the workflow again brings the draft back without a word.']],
+          [['Unsaved dot early', 'A dot appears on the tab as soon as there are unsaved changes.'], ['Undo toast', '“Tab closed · Undo” right after closing.'], ['“Restore draft?” bar', 'On reopen, a bar offers Restore draft or Discard.']],
+          [['Save before first run', 'People must name and save a workflow before they can run it. Odd and heavy, but it shows the cost of asking early.', 1], ['Confirm on close', 'A dialog asks Save, Don’t save or Cancel.'], ['Pick a draft on start', 'The app opens on a choice of drafts before anything else. Odd: it blocks everyone for a rare case.', 1]]
+        ],
+        'where|when': [
+          [['Unsaved dot', 'A dot on the tab, before anything is closed.'], ['Draft tab stays', 'The closed tab stays in the strip, dimmed and marked draft.'], ['Tab marked Recovered', 'The reopened tab carries a “Recovered” label until saved.']],
+          [['“Not saved yet” reminder', 'After a long stretch of edits, a toast suggests saving.'], ['Undo toast', '“Tab closed · Undo” right after closing.'], ['“Draft restored” toast', 'On reopen, a toast says the draft is back, with Discard.']],
+          [['Unsaved list', 'The side panel lists every tab with unsaved changes.'], ['Recently closed', 'Closed tabs land in a Recently closed list in the panel.'], ['Recover list on start', 'On start, the panel shows work that wasn’t saved last time.']]
+        ]
+      };
+      const look = (a, b, ia, ib) => M[a + '|' + b] ? M[a + '|' + b][ia][ib] : M[b + '|' + a][ib][ia];
+      const selX = $('#p27-ax-x', stage), selY = $('#p27-ax-y', stage), mx = $('#p27-ax-mx', stage), detail = $('#p27-ax-detail', stage);
+      let picked = null;
+      const keys = Object.keys(AX);
+      const renderMx = () => {
+        const x = selX.value, y = selY.value;
+        let h = '<span class="p27-mx-h" aria-hidden="true"></span>' + AX[x].levels.map(l => '<span class="p27-mx-h">' + l + '</span>').join('');
+        AX[y].levels.forEach((ly, i) => {
+          h += '<span class="p27-mx-h row">' + ly + '</span>';
+          AX[x].levels.forEach((lx, j) => {
+            const c = look(y, x, i, j);
+            h += '<button type="button" class="p27-mx-c' + (c[2] ? ' odd' : '') + '" data-i="' + i + '" data-j="' + j + '" aria-pressed="false" aria-label="' + ly + ', ' + lx + ': ' + c[0] + '">' + c[0] + (c[2] ? '<em>odd</em>' : '') + '</button>';
+          });
+        });
+        mx.innerHTML = h;
+        mx.setAttribute('aria-label', 'Matrix: ' + AX[y].name + ' down, ' + AX[x].name + ' across');
+        picked = null;
+        detail.textContent = 'Nine directions from two named axes. Pick a cell.';
+        mx.querySelectorAll('.p27-mx-c').forEach(b => b.addEventListener('click', () => {
+          mx.querySelectorAll('.p27-mx-c').forEach(o => o.setAttribute('aria-pressed', 'false'));
+          b.setAttribute('aria-pressed', 'true');
+          const i = +b.dataset.i, j = +b.dataset.j, c = look(y, x, i, j);
+          picked = [i, j];
+          detail.textContent = AX[y].levels[i] + ' × ' + AX[x].levels[j] + ': ' + c[1];
+        }));
+      };
+      const fix = changed => {
+        const other = changed === selX ? selY : selX;
+        if (selX.value === selY.value) other.value = keys.find(k => k !== changed.value && k !== other.value) || keys.find(k => k !== changed.value);
+        renderMx();
+      };
+      selX.addEventListener('change', () => fix(selX));
+      selY.addEventListener('change', () => fix(selY));
+      stage.querySelectorAll('input[name="p27-ax-mode"]').forEach(r => r.addEventListener('change', () => {
+        $('#p27-ax-v-versions', stage).hidden = r.value !== 'versions';
+        $('#p27-ax-v-axes', stage).hidden = r.value !== 'axes';
+      }));
+      renderMx();
+    })();
+
+    /* ---------- entry 3: prototype in code ---------- */
+    (() => {
+      const stage = $('[data-demo="eff-prototype-in-code"]');
+      const RUNGS = [
+        { name: 'Sketch', what: 'Rough wireframes, many side by side.', answers: 'Which direction? What goes where?', misses: 'Timing, feel, real data.', cost: 'Minutes each.',
+          sk: tabs([{ n: 'Portrait', on: 1, dot: 1 }]) + dlg('Save changes?', 'Save', 'Don’t save') },
+        { name: 'Artifact prototype', what: 'A clickable page published from a session, with sample data.', answers: 'How does it feel? Do people get it?', misses: 'Real storage, real workflows, speed.', cost: 'An hour or so.',
+          sk: tabs([{ n: 'Upscale', on: 1 }]) + ln(60) + tst('Tab closed', 'Undo') },
+        { name: 'Branch in the app', what: 'A branch in a git worktree, run locally with real workflows.', answers: 'Does it work with the real thing?', misses: 'Little, but it’s slow to throw away.', cost: 'Hours to days.',
+          sk: tabs([{ n: 'Portrait', on: 1 }, { n: 'Upscale' }, { n: '+8' }]) + rows('', [['Reload', '<span class="p27-mut">draft back</span>']]) }
+      ];
+      const QS = [
+        { q: 'Which of six directions is worth trying?', r: 0, why: 'You’re comparing ideas, not behavior. Rough sketches side by side are enough.' },
+        { q: 'Does an Undo toast give people enough time to react?', r: 1, why: 'Timing has to be felt. A clickable page with a real timer answers it; a static frame can’t.' },
+        { q: 'Can people find a closed tab again without help?', r: 1, why: 'Put a clickable page in front of two or three people and watch where they look.' },
+        { q: 'Does restore survive a reload with ten real workflows open?', r: 2, why: 'Real storage, real tab state and real workflows only exist in the app.' },
+        { q: 'Does autosave slow down a very large graph?', r: 2, why: 'Speed depends on the real code and real graphs. Measure it on a branch.' }
+      ];
+      const fs = $('.p27-qs', stage), ladder = $('#p27-pc-ladder', stage), why = $('#p27-pc-why', stage);
+      QS.forEach((q, i) => {
+        const l = document.createElement('label');
+        l.className = 'p27-q';
+        l.innerHTML = '<input type="radio" name="p27-pc-q" id="p27-pc-q' + i + '" value="' + i + '"' + (i ? '' : ' checked') + '><span>' + q.q + '</span>';
+        fs.appendChild(l);
+      });
+      ladder.innerHTML = RUNGS.map((r, i) => '<div class="surface p27-rung" data-r="' + i + '"><span class="p27-verdict"></span><b>' + (i + 1) + ' · ' + r.name + '</b>' + sk(r.sk) +
+        '<p>' + r.what + '</p><p><span>Answers</span>' + r.answers + '</p><p><span>Misses</span>' + r.misses + '</p><p><span>Rough cost</span>' + r.cost + '</p></div>').join('');
+      const render = i => {
+        const q = QS[i];
+        ladder.querySelectorAll('.p27-rung').forEach(el => {
+          const r = +el.dataset.r;
+          el.classList.toggle('fit', r === q.r);
+          el.querySelector('.p27-verdict').textContent = r === q.r ? 'Fits this question' : r < q.r ? 'Can’t answer it' : 'More than you need';
+        });
+        why.textContent = RUNGS[q.r].name + ': ' + q.why;
+      };
+      fs.querySelectorAll('input').forEach(r => r.addEventListener('change', () => render(+r.value)));
+      render(0);
+    })();
+
+    /* ---------- In Comfy switchers ---------- */
+    const switcher = (wrap, S, first) => {
+      if (!wrap) return;
+      const view = wrap.querySelector('[data-cw-view]'), cap = wrap.querySelector('[data-cw-cap]');
+      const render = k => { view.innerHTML = S[k].html; view.setAttribute('aria-label', 'Sketch: ' + S[k].alt); cap.textContent = S[k].cap; };
+      wrap.querySelectorAll('.cw-seg input').forEach(r => r.addEventListener('change', () => render(r.value)));
+      render(first);
+    };
+    const wraps = []; // old In Comfy switchers retired
+    const thumbs = list => '<div class="cw-ew-thumbs">' + list.map(t => '<div class="cw-ew-thumb">' + sk(t[1]) + '<span>' + t[0] + '</span></div>').join('') + '</div>';
+
+    switcher(wraps[0], {
+      tabs: { html: thumbs([['Confirm on close', DIRS.confirm.sk], ['Autosave and restore', DIRS.autosave.sk], ['Keep as draft', DIRS.draft.sk], ['Undo the close', DIRS.undo.sk]]),
+        alt: 'Four direction sketches: a confirm dialog, a draft saved note, a dimmed draft tab, and an undo toast.',
+        cap: 'Closing tabs: four briefs, four directions. Ask, save silently, keep the tab, or undo.' },
+      search: { html: thumbs([
+          ['List at the cursor', '<span class="p27-in">ksam|</span>' + rows('', [['KSampler'], ['KSampler (Advanced)']])],
+          ['Category browser', '<span class="p27-cols"><span>' + rows('', [['Sampling'], ['Loaders'], ['Image']]) + '</span><span>' + rows('', [['KSampler'], ['Sampler…']]) + '</span></span>'],
+          ['Search from a wire', '<span class="p27-mn"><span>VAE Decode' + ln(70) + '</span></span><span class="p27-in">IMAGE → save|</span>' + rows('', [['Save image']])]]),
+        alt: 'Three node search directions: a search list at the cursor, a two-column category browser, and a search started from a dragged wire.',
+        cap: 'Node search: each direction changes where people start, from a name, a category or a wire.' },
+      templates: { html: thumbs([
+          ['Gallery', '<span class="p27-gal"><i></i><i></i><i></i><i></i></span>'],
+          ['A few questions first', '<b>What do you want to make?</b><span class="p27-chips"><span>Image</span><span>Video</span><span>Upscale</span></span>'],
+          ['Recent and suggested', rows('Recent', [['Portrait v3']]) + rows('Suggested', [['Image to video']])]]),
+        alt: 'Three template picker directions: a thumbnail gallery, a question with three choices, and a short list of recent and suggested templates.',
+        cap: 'Template picker: a gallery, a question first, or a short list. Same templates behind each, so only the approach differs.' },
+      queue: { html: thumbs([
+          ['List', rows('Queue', [['Job 1', bar(70)], ['Job 2', bar(0)]])],
+          ['Timeline', '<span class="p27-h">Now →</span>' + rows('', [['', bar(40)], ['', bar(85)]])],
+          ['On the nodes', '<span class="p27-mn"><span>KSampler<span class="bar"><i style="width:60%"></i></span></span><span>Save<span class="bar"><i style="width:0"></i></span></span></span>']]),
+        alt: 'Three queue directions: a list with progress bars, a timeline, and progress shown on the nodes.',
+        cap: 'Queue: a list, a timeline, or progress on the nodes themselves. Compare them side by side before choosing.' }
+    }, 'tabs');
+
+    const mx2 = (y, x, yl, xl, cells) => '<div class="cw-ax-mx"><span class="cw-ax-h">' + y + ' ↓<br>' + x + ' →</span>' + xl.map(l => '<span class="cw-ax-h">' + l + '</span>').join('') +
+      yl.map((l, i) => '<span class="cw-ax-h">' + l + '</span>' + cells[i].map(c => '<span class="cw-ax-c">' + c + '</span>').join('')).join('') + '</div>';
+    switcher(wraps[1], {
+      tabs: { html: mx2('How loud', 'When', ['Silent', 'Blocking'], ['Before close', 'On reopen'], [['Unsaved dot on the tab', 'Reopen restores quietly'], ['Confirm dialog on close', 'Pick a draft on start']]),
+        alt: 'A two by two grid: how loud, silent or blocking, against when, before close or on reopen.',
+        cap: 'Closing tabs: how loud against when. Four cells, four briefs, and one odd corner worth a look.' },
+      search: { html: mx2('Where', 'How', ['At cursor', 'Side panel'], ['Type a name', 'Browse'], [['Search box at the cursor', 'Category menu at the cursor'], ['Search in the library panel', 'Category tree in the panel']]),
+        alt: 'A two by two grid: where, at the cursor or in a side panel, against how, typing a name or browsing.',
+        cap: 'Node search: where it opens against how people find a node.' },
+      templates: { html: mx2('When', 'How much', ['First open', 'On demand'], ['Small starter', 'Full workflow'], [['Start screen with three starters', 'Open one full example'], ['New ▸ starter list', 'Gallery of full workflows']]),
+        alt: 'A two by two grid: when, on first open or on demand, against how much, a small starter or a full workflow.',
+        cap: 'Template picker: when it appears against how much it gives people to start from.' },
+      queue: { html: mx2('Where', 'Detail', ['On canvas', 'Panel'], ['A count', 'Each job'], [['Count on the Run button', 'Progress on each node'], ['“3 queued” in the panel header', 'Job list with progress']]),
+        alt: 'A two by two grid: where, on the canvas or in a panel, against detail, a count or each job.',
+        cap: 'Queue: where progress shows against how much detail it gives.' }
+    }, 'tabs');
+
+    const ladderSk = (q, fit, notes) => '<span class="cw-pc-q">' + q + '</span><div class="cw-pc-row">' + ['Sketch', 'Artifact', 'Branch'].map((n, i) =>
+      '<span class="cw-pc-r' + (i === fit ? ' fit' : '') + '">' + (i + 1) + ' · ' + n + '<small>' + notes[i] + '</small></span>').join('') + '</div>';
+    switcher(wraps[2], {
+      tabs: { html: ladderSk('Does restore survive a reload with real tabs?', 2, ['Can’t show storage', 'Fake storage only', 'Real tabs, real reloads']),
+        alt: 'Question: does restore survive a reload with real tabs. The Branch rung is marked as the fit.',
+        cap: 'Closing tabs: storage and reloads only exist in the real app, so this question needs a branch.' },
+      search: { html: ladderSk('Does the result order feel right as you type?', 1, ['Can’t type in it', 'Real typing, sample node list', 'More than needed']),
+        alt: 'Question: does the result order feel right as you type. The Artifact rung is marked as the fit.',
+        cap: 'Node search: typing has to be felt, but a page with a sample list of node names is enough to judge it.' },
+      templates: { html: ladderSk('Grid or list for the picker?', 0, ['Side by side in minutes', 'More than needed', 'Far more than needed']),
+        alt: 'Question: grid or list for the picker. The Sketch rung is marked as the fit.',
+        cap: 'Template picker: a layout choice. Two sketches side by side settle it.' },
+      queue: { html: ladderSk('Is progress readable on a long real run?', 2, ['Can’t show timing', 'Fake timing only', 'Real runs, real timing']),
+        alt: 'Question: is progress readable on a long real run. The Branch rung is marked as the fit.',
+        cap: 'Queue: only real runs have real timing and real failures, so test it on a branch.' }
+    }, 'tabs');
+  })();
+  </script>

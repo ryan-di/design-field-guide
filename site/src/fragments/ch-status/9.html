@@ -1,0 +1,19 @@
+<div class="stage tall" data-demo="pat-optimistic-ui">
+      <div class="row">
+        <div class="seg" role="radiogroup" aria-label="When the star changes">
+          <input type="radio" name="p12-opt-mode" id="p12-opt-wait" value="wait" checked><label for="p12-opt-wait">Wait for server</label>
+          <input type="radio" name="p12-opt-mode" id="p12-opt-now" value="optimistic"><label for="p12-opt-now">Optimistic</label>
+        </div>
+        <label class="check"><input type="checkbox" data-fail> Simulate a failure</label>
+      </div>
+      <div class="surface p12-list">
+        <div class="p12-list-head"><span>Recipes</span><span data-total>1 favorite</span></div>
+        <ul>
+          <li class="p12-row"><span><b>Lemon pasta</b><small>Ready in 20 minutes</small></span><button class="icon-btn p12-fav" type="button" aria-pressed="true" aria-label="Favorite: Lemon pasta"><svg class="icon"><use href="#p12-star"/></svg></button></li>
+          <li class="p12-row"><span><b>Chickpea curry</b><small>Feeds four</small></span><button class="icon-btn p12-fav" type="button" aria-pressed="false" aria-label="Favorite: Chickpea curry"><svg class="icon"><use href="#p12-star"/></svg></button></li>
+          <li class="p12-row"><span><b>Banana bread</b><small>One bowl, no mixer</small></span><button class="icon-btn p12-fav" type="button" aria-pressed="false" aria-label="Favorite: Banana bread"><svg class="icon"><use href="#p12-star"/></svg></button></li>
+          <li class="p12-row"><span><b>Greek salad</b><small>No cooking needed</small></span><button class="icon-btn p12-fav" type="button" aria-pressed="false" aria-label="Favorite: Greek salad"><svg class="icon"><use href="#p12-star"/></svg></button></li>
+        </ul>
+      </div>
+      <p class="try"><b>Try it:</b> star a few recipes in each mode. Waiting makes every star take almost a second, while Optimistic flips at once. Then tick “Simulate a failure” and star one in Optimistic mode: the star rolls back, the row flashes, and an error explains what happened, with Retry.</p>
+    </div>

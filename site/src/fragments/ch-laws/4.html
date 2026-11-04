@@ -1,0 +1,108 @@
+<script>
+(() => {
+  const cs = document.currentScript.closest('.cs');
+  // The shared case helpers (csDemo, csInit) load further down the book, so wait for them.
+  const start = () => {
+  // Each demo renders into its own root, so listeners go away on Reset.
+  const D = (k, html, wire) => csDemo(cs.querySelector('[data-d="' + k + '"]'), '<div class="jk-root">' + html + '</div>', (d, t) => wire(d.firstElementChild, t));
+  const st = document.createElement('style');
+  st.textContent = `
+#pat-jakobs-law .jk-root{display:flex;flex-direction:column;align-items:center;gap:12px;width:100%;min-width:0}
+#pat-jakobs-law .jk-frame{width:min(340px,100%)}
+#pat-jakobs-law .jk-item{display:flex;align-items:center;gap:10px}
+#pat-jakobs-law .jk-thumb{width:52px;height:52px;flex:none;border-radius:8px;background:linear-gradient(150deg,var(--ui-sel-soft),var(--ui-hover))}
+#pat-jakobs-law .jk-item .grow{flex:1;min-width:0;display:flex;flex-direction:column;gap:2px;font-size:14px}
+#pat-jakobs-law .jk-tile{all:unset;cursor:pointer;user-select:none;-webkit-user-select:none;touch-action:manipulation;display:grid;place-items:center;width:52px;height:52px;border-radius:50%;background:var(--ui-sel);color:var(--ui-on-sel);font:700 18px var(--font-body);flex:none}
+#pat-jakobs-law .jk-tile:focus-visible{outline:3px solid var(--ui-text);outline-offset:2px}
+#pat-jakobs-law .jk-step{display:inline-flex;align-items:center;border:1.5px solid var(--ui-border);border-radius:9px;overflow:hidden;flex:none}
+#pat-jakobs-law .jk-step button{all:unset;cursor:pointer;width:34px;height:34px;display:grid;place-items:center;font:600 18px var(--font-body);color:var(--ui-text)}
+#pat-jakobs-law .jk-step button:hover{background:var(--ui-hover)}
+#pat-jakobs-law .jk-step button:focus-visible{outline:2px solid var(--ui-sel);outline-offset:-2px}
+#pat-jakobs-law .jk-step button:disabled{color:var(--ui-muted);cursor:default}
+#pat-jakobs-law .jk-step output{min-width:30px;text-align:center;font:600 15px var(--font-body)}
+#pat-jakobs-law .jk-sum{display:flex;justify-content:space-between;font-size:14px;border-top:1px solid var(--ui-border);padding-top:8px}
+#pat-jakobs-law .jk-grid{display:grid;grid-template-columns:auto minmax(0,1fr);border:1px solid var(--ui-border);border-radius:8px;overflow:hidden;font-size:14px}
+#pat-jakobs-law .jk-grid > *{padding:6px 9px;border-bottom:1px solid var(--ui-border);min-height:20px}
+#pat-jakobs-law .jk-grid > span{background:var(--ui-hover);font-weight:600;border-right:1px solid var(--ui-border)}
+#pat-jakobs-law .jk-cell{all:unset;box-sizing:border-box;width:100%;font:400 14px/1.4 var(--font-mono);color:var(--ui-text);resize:none;overflow:hidden;white-space:pre}
+#pat-jakobs-law .jk-cell:focus{box-shadow:inset 0 0 0 2px var(--ui-sel)}
+#pat-jakobs-law .jk-grid > .jk-last{border-bottom:0}
+#pat-jakobs-law .jk-note{min-height:96px;resize:none;font:400 14px/1.45 var(--font-body)}
+#pat-jakobs-law .jk-status{font:500 12.5px var(--font-mono);color:var(--ui-muted)}
+#pat-jakobs-law .jk-hint{padding:7px 10px;border-radius:8px;background:var(--ui-sel-soft);font-size:13.5px}
+`;
+  cs.appendChild(st);
+
+  /* 1. New control vs familiar stepper */
+  const cartHtml = fixed => '<div class="app-frame jk-frame"><div class="app-bar"><span>Your cart</span><span class="cs-meta">1 item</span></div><div class="app-body">' +
+    '<div class="jk-item"><span class="jk-thumb" aria-hidden="true"></span><span class="grow"><b>Linen tea towel</b><span class="cs-meta">€12 each</span></span>' +
+    (fixed ? '<span class="jk-step" role="group" aria-label="Quantity"><button type="button" aria-label="Remove one" data-minus>−</button><output data-q aria-live="polite">2</output><button type="button" aria-label="Add one" data-plus>+</button></span>'
+      : '<button class="jk-tile" type="button" aria-label="Quantity" data-tile><span data-q>2</span></button>') +
+    '</div><div class="jk-sum"><span>Total</span><b data-total>€24</b></div></div></div><p class="cs-meta" data-out></p>';
+  const cartWire = fixed => (d, t) => {
+    let q = 2, held = false, timer = 0;
+    const out = d.querySelector('[data-out]');
+    const set = n => { q = Math.max(1, n); d.querySelector('[data-q]').textContent = q; d.querySelector('[data-total]').textContent = '€' + q * 12; if (fixed) d.querySelector('[data-minus]').disabled = q === 1; out.textContent = q === 1 ? 'Quantity is 1.' : ''; };
+    if (fixed) {
+      d.querySelector('[data-minus]').addEventListener('click', () => set(q - 1));
+      d.querySelector('[data-plus]').addEventListener('click', () => set(q + 1));
+      return;
+    }
+    const tile = d.querySelector('[data-tile]');
+    tile.addEventListener('pointerdown', () => { held = false; timer = t.after(() => { held = true; set(q - 1); }, 650); });
+    ['pointerup', 'pointerleave', 'pointercancel'].forEach(ev => tile.addEventListener(ev, () => clearTimeout(timer)));
+    tile.addEventListener('click', () => { if (held) { held = false; return; } set(q + 1); if (q >= 4) out.textContent = 'Quantity ' + q + '. To take one away, press and hold.'; });
+    tile.addEventListener('contextmenu', e => e.preventDefault());
+  };
+  D('pat-jakobs-law-1b', cartHtml(false), cartWire(false));
+  D('pat-jakobs-law-1f', cartHtml(true), cartWire(true));
+
+  /* 2. Enter in a table */
+  const ROWS = ['Rent', 'Food', 'Phone'];
+  const sheetHtml = fixed => '<div class="app-frame jk-frame"><div class="app-bar"><span>Budget, May</span><span class="cs-meta">€</span></div><div class="app-body"><div class="jk-grid">' +
+    ROWS.map((r, i) => '<span>' + r + '</span>' + (fixed ? '<div><input class="jk-cell" inputmode="decimal" aria-label="' + r + '" data-cell="' + i + '"></div>' : '<div><textarea class="jk-cell" rows="1" aria-label="' + r + '" data-cell="' + i + '"></textarea></div>')).join('') +
+    '<span class="jk-last">Total</span><b class="jk-last" data-total>0</b></div></div></div><p class="cs-meta" data-out></p>';
+  const sheetWire = fixed => d => {
+    const cells = [...d.querySelectorAll('[data-cell]')], total = d.querySelector('[data-total]'), out = d.querySelector('[data-out]');
+    const sum = () => {
+      let bad = false, s = 0;
+      cells.forEach(c => { const v = c.value.trim(); if (!v) return; if (!/^\d+([.,]\d+)?$/.test(v)) bad = true; else s += parseFloat(v.replace(',', '.')); });
+      total.textContent = bad ? '#ERROR' : String(s);
+      out.textContent = bad ? 'One cell holds two numbers on two lines, so the total breaks.' : '';
+    };
+    cells.forEach((c, i) => {
+      c.addEventListener('input', () => { if (!fixed) c.rows = Math.min(c.value.split('\n').length, 4); sum(); });
+      if (fixed) c.addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); sum(); (cells[i + 1] || c).focus(); if (!cells[i + 1]) c.blur(); } });
+    });
+  };
+  D('pat-jakobs-law-2b', sheetHtml(false), sheetWire(false));
+  D('pat-jakobs-law-2f', sheetHtml(true), sheetWire(true));
+
+  /* 3. Autosave with no word about it */
+  const noteHtml = fixed => '<div class="app-frame jk-frame"><div class="app-bar"><span>Gift ideas</span>' + (fixed ? '<span class="jk-status" data-status aria-live="polite">Saved</span>' : '') + '</div><div class="app-body">' +
+    '<textarea class="input jk-note" aria-label="Note" data-note>Mum: gardening gloves\nLeo: a puzzle book</textarea><div data-hint></div></div></div><p class="cs-meta" data-out></p>';
+  const noteWire = fixed => (d, t) => {
+    const note = d.querySelector('[data-note]'), out = d.querySelector('[data-out]'), hint = d.querySelector('[data-hint]'), status = d.querySelector('[data-status]');
+    let tries = 0;
+    note.addEventListener('input', () => {
+      if (!fixed) { if (!tries) out.textContent = 'No Save button and no status. Is it saved?'; return; }
+      status.textContent = 'Saving…';
+      t.after(() => { status.textContent = 'Saved'; }, 700);
+    });
+    note.addEventListener('keydown', e => {
+      if (!((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 's')) return;
+      e.preventDefault();
+      if (fixed) { status.textContent = 'Saved'; hint.innerHTML = '<p class="jk-hint" role="status">No need to save. Notes save on their own as you type.</p>'; return; }
+      tries++;
+      out.textContent = tries === 1 ? 'Nothing happened. Was it saved?' : 'Still nothing. There’s no Save button either.';
+    });
+  };
+  D('pat-jakobs-law-3b', noteHtml(false), noteWire(false));
+  D('pat-jakobs-law-3f', noteHtml(true), noteWire(true));
+
+  csInit(cs);
+  };
+  if (window.csDemo) start(); else document.addEventListener('DOMContentLoaded', start);
+})();
+
+</script>

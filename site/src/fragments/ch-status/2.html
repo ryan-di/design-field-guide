@@ -1,0 +1,78 @@
+<div class="fm" data-fm>
+  <div class="seg fm-seg" role="radiogroup" aria-label="Form">
+    <input type="radio" name="fm-pat-instant-feedback" id="fm-pat-instant-feedback-1" value="pressed" checked><label for="fm-pat-instant-feedback-1">Pressed state</label>
+    <input type="radio" name="fm-pat-instant-feedback" id="fm-pat-instant-feedback-2" value="status"><label for="fm-pat-instant-feedback-2">Status line</label>
+    <input type="radio" name="fm-pat-instant-feedback" id="fm-pat-instant-feedback-3" value="place"><label for="fm-pat-instant-feedback-3">Change in place</label>
+    <input type="radio" name="fm-pat-instant-feedback" id="fm-pat-instant-feedback-4" value="toast"><label for="fm-pat-instant-feedback-4">Toast</label>
+  </div>
+  <div class="fm-stage" data-fm-stage></div>
+  <p class="fig-cap" data-fm-when aria-live="polite"></p>
+  
+  <script>
+  (() => {
+    const fm = document.currentScript.closest('[data-fm]'), stage = fm.querySelector('[data-fm-stage]'), when = fm.querySelector('[data-fm-when]');
+    const icon = n => '<svg class="icon sm" aria-hidden="true"><use href="#i-' + n + '"/></svg>';
+    let gen = 0;
+    const later = (fn, ms) => { const g = gen; return setTimeout(() => { if (g === gen) fn(); }, ms); };
+    const F = {
+      pressed: {
+        html: '<div class="app-frame ff-app"><div class="app-bar"><span>Now playing</span></div><div class="app-body ff-player"><i class="thumb c"></i><b>Holocene · Bon Iver</b><div class="ff-ctl"><button class="ff-tg" type="button" aria-pressed="false">Shuffle</button><button class="ff-tg" type="button" aria-pressed="false">Repeat</button></div></div></div>',
+        use: 'Use it for most clicks. The control itself changes the moment it’s pressed, and nothing else is needed.',
+        wire: s => s.querySelectorAll('.ff-tg').forEach(b => b.addEventListener('click', () => b.setAttribute('aria-pressed', String(b.getAttribute('aria-pressed') !== 'true'))))
+      },
+      status: {
+        html: '<div class="app-frame ff-app"><div class="app-bar ff-bar"><span>Trip notes</span><span class="ff-st" data-st role="status">' + icon('check') + 'Saved</span></div><div class="app-body"><textarea class="input ff-area" aria-label="Note" data-in>Day 1: Alfama, tram 28, dinner at 8.</textarea></div></div>',
+        use: 'Use it for work that runs in the background while people keep going, such as saving. A short status near the title says “Saving…”, then settles on “Saved” until the next change.',
+        wire: s => {
+          const st = s.querySelector('[data-st]');
+          let tm = null;
+          s.querySelector('[data-in]').addEventListener('input', () => {
+            st.innerHTML = '<span class="spinner" aria-hidden="true"></span>Saving…';
+            clearTimeout(tm); tm = later(() => { st.innerHTML = icon('check') + 'Saved just now'; }, 900);
+          });
+        }
+      },
+      place: {
+        html: '<div class="app-frame ff-app"><div class="app-bar"><span>Profile</span></div><div class="app-body"><div class="ff-prof"><i class="thumb b ff-av"></i><span class="grow"><b>Lena Fischer</b><span class="cs-meta" data-n>1,204 followers</span></span><button class="btn btn-primary cs-sm" type="button" aria-pressed="false" data-f>Follow</button></div><div class="line" style="width:80%"></div><div class="line" style="width:55%"></div></div></div>',
+        use: 'Use it when the action changes the thing on screen. The item shows its new state at once: the button reads “Following” and the count goes up.',
+        wire: s => {
+          const b = s.querySelector('[data-f]'), n = s.querySelector('[data-n]');
+          b.addEventListener('click', () => {
+            const on = b.getAttribute('aria-pressed') !== 'true';
+            b.setAttribute('aria-pressed', String(on));
+            b.className = 'btn cs-sm ' + (on ? 'btn-secondary' : 'btn-primary');
+            b.innerHTML = on ? icon('check') + 'Following' : 'Follow';
+            n.textContent = (on ? '1,205' : '1,204') + ' followers';
+          });
+        }
+      },
+      toast: {
+        html: '<div class="app-frame ff-app"><div class="app-bar"><span data-title>Lunch on Friday?</span><button class="btn btn-secondary cs-sm" type="button" data-arc>Archive</button></div><div class="app-body"><div class="ff-mail" data-open><b>Sam Ortiz</b><div class="line" style="width:90%"></div><div class="line" style="width:70%"></div></div>' +
+          '<div class="ff-mail" data-inbox hidden><div class="ff-row"><b>Bank</b><span class="cs-meta">Statement</span></div><div class="ff-row"><b>Lena</b><span class="cs-meta">Hike photos</span></div></div></div></div>',
+        use: 'Use it when the result leaves the screen or matters more, such as archiving an email. The email is gone from view, so a short toast says where it went and offers Undo.',
+        wire: s => {
+          const arc = s.querySelector('[data-arc]'), open = s.querySelector('[data-open]'), inbox = s.querySelector('[data-inbox]'), title = s.querySelector('[data-title]');
+          const set = isOpen => { open.hidden = !isOpen; inbox.hidden = isOpen; arc.style.display = isOpen ? '' : 'none'; title.textContent = isOpen ? 'Lunch on Friday?' : 'Inbox'; };
+          arc.addEventListener('click', () => {
+            set(false);
+            let box = s.querySelector('.cs-toasts');
+            if (!box) { box = document.createElement('div'); box.className = 'cs-toasts'; box.setAttribute('role', 'status'); s.appendChild(box); }
+            box.innerHTML = '<div class="toast"><span>Archived. Find it in All mail.</span><button class="toast-action" type="button">Undo</button></div>';
+            const t = box.firstChild;
+            t.querySelector('button').addEventListener('click', () => { t.remove(); set(true); arc.focus(); });
+            t.querySelector('button').focus();
+            later(() => t.remove(), 6000);
+          });
+        }
+      }
+    };
+    const show = k => {
+      gen++;
+      stage.innerHTML = F[k].html; F[k].wire(stage);
+      when.innerHTML = '<b>' + fm.querySelector('.fm-seg input:checked + label').textContent + '.</b> ' + F[k].use;
+    };
+    fm.querySelectorAll('.fm-seg input').forEach(i => i.addEventListener('change', () => show(i.value)));
+    show('pressed');
+  })();
+  </script>
+</div>

@@ -1,0 +1,131 @@
+<script>
+(() => {
+  const cs = document.currentScript.closest('.cs');
+  /* This entry sits before the shared case helpers in the book, so start once they exist. */
+  const go = () => {
+  const D = (k, html, wire) => csDemo(cs.querySelector('[data-d="' + k + '"]'), html, wire);
+  const css = document.createElement('style');
+  css.textContent = [
+    '#good-error-copy .ge-err{display:flex;gap:6px;align-items:flex-start;font-size:13.5px;line-height:1.4;color:var(--ui-danger)}',
+    '#good-error-copy .ge-err .icon{margin-top:1px}',
+    '#good-error-copy .ge-att{display:flex;align-items:center;gap:8px;padding:7px 10px;border:1px solid var(--ui-border);border-radius:8px;background:var(--ui-surface);font-size:13.5px}',
+    '#good-error-copy .ge-att .grow{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}',
+    '#good-error-copy .ge-msg{display:flex;gap:8px;align-items:flex-start;padding:9px 11px;border-left:3px solid var(--ui-danger);border-radius:6px;background:var(--ui-danger-soft);font-size:13.5px;line-height:1.45}',
+    '#good-error-copy .ge-msg .icon{color:var(--ui-danger);margin-top:1px}',
+    '#good-error-copy .ge-msg > span{display:flex;flex-direction:column;gap:4px;align-items:flex-start}',
+    '#good-error-copy .ge-det{color:var(--ui-text);font-size:13px;font-weight:600}',
+    '#good-error-copy .ge-frame{position:relative;width:min(340px,100%)}',
+    '#good-error-copy .ge-frame .app-body{min-height:200px}',
+    '#good-error-copy .ge-share{display:flex;align-items:center;gap:8px;flex-wrap:wrap}',
+    '#good-error-copy .ge-share .grow{flex:1;min-width:120px;font-size:14px}',
+    '#good-error-copy .cs-dlg .acts{flex-wrap:wrap}',
+    '#good-error-copy .ge-net{padding:0;gap:10px;font-size:14px}',
+    '#good-error-copy .ge-note{font-size:14px;resize:none}',
+    '#good-error-copy .ge-fatal{display:flex;flex-direction:column;gap:2px;padding:10px 12px;background:var(--ui-danger);color:var(--ui-on-danger);font:800 14px/1.35 var(--font-body);letter-spacing:.02em}',
+    '#good-error-copy .ge-fatal span{font-weight:700;font-size:12.5px}',
+    '#good-error-copy .ge-calm{font-size:13.5px;align-items:center;gap:8px}',
+    '#good-error-copy .ge-calm .icon{margin-top:0}'
+  ].join('\n');
+  cs.prepend(css);
+  const icon = n => '<svg class="icon sm"><use href="#i-' + n + '"/></svg>';
+  const lines = '<div class="line" style="width:86%"></div><div class="line" style="width:64%"></div>';
+
+  /* 1. Blame */
+  const cartHtml = '<div class="cs-form"><b>Your cart</b><div class="cs-row"><span class="grow">Coffee beans, 250 g</span><span>€9 each</span></div>' +
+    '<label class="cs-f">Quantity<input class="input" value="2" inputmode="numeric" autocomplete="off" data-q></label>' +
+    '<div class="cs-msgs" aria-live="polite" data-msg></div><button class="btn btn-primary cs-sm" type="button" data-up style="align-self:flex-start">Update</button><p class="cs-ok" data-out></p></div>';
+  const cartWire = fixed => d => {
+    const q = d.querySelector('[data-q]'), msg = d.querySelector('[data-msg]'), out = d.querySelector('[data-out]');
+    const up = () => {
+      const v = q.value.trim(), n = Number(v), ok = /^\d+$/.test(v) && n >= 1 && n <= 99;
+      q.setAttribute('aria-invalid', String(!ok));
+      msg.innerHTML = ok ? '' : '<p class="ge-err">' + icon('warn') + '<span>' + (fixed ? 'Quantity needs a number from 1 to 99.' : 'You entered an invalid value.') + '</span></p>';
+      out.textContent = ok ? 'Updated: ' + n + ' × €9 = €' + (n * 9) + '.' : '';
+    };
+    d.querySelector('[data-up]').addEventListener('click', up);
+    q.addEventListener('keydown', e => { if (e.key === 'Enter') up(); });
+  };
+  D('good-error-copy-1b', cartHtml, cartWire(false));
+  D('good-error-copy-1f', cartHtml, cartWire(true));
+
+  /* 2. Codes only */
+  const mailHtml = '<div class="app-frame" style="width:min(340px,100%)"><div class="app-bar"><span>New email</span><span class="cs-meta">To: Ana</span></div>' +
+    '<div class="app-body"><b>Holiday photos</b>' + lines +
+    '<div class="ge-att">' + icon('image') + '<span class="grow">holiday-photos.zip</span><span class="cs-meta">38 MB</span></div>' +
+    '<div aria-live="polite" data-msg></div><button class="btn btn-primary cs-sm" type="button" data-send style="align-self:flex-start">Send</button></div></div>';
+  const mailWire = fixed => d => {
+    const msg = d.querySelector('[data-msg]');
+    d.querySelector('[data-send]').addEventListener('click', () => {
+      msg.innerHTML = '<div class="ge-msg">' + icon('warn') + '<span>' + (fixed
+        ? '<b>Not sent. The attachment is 38 MB, and the limit is 25 MB.</b><button class="cs-link ge-det" type="button" aria-expanded="false" data-det>Show details</button><span class="cs-meta" data-code hidden>Code 552 5.3.4</span>'
+        : '<b>Error 552 5.3.4.</b>') + '</span></div>';
+      const det = msg.querySelector('[data-det]');
+      if (det) det.addEventListener('click', () => {
+        const c = msg.querySelector('[data-code]'), open = c.hidden;
+        c.hidden = !open; det.setAttribute('aria-expanded', String(open)); det.textContent = open ? 'Hide details' : 'Show details';
+      });
+    });
+  };
+  D('good-error-copy-2b', mailHtml, mailWire(false));
+  D('good-error-copy-2f', mailHtml, mailWire(true));
+
+  /* 3. No next step */
+  const shareHtml = '<div class="app-frame ge-frame" data-frame><div class="app-bar"><span>Trip budget</span><button class="btn btn-ghost cs-sm" type="button" data-set>Sharing settings</button></div>' +
+    '<div class="app-body" data-view></div></div><p class="cs-meta" data-out>Clicks: 0</p>';
+  const shareWire = fixed => d => {
+    const frame = d.querySelector('[data-frame]'), view = d.querySelector('[data-view]'), out = d.querySelector('[data-out]');
+    let access = false, clicks = 0, done = false;
+    const count = () => { if (!done) out.textContent = 'Clicks: ' + clicks; };
+    const main = () => {
+      view.innerHTML = '<div class="ge-share"><span class="grow">Send a link to <b>Sam</b></span><button class="btn btn-primary cs-sm" type="button" data-send>Send to Sam</button></div>' + lines + '<div class="line" style="width:78%"></div>';
+      view.querySelector('[data-send]').addEventListener('click', send);
+    };
+    const settings = () => {
+      view.innerHTML = '<b>Who has access</b><div class="cs-row"><span class="grow">You</span><span class="cs-meta">Owner</span></div>' +
+        '<div class="cs-row"><span class="grow">Sam</span>' + (access ? '<span class="cs-meta">Can view</span>' : '<button class="btn btn-secondary cs-sm" type="button" data-give>Give access</button>') + '</div>' +
+        '<button class="btn btn-ghost cs-sm" type="button" data-back style="align-self:flex-start">Back</button>';
+      const g = view.querySelector('[data-give]');
+      if (g) g.addEventListener('click', () => { access = true; settings(); view.querySelector('[data-back]').focus({ preventScroll: true }); });
+      view.querySelector('[data-back]').addEventListener('click', () => { main(); view.querySelector('[data-send]').focus({ preventScroll: true }); });
+    };
+    const finish = text => { done = true; out.textContent = text + ' It took ' + clicks + ' clicks.'; };
+    const send = () => {
+      if (access) { finish('Link sent. Sam can open “Trip budget”.'); return; }
+      const m = document.createElement('div'); m.className = 'cs-modal';
+      m.innerHTML = '<div class="cs-dlg" role="alertdialog" aria-label="Sam can’t open this file"><b>Sam can’t open “Trip budget”</b><p>Sam doesn’t have access to this file.</p><div class="acts">' +
+        (fixed ? '<button class="btn btn-secondary cs-sm" type="button" data-close>Cancel</button><button class="btn btn-primary cs-sm" type="button" data-give>Give Sam access</button>'
+               : '<button class="btn btn-primary cs-sm" type="button" data-close>OK</button>') + '</div></div>';
+      frame.appendChild(m);
+      m.querySelector('button:last-child').focus({ preventScroll: true });
+      m.querySelector('[data-close]').addEventListener('click', () => { m.remove(); view.querySelector('[data-send]').focus({ preventScroll: true }); });
+      const g = m.querySelector('[data-give]');
+      if (g) g.addEventListener('click', () => { m.remove(); access = true; finish('Sam can view “Trip budget”, and the link is sent.'); });
+    };
+    d.addEventListener('click', e => { if (e.target.closest('button') && !e.target.closest('.cs-reset')) { clicks++; count(); } }, true);
+    d.querySelector('[data-set]').addEventListener('click', () => { settings(); });
+    main();
+  };
+  D('good-error-copy-3b', shareHtml, shareWire(false));
+  D('good-error-copy-3f', shareHtml, shareWire(true));
+
+  /* 4. Alarm */
+  const noteHtml = '<div class="app-frame" style="width:min(340px,100%)"><div class="app-bar"><span>Notes</span><span class="cs-meta">Packing list</span></div>' +
+    '<div aria-live="polite" data-slot></div><div class="app-body"><textarea class="input ge-note" rows="4" aria-label="Note">Passport, charger, </textarea></div></div>' +
+    '<label class="switch ge-net"><span>Wi-Fi</span><input type="checkbox" role="switch" checked data-net></label>';
+  const noteWire = fixed => d => {
+    const slot = d.querySelector('[data-slot]');
+    d.querySelector('[data-net]').addEventListener('change', e => {
+      slot.innerHTML = e.target.checked ? '' : fixed
+        ? '<div class="banner ge-calm">' + icon('cloud-off') + '<span class="grow">You’re offline. Your note is saved on this device and will sync when you’re back.</span></div>'
+        : '<div class="ge-fatal"><b>FATAL ERROR: CONNECTION LOST</b><span>SYNC FAILURE. DATA MAY BE LOST.</span></div>';
+    });
+  };
+  D('good-error-copy-4b', noteHtml, noteWire(false));
+  D('good-error-copy-4f', noteHtml, noteWire(true));
+
+  csInit(cs);
+  };
+  if (window.csDemo) go(); else document.addEventListener('DOMContentLoaded', go);
+})();
+
+</script>

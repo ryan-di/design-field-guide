@@ -1,0 +1,301 @@
+---
+title: "Train your eye, design in the real material"
+description: "Taste is a skill you train."
+eyebrow: "Chapter 7"
+sidebar:
+  label: "Practice & your edge"
+---
+
+import Raw from '../../../components/Raw.astro';
+import Learned from '../../../components/Learned.astro';
+import Runtime from '../../../components/Runtime.astro';
+import F0 from '../../../fragments/ch-practice/0.html?raw';
+import F1 from '../../../fragments/ch-practice/1.html?raw';
+import F2 from '../../../fragments/ch-practice/2.html?raw';
+import F3 from '../../../fragments/ch-practice/3.html?raw';
+import F4 from '../../../fragments/ch-practice/4.html?raw';
+import F5 from '../../../fragments/ch-practice/5.html?raw';
+import F6 from '../../../fragments/ch-practice/6.html?raw';
+import F7 from '../../../fragments/ch-practice/7.html?raw';
+import F8 from '../../../fragments/ch-practice/8.html?raw';
+import F9 from '../../../fragments/ch-practice/9.html?raw';
+import F10 from '../../../fragments/ch-practice/10.html?raw';
+import F11 from '../../../fragments/ch-practice/11.html?raw';
+import F12 from '../../../fragments/ch-practice/12.html?raw';
+import F13 from '../../../fragments/ch-practice/13.html?raw';
+import F14 from '../../../fragments/ch-practice/14.html?raw';
+import F15 from '../../../fragments/ch-practice/15.html?raw';
+import F16 from '../../../fragments/ch-practice/16.html?raw';
+import F17 from '../../../fragments/ch-practice/17.html?raw';
+import F18 from '../../../fragments/ch-practice/18.html?raw';
+import F19 from '../../../fragments/ch-practice/19.html?raw';
+import F20 from '../../../fragments/ch-practice/20.html?raw';
+
+<Runtime at="start" />
+
+<section class="dfg-chapter" id="ch-practice">
+
+Taste is a skill you train. You build it by looking closely at real products, rebuilding the details that work, and naming why they work. As a design engineer, you also have an edge: you can design in the real material, where timing, real data and every state are real from the first minute. The entries below turn both into habits: look closely, try the risky part in code, and write down why you chose what you chose.
+
+<article class="entry essay" id="good-train-your-eye" data-entry data-name="Train your eye">
+
+<div class="entry-head">
+
+## Copywork and close looking \{#good-train-your-eye-h\}
+
+<Learned id="good-train-your-eye" />
+
+</div>
+
+You train taste by looking closely at good work. Rebuild a screen you admire, detail by detail, and name why each detail is there. Copying makes you notice spacing, weight and color that you would otherwise skim past.
+
+Looking closely is not the same as collecting: a folder of screenshots trains nothing until you compare, rebuild and explain what you saved.
+
+<Raw html={F0} />
+
+### Rules \{#good-train-your-eye-rules\}
+
+Four rules make close looking pay off.
+
+<div class="cs essay-cs">
+
+<section class="rule" id="good-train-your-eye-rule-1">
+
+#### 1. Tag what you save by problem \{#good-train-your-eye-rule-1-h\}
+
+Screenshots saved under their default names are hard to find again, so when you design an empty state next month, you can’t search for one. Tag each shot by the problem it solves, like “empty state”, “bulk delete” or “long names”, so your collection answers the question you have.
+
+<Raw html={F1} />
+
+</section>
+
+<section class="rule" id="good-train-your-eye-rule-2">
+
+#### 2. Write down why it works \{#good-train-your-eye-rule-2-h\}
+
+A copy without a reason only fits the case you copied, so when the next case is different, you don’t know which part to keep. Write one line next to each copy on why it works, because the reason still helps when the picture doesn’t match.
+
+<Raw html={F2} />
+
+</section>
+
+<section class="rule" id="good-train-your-eye-rule-3">
+
+#### 3. Study whole flows, not showcase shots \{#good-train-your-eye-rule-3-h\}
+
+Showcase shots show only the happy path with perfect data, and much of the design work goes into [the other states](/part-1/problem/#good-needs-hierarchy). Sign up, make mistakes on purpose, and capture every state you see. Tab through the flow and turn on a screen reader for a minute too.
+
+<Raw html={F3} />
+
+</section>
+
+<section class="rule" id="good-train-your-eye-rule-4">
+
+#### 4. Compare one property at a time \{#good-train-your-eye-rule-4-h\}
+
+Looking at two whole screens, you only notice that one “feels nicer”, and you can’t use what you can’t name. Compare one property at a time: spacing, then weight, then color, then corners. Small differences are easy to see once you look for one thing.
+
+<Raw html={F4} />
+
+</section>
+
+<Raw html={F5} />
+
+</div>
+
+### In real products \{#good-train-your-eye-products\}
+
+<Raw html={F6} />
+
+</article>
+
+<article class="entry essay" id="good-real-material" data-entry data-name="Real material">
+
+<div class="entry-head">
+
+## Prototype in the real material \{#good-real-material-h\}
+
+<Learned id="good-real-material" />
+
+</div>
+
+Prototyping in the real material means building the risky parts of a design in code, early. A mockup shows one still moment with tidy text, while code shows what happens when the message is long, the response is slow or the window is narrow. It also lets you test what a picture can’t: keyboard use, focus, screen readers and reduced motion.
+
+A prototype is not the feature. It answers one question, like “Can people read the toast before it goes?”, and then it’s thrown away. Keep mockups for what they answer faster, such as layout ideas and wording.
+
+<Raw html={F7} />
+
+### Rules \{#good-real-material-rules\}
+
+Four rules keep prototypes useful.
+
+<div class="cs essay-cs">
+
+<section class="rule" id="good-real-material-rule-1">
+
+#### 1. Try the risky part in code early \{#good-real-material-rule-1-h\}
+
+A mockup uses short names and answers at once. The real build gets long names and slow responses, and nobody sees that until weeks later, when the design is signed off and changing it costs more. Build the risky part in code first, with real data and real timing, so problems show up while the design can still change.
+
+<Raw html={F8} />
+
+</section>
+
+<section class="rule" id="good-real-material-rule-2">
+
+#### 2. Mark throwaway code as throwaway \{#good-real-material-rule-2-h\}
+
+Prototype code is written fast, with fake delays, hard-coded colors and no tests. If nobody says so, it gets merged and ships, and months later someone has to work out which parts were real. Say it’s a prototype in the branch name and at the top of the file, then rebuild the idea properly.
+
+<Raw html={F9} />
+
+</section>
+
+<section class="rule" id="good-real-material-rule-3">
+
+#### 3. Decide what “good” means before you tune \{#good-real-material-rule-3-h\}
+
+Tuning without a goal never ends: each value looks a little off, so you keep nudging it and stop when you’re tired rather than when it works. [Write down what has to be true](/part-1/problem/#good-success-criteria) first, like “people can read the caption before the slide changes”, then tune until it passes and stop.
+
+<Raw html={F10} />
+
+</section>
+
+<section class="rule" id="good-real-material-rule-4">
+
+#### 4. Try the messy cases on purpose \{#good-real-material-rule-4-h\}
+
+On your own laptop, with tidy sample data, everything looks fine, and people find the [messy cases](/part-1/craft/#good-edge-cases) for you after launch: long names, empty lists, slow connections and small screens. Go through each one before you ship, and design what people see in it.
+
+<Raw html={F11} />
+
+</section>
+
+<Raw html={F12} />
+
+</div>
+
+### In real products \{#good-real-material-products\}
+
+<Raw html={F13} />
+
+</article>
+
+<article class="entry essay" id="good-design-rationale" data-entry data-name="Design rationale">
+
+<div class="entry-head">
+
+## Write down the reasoning \{#good-design-rationale-h\}
+
+<Learned id="good-design-rationale" />
+
+</div>
+
+Design rationale is the reasoning behind a design decision, written down. It says what the problem was, which options you considered, which one you chose and why. The next person reads it before they change the design. Without it, they guess, and may undo a choice that was made for a good reason.
+
+Rationale is not a description of how the design works, which the design itself shows. It records why it works that way, including the options you turned down. Record accessibility decisions too, like the keyboard path, because they are the first thing lost in a later rewrite.
+
+<Raw html={F14} />
+
+### Rules \{#good-design-rationale-rules\}
+
+Four rules keep design rationale useful.
+
+<div class="cs essay-cs">
+
+<section class="rule" id="good-design-rationale-rule-1">
+
+#### 1. Keep it where people will look \{#good-design-rationale-rule-1-h\}
+
+Decisions are often made in a chat thread or on a call, and a month later nobody can find them, so a new teammate has to ask again or guess. Put the decision in the pull request description or a short doc, and link it from the issue so it’s one click from the question.
+
+<Raw html={F15} />
+
+</section>
+
+<section class="rule" id="good-design-rationale-rule-2">
+
+#### 2. Include what you rejected \{#good-design-rationale-rule-2-h\}
+
+A record that only names the winner answers “what”, not “why not”, so the next person suggests an option you already tried and the team argues it again. List each option you turned down, with one line on why, and the second discussion ends before it starts.
+
+<Raw html={F16} />
+
+</section>
+
+<section class="rule" id="good-design-rationale-rule-3">
+
+#### 3. Write it while you decide \{#good-design-rationale-rule-3-h\}
+
+Written weeks later, a record comes from memory. The reasons have faded, so it says “it seemed best”, which helps nobody. Write it while you’re still choosing, because spelling out each option’s trade-off often turns up a better option you hadn’t seen.
+
+<Raw html={F17} />
+
+</section>
+
+<section class="rule" id="good-design-rationale-rule-4">
+
+#### 4. Lead with what changes for people \{#good-design-rationale-rule-4-h\}
+
+Reviewers read the top of a pull request description and skim the rest. If it opens with refactors and file names, they can’t tell what people will notice, and the change people will feel gets the least review. Start with what changes for people, then why, then how it’s built.
+
+<Raw html={F18} />
+
+</section>
+
+<Raw html={F19} />
+
+</div>
+
+### In real products \{#good-design-rationale-products\}
+
+<Raw html={F20} />
+
+</article>
+
+<aside class="in-short" id="ch-practice-in-short" aria-labelledby="ch-practice-in-short-h" data-pagefind-ignore>
+
+## In short \{#ch-practice-in-short-h\}
+
+<div class="is-grid">
+
+<div>
+
+<a class="is-e" href="#good-train-your-eye">Copywork and close looking</a>
+
+1. [Tag what you save by problem](#good-train-your-eye-rule-1)
+2. [Write down why it works](#good-train-your-eye-rule-2)
+3. [Study whole flows, not showcase shots](#good-train-your-eye-rule-3)
+4. [Compare one property at a time](#good-train-your-eye-rule-4)
+
+</div>
+
+<div>
+
+<a class="is-e" href="#good-real-material">Prototype in the real material</a>
+
+1. [Try the risky part in code early](#good-real-material-rule-1)
+2. [Mark throwaway code as throwaway](#good-real-material-rule-2)
+3. [Decide what “good” means before you tune](#good-real-material-rule-3)
+4. [Try the messy cases on purpose](#good-real-material-rule-4)
+
+</div>
+
+<div>
+
+<a class="is-e" href="#good-design-rationale">Write down the reasoning</a>
+
+1. [Keep it where people will look](#good-design-rationale-rule-1)
+2. [Include what you rejected](#good-design-rationale-rule-2)
+3. [Write it while you decide](#good-design-rationale-rule-3)
+4. [Lead with what changes for people](#good-design-rationale-rule-4)
+
+</div>
+
+</div>
+
+</aside>
+
+</section>
+
+<Runtime chapter="ch-practice" />

@@ -1,0 +1,49 @@
+<div class="note comfy cw-wrap">
+      <div class="seg cw-seg" role="radiogroup" aria-label="Example">
+        <input type="radio" name="cw-pat-progressive-disclosure-w" id="cw-pat-progressive-disclosure-w-1" value="gmail" checked><label for="cw-pat-progressive-disclosure-w-1">Gmail</label>
+        <input type="radio" name="cw-pat-progressive-disclosure-w" id="cw-pat-progressive-disclosure-w-2" value="lightroom"><label for="cw-pat-progressive-disclosure-w-2">Lightroom</label>
+        <input type="radio" name="cw-pat-progressive-disclosure-w" id="cw-pat-progressive-disclosure-w-3" value="vscode"><label for="cw-pat-progressive-disclosure-w-3">VS Code</label>
+        <input type="radio" name="cw-pat-progressive-disclosure-w" id="cw-pat-progressive-disclosure-w-4" value="maps"><label for="cw-pat-progressive-disclosure-w-4">Google Maps</label>
+      </div>
+      <div class="cw" data-cw-view role="img" aria-label=""></div>
+      <p class="cw-cap" data-cw-cap aria-live="polite"></p>
+      
+      <script>
+      (() => {
+        const wrap = document.currentScript.closest('.cw-wrap');
+        const view = wrap.querySelector('[data-cw-view]'), cap = wrap.querySelector('[data-cw-cap]');
+        const ic = id => '<svg class="icon sm"><use href="#i-' + id + '"/></svg>';
+        const down = '<svg class="icon sm" viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"/></svg>';
+        const right = '<svg class="icon sm" viewBox="0 0 24 24"><path d="M9 6l6 6-6 6"/></svg>';
+        const field = (label, val) => '<span class="cw-pdis-f"><b>' + label + '</b>' + (val ? '<span class="cw-pdis-dd">' + val + '</span>' : '<i class="cw-pdis-in"></i>') + '</span>';
+        const slider = (label, v) => '<span class="cw-pdis-sl"><span>' + label + '</span><i style="--v:' + v + '%"></i></span>';
+        const sec = name => '<div class="cw-pdis-sec"><span>' + name + '</span>' + right + '</div>';
+        const setting = (label, help, val) => '<div><b>' + label + '</b><small>' + help + '</small><span class="cw-pdis-box">' + val + '</span></div>';
+        const S = {
+          gmail: { html: '<div class="cw-pdis-win"><div class="cw-pdis-search">' + ic('search') + '<span class="cw-pdis-q">Search mail</span><span class="cw-pdis-tune on">' + ic('sliders') + '</span></div>' +
+              '<div class="cw-pdis-panel">' + field('From') + field('To') + field('Subject') + field('Date within', '1 week') + '<span class="cw-pdis-acts"><span class="btn btn-primary">Search</span></span></div></div>',
+            alt: 'A mail search box with a small options icon at its end. Opened under it: fields for From, To, Subject and Date within, and a Search button.',
+            cap: 'Gmail: the search box is a single field. An icon in it opens fields for sender, subject and date, for the few searches that need them.' },
+          lightroom: { html: '<div class="cw-pdis-win cw-pdis-lr"><div class="thumb cw-pdis-photo"></div><div class="cw-pdis-side">' +
+              '<div class="cw-pdis-sec"><span>Light</span>' + down + '</div>' + slider('Exposure', 55) + slider('Contrast', 62) + slider('Highlights', 40) + slider('Shadows', 58) +
+              sec('Color') + sec('Effects') + sec('Detail') + sec('Optics') + '</div></div>',
+            alt: 'A photo next to an edit panel. The Light section is open with four sliders. Below it, closed sections named Color, Effects, Detail and Optics.',
+            cap: 'Lightroom: sliders are grouped into sections like Light and Color that open and close. Closed sections still show their names, so people know what’s inside.' },
+          vscode: { html: '<div class="cw-pdis-win"><div class="cw-pdis-head"><span class="cw-pdis-search">' + ic('search') + '<span class="cw-pdis-q">Search settings</span></span><span class="cw-pdis-json">{ }</span></div>' +
+              '<div class="cw-pdis-vs"><div class="cw-pdis-toc"><span class="on">Commonly Used</span><span>Text Editor</span><span>Workbench</span><span>Window</span><span>Features</span><span>Extensions</span></div>' +
+              '<div class="cw-pdis-sets">' + setting('Auto Save', 'Save files automatically.', 'off') + setting('Font Size', 'Size of the editor text.', '14') + setting('Tab Size', 'Spaces per tab.', '4') + '</div></div></div>',
+            alt: 'A settings screen with a search box and a button to open the settings file. The side list starts with Commonly Used, selected, and three settings are shown: Auto Save, Font Size and Tab Size.',
+            cap: 'VS Code: the settings editor opens on a short Commonly Used list. Every other setting is a search away, and experts can edit the settings file directly.' },
+          maps: { html: '<div class="cw-pdis-phone"><span class="cw-pdis-inp"><i class="cw-pdis-dot"></i>Your location</span><span class="cw-pdis-inp"><i class="cw-pdis-pin"></i>Train station</span>' +
+              '<div class="cw-pdis-map"><svg viewBox="0 0 200 62" preserveAspectRatio="none" aria-hidden="true"><path d="M14 50 C 50 50, 60 18, 100 22 S 160 12, 186 12" fill="none" stroke="var(--ui-sel)" stroke-width="4" stroke-linecap="round"/></svg></div>' +
+              '<div class="cw-pdis-route"><b>18 min</b><span>Fastest route</span></div>' +
+              '<div class="cw-pdis-opts"><b>Route options' + down + '</b><span>Avoid highways</span><span>Avoid tolls</span><span>Avoid ferries</span></div></div>',
+            alt: 'A phone shows directions from your location to a train station, a route on a small map, and 18 min, fastest route. Under it, opened route options: avoid highways, avoid tolls, avoid ferries, all unchecked.',
+            cap: 'Google Maps: directions show the fastest route at once. Choices like avoiding tolls or highways wait in route options, for the trips that need them.' }
+        };
+        const render = k => { view.innerHTML = S[k].html; view.setAttribute('aria-label', 'Sketch: ' + S[k].alt); cap.textContent = S[k].cap; };
+        wrap.querySelectorAll('input[name="cw-pat-progressive-disclosure-w"]').forEach(r => r.addEventListener('change', () => render(r.value)));
+        render('gmail');
+      })();
+      </script>
+    </div>

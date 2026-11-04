@@ -1,0 +1,148 @@
+<div class="stage tall" data-demo="eff-worked-example">
+      <div class="p31-ex">
+        <ol class="p31-steps" aria-label="Stages">
+          <li><button type="button" class="p31-step" data-i="0"><span class="p31-n">1</span><span class="p31-sl">Brief</span></button></li>
+          <li><button type="button" class="p31-step" data-i="1"><span class="p31-n">2</span><span class="p31-sl">Context</span></button></li>
+          <li><button type="button" class="p31-step" data-i="2"><span class="p31-n">3</span><span class="p31-sl">Explore</span></button></li>
+          <li><button type="button" class="p31-step" data-i="3"><span class="p31-n">4</span><span class="p31-sl">Decide</span></button></li>
+          <li><button type="button" class="p31-step" data-i="4"><span class="p31-n">5</span><span class="p31-sl">Build</span></button></li>
+          <li><button type="button" class="p31-step" data-i="5"><span class="p31-n">6</span><span class="p31-sl">Check</span></button></li>
+          <li><button type="button" class="p31-step" data-i="6"><span class="p31-n">7</span><span class="p31-sl">Learn</span></button></li>
+        </ol>
+        <div class="surface p31-panel">
+          <p class="p31-ph" id="p31-ex-title" aria-live="polite"></p>
+
+          <div class="p31-pane" data-pane="0">
+            <div class="p31-doc">
+              <p class="p31-lbl">Sample brief · Linear ticket</p>
+              <p class="p31-big">People lose unsaved work when they close a workflow tab.</p>
+              <dl class="p31-dl">
+                <dt>Who</dt><dd>People with several workflows open, tidying their tabs.</dd>
+                <dt>Trying to</dt><dd>Close what they don’t need without thinking about it.</dd>
+                <dt>In the way</dt><dd>A tab with changes can close before they meant to keep them.</dd>
+                <dt>Evidence</dt><dd>Three support threads this month, and you lost work the same way in your own runs. To check: how often it happens.</dd>
+                <dt>Done when</dt><dd>Closing a tab never throws away changes without a choice the person made.</dd>
+              </dl>
+            </div>
+          </div>
+
+          <div class="p31-pane" data-pane="1" hidden>
+            <div class="p31-doc">
+              <p class="p31-lbl">Sample context pack · one page, linked from the ticket</p>
+              <ul class="p31-ctx">
+                <li><svg class="icon sm" aria-hidden="true"><use href="#i-check"/></svg><span>How the tab bar closes a tab</span><em>repo · subagent</em></li>
+                <li><svg class="icon sm" aria-hidden="true"><use href="#i-check"/></svg><span>How saving and the unsaved marker work</span><em>repo · subagent</em></li>
+                <li><svg class="icon sm" aria-hidden="true"><use href="#i-check"/></svg><span>Related tickets and threads</span><em>Linear · you</em></li>
+                <li><svg class="icon sm" aria-hidden="true"><use href="#i-check"/></svg><span>Tab, dialog and toast frames, plus tokens</span><em>Figma connector</em></li>
+                <li><svg class="icon sm" aria-hidden="true"><use href="#i-check"/></svg><span>Patterns: <a href="/part-3/dialogs/#dialog">dialog</a>, <a href="/part-2/safety/#pat-undo">undo</a>, <a href="/part-2/errors/#pat-autosave">autosave</a></span><em>this book</em></li>
+              </ul>
+              <p class="p31-out"><b>Out of scope:</b> closing the whole app. Note it, don’t solve it here.</p>
+            </div>
+          </div>
+
+          <div class="p31-pane" data-pane="2" hidden>
+            <div class="p31-dirs">
+              <figure class="p31-dir">
+                <div class="p31-wf" role="img" aria-label="Sketch: a dialog asks Save changes to Portrait? with Save, Don’t save and Cancel.">
+                  <div class="p31-tabs"><span class="on">Portrait •</span><span>Upscale</span></div>
+                  <div class="p31-wf-body"><div class="p31-dlg"><b>Save changes?</b><span class="p31-dbtn">Save</span><span class="p31-dbtn o">Don’t save</span></div></div>
+                </div>
+                <figcaption><b>A · Ask on close</b>A dialog before the tab closes.</figcaption>
+              </figure>
+              <figure class="p31-dir">
+                <div class="p31-wf" role="img" aria-label="Sketch: the tab is gone and a toast says Tab closed, with Undo.">
+                  <div class="p31-tabs"><span class="on">Upscale</span></div>
+                  <div class="p31-wf-body"><div class="p31-toast">Tab closed <u>Undo</u></div></div>
+                </div>
+                <figcaption><b>B · Close, then Undo</b>Close right away, offer Undo for a while.</figcaption>
+              </figure>
+              <figure class="p31-dir">
+                <div class="p31-wf" role="img" aria-label="Sketch: the workflow is reopened and a bar offers Restore unsaved changes.">
+                  <div class="p31-tabs"><span class="on">Portrait</span><span>Upscale</span></div>
+                  <div class="p31-wf-body"><div class="p31-rest">Unsaved changes found <u>Restore</u></div></div>
+                </div>
+                <figcaption><b>C · Keep a draft</b>Close right away, offer the changes back on reopen.</figcaption>
+              </figure>
+            </div>
+            <p class="p31-out">Three subagents each prototyped one direction. All three went on one shared page.</p>
+          </div>
+
+          <div class="p31-pane" data-pane="3" hidden>
+            <div class="p31-doc">
+              <p class="p31-lbl">Sample scores · 1 to 5, criteria from the brief</p>
+              <div class="p31-tw">
+                <table class="p31-score">
+                  <thead><tr><th scope="col">Criterion</th><th scope="col">A · Ask</th><th scope="col">B · Undo</th><th scope="col">C · Draft</th></tr></thead>
+                  <tbody>
+                    <tr data-w><th scope="row">Never loses work <span class="p31-x" hidden>×2</span></th><td data-s="3"></td><td data-s="1"></td><td data-s="5"></td></tr>
+                    <tr><th scope="row">No extra step</th><td data-s="1"></td><td data-s="5"></td><td data-s="5"></td></tr>
+                    <tr><th scope="row">Pattern people know</th><td data-s="5"></td><td data-s="5"></td><td data-s="3"></td></tr>
+                    <tr><th scope="row">Small to build</th><td data-s="5"></td><td data-s="5"></td><td data-s="1"></td></tr>
+                  </tbody>
+                  <tfoot><tr><th scope="row">Total</th><td data-t="0"></td><td data-t="1"></td><td data-t="2"></td></tr></tfoot>
+                </table>
+              </div>
+              <label class="check"><input type="checkbox" id="p31-ex-weight"> Count “never loses work” twice, as the brief says</label>
+              <p class="p31-verdict" id="p31-ex-verdict" aria-live="polite"></p>
+            </div>
+          </div>
+
+          <div class="p31-pane" data-pane="4" hidden>
+            <div class="p31-doc">
+              <p class="p31-lbl">Build plan · agreed in plan mode</p>
+              <ol class="p31-plan">
+                <li>Work in its own git worktree, so main stays clean.</li>
+                <li>Save a draft when a tab with changes closes. Restore it on reopen. Clear it on save.</li>
+                <li>Show “Tab closed · Undo” right after closing.</li>
+                <li>Write the checks first: they should fail before the change.</li>
+              </ol>
+              <div class="p31-pr">
+                <p class="p31-lbl">Sample PR description</p>
+                <p class="p31-prt">Keep unsaved changes when a workflow tab closes</p>
+                <p class="p31-prh">What changes for people</p>
+                <ul><li>Closing a tab with changes closes it right away and offers Undo.</li><li>Reopening that workflow offers to restore the changes.</li><li>Tabs without changes close as before.</li></ul>
+                <p class="p31-prh">Checks</p>
+                <ul><li>Vitest: draft saved on close, restored on reopen, cleared on save.</li><li>Playwright: close with edits, Undo, edits are back. Close, reopen, Restore.</li></ul>
+              </div>
+            </div>
+          </div>
+
+          <div class="p31-pane" data-pane="5" hidden>
+            <div class="p31-doc">
+              <p class="p31-lbl">Sample evaluation plan · in the PR, under the behaviors</p>
+              <p class="p31-big">We’ll know it worked when…</p>
+              <ul class="p31-ev">
+                <li><b>No silent loss.</b> Closing a tab with changes never discards them without a choice. <em>Playwright spec on every PR</em></li>
+                <li><b>Found without help.</b> People get closed work back on their own. <em>Watch five people close and reopen tabs</em></li>
+                <li><b>Fewer reports.</b> No new threads about work lost on close. <em>Read support threads a month after release</em></li>
+              </ul>
+            </div>
+          </div>
+
+          <div class="p31-pane" data-pane="6" hidden>
+            <div class="p31-doc">
+              <p class="p31-lbl">Sample session tally · written in the ticket when it closes</p>
+              <div class="p31-tally">
+                <div><b>3</b><span>directions explored</span></div>
+                <div><b>1</b><span>kept, plus B’s Undo</span></div>
+                <div><b>4</b><span>subagent runs</span></div>
+                <div><b>1</b><span>worktree</span></div>
+                <div><b>5</b><span>checks added</span></div>
+                <div><b>2</b><span>review rounds</span></div>
+              </div>
+              <p class="p31-out"><b>Learned:</b> drafts need a limit, or old ones pile up. <b>Next time:</b> ask in the brief what happens when the whole app closes.</p>
+            </div>
+          </div>
+
+          <div class="p31-split">
+            <p><span class="p31-who">You</span><span id="p31-ex-you"></span></p>
+            <p><span class="p31-who a">Agents</span><span id="p31-ex-ag"></span></p>
+          </div>
+        </div>
+        <div class="p31-nav">
+          <button type="button" class="btn btn-secondary" id="p31-ex-prev">Back</button>
+          <button type="button" class="btn btn-primary" id="p31-ex-next">Next stage</button>
+        </div>
+      </div>
+      <p class="try"><b>Try it:</b> step through the seven stages with Next, the numbers, or the arrow keys on a number. At Decide, count “never loses work” twice and watch the winner change.</p>
+    </div>

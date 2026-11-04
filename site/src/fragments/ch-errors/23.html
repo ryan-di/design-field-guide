@@ -1,0 +1,49 @@
+<div class="note comfy cw-wrap"><p>Notice how each product shows that work is safe, and what comes back after a close or a crash.</p>
+  <div class="seg cw-seg" role="radiogroup" aria-label="Example">
+    <input type="radio" name="cw-pat-autosave-w" id="cw-pat-autosave-w-1" value="docs" checked><label for="cw-pat-autosave-w-1">Google Docs</label>
+    <input type="radio" name="cw-pat-autosave-w" id="cw-pat-autosave-w-2" value="word"><label for="cw-pat-autosave-w-2">Word</label>
+    <input type="radio" name="cw-pat-autosave-w" id="cw-pat-autosave-w-3" value="code"><label for="cw-pat-autosave-w-3">VS Code</label>
+    <input type="radio" name="cw-pat-autosave-w" id="cw-pat-autosave-w-4" value="tg"><label for="cw-pat-autosave-w-4">Telegram</label>
+  </div>
+  <div class="cw cw-autosave-view" data-cw-view role="img" aria-label=""></div>
+  <p class="cw-cap" data-cw-cap aria-live="polite"></p>
+  
+  <script>
+  (() => {
+    const wrap = document.currentScript.closest('.cw-wrap');
+    const view = wrap.querySelector('[data-cw-view]'), cap = wrap.querySelector('[data-cw-cap]');
+    const ic = id => '<svg class="icon sm" aria-hidden="true"><use href="#i-' + id + '"/></svg>';
+    const L = w => '<i class="cw-line" style="width:' + w + '%"></i>';
+    const lines = (...ws) => ws.map(L).join('');
+    const code = (...rows) => rows.map(([indent, w]) => '<i class="cw-line" style="margin-left:' + indent * 14 + 'px;width:' + w + '%"></i>').join('');
+    const chat = (av, name, text, time, hl) => '<div class="cw-autosave-row' + (hl ? ' cw-autosave-hl' : '') + '"><span class="cw-autosave-av ' + av + '"></span><span class="cw-autosave-txt"><b>' + name + '</b><span>' + text + '</span></span><i>' + time + '</i></div>';
+    const S = {
+      docs: { html: '<div class="cw-autosave-win"><div class="cw-autosave-bar"><span class="cw-autosave-doc"></span><span>Trip notes</span><span class="cw-autosave-status cw-autosave-hl">' + ic('check') + 'Saved to Drive</span></div>' +
+          '<div class="cw-autosave-body">' + lines(92, 84, 96, 60) + '<span>Day 3: ferry to the island<span class="cw-autosave-caret"></span></span></div></div>',
+        alt: 'A document window. Next to the title, a status with a check mark says Saved to Drive. There is no Save button.',
+        cap: 'Google Docs: saves as you type, so there’s no Save button to forget, only “Saved to Drive” next to the title.' },
+      word: { html: '<div class="cw-autosave-win"><div class="cw-autosave-bar"><span class="cw-autosave-doc"></span><span>Report</span></div>' +
+          '<div class="cw-autosave-split"><div class="cw-autosave-pane"><b>Recovered</b>' +
+          '<span class="cw-autosave-item cw-autosave-hl"><span>Report</span><small>Autosaved 10:42</small></span>' +
+          '<span class="cw-autosave-item"><span>Report</span><small>Last saved 9:15</small></span></div>' +
+          '<div class="cw-autosave-body">' + lines(90, 96, 80, 94, 55) + '</div></div></div>',
+        alt: 'A document window with a Recovered pane on the left. It lists two copies of Report: autosaved at 10:42, selected, and last saved at 9:15.',
+        cap: 'Word: after a crash, a recovery pane lists the autosaved copy next to the last saved one, so you choose which to keep.' },
+      code: { html: '<div class="cw-autosave-win"><div class="cw-autosave-tabs"><span class="cw-autosave-tab on cw-autosave-hl">notes.md<span class="cw-autosave-dot"></span></span><span class="cw-autosave-tab">app.js<span class="cw-autosave-dot"></span></span><span class="cw-autosave-tab">README.md</span></div>' +
+          '<div class="cw-autosave-code">' + code([0, 40], [1, 62], [1, 48], [2, 55], [1, 30], [0, 12]) + '</div></div>' +
+          '<span class="cw-autosave-note">Reopened after quitting: both files still unsaved</span>',
+        alt: 'A code editor reopened after quitting. Two tabs, notes.md and app.js, each show a dot that means unsaved changes.',
+        cap: 'VS Code: quit with unsaved files and they reopen next time, still marked unsaved. Nothing is lost, and nothing is written to the file until you save.' },
+      tg: { html: '<div class="cw-autosave-phone"><div class="cw-autosave-head">Chats</div>' +
+          chat('', 'Ana', '<em>Draft:</em> see you at seven, I’ll bring', '10:31', true) +
+          chat('b', 'Climbing group', 'Photos are up', '10:05') +
+          chat('c', 'Sam', 'Thanks!', 'Mon') + '</div>',
+        alt: 'A phone chat list. The top chat, Ana, shows Draft: see you at seven, in place of the last message.',
+        cap: 'Telegram: leave a chat mid-message and the chat list marks it as a draft. The text is still there when you come back, even on another device.' }
+    };
+    const render = k => { view.innerHTML = S[k].html; view.setAttribute('aria-label', 'Sketch: ' + S[k].alt); cap.textContent = S[k].cap; };
+    wrap.querySelectorAll('input[name="cw-pat-autosave-w"]').forEach(r => r.addEventListener('change', () => render(r.value)));
+    render('docs');
+  })();
+  </script>
+</div>

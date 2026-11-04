@@ -1,0 +1,107 @@
+<div class="fm" data-fm>
+  <div class="seg fm-seg" role="radiogroup" aria-label="Way">
+    <input type="radio" name="fm-pat-background-work" id="fm-pat-background-work-1" value="ind" checked><label for="fm-pat-background-work-1">Indicator</label>
+    <input type="radio" name="fm-pat-background-work" id="fm-pat-background-work-2" value="panel"><label for="fm-pat-background-work-2">Panel</label>
+    <input type="radio" name="fm-pat-background-work" id="fm-pat-background-work-3" value="notice"><label for="fm-pat-background-work-3">Toast when done</label>
+    <input type="radio" name="fm-pat-background-work" id="fm-pat-background-work-4" value="email"><label for="fm-pat-background-work-4">Email when ready</label>
+  </div>
+  <div class="fm-stage" data-fm-stage></div>
+  <p class="fig-cap" data-fm-when aria-live="polite"></p>
+  
+  <script>
+  (() => {
+    const fm = document.currentScript.closest('[data-fm]'), stage = fm.querySelector('[data-fm-stage]'), when = fm.querySelector('[data-fm-when]');
+    const icon = n => '<svg class="icon sm" aria-hidden="true"><use href="#i-' + n + '"/></svg>';
+    let gen = 0, ids = [];
+    const later = (fn, ms) => { const g = gen; ids.push(setTimeout(() => { if (g === gen) fn(); }, ms)); };
+    const stop = () => { ids.forEach(clearTimeout); ids = []; };
+    const count = (ms, onTick, onDone) => { const steps = 20; for (let i = 1; i <= steps; i++) later(() => (i === steps ? onDone() : onTick(Math.round(i / steps * 100))), ms / steps * i); };
+    const frame = (title, right, body) => '<div class="app-frame bwf-frame"><div class="app-bar"><span>' + title + '</span>' + right + '</div><div class="app-body bwf-body">' + body + '</div></div>';
+    const files = names => names.map(n => '<div class="cs-row"><span class="grow">' + n + '</span><span class="cs-meta">' + (n.endsWith('.txt') ? '4 KB' : n.endsWith('.xlsx') ? '88 KB' : '1.2 MB') + '</span></div>').join('');
+    const UP = ['contract.pdf', 'budget.xlsx', 'notes.txt'];
+    const F = {
+      ind: {
+        html: frame('My files', '<span data-ind></span>', '<div data-list>' + files(['cv-2026.pdf', 'recipes.txt']) + '</div><button class="btn btn-primary cs-sm" type="button" data-go>Upload 3 files</button>'),
+        use: 'A small status in a bar that stays on screen.',
+        close: 'Use it for one job that ends within a minute or so.',
+        wire: s => {
+          const go = s.querySelector('[data-go]'), ind = s.querySelector('[data-ind]');
+          go.addEventListener('click', () => {
+            go.disabled = true;
+            ind.innerHTML = '<span class="bwf-pill"><span class="spinner"></span><span data-t>Uploading 3 files</span></span>';
+            count(4000, p => { ind.querySelector('[data-t]').textContent = 'Uploading 3 files · ' + p + '%'; }, () => {
+              ind.innerHTML = '<span class="bwf-pill" role="status">' + icon('check') + '3 files uploaded</span>';
+              s.querySelector('[data-list]').insertAdjacentHTML('beforeend', files(UP));
+              later(() => { ind.innerHTML = ''; }, 3000);
+            });
+          });
+        }
+      },
+      panel: {
+        html: frame('My files', '', '<div data-list>' + files(['cv-2026.pdf', 'recipes.txt']) + '</div><button class="btn btn-primary cs-sm" type="button" data-go>Upload 3 files</button>') ,
+        use: 'A corner panel with one row per item, which people can shrink.',
+        close: 'Use it when people send many items at once and want to see which are done.',
+        wire: s => {
+          const go = s.querySelector('[data-go]'), fr = s.querySelector('.bwf-frame');
+          go.addEventListener('click', () => {
+            go.disabled = true;
+            const old = fr.querySelector('.bwf-panel'); if (old) old.remove();
+            fr.insertAdjacentHTML('beforeend', '<div class="bwf-panel surface"><div class="bwf-ph"><span data-h>Uploading 3 items</span><span><button class="icon-btn" type="button" aria-label="Shrink" aria-expanded="true" data-min>' + icon('minus') + '</button></span></div><div data-rows>' +
+              UP.map(n => '<div class="bwf-pr"><span>' + n + '</span><span class="spinner" data-st></span></div>').join('') + '</div></div>');
+            const pn = fr.querySelector('.bwf-panel'), rows = pn.querySelector('[data-rows]'), min = pn.querySelector('[data-min]');
+            min.addEventListener('click', () => { rows.hidden = !rows.hidden; min.setAttribute('aria-expanded', String(!rows.hidden)); });
+            UP.forEach((n, i) => later(() => {
+              pn.querySelectorAll('.bwf-pr')[i].querySelector('[data-st]').outerHTML = icon('check');
+              if (i < UP.length - 1) return;
+              pn.querySelector('[data-h]').textContent = '3 uploads complete';
+              min.insertAdjacentHTML('afterend', '<button class="icon-btn" type="button" aria-label="Close" data-x>' + icon('x') + '</button>');
+              pn.querySelector('[data-x]').addEventListener('click', () => { pn.remove(); go.disabled = false; go.focus(); });
+              s.querySelector('[data-list]').insertAdjacentHTML('beforeend', files(UP));
+            }, 1300 + i * 1100));
+          });
+        }
+      },
+      notice: {
+        html: frame('Video editor', '<span class="badge-wrap"><button class="btn btn-ghost cs-sm" type="button" data-exps>Exports</button><span class="badge" data-badge hidden>1</span></span>',
+          '<div class="thumb bwf-thumb"></div><b>Trip to Lisbon · 2:14</b><button class="btn btn-primary cs-sm" type="button" data-go>Export video</button><p class="cs-meta" data-out></p>') + '<div class="bwf-toasts" role="status" data-toasts></div>',
+        use: 'A short toast when the work finishes, with a way to open the result.',
+        close: 'Pair it with a badge, so a missed toast still leaves a trace.',
+        wire: s => {
+          const go = s.querySelector('[data-go]'), out = s.querySelector('[data-out]'), badge = s.querySelector('[data-badge]'), ts = s.querySelector('[data-toasts]');
+          const openIt = () => { out.textContent = 'Opened trip-to-lisbon.mp4.'; badge.hidden = true; };
+          go.addEventListener('click', () => {
+            go.disabled = true; out.textContent = 'Exporting. You can keep editing.';
+            later(() => {
+              go.disabled = false; out.textContent = ''; badge.hidden = false;
+              ts.innerHTML = '<div class="toast"><span>Video exported</span><button type="button" class="toast-action" data-open>Open</button></div>';
+              ts.querySelector('[data-open]').addEventListener('click', () => { ts.innerHTML = ''; openIt(); go.focus(); });
+              later(() => { ts.innerHTML = ''; }, 5000);
+            }, 2500);
+          });
+          s.querySelector('[data-exps]').addEventListener('click', () => { out.textContent = badge.hidden ? (out.textContent || 'No new exports.') : 'Exports: trip-to-lisbon.mp4 (new).'; });
+        }
+      },
+      email: {
+        html: frame('Settings › Your data', '', '<p>Download a copy of your photos, messages and settings.</p><button class="btn btn-primary cs-sm" type="button" data-go>Request a download</button><div data-out></div>'),
+        use: 'For work that takes many minutes or hours.',
+        close: 'People can close the app, and the email reaches them wherever they are.',
+        wire: s => {
+          const go = s.querySelector('[data-go]'), out = s.querySelector('[data-out]');
+          go.addEventListener('click', () => {
+            go.disabled = true; go.textContent = 'Requested';
+            out.innerHTML = '<div class="bwf-card" role="status"><b>Preparing your archive</b><span>This usually takes about an hour. We’ll email sam@example.com when it’s ready. You can close this page.</span></div>';
+            later(() => { out.insertAdjacentHTML('beforeend', '<div class="bwf-mail" style="margin-top:8px">✉<span><b>An hour later, in the inbox:</b> “Your data is ready to download.” The link works for 7 days.</span></div>'); }, 2200);
+          });
+        }
+      }
+    };
+    const show = k => {
+      gen++; stop();
+      stage.innerHTML = F[k].html; F[k].wire(stage);
+      when.innerHTML = '<b>' + fm.querySelector('.fm-seg input:checked + label').textContent + '.</b> ' + F[k].use + ' ' + F[k].close;
+    };
+    fm.querySelectorAll('.fm-seg input').forEach(i => i.addEventListener('change', () => show(i.value)));
+    show('ind');
+  })();
+  </script>
+</div>

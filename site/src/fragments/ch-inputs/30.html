@@ -1,0 +1,46 @@
+<div class="note comfy cw-wrap">
+      <div class="seg cw-seg" role="radiogroup" aria-label="Example">
+        <input type="radio" name="cw-segmented-w" id="cw-segmented-w-1" value="maccal" checked><label for="cw-segmented-w-1">macOS Calendar</label>
+        <input type="radio" name="cw-segmented-w" id="cw-segmented-w-2" value="blender"><label for="cw-segmented-w-2">Blender</label>
+        <input type="radio" name="cw-segmented-w" id="cw-segmented-w-3" value="maps"><label for="cw-segmented-w-3">Google Maps</label>
+        <input type="radio" name="cw-segmented-w" id="cw-segmented-w-4" value="gcal"><label for="cw-segmented-w-4">Google Calendar</label>
+      </div>
+      <div class="cw" data-cw-view role="img" aria-label=""></div>
+      <p class="cw-cap" data-cw-cap aria-live="polite"></p>
+      
+      <script>
+      (() => {
+        const wrap = document.currentScript.closest('.cw-wrap');
+        const view = wrap.querySelector('[data-cw-view]'), cap = wrap.querySelector('[data-cw-cap]');
+        const ic = id => '<svg class="icon sm"><use href="#i-' + id + '"/></svg>';
+        const ln = w => '<i class="cw-sgmw-ln"' + (w ? ' style="width:' + w + '"' : '') + '></i>';
+        const seg = (items, on) => '<span class="cw-sgmw-seg">' + items.map(t => '<span' + (t === on ? ' class="on"' : '') + '>' + t + '</span>').join('') + '</span>';
+        const evt = (col, top, h, b) => '<i class="cw-sgmw-evt' + (b ? ' b' : '') + '" style="left:calc(' + col + ' * 100% / 7 + 2px);width:calc(100% / 7 - 4px);top:' + top + 'px;height:' + h + 'px"></i>';
+        const week = (today) => '<div class="cw-sgmw-week">' + [4, 5, 6, 7, 8, 9, 10].map(d => '<span' + (d === today ? ' class="on"' : '') + '>' + d + '</span>').join('') +
+          evt(1, 30, 34) + evt(2, 74, 24, 1) + evt(3, 40, 50) + evt(4, 26, 22, 1) + evt(5, 88, 34) + '</div>';
+        const cube = '<svg viewBox="0 0 300 160" preserveAspectRatio="xMidYMid meet" stroke="var(--ui-muted)" stroke-width="1"><g opacity=".6"><path d="M20 130 L280 130 M50 112 L250 112 M80 98 L220 98 M150 92 L150 150 M90 92 L40 150 M210 92 L260 150" fill="none"/></g>' +
+          '<path d="M150 40 L196 62 L196 110 L150 132 L104 110 L104 62 Z" fill="var(--ui-bg)" stroke="none"/><path d="M150 40 L196 62 L150 84 L104 62 Z" fill="var(--ui-skel)"/><path d="M104 62 L150 84 L150 132 L104 110 Z" fill="var(--ui-border)"/><path d="M196 62 L150 84 L150 132 L196 110 Z" fill="var(--ui-muted)" fill-opacity=".55"/></svg>';
+        const mode = (name, time, on) => '<span' + (on ? ' class="on"' : '') + '>' + name + '<em>' + time + '</em></span>';
+        const S = {
+          maccal: { html: '<div class="cw-sgmw-win"><div class="cw-sgmw-bar">' + ic('plus') + '<span class="grow"></span>' + seg(['Day', 'Week', 'Month', 'Year'], 'Week') + '<span class="grow"></span>' + ic('search') + '</div>' + week(7) + '</div>',
+            alt: 'A calendar window. In the toolbar, a segmented control with Day, Week, Month and Year; Week is selected, and the week’s events fill the grid below.',
+            cap: 'macOS Calendar: four short segments switch the same events between day, week, month and year.' },
+          blender: { html: '<div class="cw-sgmw-win cw-sgmw-bl"><div class="cw-sgmw-bar"><span class="cw-sgmw-mode">Mode ▾</span><span class="grow"></span><span class="cw-sgmw-shade"><i class="w"></i><i class="s on"></i><i class="m"></i><i class="r"></i></span></div><div class="cw-sgmw-vp">' + cube + '</div></div>',
+            alt: 'A 3D viewport with a cube on a grid floor. In the header, four small sphere buttons for wireframe, solid, material and rendered shading; Solid is selected.',
+            cap: 'Blender: four small buttons in the viewport header switch how the same scene is drawn, from wireframe to fully rendered. They change only the view, never the model.' },
+          maps: { html: '<div class="cw-sgmw-dir"><div class="cw-sgmw-modes">' + mode('Car', '18 min') + mode('Transit', '32 min', true) + mode('Walk', '1 hr') + mode('Bike', '24 min') + '</div>' +
+              '<span class="cw-sgmw-fld"><i></i>Your location</span><span class="cw-sgmw-fld"><i class="to"></i>City museum</span>' +
+              '<div><div class="cw-sgmw-route on">' + ln() + '<b>32 min</b></div><div class="cw-sgmw-route">' + ln('70%') + '<b>38 min</b></div></div></div>',
+            alt: 'A directions panel. At the top, four travel modes, Car, Transit, Walk and Bike, each with its travel time; Transit is selected. Below, the start and end, and two transit routes.',
+            cap: 'Google Maps: the travel modes at the top of directions switch the same trip between driving, transit, walking and cycling. Each shows its time, so people can compare before they pick.' },
+          gcal: { html: '<div class="cw-sgmw-win cw-sgmw-gcal"><div class="cw-sgmw-bar"><span class="cw-sgmw-today">Today</span><b>‹ ›</b><b>May</b><span class="grow"></span><span class="cw-sgmw-dd">Week ▾</span></div>' + week(7) +
+              '<div class="cw-sgmw-menu"><span>Day</span><span class="on">Week</span><span>Month</span><span>Year</span><span>Schedule</span><span>4 days</span></div></div>',
+            alt: 'A calendar header with a Week dropdown open over the grid, listing Day, Week, Month, Year, Schedule and 4 days.',
+            cap: 'Google Calendar: with six views to choose from, the view switch is a dropdown in the header instead of a long row of segments.' }
+        };
+        const render = k => { view.innerHTML = S[k].html; view.setAttribute('aria-label', 'Sketch: ' + S[k].alt); cap.textContent = S[k].cap; };
+        wrap.querySelectorAll('input[name="cw-segmented-w"]').forEach(r => r.addEventListener('change', () => render(r.value)));
+        render('maccal');
+      })();
+      </script>
+    </div>

@@ -1,0 +1,41 @@
+<div class="note comfy cw-wrap">
+  <div class="seg cw-seg" role="radiogroup" aria-label="Example">
+    <input type="radio" name="cw-eff-decision-matrix-w" id="cw-eff-decision-matrix-w-1" value="intercom" checked><label for="cw-eff-decision-matrix-w-1">Intercom</label>
+    <input type="radio" name="cw-eff-decision-matrix-w" id="cw-eff-decision-matrix-w-2" value="aha"><label for="cw-eff-decision-matrix-w-2">Aha!</label>
+    <input type="radio" name="cw-eff-decision-matrix-w" id="cw-eff-decision-matrix-w-3" value="flights"><label for="cw-eff-decision-matrix-w-3">Google Flights</label>
+  </div>
+  <div class="cw" data-cw-view role="img" aria-label=""></div>
+  <p class="cw-cap" data-cw-cap aria-live="polite"></p>
+  
+  <script>
+  (() => {
+    const wrap = document.currentScript.closest('.cw-wrap');
+    const view = wrap.querySelector('[data-cw-view]'), cap = wrap.querySelector('[data-cw-cap]');
+    const ic = id => '<svg class="icon sm" aria-hidden="true"><use href="#i-' + id + '"/></svg>';
+    const rice = [['Saved filters', '1200', '1', '50%', '1', '600', 1], ['Dark mode', '2000', '0.5', '100%', '3', '333'], ['Bulk export', '300', '2', '80%', '2', '240']];
+    const tbl = '<div class="cw-dx-tbl"><i>Idea</i><i>R</i><i>I</i><i>C</i><i>E</i><i>Score</i>' +
+      rice.map((r, k) => '<span' + (k === 0 ? ' class="top"' : '') + '>' + r[0] + '</span><span>' + r[1] + '</span><span>' + r[2] + '</span><span' + (r[6] ? ' class="g"' : '') + '>' + r[3] + '</span><span>' + r[4] + '</span><b>' + r[5] + '</b>').join('') + '</div>';
+    const m = (name, w, v) => '<span class="cw-dx-m"><span>' + name + '</span><em>' + w + '</em><i><b style="width:' + v * 10 + '%"></b></i><strong>' + v + '</strong></span>';
+    const fr = (t, d, p, lo) => '<span class="cw-dx-fr"><b>' + t + '</b><strong>' + p + '</strong><small>' + d + '</small>' + (lo ? '<small class="lo">Lowest</small>' : '<span></span>') + '</span>';
+    const S = {
+      intercom: { html: '<div class="cw-dx-card"><div class="cw-dx-head"><b>RICE</b><code>R × I × C ÷ E</code></div>' + tbl +
+          '<div class="cw-dx-note">' + ic('warn') + '<span>Top score, but confidence is only 50%: worth a check before committing.</span></div></div>',
+        alt: 'A RICE table with three ideas scored on reach, impact, confidence and effort. Saved filters scores highest, 600, but its confidence cell, 50%, is flagged. A note says to check it before committing.',
+        cap: 'Intercom: its RICE method scores each idea by reach, impact, confidence and effort. Confidence pulls down scores that rest on guesses, and the score is meant to inform the call, not make it.' },
+      aha: { html: '<div class="cw-dx-card"><div class="cw-dx-head"><b>Saved filters</b><code>Scorecard</code></div><div class="cw-dx-sc">' +
+          m('Customer value', '×3', 8) + m('Strategic fit', '×2', 5) + m('Effort', '−1', 3) + '</div>' +
+          '<div class="cw-dx-total"><code>8×3 + 5×2 − 3</code><b>Score 31</b></div></div>',
+        alt: 'A scorecard for one idea, Saved filters. Customer value 8 weighted times 3, strategic fit 5 weighted times 2, effort 3 subtracted. The equation gives a score of 31.',
+        cap: 'Aha!: a team sets up a scorecard once, with its criteria and an equation for how much each counts. Every idea is then rated on the same card, so scores compare like with like.' },
+      flights: { html: '<div class="cw-dx-card"><div class="cw-dx-head"><b>Ranked by price and convenience</b></div>' +
+          '<div class="cw-dx-sorts"><small>Sort by</small><span class="on">' + ic('check') + 'Best</span><span>Price</span><span>Duration</span></div>' +
+          fr('08:10 – 11:25', '3 h 15 · Nonstop', '$240') + fr('06:00 – 10:40', '4 h 40 · 1 stop', '$185', 1) + fr('13:30 – 16:50', '3 h 20 · Nonstop', '$265') + '</div>',
+        alt: 'Three flights ranked by price and convenience. The top one is nonstop for 240 dollars; a cheaper one with a stop, 185 dollars, is second. Sort options above the list: Best, picked, then Price and Duration.',
+        cap: 'Google Flights: the top results are ranked by a mix of price and convenience, and each row shows the price, duration and stops. If price matters most to you, you re-sort by price.' }
+    };
+    const render = k => { view.innerHTML = S[k].html; view.setAttribute('aria-label', 'Sketch: ' + S[k].alt); cap.textContent = S[k].cap; };
+    wrap.querySelectorAll('input[name="cw-eff-decision-matrix-w"]').forEach(r => r.addEventListener('change', () => render(r.value)));
+    render('intercom');
+  })();
+  </script>
+</div>

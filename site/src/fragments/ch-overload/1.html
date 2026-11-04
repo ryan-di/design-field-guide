@@ -1,0 +1,81 @@
+<div class="fm" data-fm>
+  <div class="seg fm-seg" role="radiogroup" aria-label="Way">
+    <input type="radio" name="fm-pat-progressive-disclosure" id="fm-pat-progressive-disclosure-1" value="more" checked><label for="fm-pat-progressive-disclosure-1">Show more</label>
+    <input type="radio" name="fm-pat-progressive-disclosure" id="fm-pat-progressive-disclosure-2" value="sections"><label for="fm-pat-progressive-disclosure-2">Sections</label>
+    <input type="radio" name="fm-pat-progressive-disclosure" id="fm-pat-progressive-disclosure-3" value="page"><label for="fm-pat-progressive-disclosure-3">Separate page</label>
+    <input type="radio" name="fm-pat-progressive-disclosure" id="fm-pat-progressive-disclosure-4" value="relevant"><label for="fm-pat-progressive-disclosure-4">When relevant</label>
+  </div>
+  <div class="fm-stage" data-fm-stage></div>
+  <p class="fig-cap" data-fm-when aria-live="polite"></p>
+  
+  <script>
+  (() => {
+    const fm = document.currentScript.closest('[data-fm]'), stage = fm.querySelector('[data-fm-stage]'), when = fm.querySelector('[data-fm-when]');
+    const fld = (l, v) => '<label class="field"><span class="field-label">' + l + '</span><input class="input" value="' + v + '" autocomplete="off"></label>';
+    const sw = (l, on) => '<label class="switch"><span class="grow">' + l + '</span><input type="checkbox" role="switch"' + (on ? ' checked' : '') + '></label>';
+    const F = {
+      more: {
+        html: '<div class="pdf-card"><b>New contact</b>' + fld('Name', 'Ana Reis') + fld('Phone', '+351 912 345 678') +
+          '<button class="btn btn-ghost cs-sm pdf-tg" type="button" aria-expanded="false" data-tg>Show 3 more: email, address, birthday</button>' +
+          '<div class="pdf-more" data-more hidden>' + fld('Email', '') + fld('Address', '') + fld('Birthday', '') + '</div></div>',
+        use: 'Use it when a few extra fields belong with the basics in one form.',
+        cost: 'The button names what’s behind it.',
+        wire: s => {
+          const b = s.querySelector('[data-tg]'), m = s.querySelector('[data-more]');
+          b.addEventListener('click', () => { m.hidden = !m.hidden; b.setAttribute('aria-expanded', String(!m.hidden)); b.textContent = m.hidden ? 'Show 3 more: email, address, birthday' : 'Show fewer'; });
+        }
+      },
+      sections: {
+        html: '<div class="pdf-card"><b>Settings</b>' +
+          [['Notifications', '3 settings', sw('Sounds', true) + sw('Badges', true) + sw('Previews on lock screen', false)],
+           ['Privacy', '2 settings', sw('Share read receipts', true) + sw('Show when online', false)],
+           ['Storage', '2 settings', sw('Download photos on Wi-Fi only', true) + sw('Keep media for 30 days', false)]]
+            .map((x, i) => '<div class="pdf-sec"><button class="pdf-sh" type="button" aria-expanded="' + (i === 0) + '"><b>' + x[0] + '</b><span>' + x[1] + '</span></button><div class="pdf-sb"' + (i === 0 ? '' : ' hidden') + '>' + x[2] + '</div></div>').join('') + '</div>',
+        use: 'Use it when there are many settings in a few clear groups.',
+        cost: 'Closed sections still show their names, so people can scan for the one they need.',
+        wire: s => s.querySelectorAll('.pdf-sh').forEach(h => h.addEventListener('click', () => {
+          const body = h.nextElementSibling; body.hidden = !body.hidden; h.setAttribute('aria-expanded', String(!body.hidden));
+        }))
+      },
+      page: {
+        html: '<div class="pdf-card" data-wifi></div>',
+        use: 'Use it for settings few people change, which need room of their own.',
+        cost: 'It costs a page change, so make the way back obvious.',
+        wire: s => {
+          const pg = s.querySelector('[data-wifi]');
+          const main = () => {
+            pg.innerHTML = '<b>Wi-Fi: Home</b>' + sw('Join automatically', true) + sw('Low data mode', false) +
+              '<button class="pdf-a" type="button" data-adv>Advanced settings<span aria-hidden="true">›</span></button>';
+            pg.querySelector('[data-adv]').addEventListener('click', adv);
+          };
+          const adv = () => {
+            pg.innerHTML = '<button class="pdf-a" type="button" data-back style="justify-content:flex-start">‹ Wi-Fi: Home</button><b>Advanced settings</b>' +
+              '<div class="pdf-row">IP address<span>192.168.1.24</span></div><div class="pdf-row">DNS<span>Automatic</span></div><div class="pdf-row">Proxy<span>Off</span></div>';
+            pg.querySelector('[data-back]').addEventListener('click', () => { main(); pg.querySelector('[data-adv]').focus(); });
+            pg.querySelector('[data-back]').focus();
+          };
+          main();
+        }
+      },
+      relevant: {
+        html: '<div class="pdf-card"><b>Alarm</b><span class="pdf-time">07:00</span>' +
+          '<label class="field"><span class="field-label">Repeat</span><select class="select" data-rep><option value="never">Never</option><option value="weekdays">Weekdays</option><option value="custom">Choose days</option></select></label>' +
+          '<div class="pdf-days" role="group" aria-label="Days" data-days hidden>' + ['M', 'T', 'W', 'T', 'F', 'S', 'S'].map((x, i) => '<button type="button" aria-pressed="' + (i === 0 || i === 2) + '" aria-label="' + ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'][i] + '">' + x + '</button>').join('') + '</div></div>',
+        use: 'Use it when some options only matter after an earlier choice.',
+        cost: 'Pick “Choose days” and the days appear.',
+        wire: s => {
+          const rep = s.querySelector('[data-rep]'), days = s.querySelector('[data-days]');
+          rep.addEventListener('change', () => { days.hidden = rep.value !== 'custom'; });
+          days.querySelectorAll('button').forEach(b => b.addEventListener('click', () => b.setAttribute('aria-pressed', String(b.getAttribute('aria-pressed') !== 'true'))));
+        }
+      }
+    };
+    const show = k => {
+      stage.innerHTML = F[k].html; F[k].wire(stage);
+      when.innerHTML = '<b>' + fm.querySelector('.fm-seg input:checked + label').textContent + '.</b> ' + F[k].use + ' ' + F[k].cost;
+    };
+    fm.querySelectorAll('.fm-seg input').forEach(i => i.addEventListener('change', () => show(i.value)));
+    show('more');
+  })();
+  </script>
+</div>

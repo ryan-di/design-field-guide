@@ -7,49 +7,7 @@
   </div>
   <div class="cw cw-gnh-view" data-cw-view role="img" aria-label=""></div>
   <p class="cw-cap" data-cw-cap aria-live="polite"></p>
-  <style>
-    .cw-gnh-view{min-height:236px;align-items:center}
-    .cw-gnh-layer{align-self:flex-start;font:600 11.5px var(--font-mono);letter-spacing:.06em;text-transform:uppercase;color:var(--ui-muted);background:var(--ui-surface);border:1px solid var(--ui-border);border-radius:999px;padding:3px 9px}
-    .cw-gnh-layer b{color:var(--ui-text);font-weight:600}
-    .cw-gnh-win{width:min(340px,100%);background:var(--ui-surface);border:1px solid var(--ui-border);border-radius:9px;overflow:hidden;box-shadow:var(--ui-shadow);color:var(--ui-text);font-size:12.5px}
-    .cw-gnh-phone{width:min(230px,100%);background:var(--ui-bg);border:1px solid var(--ui-border);border-radius:18px;overflow:hidden;box-shadow:var(--ui-shadow);color:var(--ui-text);font-size:12.5px}
-    .cw-gnh-bar{display:flex;align-items:center;gap:8px;padding:7px 10px;background:var(--ui-surface);border-bottom:1px solid var(--ui-border);font:600 12.5px var(--font-body)}
-    .cw-gnh-files{display:flex;flex-direction:column;padding:4px 0}
-    .cw-gnh-file{display:flex;align-items:center;gap:8px;padding:6px 10px}
-    .cw-gnh-file + .cw-gnh-file{border-top:1px solid var(--ui-border)}
-    .cw-gnh-file .grow{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-    .cw-gnh-file i{font-style:normal;color:var(--ui-muted);font-size:12px}
-    .cw-gnh-fic{width:14px;height:17px;border-radius:2px;border:1.5px solid var(--ui-muted);flex:none}
-    .cw-gnh-fic.dir{width:18px;height:14px;border-radius:3px;background:var(--ui-sel-soft);border-color:var(--ui-sel)}
-    .cw-gnh-sync{display:inline-grid;place-items:center;width:18px;height:18px;border-radius:50%;flex:none}
-    .cw-gnh-sync .icon{width:12px;height:12px;stroke-width:3}
-    .cw-gnh-sync.ok{background:var(--ui-ok);color:var(--ui-surface)}
-    .cw-gnh-sync.run{background:var(--ui-sel);color:var(--ui-surface)}
-    .cw-gnh-key{display:flex;flex-wrap:wrap;justify-content:center;gap:6px 14px;font-size:12px;color:var(--ink)}
-    .cw-gnh-key > span{display:inline-flex;align-items:center;gap:5px}
-    .cw-gnh-chat{display:flex;flex-direction:column;gap:6px;padding:10px}
-    .cw-gnh-msg{align-self:flex-start;max-width:85%;background:var(--ui-surface);border:1px solid var(--ui-border);border-radius:10px;padding:5px 8px;display:inline-flex;align-items:flex-end;gap:6px;line-height:1.3}
-    .cw-gnh-msg.out{align-self:flex-end;background:var(--ui-sel-soft);border-color:transparent}
-    .cw-gnh-msg .icon{width:15px;height:15px;color:var(--ui-muted);flex:none}
-    .cw-gnh-av{width:22px;height:22px;border-radius:50%;background:var(--thumb-a);flex:none}
-    .cw-gnh-key .icon{width:15px;height:15px;color:var(--ui-muted)}
-    .cw-gnh-key .cw-gnh-sync .icon{width:12px;height:12px;color:inherit}
-    .cw-gnh-fly{display:block;width:100%;height:46px;color:var(--ui-muted)}
-    .cw-gnh-tasks{display:flex;flex-direction:column;padding:0 10px 8px}
-    .cw-gnh-tasks span{display:flex;align-items:center;gap:8px;padding:6px 0}
-    .cw-gnh-tasks span + span{border-top:1px solid var(--ui-border)}
-    .cw-gnh-tasks .icon{color:var(--ui-muted)}
-    .cw-gnh-tasks .done{color:var(--ui-muted)}
-    .cw-gnh-tasks .done .icon{color:var(--ui-ok)}
-    .cw-gnh-duo{display:flex;flex-direction:column;align-items:center;gap:8px;padding:14px 12px 12px;background:var(--ui-surface)}
-    .cw-gnh-burst{width:58px;height:58px;color:var(--ui-ok)}
-    .cw-gnh-duo > b{font:700 16px var(--font-body)}
-    .cw-gnh-tiles{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px;width:100%}
-    .cw-gnh-tiles span{display:flex;flex-direction:column;align-items:center;border:1.5px solid var(--ui-border);border-radius:8px;padding:5px 2px}
-    .cw-gnh-tiles small{font-size:11.5px;color:var(--ui-muted)}
-    .cw-gnh-tiles b{font:700 15px var(--font-body)}
-    .cw-gnh-duo .btn{width:100%;justify-content:center;font-size:13px;padding:7px 10px}
-  </style>
+  
   <script>
   (() => {
     const wrap = document.currentScript.closest('.cw-wrap');

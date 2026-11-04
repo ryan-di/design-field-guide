@@ -1,0 +1,43 @@
+<div class="note comfy cw-wrap">
+  <div class="seg cw-seg" role="radiogroup" aria-label="Example">
+    <input type="radio" name="cw-pat-customization-w" id="cw-pat-customization-w-1" value="notion" checked><label for="cw-pat-customization-w-1">Notion</label>
+    <input type="radio" name="cw-pat-customization-w" id="cw-pat-customization-w-2" value="chrome"><label for="cw-pat-customization-w-2">Chrome</label>
+    <input type="radio" name="cw-pat-customization-w" id="cw-pat-customization-w-3" value="wa"><label for="cw-pat-customization-w-3">WhatsApp</label>
+  </div>
+  <div class="cw cw-pins-view" data-cw-view role="img" aria-label=""></div>
+  <p class="cw-cap" data-cw-cap aria-live="polite"></p>
+  
+  <script>
+  (() => {
+    const wrap = document.currentScript.closest('.cw-wrap');
+    const view = wrap.querySelector('[data-cw-view]'), cap = wrap.querySelector('[data-cw-cap]');
+    const ic = id => '<svg class="icon sm" aria-hidden="true"><use href="#i-' + id + '"/></svg>';
+    const L = w => '<i class="cw-line" style="width:' + w + '%"></i>';
+    const star = '<svg class="icon sm cw-pins-star" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3.6l2.6 5.3 5.8.85-4.2 4.1 1 5.8L12 16.9l-5.2 2.75 1-5.8-4.2-4.1 5.8-.85z"/></svg>';
+    const pin = on => '<svg class="icon cw-pins-pin' + (on ? ' on' : '') + '" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 3.5h6l-1 6.5 3.5 3.5h-11L10 10z"/><path d="M12 13.5V21"/></svg>';
+    const page = (name, on) => '<span class="cw-pins-item' + (on ? ' on' : '') + '">' + ic('book') + name + '</span>';
+    const ext = (cls, name, on) => '<span class="cw-pins-mrow"><i class="cw-pins-ext ' + cls + '"></i><span>' + name + '</span>' + pin(on) + '</span>';
+    const chat = (av, name, text, time, pinned) => '<div class="cw-pins-chat"><span class="cw-pins-av ' + av + '"></span><span class="cw-pins-txt"><b>' + name + '</b><span>' + text + '</span></span><span class="cw-pins-meta"><span>' + time + '</span>' + (pinned ? pin(false) : '') + '</span></div>';
+    const S = {
+      notion: { html: '<div class="cw-pins-win"><div class="cw-pins-split"><div class="cw-pins-side">' +
+          '<div class="cw-pins-grp cw-pins-hl"><div class="cw-pins-h">Favorites</div><span class="cw-pins-item on">' + star + 'Roadmap</span></div>' +
+          '<div class="cw-pins-h">Private</div>' + page('Home') + page('Docs') + page('Roadmap') + page('Meeting notes') + page('Reading list') + '</div>' +
+          '<div class="cw-pins-page"><b>Roadmap</b>' + L(90) + L(76) + L(84) + L(50) + '</div></div></div>',
+        alt: 'A sidebar with a Favorites section at the top holding Roadmap. Below, the Private section still lists Roadmap in its usual place between Docs and Meeting notes.',
+        cap: 'Notion: add a page to Favorites and it shows up at the top of the sidebar. It also stays in its place in the page tree.' },
+      chrome: { html: '<div class="cw-pins-win"><div class="cw-pins-tool"><span class="cw-pins-url"></span><span class="cw-pins-exts cw-pins-hl"><i class="cw-pins-ext"></i><i class="cw-pins-ext b"></i></span><span class="cw-pins-ib">' + ic('cube') + '</span></div>' +
+          '<div class="cw-pins-menu"><b>Extensions</b>' + ext('', 'Web clipper', true) + ext('b', 'Color picker', true) + ext('c', 'Translator') + ext('d', 'Tab sorter') + '</div></div>',
+        alt: 'A browser toolbar with two extension buttons next to the extensions menu. The open menu lists four extensions; the first two have their pin turned on.',
+        cap: 'Chrome: the extensions menu lists everything installed. Pin the few you use often and they get their own button in the toolbar.' },
+      wa: { html: '<div class="cw-pins-phone"><div class="cw-pins-head">Chats</div>' +
+          '<div class="cw-pins-chats cw-pins-hl">' + chat('', 'Family', 'Dinner at eight?', 'Mon', true) + chat('b', 'Ana', 'Photo', 'Sun', true) + '</div>' +
+          chat('c', 'Sam', 'Thanks!', '10:41') + chat('d', 'Book club', 'See you there', '10:05') + '</div>',
+        alt: 'A phone chat list. Family and Ana are pinned at the top with pin icons, even though their last messages are from Monday and Sunday. Newer chats from today sit below.',
+        cap: 'WhatsApp: pin a few chats and they stay at the top, even when newer messages arrive elsewhere. The rest keep sorting by the latest message.' }
+    };
+    const render = k => { view.innerHTML = S[k].html; view.setAttribute('aria-label', 'Sketch: ' + S[k].alt); cap.textContent = S[k].cap; };
+    wrap.querySelectorAll('input[name="cw-pat-customization-w"]').forEach(r => r.addEventListener('change', () => render(r.value)));
+    render('notion');
+  })();
+  </script>
+</div>

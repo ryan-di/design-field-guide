@@ -1,0 +1,301 @@
+---
+title: "Treat the words as the interface"
+description: "Most of an interface is words."
+eyebrow: "Chapter 4"
+sidebar:
+  label: "Words"
+---
+
+import Raw from '../../../components/Raw.astro';
+import Learned from '../../../components/Learned.astro';
+import Runtime from '../../../components/Runtime.astro';
+import F0 from '../../../fragments/ch-words/0.html?raw';
+import F1 from '../../../fragments/ch-words/1.html?raw';
+import F2 from '../../../fragments/ch-words/2.html?raw';
+import F3 from '../../../fragments/ch-words/3.html?raw';
+import F4 from '../../../fragments/ch-words/4.html?raw';
+import F5 from '../../../fragments/ch-words/5.html?raw';
+import F6 from '../../../fragments/ch-words/6.html?raw';
+import F7 from '../../../fragments/ch-words/7.html?raw';
+import F8 from '../../../fragments/ch-words/8.html?raw';
+import F9 from '../../../fragments/ch-words/9.html?raw';
+import F10 from '../../../fragments/ch-words/10.html?raw';
+import F11 from '../../../fragments/ch-words/11.html?raw';
+import F12 from '../../../fragments/ch-words/12.html?raw';
+import F13 from '../../../fragments/ch-words/13.html?raw';
+import F14 from '../../../fragments/ch-words/14.html?raw';
+import F15 from '../../../fragments/ch-words/15.html?raw';
+import F16 from '../../../fragments/ch-words/16.html?raw';
+import F17 from '../../../fragments/ch-words/17.html?raw';
+import F18 from '../../../fragments/ch-words/18.html?raw';
+import F19 from '../../../fragments/ch-words/19.html?raw';
+import F20 from '../../../fragments/ch-words/20.html?raw';
+
+<Runtime at="start" />
+
+<section class="dfg-chapter" id="ch-words">
+
+Most of an interface is words. People read the label on a button, the title of a dialog and the first line of an error long before they notice the layout. Each of those words sets what people expect to happen next, so writing them is design work. The entries below share one test: can someone act on the words alone?
+
+<article class="entry essay" id="good-labels" data-entry data-name="Labels">
+
+<div class="entry-head">
+
+## Labels that say what happens \{#good-labels-h\}
+
+<Learned id="good-labels" />
+
+</div>
+
+A button label should say what happens when people press it: a verb, and the thing it acts on. “Save draft” and “Delete 3 photos” do that, and “OK” and “Yes” don’t.
+
+Labels are the smallest case of [plain language](#good-plain-language), and they matter more on a button, because pressing it changes something.
+
+<Raw html={F0} />
+
+### Rules \{#good-labels-rules\}
+
+Four rules keep labels clear.
+
+<div class="cs essay-cs">
+
+<section class="rule" id="good-labels-rule-1">
+
+#### 1. Name the action, not the answer \{#good-labels-rule-1-h\}
+
+“OK”, “Submit” and “Yes” only make sense next to the question above them. People who skim read the buttons first, and so do screen-reader users who jump between buttons, so they have to go back to the text to learn what a button does, or guess. Use a verb and an object, like “Delete draft”, so the button makes sense on its own.
+
+<Raw html={F1} />
+
+</section>
+
+<section class="rule" id="good-labels-rule-2">
+
+#### 2. Use people’s words \{#good-labels-rule-2-h\}
+
+Words like “Execute query” describe what the code does, not what people want to do, so people stop to translate them and some give up. Use the words people use for their own tasks, like “Search” and “Add contact”. [Labels in people’s words](/part-2/find/#pat-information-scent) covers how to find those words.
+
+<Raw html={F2} />
+
+</section>
+
+<section class="rule" id="good-labels-rule-3">
+
+#### 3. Pick one capital style \{#good-labels-rule-3-h\}
+
+When “Add To Cart” sits next to “Save for later”, the page looks like it was put together from different apps, and people notice the mismatch before they read the words. Pick one style and use it on every button, menu item and title. Sentence case is a common choice: only the first word and names get a capital.
+
+<Raw html={F3} />
+
+</section>
+
+<section class="rule" id="good-labels-rule-4">
+
+#### 4. Keep one verb per action \{#good-labels-rule-4-h\}
+
+If the menu says “Remove” and the dialog it opens says “Delete”, people can’t tell whether it’s the same action, and often it isn’t: removing a photo from an album keeps it, deleting it doesn’t. Give each action [one name everywhere](/part-1/consistency/#good-consistency), so the confirm button repeats the verb from the menu item that opened it.
+
+<Raw html={F4} />
+
+</section>
+
+<Raw html={F5} />
+
+</div>
+
+### In real products \{#good-labels-products\}
+
+<Raw html={F6} />
+
+</article>
+
+<article class="entry essay" id="good-error-copy" data-entry data-name="Error messages">
+
+<div class="entry-head">
+
+## Error messages that help \{#good-error-copy-h\}
+
+<Learned id="good-error-copy" />
+
+</div>
+
+A good error message says what happened, why if you know, and what to do next, in plain words that don’t blame anyone. People read it at a bad moment, when something they wanted didn’t work, and the message decides whether they fix it in a few seconds or give up.
+
+This entry is about the words. Where the message goes, next to a field or across the page, is covered in [Inline message](/part-3/feedback/#inline-message) and [Error state](/part-3/states/#error-state).
+
+<Raw html={F7} />
+
+### Rules \{#good-error-copy-rules\}
+
+Four rules keep error messages helpful.
+
+<div class="cs essay-cs">
+
+<section class="rule" id="good-error-copy-rule-1">
+
+#### 1. Describe the problem, not the person \{#good-error-copy-rule-1-h\}
+
+“You entered an invalid value” tells people they did something wrong, but not what, so they feel blamed and still have to guess the rule. Describe the thing in neutral words and include the rule, like “Quantity needs a number from 1 to 99”, so people can fix it in one try.
+
+<Raw html={F8} />
+
+</section>
+
+<section class="rule" id="good-error-copy-rule-2">
+
+#### 2. Lead with plain words \{#good-error-copy-rule-2-h\}
+
+A code like “Error 0x80070002” means nothing to most people, who can’t tell whether the problem is theirs, the app’s or the network’s, and screen readers read it out one character at a time. Say what happened in plain words first. Keep the code small, or behind “Show details”, for support and developers.
+
+<Raw html={F9} />
+
+</section>
+
+<section class="rule" id="good-error-copy-rule-3">
+
+#### 3. Offer the next step \{#good-error-copy-rule-3-h\}
+
+A message that explains the problem and offers only “OK” leaves people where they started: once it closes, they have to find the fix on their own. Put the action that fixes it on the message, on a button that names it, like “Give Sam access” or “Try again”.
+
+<Raw html={F10} />
+
+</section>
+
+<section class="rule" id="good-error-copy-rule-4">
+
+#### 4. Match the tone to the stakes \{#good-error-copy-rule-4-h\}
+
+Red capitals and words like “fatal” make people think their work is lost. Most errors aren’t like that: the problem can be fixed, or the app will try again on its own. Use calm words that fit what happened, and say what still works: “Your changes are saved on this device.”
+
+<Raw html={F11} />
+
+</section>
+
+<Raw html={F12} />
+
+</div>
+
+### In real products \{#good-error-copy-products\}
+
+<Raw html={F13} />
+
+</article>
+
+<article class="entry essay" id="good-plain-language" data-entry data-name="Plain language">
+
+<div class="entry-head">
+
+## Plain words, one term per concept \{#good-plain-language-h\}
+
+<Learned id="good-plain-language" />
+
+</div>
+
+Plain language means the words people already use, in short sentences, with the main point first and one name for each concept. People read fast and often read only part of the text, so plain words let them understand it the first time.
+
+It helps everyone, and most of all people reading in a second language, people with cognitive or learning disabilities, and anyone tired or stressed. [Labels](#good-labels) apply the same rules to buttons.
+
+<Raw html={F14} />
+
+### Rules \{#good-plain-language-rules\}
+
+Four rules keep writing plain.
+
+<div class="cs essay-cs">
+
+<section class="rule" id="good-plain-language-rule-1">
+
+#### 1. Use everyday words \{#good-plain-language-rule-1-h\}
+
+Words like “utilize” and “initiate” make people slow down and translate. Some stop reading, and people reading in a second language may not know them at all. Use the words people use, like “use” and “start”. If a technical term can’t be avoided, explain it the first time it appears, including where to find it.
+
+<Raw html={F15} />
+
+</section>
+
+<section class="rule" id="good-plain-language-rule-2">
+
+#### 2. Put the point first \{#good-plain-language-rule-2-h\}
+
+When a message opens with background and conditions, people have to read to the end to learn what it means for them, and many stop before they get there. A notification preview may show only the first line. Lead with what people need to know or do, and put the reason and the details after it.
+
+<Raw html={F16} />
+
+</section>
+
+<section class="rule" id="good-plain-language-rule-3">
+
+#### 3. One idea per sentence \{#good-plain-language-rule-3-h\}
+
+A long sentence makes people hold several ideas at once, so they lose track, read it again, or miss the part that mattered to them. Give each idea its own sentence, and split any sentence that needs “and” twice.
+
+<Raw html={F17} />
+
+</section>
+
+<section class="rule" id="good-plain-language-rule-4">
+
+#### 4. Give each thing one name \{#good-plain-language-rule-4-h\}
+
+If a shop says “bag” in one place, “basket” in another and “cart” in a third, people wonder whether these are different places and look for their items in the wrong one. Pick one term, keep it in a short glossary, and use it everywhere, help pages included, as [one thing, one name](/part-1/consistency/#good-consistency) explains.
+
+<Raw html={F18} />
+
+</section>
+
+<Raw html={F19} />
+
+</div>
+
+### In real products \{#good-plain-language-products\}
+
+<Raw html={F20} />
+
+</article>
+
+<aside class="in-short" id="ch-words-in-short" aria-labelledby="ch-words-in-short-h" data-pagefind-ignore>
+
+## In short \{#ch-words-in-short-h\}
+
+<div class="is-grid">
+
+<div>
+
+<a class="is-e" href="#good-labels">Labels that say what happens</a>
+
+1. [Name the action, not the answer](#good-labels-rule-1)
+2. [Use people’s words](#good-labels-rule-2)
+3. [Pick one capital style](#good-labels-rule-3)
+4. [Keep one verb per action](#good-labels-rule-4)
+
+</div>
+
+<div>
+
+<a class="is-e" href="#good-error-copy">Error messages that help</a>
+
+1. [Describe the problem, not the person](#good-error-copy-rule-1)
+2. [Lead with plain words](#good-error-copy-rule-2)
+3. [Offer the next step](#good-error-copy-rule-3)
+4. [Match the tone to the stakes](#good-error-copy-rule-4)
+
+</div>
+
+<div>
+
+<a class="is-e" href="#good-plain-language">Plain words, one term per concept</a>
+
+1. [Use everyday words](#good-plain-language-rule-1)
+2. [Put the point first](#good-plain-language-rule-2)
+3. [One idea per sentence](#good-plain-language-rule-3)
+4. [Give each thing one name](#good-plain-language-rule-4)
+
+</div>
+
+</div>
+
+</aside>
+
+</section>
+
+<Runtime chapter="ch-words" />

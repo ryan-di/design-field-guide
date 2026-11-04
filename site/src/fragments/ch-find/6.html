@@ -1,0 +1,217 @@
+<script>
+(() => {
+  const cs = document.currentScript.closest('.cs');
+  const run = () => {
+  const D = (k, html, wire) => csDemo(cs.querySelector('[data-d="' + k + '"]'), html, wire);
+  const P = '#pat-command-palette ';
+  const css = document.createElement('style');
+  css.textContent = [
+    '.cp-app{width:min(360px,100%);position:relative}',
+    '.cp-app:focus{outline:none}',
+    '.cp-app:focus-visible{outline:3px solid var(--ui-sel);outline-offset:2px}',
+    '.cp-pal{position:absolute;top:50px;left:50%;transform:translateX(-50%);width:min(300px,calc(100% - 16px));padding:6px;display:flex;flex-direction:column;gap:4px;z-index:3;text-align:left}',
+    '.cp-pal[hidden]{display:none}',
+    '.cp-pal[data-inline]{position:static;transform:none;width:100%;box-shadow:none}',
+    '.cp-q{position:relative}',
+    '.cp-q .icon{position:absolute;left:9px;top:50%;transform:translateY(-50%);color:var(--ui-muted)}',
+    '.cp-q .input{padding:8px 10px 8px 32px;font-size:14px}',
+    '.cp-list{position:relative;max-height:176px;overflow:auto;display:flex;flex-direction:column}',
+    '.cp-list.tall{max-height:214px}',
+    '.cp-grp{font:600 11.5px var(--font-body);color:var(--ui-muted);padding:6px 8px 2px}',
+    '.cp-opt{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:6px 8px;border-radius:6px;cursor:pointer;font-size:13.5px;flex:none}',
+    '.cp-opt[aria-selected="true"]{background:var(--ui-sel-soft)}',
+    '.cp-opt small{display:block;color:var(--ui-muted);font-size:12px}',
+    '.cp-k{display:inline-flex;gap:3px;flex:none}',
+    '.cp-k kbd{font:600 11px/1 var(--font-body);border:1px solid var(--ui-border);border-bottom-width:2px;border-radius:4px;padding:2px 4px;background:var(--ui-surface);color:var(--ui-muted)}',
+    '.btn .cp-k kbd{font-size:10.5px}',
+    '.cp-none{font-size:13.5px;color:var(--ui-muted);padding:6px 8px}',
+    '.cp-none[hidden]{display:none}',
+    '.cp-cal{display:grid;gap:2px;font:500 12.5px var(--font-body);text-align:center}',
+    '.cp-cal span{padding:5px 0;border-radius:6px}',
+    '.cp-cal .h{color:var(--ui-muted);font-weight:600}',
+    '.cp-cal .wk{color:var(--ui-sel);font:600 11.5px var(--font-mono)}',
+    '.cp-cal .dim{color:var(--ui-muted)}',
+    '.cp-cal .today{background:var(--ui-sel);color:var(--ui-on-sel)}',
+    '.cp-thumbs{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px}',
+    '.cp-thumbs .thumb{transition:transform .2s}',
+    '.cp-app.cp-dark .app-body{background:var(--ui-text)}',
+    '.cp-note{min-height:96px;font-size:14px}'
+  ].map(r => P + r).join('\n');
+  cs.appendChild(css);
+  const KEY = /Mac|iPhone|iPad/i.test(navigator.platform || navigator.userAgent || '') ? '⌘' : 'Ctrl';
+  const icon = n => '<svg class="icon sm" aria-hidden="true"><use href="#i-' + n + '"/></svg>';
+  const exact = (c, q) => (c.name.toLowerCase().includes(q) ? {} : null);
+  const loose = (c, q) => {
+    const n = c.name.toLowerCase();
+    if (n.includes(q)) return {};
+    const qw = q.split(/\s+/);
+    const syn = (c.syn || []).find(s => qw.some(w => w.length >= 3 && s.startsWith(w)));
+    if (syn) return { why: syn };
+    const flat = q.replace(/\s/g, '');
+    let i = 0;
+    for (const ch of n.replace(/\s/g, '')) if (ch === flat[i]) i++;
+    return flat.length >= 3 && i === flat.length ? {} : null;
+  };
+  /* A small palette: cfg = {cmds, match, empty(), inline, none(q), tall} */
+  const palette = (host, cfg) => {
+    host.insertAdjacentHTML('beforeend', '<div class="cp-pal surface"' + (cfg.inline ? ' data-inline' : ' hidden role="dialog" aria-label="Command palette"') + '><div class="cp-q">' + icon('search') +
+      '<input class="input" type="text" aria-label="Search commands" placeholder="Type a command" autocomplete="off" spellcheck="false"></div>' +
+      '<div class="cp-list' + (cfg.tall ? ' tall' : '') + '" role="listbox" aria-label="Commands"></div><p class="cp-none" hidden></p></div>');
+    const el = host.lastElementChild, input = el.querySelector('input'), list = el.querySelector('.cp-list'), none = el.querySelector('.cp-none');
+    let shown = [], active = 0, back = null, closedAt = 0;
+    const mark = () => {
+      const opts = list.querySelectorAll('[role="option"]');
+      opts.forEach((o, i) => o.setAttribute('aria-selected', String(i === active)));
+      const o = opts[active];
+      if (!o) return;
+      if (o.offsetTop < list.scrollTop) list.scrollTop = o.offsetTop - 24;
+      else if (o.offsetTop + o.offsetHeight > list.scrollTop + list.clientHeight) list.scrollTop = o.offsetTop + o.offsetHeight - list.clientHeight;
+    };
+    const runAt = i => { const c = shown[i]; if (!c) return; close(); c.run(); };
+    const render = () => {
+      const raw = input.value.trim(), q = raw.toLowerCase();
+      const groups = !q ? (cfg.empty ? cfg.empty() : [{ items: cfg.cmds }])
+        : [{ items: cfg.cmds.map(c => ({ c, m: cfg.match(c, q) })).filter(x => x.m).map(x => Object.assign({}, x.c, { why: x.m.why })) }];
+      shown = []; list.innerHTML = '';
+      groups.forEach(g => {
+        if (g.group && g.items.length) list.insertAdjacentHTML('beforeend', '<div class="cp-grp" role="presentation">' + g.group + '</div>');
+        g.items.forEach(c => {
+          const i = shown.length; shown.push(c);
+          const o = document.createElement('div'); o.className = 'cp-opt'; o.setAttribute('role', 'option');
+          o.innerHTML = '<span>' + c.name + (c.why ? '<small>Matches “' + c.why + '”</small>' : '') + '</span>' +
+            (c.keys ? '<span class="cp-k">' + c.keys.map(k => '<kbd>' + k + '</kbd>').join('') + '</span>' : '');
+          o.addEventListener('mousedown', e => e.preventDefault());
+          o.addEventListener('click', () => runAt(i));
+          list.appendChild(o);
+        });
+      });
+      none.hidden = !!shown.length || !q;
+      none.textContent = cfg.none ? cfg.none(raw) : 'No results.';
+      active = 0; list.scrollTop = 0; mark();
+    };
+    const open = () => { back = document.activeElement; el.hidden = false; input.value = ''; render(); input.focus({ preventScroll: true }); };
+    const close = () => { if (cfg.inline || el.hidden) return; el.hidden = true; if (back && back.isConnected) back.focus({ preventScroll: true }); };
+    input.addEventListener('input', render);
+    input.addEventListener('keydown', e => {
+      if (e.key === 'ArrowDown' || e.key === 'ArrowUp') { e.preventDefault(); if (shown.length) { active = (active + (e.key === 'ArrowDown' ? 1 : -1) + shown.length) % shown.length; mark(); } }
+      else if (e.key === 'Enter') { e.preventDefault(); runAt(active); }
+      else if (e.key === 'Escape' && !cfg.inline) { e.preventDefault(); e.stopPropagation(); close(); }
+    });
+    if (!cfg.inline) el.addEventListener('focusout', e => { if (!el.hidden && !el.contains(e.relatedTarget)) { el.hidden = true; closedAt = Date.now(); } });
+    render();
+    return { open, close, isOpen: () => !el.hidden, justClosed: () => Date.now() - closedAt < 250 };
+  };
+  const isK = e => (e.ctrlKey || e.metaKey) && !e.altKey && !e.shiftKey && (e.key === 'k' || e.key === 'K');
+
+  /* 1. Hidden palette */
+  const calHtml = fixed => '<div class="app-frame cp-app" tabindex="-1" data-app aria-label="Calendar"><div class="app-bar"><span>October 2026</span>' +
+    (fixed ? '<button class="btn btn-secondary cs-sm" type="button" data-open aria-haspopup="dialog">' + icon('search') + 'Commands<span class="cp-k"><kbd>' + KEY + '</kbd><kbd>K</kbd></span></button>' : '<span class="cs-meta">Month</span>') +
+    '</div><div class="app-body"><div class="cp-cal" data-cal></div><p class="cs-ok" data-out></p></div></div>';
+  const calWire = fixed => d => {
+    const app = d.querySelector('[data-app]'), cal = d.querySelector('[data-cal]'), out = d.querySelector('[data-out]');
+    let wk = false;
+    const draw = () => {
+      cal.style.gridTemplateColumns = 'repeat(' + (wk ? 8 : 7) + ',minmax(0,1fr))';
+      let h = (wk ? '<span class="h">Wk</span>' : '') + ['M', 'T', 'W', 'T', 'F', 'S', 'S'].map(x => '<span class="h">' + x + '</span>').join('');
+      for (let w = 0; w < 5; w++) {
+        if (wk) h += '<span class="wk">' + (40 + w) + '</span>';
+        for (let k = 0; k < 7; k++) {
+          const n = w * 7 + k - 2;
+          const day = n < 1 ? 28 + w * 7 + k : n > 31 ? n - 31 : n;
+          h += '<span class="' + (n < 1 || n > 31 ? 'dim' : n === 24 ? 'today' : '') + '">' + day + '</span>';
+        }
+      }
+      cal.innerHTML = h;
+    };
+    const cmds = [
+      { get name() { return wk ? 'Hide week numbers' : 'Show week numbers'; }, syn: ['week', 'numbers'], run: () => { wk = !wk; draw(); out.textContent = wk ? 'Week numbers on.' : 'Week numbers off.'; } },
+      { name: 'Go to today', syn: ['now', 'current'], keys: ['T'], run: () => { out.textContent = 'Today is Saturday 24 October.'; } },
+      { name: 'New event', syn: ['add', 'create', 'meeting'], keys: ['N'], run: () => { out.textContent = 'A new event form would open here.'; } },
+      { name: 'Switch to week view', syn: ['week', 'view'], keys: ['W'], run: () => { out.textContent = 'Week view would open here.'; } }
+    ];
+    const pal = palette(app, { cmds, match: loose, none: q => 'No commands match “' + q + '”.' });
+    d.addEventListener('keydown', e => { if (isK(e)) { e.preventDefault(); e.stopPropagation(); if (pal.isOpen()) pal.close(); else pal.open(); } });
+    app.addEventListener('mousedown', e => { if (!e.target.closest('button,input,.cp-pal')) { e.preventDefault(); app.focus({ preventScroll: true }); } });
+    if (fixed) d.querySelector('[data-open]').addEventListener('click', () => { if (pal.isOpen()) pal.close(); else if (!pal.justClosed()) pal.open(); });
+    draw();
+  };
+  D('pat-command-palette-1b', calHtml(false), calWire(false));
+  D('pat-command-palette-1f', calHtml(true), calWire(true));
+
+  /* 2. Strict matching */
+  const photoHtml = '<div class="app-frame cp-app" data-app><div class="app-bar"><span>Photos</span><span class="cs-meta" data-theme>Light theme</span></div>' +
+    '<div class="app-body" data-host><div class="cp-thumbs"><span class="thumb"></span><span class="thumb b"></span><span class="thumb c"></span></div><p class="cs-ok" data-out></p></div></div>';
+  const photoWire = fixed => d => {
+    const app = d.querySelector('[data-app]'), host = d.querySelector('[data-host]'), out = d.querySelector('[data-out]');
+    let dark = false, turn = 0;
+    const cmds = [
+      { name: 'Change theme', syn: ['dark', 'light', 'night', 'colors', 'appearance'], run: () => { dark = !dark; app.classList.toggle('cp-dark', dark); d.querySelector('[data-theme]').textContent = dark ? 'Dark theme' : 'Light theme'; out.textContent = 'Theme changed.'; } },
+      { name: 'Rotate photo', syn: ['turn', 'spin'], run: () => { turn += 90; host.querySelector('.thumb').style.transform = 'rotate(' + turn + 'deg)'; out.textContent = 'Photo rotated.'; } },
+      { name: 'Start slideshow', syn: ['play', 'present'], run: () => { out.textContent = 'The slideshow would start here.'; } },
+      { name: 'Share album', syn: ['send', 'invite', 'link'], run: () => { out.textContent = 'Sharing options would open here.'; } },
+      { name: 'Delete photo', syn: ['remove', 'trash'], run: () => { out.textContent = 'The photo would move to the trash.'; } }
+    ];
+    palette(host, { cmds, match: fixed ? loose : exact, inline: true, none: q => (fixed ? 'No commands match “' + q + '”.' : 'No results.') });
+    host.insertBefore(host.querySelector('.cp-pal'), host.firstChild);
+  };
+  D('pat-command-palette-2b', photoHtml, photoWire(false));
+  D('pat-command-palette-2f', photoHtml, photoWire(true));
+
+  /* 3. Vague, flat list */
+  const slideHtml = '<div class="app-frame cp-app" data-app><div class="app-bar"><span>Q3 review · Slides</span></div><div class="app-body" data-host><p class="cs-ok" data-out></p></div></div>';
+  const FLAT = ['Advanced', 'Arrange', 'Background', 'Export', 'Format', 'Grid', 'Layout', 'Master', 'Misc', 'PDF', 'Present', 'Print', 'Sidebar', 'Theme', 'Tools', 'Transitions'];
+  const slideWire = fixed => d => {
+    const host = d.querySelector('[data-host]'), out = d.querySelector('[data-out]');
+    let cfg;
+    if (!fixed) {
+      const msg = n => n === 'PDF' ? 'PDF opened a page of PDF settings. Nothing was saved.' : n === 'Export' ? 'Export opened a second list of formats.' : '“' + n + '” opened a panel of options.';
+      cfg = { cmds: FLAT.map(n => ({ name: n, run: () => { out.textContent = msg(n); } })), match: exact };
+    } else {
+      const say = (n, m) => ({ name: n, run: () => { out.textContent = m; } });
+      const pdf = say('Export to PDF', 'Saved “Q3 review.pdf”.'), present = say('Start presenting', 'The slideshow would start here.');
+      const groups = [
+        { group: 'Recent', items: [pdf, present] },
+        { group: 'File', items: [pdf, say('Export as images', 'Saved 12 images.'), say('Print handouts', 'The print dialog would open here.')] },
+        { group: 'View', items: [say('Toggle sidebar', 'Sidebar hidden.'), say('Show grid', 'Grid on.')] },
+        { group: 'Slide', items: [say('Change background', 'Background options would open here.'), say('Change layout', 'Layout options would open here.'), say('Add transition', 'Transition options would open here.')] }
+      ];
+      const all = Array.from(new Set(groups.slice(1).flatMap(g => g.items)));
+      cfg = { cmds: all.concat([present]), match: loose, empty: () => groups };
+    }
+    cfg.inline = true; cfg.tall = true;
+    palette(host, cfg);
+    host.insertBefore(host.querySelector('.cp-pal'), host.firstChild);
+  };
+  D('pat-command-palette-3b', slideHtml, slideWire(false));
+  D('pat-command-palette-3f', slideHtml, slideWire(true));
+
+  /* 4. Shortcut steals a typing key */
+  const noteHtml = fixed => '<div class="app-frame cp-app" data-app><div class="app-bar"><span>Notes</span><span class="cs-meta">Commands: ' + (fixed ? KEY + ' K' : '/') + '</span></div>' +
+    '<div class="app-body"><textarea class="input cp-note" aria-label="Note" spellcheck="false">Shopping: milk, bread, </textarea><p class="cs-ok" data-out></p></div></div>';
+  const noteWire = fixed => d => {
+    const app = d.querySelector('[data-app]'), ta = d.querySelector('textarea'), out = d.querySelector('[data-out]');
+    const put = (text, m) => () => { ta.focus({ preventScroll: true }); ta.setRangeText(text, ta.selectionStart, ta.selectionEnd, 'end'); out.textContent = m; };
+    const cmds = [
+      { name: 'Add checklist', syn: ['todo', 'tasks'], run: put('\n☐ ', 'Checklist added.') },
+      { name: 'Insert date', syn: ['today', 'day'], run: put('24 Oct 2026', 'Date inserted.') },
+      { name: 'Insert divider', syn: ['line', 'rule'], run: put('\n———\n', 'Divider inserted.') }
+    ];
+    const pal = palette(app, { cmds, match: loose, none: q => 'No commands match “' + q + '”.' });
+    d.addEventListener('keydown', e => {
+      if (fixed ? isK(e) : (e.key === '/' && !pal.isOpen())) {
+        e.preventDefault(); e.stopPropagation();
+        out.textContent = '';
+        if (pal.isOpen()) pal.close(); else pal.open();
+      }
+    });
+    const end = ta.value.length; ta.setSelectionRange(end, end);
+  };
+  D('pat-command-palette-4b', noteHtml(false), noteWire(false));
+  D('pat-command-palette-4f', noteHtml(true), noteWire(true));
+
+  csInit(cs);
+  };
+  if (window.csDemo) run(); else document.addEventListener('DOMContentLoaded', run);
+})();
+
+</script>

@@ -10,13 +10,15 @@ import Raw from '../../../components/Raw.astro';
 import Learned from '../../../components/Learned.astro';
 import Runtime from '../../../components/Runtime.astro';
 
-<div class="dfg-chapter" id="ch-preface">
+<Runtime at="start" />
+
+<section class="dfg-chapter" id="ch-preface">
 
 This book is for anyone who decides how an interface should work, and most of all for design engineers, who make those calls in code. It teaches by showing: every idea comes with a demo you can try on the page.
 
 ## Three ways to read it
 
-Read it from the start. Each part builds on the one before, and Part 4 puts the first three to work on one problem. Or start from a question: [When you hear this, try that](https://ryan-di.github.io/design-field-guide/#ch-patterns-cheat) goes from what people say to a pattern, and [Before you pick one, ask three questions](https://ryan-di.github.io/design-field-guide/#ch-choose) goes from what people need to a component. Or keep it open while you work: [Before you ship, ask these](https://ryan-di.github.io/design-field-guide/#ch-good-checklist) and [Effective design, step by step](https://ryan-di.github.io/design-field-guide/#ch-eff-checklist) turn the book into questions for your next change.
+Read it from the start. Each part builds on the one before, and Part 4 puts the first three to work on one problem. Or start from a question: [When you hear this, try that](/part-2/patterns-cheat/#ch-patterns-cheat) goes from what people say to a pattern, and [Before you pick one, ask three questions](/part-3/choose/#ch-choose) goes from what people need to a component. Or keep it open while you work: [Before you ship, ask these](/part-1/good-checklist/#ch-good-checklist) and [Effective design, step by step](/part-4/eff-checklist/#ch-eff-checklist) turn the book into questions for your next change.
 
 ## How an entry works
 
@@ -32,6 +34,6 @@ The product examples are this book’s summaries of how those products worked wh
 
 Every entry, section and rule has its own link: press the # next to its title. To cite one, give the version and the link’s anchor, such as “Design Field Guide v35, #good-problem-framing-rule-2”. Agents can read the same book as plain text, starting from [llms.txt](https://ryan-di.github.io/design-field-guide/llms.txt).
 
-</div>
+</section>
 
 <Runtime chapter="ch-preface" />

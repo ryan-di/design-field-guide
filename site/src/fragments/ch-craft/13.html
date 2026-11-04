@@ -1,0 +1,41 @@
+<div class="note comfy cw-wrap">
+  <div class="seg cw-seg" role="radiogroup" aria-label="Example">
+    <input type="radio" name="cw-good-edge-cases-w" id="cw-good-edge-cases-w-1" value="vscode" checked><label for="cw-good-edge-cases-w-1">VS Code</label>
+    <input type="radio" name="cw-good-edge-cases-w" id="cw-good-edge-cases-w-2" value="finder"><label for="cw-good-edge-cases-w-2">macOS Finder</label>
+    <input type="radio" name="cw-good-edge-cases-w" id="cw-good-edge-cases-w-3" value="youtube"><label for="cw-good-edge-cases-w-3">YouTube</label>
+    <input type="radio" name="cw-good-edge-cases-w" id="cw-good-edge-cases-w-4" value="airbnb"><label for="cw-good-edge-cases-w-4">Airbnb</label>
+  </div>
+  <div class="cw" data-cw-view role="img" aria-label=""></div>
+  <p class="cw-cap" data-cw-cap aria-live="polite"></p>
+  
+  <script>
+  (() => {
+    const wrap = document.currentScript.closest('.cw-wrap');
+    const view = wrap.querySelector('[data-cw-view]'), cap = wrap.querySelector('[data-cw-cap]');
+    const line = w => '<i class="cw-line cw-gedge-w' + w + '"></i>';
+    const tab = (name, dir, on) => '<span class="cw-gedge-tab' + (on ? ' on' : '') + '">' + name + (dir ? '<em>' + dir + '</em>' : '') + '</span>';
+    const doc = '<svg class="icon sm" viewBox="0 0 24 24"><path d="M6 3h8l4 4v14H6z"/><path d="M14 3v4h4"/></svg>';
+    const file = (name, date, on) => '<div class="cw-gedge-lr' + (on ? ' on' : '') + '">' + doc + '<span class="cw-gedge-nm">' + name + '</span><span class="cw-gedge-dt">' + date + '</span></div>';
+    const card = (cls, title, rating, isNew, sub, price) => '<div class="cw-gedge-card"><i class="cw-gedge-img' + cls + '"></i><span class="cw-gedge-t"><b>' + title + '</b><span' + (isNew ? ' class="cw-gedge-new"' : '') + '>★ ' + rating + '</span></span><em>' + sub + '</em><span>' + price + '</span></div>';
+    const S = {
+      vscode: { html: '<div class="cw-gedge-mid"><div class="cw-gedge-ed"><div class="cw-gedge-tabs">' + tab('index.ts', 'ui', true) + tab('index.ts', 'api') + tab('app.ts') + '</div><div class="cw-gedge-code">' + line(60) + line(80) + line(40) + '</div></div></div>',
+        alt: 'An editor with three tabs. Two tabs are both named index.ts; one adds ui and the other api in lighter text. The third tab, app.ts, has no extra text.',
+        cap: 'VS Code: when two open tabs have the same file name, each tab adds the part of its path that tells them apart, in lighter text. Tabs with unique names stay short.' },
+      finder: { html: '<div class="cw-gedge-mid"><div class="cw-gedge-list"><div class="cw-gedge-lh"><span class="cw-gedge-nm">Name</span><span class="cw-gedge-dt">Modified</span></div>' +
+          file('Project proposal…final v2.pdf', 'Today') + file('Project proposal…final v3.pdf', 'Today', true) + file('Notes.txt', 'Monday') + '</div></div>',
+        alt: 'A file list. Two long names are cut in the middle, so both read Project proposal, then an ellipsis, then final v2.pdf and final v3.pdf. A short name, Notes.txt, shows in full.',
+        cap: 'macOS Finder: long file names are cut in the middle, not at the end. The start and the ending both stay visible, so “final v2.pdf” and “final v3.pdf” still look different.' },
+      youtube: { html: '<div class="cw-gedge-mid"><div class="cw-gedge-yt"><div class="cw-gedge-vid"><i class="cw-gedge-th"><span>12:04</span></i><span class="cw-gedge-meta"><b>How to plan a week of family dinners on a small budget, with a shopping list</b><em>1.2M views · 3 years ago</em></span></div>' +
+          '<div class="cw-gedge-desc"><span><b>1,234,567 views</b> <em>· Mar 3, 2023</em></span>' + line(80) + '</div></div></div>',
+        alt: 'A video card with a long title cut after two lines and the line 1.2M views, 3 years ago. Below, the opened description shows the exact count and date: 1,234,567 views, Mar 3, 2023.',
+        cap: 'YouTube: big view counts are rounded, like “1.2M views”, and dates are relative, like “3 years ago”. Long titles wrap to two lines before they’re cut. The exact count and date show when you open the description.' },
+      airbnb: { html: '<div class="cw-gedge-mid"><div class="cw-gedge-cards">' + card('', 'Cabin by the lake', 'New', true, '2 beds', '$120 night') + card(' b', 'Flat in the old town', '4.92', false, '1 bed', '$95 night') + '</div></div>',
+        alt: 'Two listing cards. The first, with no reviews yet, shows a star and the word New where the rating goes. The second shows a star and 4.92.',
+        cap: 'Airbnb: a listing without enough reviews shows “New” where the star rating goes. There’s no zero-star rating and no empty gap.' }
+    };
+    const render = k => { view.innerHTML = S[k].html; view.setAttribute('aria-label', 'Sketch: ' + S[k].alt); cap.textContent = S[k].cap; };
+    wrap.querySelectorAll('input[name="cw-good-edge-cases-w"]').forEach(r => r.addEventListener('change', () => render(r.value)));
+    render('vscode');
+  })();
+  </script>
+</div>

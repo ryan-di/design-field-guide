@@ -1,0 +1,49 @@
+<div class="note comfy cw-wrap"><p>Notice that “done” comes with proof anyone can open: a list of checks, a link, a picture.</p>
+        <div class="seg cw-seg" role="radiogroup" aria-label="Example">
+          <input type="radio" name="cw-eff-agent-verification-w" id="cw-eff-agent-verification-w-1" value="github" checked><label for="cw-eff-agent-verification-w-1">GitHub</label>
+          <input type="radio" name="cw-eff-agent-verification-w" id="cw-eff-agent-verification-w-2" value="vercel"><label for="cw-eff-agent-verification-w-2">Vercel</label>
+          <input type="radio" name="cw-eff-agent-verification-w" id="cw-eff-agent-verification-w-3" value="chromatic"><label for="cw-eff-agent-verification-w-3">Chromatic</label>
+          <input type="radio" name="cw-eff-agent-verification-w" id="cw-eff-agent-verification-w-4" value="amazon"><label for="cw-eff-agent-verification-w-4">Amazon</label>
+        </div>
+        <div class="cw" data-cw-view role="img" aria-label=""></div>
+        <p class="cw-cap" data-cw-cap aria-live="polite"></p>
+        
+        <script>
+        (() => {
+          const wrap = document.currentScript.closest('.cw-wrap');
+          const view = wrap.querySelector('[data-cw-view]'), cap = wrap.querySelector('[data-cw-cap]');
+          const ic = id => '<svg class="icon sm"><use href="#i-' + id + '"/></svg>';
+          const line = w => '<i class="cw-line" style="width:' + w + '%"></i>';
+          const row = (name, ok, req) => '<div class="cw-eav-row' + (ok ? '' : ' bad') + '">' + ic(ok ? 'check' : 'x') + '<span>' + name + '</span>' + (req ? '<span class="cw-eav-req">Required</span>' : '<span></span>') + '</div>';
+          const mini = (diff) => '<div class="cw-eav-mini">' + line(70) + line(90) + '<span class="cw-eav-mb' + (diff ? ' diff' : '') + '"><i></i><i' + (diff ? ' class="wide"' : '') + '></i><i class="pri"></i></span></div>';
+          const S = {
+            github: { html: '<div class="cw-eav-box"><div class="cw-eav-head"><span class="cw-eav-ic bad">' + ic('x') + '</span><div><b>Some checks failed</b><small>1 failing, 3 passing</small></div></div>' +
+                row('End-to-end: tab close', false, true) + row('Unit tests', true, true) + row('Type check', true, true) + row('Lint', true, false) +
+                '<div class="cw-eav-merge"><span class="btn btn-primary" aria-disabled="true">Merge</span><small>Required checks must pass first</small></div></div>',
+              alt: 'A pull request’s checks box: 1 failing, 3 passing. The end-to-end tab close check failed and is marked Required. Unit tests and type check passed and are required; lint passed. The Merge button is grayed out until required checks pass.',
+              cap: 'GitHub: each pull request lists its checks, like tests and a type check, with a pass or fail and a link to the output, so anyone can see what ran.' },
+            vercel: { html: '<div class="cw-eav-stack"><div class="cw-eav-cmt"><div class="cw-eav-who"><i></i><b>deploy bot</b>commented</div>' +
+                '<div class="cw-eav-tbl"><span>Preview</span><span class="cw-eav-ready">Ready</span><u>Visit preview</u></div></div>' +
+                '<div class="cw-eav-win"><div class="cw-eav-url">close-dialog-pr-482.preview.example</div><div class="cw-eav-app">' +
+                '<div class="cw-eav-tabs"><span class="on">Portrait</span><span>Upscale</span></div>' +
+                '<div class="cw-eav-dlg"><b>Save changes?</b>' + line(85) + '<span class="cw-eav-btns"><span>Cancel</span><span>Don’t save</span><span class="pri">Save</span></span></div></div></div></div>',
+              alt: 'A pull request comment from a deploy bot: Preview, Ready, Visit preview. Below, the preview open in a browser at its own address, showing the new Save changes dialog over a tab with unsaved changes.',
+              cap: 'Vercel: the preview link on each pull request lets anyone open the real change, instead of reading that it works.' },
+            chromatic: { html: '<div class="cw-eav-box"><div class="cw-eav-vh"><b>CloseDialog / Default</b><span class="cw-eav-chg">1 change</span></div>' +
+                '<div class="cw-eav-two"><div class="cw-eav-snap"><em>Baseline</em>' + mini(false) + '</div><div class="cw-eav-snap"><em>New</em>' + mini(true) + '</div></div>' +
+                '<div class="cw-eav-acts"><span class="btn btn-secondary">Deny</span><span class="btn btn-primary">Accept</span></div></div>',
+              alt: 'A visual test for one component story: Baseline and New snapshots side by side. In the new one, the middle button is wider and the changed area is highlighted. Deny and Accept buttons below.',
+              cap: 'Chromatic: each change comes with snapshots of every Storybook story and any differences side by side, so a visual change can’t pass as “no change”.' },
+            amazon: { html: '<div class="cw-eav-phone"><b>Delivered</b><small>Today, left at the front door</small><div class="cw-eav-track"><i></i><i></i><i></i><i></i></div>' +
+                '<svg class="cw-eav-photo" viewBox="0 0 160 110" aria-hidden="true"><rect class="wall" width="160" height="110"/><rect class="door" x="50" y="8" width="60" height="96" rx="2"/><circle class="knob" cx="100" cy="58" r="3"/>' +
+                '<rect class="mat" x="36" y="98" width="88" height="10" rx="2"/><rect class="box" x="62" y="76" width="36" height="26" rx="2"/><rect class="tape" x="62" y="86" width="36" height="5"/></svg>' +
+                '<small>Photo of where your package was left</small></div>',
+              alt: 'A phone order screen: Delivered, today, left at the front door, with a full progress bar. Below, a photo of a package on the mat in front of a door.',
+              cap: 'Amazon: a “Delivered” status can come with a photo of the package where it was left. You don’t have to take the status on trust, and you know where to look.' }
+          };
+          const render = k => { view.innerHTML = S[k].html; view.setAttribute('aria-label', 'Sketch: ' + S[k].alt); cap.textContent = S[k].cap; };
+          wrap.querySelectorAll('input[name="cw-eff-agent-verification-w"]').forEach(r => r.addEventListener('change', () => render(r.value)));
+          render('github');
+        })();
+        </script>
+      </div>

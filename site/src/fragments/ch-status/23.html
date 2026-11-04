@@ -1,0 +1,49 @@
+<div class="note comfy cw-wrap"><p>Notice where progress lives while the work runs, and where the result waits once it’s done.</p>
+  <div class="seg cw-seg" role="radiogroup" aria-label="Example">
+    <input type="radio" name="cw-pat-background-work-w" id="cw-pat-background-work-w-1" value="drive" checked><label for="cw-pat-background-work-w-1">Google Drive</label>
+    <input type="radio" name="cw-pat-background-work-w" id="cw-pat-background-work-w-2" value="lr"><label for="cw-pat-background-work-w-2">Lightroom</label>
+    <input type="radio" name="cw-pat-background-work-w" id="cw-pat-background-work-w-3" value="ig"><label for="cw-pat-background-work-w-3">Instagram</label>
+    <input type="radio" name="cw-pat-background-work-w" id="cw-pat-background-work-w-4" value="safari"><label for="cw-pat-background-work-w-4">Safari</label>
+  </div>
+  <div class="cw" data-cw-view role="img" aria-label=""></div>
+  <p class="cw-cap" data-cw-cap aria-live="polite"></p>
+  
+  <script>
+  (() => {
+    const wrap = document.currentScript.closest('.cw-wrap');
+    const view = wrap.querySelector('[data-cw-view]'), cap = wrap.querySelector('[data-cw-cap]');
+    const ic = id => '<svg class="icon sm"><use href="#i-' + id + '"/></svg>';
+    const line = w => '<i class="cw-line"' + (w ? ' style="width:' + w + '"' : '') + '></i>';
+    const bar = p => '<span class="bar"><span style="width:' + p + '%"></span></span>';
+    const file = n => '<span class="cw-bgwork-file">' + ic(n % 3 ? 'image' : 'folder') + line() + '</span>';
+    const done = name => '<div class="cw-bgwork-row">' + ic('image') + '<span>' + name + '</span><b class="cw-bgwork-ok">' + ic('check') + '</b></div>';
+    const sl = (name, x) => '<span class="cw-bgwork-sl">' + name + '<i style="--x:' + x + '%"></i></span>';
+    const S = {
+      drive: { html: '<div class="cw-bgwork-win"><div class="cw-bgwork-top"><span class="cw-bgwork-pill">' + ic('search') + line() + '</span></div>' +
+          '<div class="cw-bgwork-files">' + [1, 2, 3, 4, 5, 6].map(file).join('') + '</div>' +
+          '<div class="cw-bgwork-panel surface"><div class="cw-bgwork-ph">Uploading 3 items<span>' + ic('minus') + ic('x') + '</span></div>' +
+          done('beach.jpg') + done('dunes.jpg') + '<div class="cw-bgwork-row">' + ic('image') + '<span>pier.jpg</span><i class="cw-bgwork-ring"></i></div></div></div>',
+        alt: 'A file browser. In the bottom-right corner, a panel says Uploading 3 items: two files have a check, the third shows a progress ring. The files behind it stay usable.',
+        cap: 'Google Drive: uploads run in a small panel in the corner, one row per file, while you keep browsing. Finished files keep their check until you close the panel.' },
+      lr: { html: '<div class="cw-bgwork-win"><div class="cw-bgwork-top"><span class="cw-bgwork-task"><div>Exporting 24 photos' + bar(45) + '</div>' + ic('x') + '</span><span class="cw-bgwork-mods"><b>Library</b> · Develop</span></div>' +
+          '<div class="cw-bgwork-lr"><div class="thumb"></div><div class="cw-bgwork-sls">' + sl('Exposure', 55) + sl('Contrast', 40) + sl('Highlights', 30) + sl('Shadows', 65) + '</div></div></div>',
+        alt: 'A photo editor. A thin progress bar in the top-left corner says Exporting 24 photos. Below, a photo and its edit sliders stay in use.',
+        cap: 'Lightroom Classic: imports and exports show a thin progress bar in the top-left corner, so you can keep editing photos while they run.' },
+      ig: { html: '<div class="cw-bgwork-phone"><div class="cw-bgwork-pt">' + line() + '<span>' + ic('plus') + ic('dots') + '</span></div>' +
+          '<div class="cw-bgwork-up"><span class="thumb b"></span><div>Posting…' + bar(70) + '</div></div>' +
+          '<div class="cw-bgwork-who"><b></b>' + line() + '</div><div class="thumb c"></div></div>',
+        alt: 'A phone feed. At the top, a strip shows a small photo, the word Posting and a progress bar. The feed below can still be scrolled.',
+        cap: 'Instagram: after you share a post, you land back in the feed, and a strip at the top shows your photo with a progress bar until it’s posted.' },
+      safari: { html: '<div class="cw-bgwork-win"><div class="cw-bgwork-top"><span class="cw-bgwork-addr">' + line() + '</span><span class="cw-bgwork-dl">↓' + bar(40) + '</span></div>' +
+          '<div class="cw-bgwork-page">' + line('80%') + line('92%') + line('64%') + '</div>' +
+          '<div class="cw-bgwork-pop surface"><div class="cw-bgwork-dlrow"><span class="cw-bgwork-doc"></span><div>talk.mov' + bar(40) + '<small>48 of 120 MB</small></div></div>' +
+          '<div class="cw-bgwork-dlrow"><span class="cw-bgwork-doc"></span><div>report.pdf<small>2.1 MB</small></div></div></div></div>',
+        alt: 'A browser toolbar with a downloads button that has a small progress bar under its arrow. Its list shows one file still downloading and one finished file.',
+        cap: 'Safari: the downloads button in the toolbar shows progress, and its list keeps finished files, so a download you missed is still one click away.' }
+    };
+    const render = k => { view.innerHTML = S[k].html; view.setAttribute('aria-label', 'Sketch: ' + S[k].alt); cap.textContent = S[k].cap; };
+    wrap.querySelectorAll('input[name="cw-pat-background-work-w"]').forEach(r => r.addEventListener('change', () => render(r.value)));
+    render('drive');
+  })();
+  </script>
+</div>

@@ -1,0 +1,113 @@
+<script>
+(() => {
+  const cs = document.currentScript.closest('.cs');
+  // The shared case helpers (csDemo, csInit) load further down the book, so wait for them.
+  const start = () => {
+  // Each demo renders into its own root, so listeners go away on Reset.
+  const D = (k, html, wire) => csDemo(cs.querySelector('[data-d="' + k + '"]'), '<div class="hk-root">' + html + '</div>', (d, t) => wire(d.firstElementChild, t));
+  const st = document.createElement('style');
+  st.textContent = `
+#pat-hicks-law .hk-root{display:flex;flex-direction:column;align-items:center;gap:12px;width:100%;min-width:0}
+#pat-hicks-law .hk-frame{width:min(340px,100%);position:relative}
+#pat-hicks-law .hk-field{all:unset;box-sizing:border-box;cursor:pointer;display:flex;justify-content:space-between;align-items:center;width:100%;padding:9px 12px;border:1.5px solid var(--ui-border);border-radius:9px;background:var(--ui-surface);font-size:14.5px;color:var(--ui-text)}
+#pat-hicks-law .hk-field:focus-visible{outline:3px solid var(--ui-sel)}
+#pat-hicks-law .hk-list{max-height:208px;overflow:auto;border:1px solid var(--ui-border);border-radius:9px;background:var(--ui-surface);padding:4px;display:flex;flex-direction:column}
+#pat-hicks-law .hk-sec{margin:4px 8px 2px;font:600 11.5px var(--font-body);color:var(--ui-muted)}
+#pat-hicks-law .hk-opt{all:unset;box-sizing:border-box;width:100%;cursor:pointer;display:flex;align-items:center;justify-content:space-between;gap:8px;padding:6px 8px;border-radius:6px;font-size:14px;color:var(--ui-text)}
+#pat-hicks-law .hk-opt small{font:500 12px var(--font-mono);color:var(--ui-muted)}
+#pat-hicks-law .hk-opt:hover,#pat-hicks-law .hk-opt:focus-visible{background:var(--ui-hover)}
+#pat-hicks-law .hk-opt:focus-visible{outline:2px solid var(--ui-sel);outline-offset:-2px}
+#pat-hicks-law .hk-q{padding:7px 10px;font-size:14px;margin-bottom:4px}
+#pat-hicks-law .hk-doc{display:flex;flex-direction:column;gap:6px;min-height:230px}
+#pat-hicks-law .hk-dlg{width:min(290px,100%)}
+#pat-hicks-law .hk-dlg .acts{flex-wrap:wrap}
+#pat-hicks-law .hk-dlg .acts .btn{padding:6px 10px;font-size:13.5px}
+#pat-hicks-law .hk-photo{height:110px;border-radius:8px;background:linear-gradient(150deg,#4f8fb0,#e2c48a)}
+#pat-hicks-law .hk-share{display:flex;flex-direction:column;border:1px solid var(--ui-border);border-radius:9px;padding:4px;background:var(--ui-surface)}
+`;
+  cs.appendChild(st);
+  const secs = t0 => ((performance.now() - t0) / 1000).toFixed(1) + ' s';
+
+  /* 1. Flat list vs recent + search */
+  const CITIES = [['Madrid', 'MAD'], ['Oslo', 'OSL'], ['Athens', 'ATH'], ['Porto', 'OPO'], ['Vienna', 'VIE'], ['Dublin', 'DUB'], ['Nice', 'NCE'], ['Prague', 'PRG'], ['Milan', 'MXP'], ['Seville', 'SVQ'], ['Krakow', 'KRK'], ['Lyon', 'LYS'], ['Berlin', 'BER'], ['Faro', 'FAO'], ['Lisbon', 'LIS'], ['Venice', 'VCE'], ['Munich', 'MUC'], ['Bergen', 'BGO'], ['Malaga', 'AGP'], ['Zurich', 'ZRH'], ['Split', 'SPU'], ['Riga', 'RIX']];
+  const opt = c => '<button class="hk-opt" type="button" data-city="' + c[0] + '"><span>' + c[0] + '</span><small>' + c[1] + '</small></button>';
+  const tripHtml = '<div class="app-frame hk-frame"><div class="app-bar"><span>Book a flight</span><span class="cs-meta">From Amsterdam</span></div><div class="app-body">' +
+    '<button class="hk-field" type="button" aria-expanded="false" data-open><span data-to>Choose a destination</span><span aria-hidden="true">▾</span></button><div data-list hidden></div></div></div><p class="cs-meta" data-out></p>';
+  const tripWire = fixed => d => {
+    const list = d.querySelector('[data-list]'), openBtn = d.querySelector('[data-open]'), out = d.querySelector('[data-out]');
+    let t0 = 0;
+    const draw = q => {
+      const hit = CITIES.filter(c => c[0].toLowerCase().startsWith(q) || c[1].toLowerCase().startsWith(q));
+      list.querySelector('[data-opts]').innerHTML = !fixed ? CITIES.map(opt).join('')
+        : q ? (hit.length ? hit.map(opt).join('') : '<p class="hk-sec">No match</p>')
+        : '<p class="hk-sec">Recent</p>' + [CITIES[14], CITIES[3]].map(opt).join('') + '<p class="hk-sec">All destinations, A–Z</p>' + CITIES.slice().sort((a, b) => a[0].localeCompare(b[0])).map(opt).join('');
+    };
+    openBtn.addEventListener('click', () => {
+      const on = list.hidden; list.hidden = !on; openBtn.setAttribute('aria-expanded', String(on));
+      if (!on) return;
+      list.innerHTML = '<div class="hk-list">' + (fixed ? '<input class="input hk-q" aria-label="Search destinations" placeholder="Search" data-q>' : '') + '<div data-opts></div></div>';
+      draw('');
+      if (fixed) { const q = list.querySelector('[data-q]'); q.addEventListener('input', () => draw(q.value.trim().toLowerCase())); q.focus(); }
+      else list.querySelector('.hk-opt').focus();
+      t0 = performance.now(); out.textContent = '';
+    });
+    list.addEventListener('click', e => {
+      const b = e.target.closest('[data-city]'); if (!b) return;
+      d.querySelector('[data-to]').textContent = 'To ' + b.dataset.city;
+      out.textContent = 'Picked ' + b.dataset.city + ' in ' + secs(t0) + '.';
+      list.hidden = true; openBtn.setAttribute('aria-expanded', 'false'); openBtn.focus();
+    });
+  };
+  D('pat-hicks-law-1b', tripHtml, tripWire(false));
+  D('pat-hicks-law-1f', tripHtml, tripWire(true));
+
+  /* 2. Equal buttons vs one likely choice */
+  const docHtml = '<div class="app-frame hk-frame"><div class="app-bar"><span>Trip plan •</span><span class="cs-meta">Edited</span></div><div class="app-body hk-doc">' +
+    '<b>Lisbon, 12–16 Nov</b><div class="line" style="width:84%"></div><div class="line" style="width:66%"></div><div class="line" style="width:74%"></div>' +
+    '<button class="btn btn-secondary cs-sm" type="button" style="align-self:flex-start;margin-top:auto" data-close>Close document</button></div><div data-modal></div></div><p class="cs-meta" data-out></p>';
+  const docWire = fixed => d => {
+    const modal = d.querySelector('[data-modal]'), out = d.querySelector('[data-out]'), closeBtn = d.querySelector('[data-close]');
+    let t0 = 0;
+    const SAY = { save: 'Closed and saved.', drop: 'Closed. Your changes are gone.', copy: 'Saved a copy and closed. The original has no changes.', cancel: 'Still open.' };
+    closeBtn.addEventListener('click', () => {
+      const btn = (cls, k, label) => '<button class="btn ' + cls + '" type="button" data-pick="' + k + '">' + label + '</button>';
+      const acts = fixed ? btn('btn-ghost', 'copy', 'Save as copy') + btn('btn-ghost', 'cancel', 'Cancel') + btn('btn-secondary', 'drop', 'Don’t save') + btn('btn-primary', 'save', 'Save')
+        : btn('btn-secondary', 'copy', 'Save as copy') + btn('btn-secondary', 'drop', 'Don’t save') + btn('btn-secondary', 'save', 'Save') + btn('btn-secondary', 'cancel', 'Cancel');
+      modal.innerHTML = '<div class="cs-modal"><div class="cs-dlg hk-dlg" role="dialog" aria-modal="true" aria-label="Save changes?"><b>Save changes to “Trip plan”?</b><p>Your edits from today aren’t saved yet.</p><div class="acts">' + acts + '</div></div></div>';
+      modal.querySelector(fixed ? '[data-pick="save"]' : '[data-pick]').focus();
+      t0 = performance.now(); out.textContent = '';
+    });
+    modal.addEventListener('click', e => {
+      const b = e.target.closest('[data-pick]'); if (!b) return;
+      modal.innerHTML = ''; out.textContent = SAY[b.dataset.pick] + ' (' + secs(t0) + ')'; closeBtn.focus();
+    });
+    modal.addEventListener('keydown', e => { if (e.key === 'Escape') { modal.innerHTML = ''; out.textContent = SAY.cancel; closeBtn.focus(); } });
+  };
+  D('pat-hicks-law-2b', docHtml, docWire(false));
+  D('pat-hicks-law-2f', docHtml, docWire(true));
+
+  /* 3. Cut vs tucked away */
+  const COMMON = [['link', 'Copy link'], ['send', 'Send to…'], ['save', 'Save to device']];
+  const RARE = [['orig', 'Download original (24 MP)'], ['noloc', 'Download without location'], ['print', 'Order a print']];
+  const shareHtml = fixed => '<div class="app-frame hk-frame"><div class="app-bar"><span>Harbour.jpg</span><span class="cs-meta">Share</span></div><div class="app-body"><div class="hk-photo" role="img" aria-label="Photo of a harbour"></div>' +
+    '<div class="hk-share">' + COMMON.map(c => '<button class="hk-opt" type="button" data-act="' + c[0] + '">' + c[1] + '</button>').join('') +
+    (fixed ? '<button class="hk-opt" type="button" aria-expanded="false" data-more><span>More options</span><small>3</small></button><div data-rare hidden>' + RARE.map(c => '<button class="hk-opt" type="button" data-act="' + c[0] + '">' + c[1] + '</button>').join('') + '</div>' : '') +
+    '</div></div></div><p class="cs-meta" data-out></p>';
+  const shareWire = fixed => d => {
+    const out = d.querySelector('[data-out]');
+    const SAY = { link: 'Link copied.', send: 'The send sheet would open here.', save: 'Saved at 1600 px wide, not full size.' + (fixed ? '' : ' There’s no other download option.'), orig: 'Downloaded at full size, 6000 × 4000.', noloc: 'Downloaded without the location.', print: 'The print order would open here.' };
+    d.querySelector('.hk-share').addEventListener('click', e => {
+      const m = e.target.closest('[data-more]');
+      if (m) { const r = d.querySelector('[data-rare]'); r.hidden = !r.hidden; m.setAttribute('aria-expanded', String(!r.hidden)); if (!r.hidden) r.querySelector('button').focus(); return; }
+      const a = e.target.closest('[data-act]'); if (a) out.textContent = SAY[a.dataset.act];
+    });
+  };
+  D('pat-hicks-law-3b', shareHtml(false), shareWire(false));
+  D('pat-hicks-law-3f', shareHtml(true), shareWire(true));
+
+  csInit(cs);
+  };
+  if (window.csDemo) start(); else document.addEventListener('DOMContentLoaded', start);
+})();
+
+</script>

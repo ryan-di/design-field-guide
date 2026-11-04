@@ -1,0 +1,68 @@
+<div class="fm" data-fm>
+  
+  <div class="seg fm-seg" role="radiogroup" aria-label="Form">
+    <input type="radio" name="fm-switch" id="fm-switch-1" value="list" checked><label for="fm-switch-1">In a list</label>
+    <input type="radio" name="fm-switch" id="fm-switch-2" value="desc"><label for="fm-switch-2">With a description</label>
+    <input type="radio" name="fm-switch" id="fm-switch-3" value="group"><label for="fm-switch-3">For a group</label>
+    <input type="radio" name="fm-switch" id="fm-switch-4" value="toolbar"><label for="fm-switch-4">In a toolbar</label>
+  </div>
+  <div class="fm-stage" data-fm-stage></div>
+  <p class="fig-cap" data-fm-when aria-live="polite"></p>
+  <script>
+  (() => {
+    const fm = document.currentScript.closest('[data-fm]'), stage = fm.querySelector('[data-fm-stage]'), when = fm.querySelector('[data-fm-when]');
+    const row = (label, on, o = {}) => '<label class="switch' + (o.cls ? ' ' + o.cls : '') + '"><span class="grow">' + label + (o.desc ? '<small class="fms-d">' + o.desc + '</small>' : '') + '</span>' +
+      '<span class="state" aria-hidden="true">' + (on ? 'On' : 'Off') + '</span><input type="checkbox" role="switch"' + (on ? ' checked' : '') + (o.data ? ' ' + o.data : '') + '></label>';
+    const box = (title, rows) => '<div class="settings surface fms-box"><b class="fms-h">' + title + '</b>' + rows + '</div>';
+    /* Every switch acts at once and says On or Off in words. */
+    const states = s => s.querySelectorAll('.switch').forEach(l => {
+      const inp = l.querySelector('input'), st = l.querySelector('.state');
+      if (st) inp.addEventListener('change', () => { st.textContent = inp.checked ? 'On' : 'Off'; });
+    });
+    const MAIL = [['Sam', 'Lunch on Friday?', 1], ['Bank', 'Your statement is ready', 0], ['Mia', 'Photos from the trip', 1], ['Airline', 'Your boarding pass for Lisbon', 0], ['Ana', 'Shared a file with you', 0]];
+    const F = {
+      list: {
+        html: box('Sounds', row('Vibrate on ring', true) + row('Keyboard clicks', false) + row('Lock sound', true)),
+        use: 'Use it for a list of settings, one per row.',
+        more: 'The label names the setting, and the word next to the switch says whether it’s on.',
+        wire: states
+      },
+      desc: {
+        html: box('Backup', row('Back up over mobile data', false, { desc: 'Uses your data plan when there’s no Wi‑Fi.' }) + row('Upload in full size', true, { desc: 'Keeps every detail, but uses more storage.' })),
+        use: 'Use it when the name alone doesn’t say what will change.',
+        more: 'One short line under the name says what happens when it’s on.',
+        wire: states
+      },
+      group: {
+        html: box('Mail', row('Allow notifications', true, { data: 'data-master' }) + row('New mail', true, { cls: 'fms-sub' }) + row('Replies to me', true, { cls: 'fms-sub' }) + row('Sound', false, { cls: 'fms-sub' })),
+        use: 'Use it to turn a whole group of settings on or off at once.',
+        more: 'When it’s off, the settings under it are locked, and they come back as they were.',
+        wire: s => {
+          states(s);
+          const m = s.querySelector('[data-master]');
+          m.addEventListener('change', () => s.querySelectorAll('.fms-sub input').forEach(i => { i.disabled = !m.checked; }));
+        }
+      },
+      toolbar: {
+        html: '<div class="app-frame fm-frame"><div class="app-bar"><span>Inbox</span><label class="switch fms-tb"><span>Unread only</span><input type="checkbox" role="switch" data-unread></label></div>' +
+          '<div class="app-body fms-list">' + MAIL.map(m => '<div class="fms-mail' + (m[2] ? ' unread' : '') + '"' + (m[2] ? '' : ' data-read') + '><b>' + m[0] + '</b><span>' + m[1] + '</span></div>').join('') + '<p class="cs-meta" data-out>Showing all 5.</p></div></div>',
+        use: 'Use it for a view option people change often, like showing only unread mail.',
+        more: 'The list changes as soon as it’s flipped.',
+        wire: s => {
+          const sw = s.querySelector('[data-unread]'), out = s.querySelector('[data-out]');
+          sw.addEventListener('change', () => {
+            s.querySelectorAll('[data-read]').forEach(r => { r.hidden = sw.checked; });
+            out.textContent = sw.checked ? 'Showing 2 unread.' : 'Showing all 5.';
+          });
+        }
+      }
+    };
+    const show = k => {
+      stage.innerHTML = F[k].html; F[k].wire(stage);
+      when.innerHTML = '<b>' + fm.querySelector('.fm-seg input:checked + label').textContent + '.</b> ' + F[k].use + ' ' + F[k].more;
+    };
+    fm.querySelectorAll('.fm-seg input').forEach(i => i.addEventListener('change', () => show(i.value)));
+    show('list');
+  })();
+  </script>
+</div>

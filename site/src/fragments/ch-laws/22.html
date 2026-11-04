@@ -1,0 +1,136 @@
+<script>
+(() => {
+  const cs = document.currentScript.closest('.cs');
+  /* This entry sits before the shared case helpers in the book, so start once they exist. */
+  const go = () => {
+    const D = (k, html, wire) => csDemo(cs.querySelector('[data-d="' + k + '"]'), html, wire);
+    const st = document.createElement('style');
+    st.textContent = [
+      '#pat-teslers-law .tl-card{width:min(360px,100%);display:flex;flex-direction:column;gap:10px;text-align:left;background:var(--ui-surface);border:1px solid var(--ui-border);border-radius:12px;padding:14px;box-shadow:var(--ui-shadow);color:var(--ui-text)}',
+      '#pat-teslers-law .tl-card > b{font-size:15px}',
+      '#pat-teslers-law .tl-photo{display:flex;gap:10px;align-items:center}',
+      '#pat-teslers-law .tl-photo .thumb{width:72px;flex:none}',
+      '#pat-teslers-law .tl-need{font-size:13.5px;color:var(--ui-muted);border-left:3px solid var(--ui-sel);padding:2px 0 2px 8px}',
+      '#pat-teslers-law .tl-acts{display:flex;gap:8px;flex-wrap:wrap;align-items:center}',
+      '#pat-teslers-law .tl-more{display:flex;flex-direction:column;gap:6px;border:1px solid var(--ui-border);border-radius:9px;padding:8px 10px;margin:0}',
+      '#pat-teslers-law .tl-more[hidden]{display:none}',
+      '#pat-teslers-law .tl-more legend{font:600 13px var(--font-body);padding:0 4px}',
+      '#pat-teslers-law .tl-more .check{font-size:14px}',
+      '#pat-teslers-law .tl-res{font-size:14px;line-height:1.45;min-height:20px}',
+      '#pat-teslers-law .tl-res:empty{display:none}',
+      '#pat-teslers-law .tl-bad{color:var(--ui-danger)}',
+      '#pat-teslers-law .tl-ok{color:var(--ui-ok)}',
+      '#pat-teslers-law .tl-files{display:flex;flex-direction:column}',
+      '#pat-teslers-law .tl-file{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:2px 10px;align-items:center;padding:7px 0;border-bottom:1px solid var(--ui-border);font-size:14px}',
+      '#pat-teslers-law .tl-file:last-child{border-bottom:0}',
+      '#pat-teslers-law .tl-file .nm{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}',
+      '#pat-teslers-law .tl-file .sz{font:500 12px var(--font-mono);color:var(--ui-muted)}',
+      '#pat-teslers-law .tl-file .stt{grid-column:1 / -1;font:500 12.5px var(--font-mono);color:var(--ui-muted)}',
+      '#pat-teslers-law .tl-file .stt:empty{display:none}',
+      '#pat-teslers-law .tl-file .stt.tl-bad{color:var(--ui-danger)}',
+      '#pat-teslers-law .tl-file .stt.tl-ok{color:var(--ui-ok)}'
+    ].join('\n');
+    cs.appendChild(st);
+
+    /* 1. Hidden control: export size */
+    const exportHtml = fixed => '<div class="tl-card"><b>Export photo</b>' +
+      '<div class="tl-photo"><span class="thumb b"></span><span><b>Tram, Lisbon.jpg</b><br><span class="cs-meta">4032 × 3024 px</span></span></div>' +
+      '<p class="tl-need">For the print shop: at least 3,000 px wide.</p>' +
+      (fixed ? '<fieldset class="tl-more" data-more hidden><legend>Size</legend>' +
+        '<label class="check"><input type="radio" name="tl-size" value="1080" checked><span>Small, 1080 px<small>Good for sharing</small></span></label>' +
+        '<label class="check"><input type="radio" name="tl-size" value="4032"><span>Full size, 4032 px<small>Good for printing</small></span></label></fieldset>' : '') +
+      '<div class="tl-acts"><button class="btn btn-primary cs-sm" type="button" data-export>Export</button>' +
+      (fixed ? '<button class="btn btn-ghost cs-sm" type="button" aria-expanded="false" data-toggle>More options</button>' : '') + '</div>' +
+      '<p class="tl-res" data-res aria-live="polite"></p></div>';
+    const exportWire = fixed => d => {
+      const res = d.querySelector('[data-res]'), more = d.querySelector('[data-more]');
+      if (fixed) d.querySelector('[data-toggle]').addEventListener('click', e => {
+        more.hidden = !more.hidden; e.target.setAttribute('aria-expanded', String(!more.hidden));
+        e.target.textContent = more.hidden ? 'More options' : 'Fewer options';
+      });
+      d.querySelector('[data-export]').addEventListener('click', () => {
+        const px = fixed ? +d.querySelector('input[name="tl-size"]:checked').value : 1080;
+        if (px >= 3000) { res.innerHTML = '<span class="tl-ok">Exported at ' + px + ' px wide. Big enough for the print shop.</span>'; return; }
+        res.innerHTML = 'Exported at 1080 px wide.<br><span class="tl-bad">Too small for the print shop.' + (fixed ? ' Other sizes are under More options.' : ' There’s no way to pick another size.') + '</span>';
+      });
+    };
+    D('pat-teslers-law-1b', exportHtml(false), exportWire(false));
+    D('pat-teslers-law-1f', exportHtml(true), exportWire(true));
+
+    /* 2. Pushed onto people: phone format */
+    const phoneHtml = fixed => '<div class="tl-card"><b>Delivery details</b>' +
+      '<label class="cs-f">Phone number<input class="input" inputmode="tel" autocomplete="off" spellcheck="false" data-ph></label>' +
+      '<p class="field-help">' + (fixed ? 'We’ll text you when the parcel is close.' : 'Use the format +447700900123, with no spaces.') + '</p>' +
+      '<p class="field-msg" data-msg hidden><svg class="icon"><use href="#i-warn"/></svg><span></span></p>' +
+      '<div class="tl-acts"><button class="btn btn-primary cs-sm" type="button" data-save>Save</button><span class="cs-meta" data-tries></span></div>' +
+      '<p class="tl-res tl-ok" data-res aria-live="polite"></p></div>';
+    const phoneWire = fixed => d => {
+      const inp = d.querySelector('[data-ph]'), msg = d.querySelector('[data-msg]'), res = d.querySelector('[data-res]'), tries = d.querySelector('[data-tries]');
+      let n = 0;
+      const err = text => { msg.querySelector('span').textContent = text; msg.hidden = !text; inp.setAttribute('aria-invalid', text ? 'true' : 'false'); };
+      inp.addEventListener('input', () => err(''));
+      d.querySelector('[data-save]').addEventListener('click', () => {
+        n++; res.textContent = '';
+        tries.textContent = n > 1 ? 'Tries: ' + n : '';
+        const v = inp.value.trim();
+        if (!fixed) {
+          if (!/^\+\d{11,13}$/.test(v)) { err('Invalid phone number format.'); inp.focus(); return; }
+          err(''); res.textContent = 'Saved as ' + v + '.'; return;
+        }
+        let digits = v.replace(/[^\d+]/g, '');
+        if (digits.startsWith('00')) digits = '+' + digits.slice(2);
+        if (digits.startsWith('0')) digits = '+44' + digits.slice(1);
+        if (!digits.startsWith('+')) digits = '+' + digits;
+        const body = digits.slice(1);
+        if (!/^\d{10,13}$/.test(body)) { err('Enter a phone number with at least 10 digits.'); inp.focus(); return; }
+        err('');
+        const nice = body.startsWith('44') ? '+44 ' + body.slice(2, 6) + ' ' + body.slice(6) : '+' + body;
+        res.textContent = 'Saved as ' + nice + '.';
+      });
+    };
+    D('pat-teslers-law-2b', phoneHtml(false), phoneWire(false));
+    D('pat-teslers-law-2f', phoneHtml(true), phoneWire(true));
+
+    /* 3. Simple only in the demo: uploads */
+    const FILES = [
+      ['beach.jpg', '2 MB', ['Uploaded', 'ok'], ['Uploaded', 'ok']],
+      ['IMG_2041.HEIC', '3 MB', ['Error 415', 'bad'], ['Uploaded as JPG', 'ok']],
+      ['Día 2 – playa (1).jpg', '4 MB', ['Invalid file name', 'bad'], ['Uploaded', 'ok']],
+      ['Tram ride.mov', '1.8 GB', ['Upload failed. Try again.', 'bad'], ['Uploaded', 'ok']]
+    ];
+    const upHtml = fixed => '<div class="tl-card"><b>Add to shared album</b><span class="cs-meta">' +
+      (fixed ? 'Tested with: real photos and videos from a phone' : 'Tested with: sample.jpg (1 MB)') + '</span>' +
+      '<div class="tl-files">' + FILES.map(f => '<div class="tl-file"><span class="nm">' + f[0] + '</span><span class="sz">' + f[1] + '</span><span class="stt" data-st></span></div>').join('') + '</div>' +
+      '<div class="tl-acts"><button class="btn btn-primary cs-sm" type="button" data-up>Upload 4 files</button></div>' +
+      '<p class="tl-res" data-res aria-live="polite"></p></div>';
+    const upWire = fixed => (d, t) => {
+      const sts = d.querySelectorAll('[data-st]'), res = d.querySelector('[data-res]'), btn = d.querySelector('[data-up]');
+      btn.addEventListener('click', () => {
+        btn.disabled = true; res.textContent = '';
+        sts.forEach(s => { s.className = 'stt'; s.textContent = 'Waiting…'; });
+        let ok = 0, left = 4;
+        const set = (i, r) => { sts[i].textContent = r[0]; sts[i].className = 'stt tl-' + r[1]; if (r[1] === 'ok') ok++; if (--left === 0) done(); };
+        FILES.slice(0, 3).forEach((f, i) => t.after(() => set(i, fixed ? f[3] : f[2]), 350 * (i + 1)));
+        let pct = 0;
+        const timer = t.every(() => {
+          pct += fixed ? 12 : 9;
+          if (!fixed && pct >= 54) { clearInterval(timer); set(3, FILES[3][2]); return; }
+          if (pct >= 100) { clearInterval(timer); set(3, FILES[3][3]); return; }
+          sts[3].textContent = (fixed ? 'Uploading in parts… ' : 'Uploading… ') + pct + '%';
+        }, 160);
+        const done = () => {
+          btn.disabled = false;
+          res.className = 'tl-res ' + (ok === 4 ? 'tl-ok' : 'tl-bad');
+          res.textContent = ok + ' of 4 uploaded.' + (ok === 4 ? '' : ' The errors don’t say what to do.');
+        };
+      });
+    };
+    D('pat-teslers-law-3b', upHtml(false), upWire(false));
+    D('pat-teslers-law-3f', upHtml(true), upWire(true));
+
+    csInit(cs);
+  };
+  if (window.csDemo) go(); else document.addEventListener('DOMContentLoaded', go);
+})();
+
+</script>

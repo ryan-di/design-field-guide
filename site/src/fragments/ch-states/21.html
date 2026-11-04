@@ -1,0 +1,126 @@
+<script>
+(() => {
+  const cs = document.currentScript.closest('.cs');
+  const D = (k, html, wire) => csDemo(cs.querySelector('[data-d="' + k + '"]'), html, wire);
+  const icon = n => '<svg class="icon sm"><use href="#i-' + n + '"/></svg>';
+  const big = n => '<svg class="icon"><use href="#i-' + n + '"/></svg>';
+  const frame = (title, body) => '<div class="app-frame" style="width:min(340px,100%)"><div class="app-bar"><span>' + title + '</span></div>' + body + '</div>';
+  const alert = inner => '<div class="cs-sum" role="alert">' + icon('warn') + inner + '</div>';
+  const loading = text => '<p class="er-load"><span class="spinner"></span>' + text + '</p>';
+
+  /* 1. Vague: saving a calendar event, with three possible causes */
+  const TIMES = ['9:00', '9:30', '10:00', '10:30', '11:00', '11:30'];
+  const timeSel = (attr, val) => '<select class="select" ' + attr + '>' + TIMES.map(x => '<option' + (x === val ? ' selected' : '') + '>' + x + '</option>').join('') + '</select>';
+  const evHtml = '<label class="er-sim">Simulate<select class="select" data-sim><option value="wifi">No Wi‑Fi</option><option value="server">Server down</option><option value="ok">All working</option></select></label>' +
+    frame('New event', '<div class="app-body"><label class="cs-f">Title<input class="input" data-title value="Dentist"></label>' +
+    '<div class="er-times"><label class="cs-f">Start' + timeSel('data-start', '10:00') + '</label><label class="cs-f">End' + timeSel('data-end', '9:00') + '</label></div>' +
+    '<div class="cs-msgs" data-err></div><button class="btn btn-primary" type="button" data-save style="align-self:flex-start">Save event</button><p class="cs-ok" data-ok></p></div>');
+  const evWire = fixed => (d, t) => {
+    const sim = d.querySelector('[data-sim]'), start = d.querySelector('[data-start]'), end = d.querySelector('[data-end]'), err = d.querySelector('[data-err]'), ok = d.querySelector('[data-ok]'), btn = d.querySelector('[data-save]'), title = d.querySelector('[data-title]');
+    let busy = false;
+    end.addEventListener('change', () => end.setAttribute('aria-invalid', 'false'));
+    btn.addEventListener('click', () => {
+      if (busy) return;
+      busy = true; err.innerHTML = ''; ok.textContent = ''; btn.textContent = 'Saving…';
+      t.after(() => {
+        busy = false; btn.textContent = 'Save event';
+        const bad = TIMES.indexOf(end.value) <= TIMES.indexOf(start.value);
+        const cause = bad ? 'input' : sim.value === 'ok' ? '' : sim.value;
+        end.setAttribute('aria-invalid', String(fixed && bad));
+        if (!cause) { ok.textContent = 'Saved: ' + (title.value.trim() || 'Event') + ', ' + start.value + '–' + end.value + '.'; return; }
+        if (!fixed) { err.innerHTML = alert('<span>Something went wrong.</span>'); return; }
+        const MSG = {
+          input: 'The end time (' + end.value + ') must be after the start time (' + start.value + '). Change one of them.',
+          wifi: 'You’re offline. Your event is still here. Save again when you’re back online.',
+          server: 'Our server had a problem, not you. Try again in a minute.'
+        };
+        err.innerHTML = alert('<span><b>Event not saved.</b> ' + MSG[cause] + '</span>');
+      }, 500);
+    });
+  };
+  D('error-state-1b', evHtml, evWire(false));
+  D('error-state-1f', evHtml, evWire(true));
+
+  /* 2. No way forward: photos that didn't load */
+  const galHtml = frame('Photos', '<div class="app-body er-body" data-body></div>');
+  const galWire = fixed => (d, t) => {
+    const body = d.querySelector('[data-body]');
+    const acts = fixed
+      ? '<button class="btn btn-primary cs-sm" type="button" data-retry>Try again</button><button class="btn btn-ghost cs-sm" type="button" data-help>Get help</button>'
+      : '<button class="btn btn-secondary cs-sm" type="button" data-ok>OK</button>';
+    body.innerHTML = alert('<div class="er-msg"><span><b>Couldn’t load your photos.</b> The connection dropped.</span><div class="er-acts">' + acts + '</div><p class="cs-meta" data-helptext></p></div>');
+    const q = s => body.querySelector(s);
+    if (!fixed) { q('[data-ok]').addEventListener('click', () => { body.innerHTML = ''; }); return; }
+    q('[data-help]').addEventListener('click', () => { q('[data-helptext]').textContent = 'Still failing? Check that other sites load, then turn Wi‑Fi off and on.'; });
+    q('[data-retry]').addEventListener('click', () => {
+      body.innerHTML = loading('Loading photos…');
+      t.after(() => { body.innerHTML = '<div class="er-grid">' + ['', ' b', ' c', ' b', ' c', ''].map(c => '<div class="thumb' + c + '"></div>').join('') + '</div><p class="cs-ok">6 photos</p>'; }, 900);
+    });
+  };
+  D('error-state-2b', galHtml, galWire(false));
+  D('error-state-2f', galHtml, galWire(true));
+
+  /* 3. Lost work: an upload that stops halfway */
+  const upHtml = frame('Upload to “Lisbon trip”', '<div class="app-body"><div class="er-sel" data-sel></div><div class="bar"><span data-bar></span></div>' +
+    '<p class="cs-meta" data-prog></p><div class="cs-msgs" data-err></div><button class="btn btn-primary" type="button" data-go style="align-self:flex-start"></button><p class="cs-ok" data-ok></p></div>');
+  const upWire = fixed => (d, t) => {
+    const sel = d.querySelector('[data-sel]'), bar = d.querySelector('[data-bar]'), prog = d.querySelector('[data-prog]'), err = d.querySelector('[data-err]'), btn = d.querySelector('[data-go]'), ok = d.querySelector('[data-ok]');
+    let done = 0, chosen = true, failed = false, mode = '';
+    const paint = () => {
+      sel.textContent = chosen ? '40 photos selected' + (done && done < 40 ? ' · ' + done + ' uploaded' : '') : 'No photos selected';
+      sel.classList.toggle('none', !chosen);
+      bar.style.width = (done / 40 * 100) + '%'; prog.textContent = done + ' of 40 uploaded';
+    };
+    const set = (m, html) => {
+      mode = m; btn.innerHTML = html; btn.hidden = m === 'done';
+      btn.classList.toggle('busy', m === 'busy');
+      if (m === 'busy') btn.setAttribute('aria-disabled', 'true'); else btn.removeAttribute('aria-disabled');
+    };
+    const run = () => {
+      err.innerHTML = ''; set('busy', '<span class="spinner"></span>Uploading…');
+      const iv = t.every(() => {
+        done++; paint();
+        if (!failed && done === 18) { clearInterval(iv); fail(); }
+        else if (done === 40) { clearInterval(iv); set('done', ''); ok.textContent = 'All 40 photos uploaded.'; }
+      }, 80);
+    };
+    const fail = () => {
+      failed = true;
+      if (fixed) {
+        err.innerHTML = alert('<span><b>Upload stopped at 18 of 40.</b> The connection dropped. Your photos are still selected.</span>');
+        set('resume', 'Resume (22 left)');
+      } else {
+        chosen = false; done = 0; paint();
+        err.innerHTML = alert('<span><b>Upload stopped at 18 of 40.</b> The connection dropped. Choose your photos and start over.</span>');
+        set('choose', 'Choose photos');
+      }
+    };
+    btn.addEventListener('click', () => {
+      if (mode === 'busy') return;
+      if (mode === 'choose') { chosen = true; err.innerHTML = ''; paint(); set('upload', 'Upload 40 photos'); return; }
+      run();
+    });
+    paint(); set('upload', 'Upload 40 photos');
+  };
+  D('error-state-3b', upHtml, upWire(false));
+  D('error-state-3f', upHtml, upWire(true));
+
+  /* 4. Code only: playlists that didn't load */
+  const PL = [['Morning run', '24 songs'], ['Focus', '51 songs'], ['Road trip', '38 songs'], ['Sunday jazz', '17 songs']];
+  const plHtml = fixed => frame('Your playlists', '<div class="app-body er-body" data-body>' + (fixed
+    ? '<div class="empty">' + big('warn') + '<h5>Your playlists didn’t load</h5><p>Our server had a problem, not you. Try again in a minute.</p><button class="btn btn-secondary cs-sm" type="button" data-retry>Try again</button><span class="er-small">Code 500 · ref 7f3a</span></div>'
+    : '<div class="er-center"><span class="er-code">Error 500</span><button class="btn btn-secondary cs-sm" type="button" data-retry>Try again</button></div>') + '</div>');
+  const plWire = (d, t) => {
+    const body = d.querySelector('[data-body]');
+    body.querySelector('[data-retry]').addEventListener('click', () => {
+      body.innerHTML = loading('Loading playlists…');
+      t.after(() => { body.classList.add('list'); body.innerHTML = PL.map(p => '<div class="cs-row"><span class="grow">' + icon('play') + ' ' + p[0] + '</span><span class="cs-meta">' + p[1] + '</span></div>').join(''); }, 900);
+    });
+  };
+  D('error-state-4b', plHtml(false), plWire);
+  D('error-state-4f', plHtml(true), plWire);
+
+  csInit(cs);
+})();
+
+  </script>

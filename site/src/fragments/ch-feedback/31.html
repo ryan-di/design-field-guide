@@ -1,0 +1,101 @@
+<script>
+(() => {
+  const cs = document.currentScript.closest('.cs');
+  const D = (k, html, wire) => csDemo(cs.querySelector('[data-d="' + k + '"]'), html, wire);
+  const icon = n => '<svg class="icon sm"><use href="#i-' + n + '"/></svg>';
+  const frame = (bar, body, barStyle) => '<div class="app-frame" style="width:min(340px,100%)"><div class="app-bar"' + (barStyle ? ' style="' + barStyle + '"' : '') + '>' + bar + '</div>' + body + '</div>';
+
+  /* 1. Never clears */
+  const T = ['', ' b', ' c'];
+  const shHtml = frame('<button class="cs-tab on" type="button" data-tab="lib">Library</button><button class="cs-tab" type="button" data-tab="sh" aria-label="Shared, 3 new">Shared<span class="badge" data-b aria-hidden="true">3</span></button>',
+    '<div class="app-body" data-lib><div class="bd-grid">' + [0, 1, 2, 1, 2, 0].map(i => '<div class="thumb' + T[i] + '"></div>').join('') + '</div><p class="cs-meta">128 photos</p></div>' +
+    '<div class="app-body" data-sh hidden><p class="cs-meta">New from Lena</p><div class="bd-grid">' +
+    ['Beach day', 'Birthday cake', 'Sunset'].map((n, i) => '<figure class="bd-fig"><div class="thumb' + T[(i + 1) % 3] + '"></div><figcaption>' + n + '</figcaption></figure>').join('') + '</div></div>',
+    'justify-content:flex-start;gap:4px');
+  const shWire = fixed => d => {
+    const tabs = d.querySelectorAll('.cs-tab'), lib = d.querySelector('[data-lib]'), sh = d.querySelector('[data-sh]'), b = d.querySelector('[data-b]');
+    tabs.forEach(tab => tab.addEventListener('click', () => {
+      const which = tab.dataset.tab;
+      tabs.forEach(x => x.classList.toggle('on', x === tab));
+      lib.hidden = which !== 'lib'; sh.hidden = which !== 'sh';
+      if (which === 'sh' && fixed) { b.hidden = true; tabs[1].setAttribute('aria-label', 'Shared'); }
+    }));
+  };
+  D('badge-1b', shHtml, shWire(false));
+  D('badge-1f', shHtml, shWire(true));
+
+  /* 2. Everywhere */
+  const FOLDERS = [['folder', 'Files', 48, '48 files. Nothing new.'], ['image', 'Photos', 312, '312 photos. Nothing new.'], ['play', 'Music', 120, '120 songs. Nothing new.'],
+    ['layers', 'Shared', 2, '2 new files from Lena: Budget.xlsx and Trip.pdf.'], ['trash', 'Trash', 9, '9 items. Nothing new.']];
+  const evHtml = fixed => frame('<span>Files</span>', '<div class="app-body" style="gap:6px"><div class="bd-list">' + FOLDERS.map((f, i) => {
+    const news = f[1] === 'Shared', badge = !fixed || news;
+    return '<button class="bd-item" type="button" data-i="' + i + '" aria-label="' + f[1] + ', ' + f[2] + (news ? ' new' : '') + '">' + icon(f[0]) + '<span class="grow">' + f[1] + '</span>' +
+      (badge ? '<span class="badge" aria-hidden="true">' + f[2] + '</span>' : '<span class="cs-meta" aria-hidden="true">' + f[2] + '</span>') + '</button>';
+  }).join('') + '</div><p class="bd-out" data-out>Pick a folder to open it.</p></div>');
+  const evWire = d => {
+    const out = d.querySelector('[data-out]'), items = d.querySelectorAll('.bd-item');
+    const opened = new Set();
+    items.forEach(b => b.addEventListener('click', () => {
+      const f = FOLDERS[+b.dataset.i];
+      items.forEach(x => x.classList.toggle('on', x === b));
+      opened.add(f[1]);
+      out.innerHTML = '<b>' + f[1] + ':</b> ' + f[3] + (f[1] === 'Shared' ? '<br><span class="cs-ok">Found it after opening ' + opened.size + (opened.size === 1 ? ' folder.' : ' folders.') + '</span>' : '');
+    }));
+  };
+  D('badge-2b', evHtml(false), evWire);
+  D('badge-2f', evHtml(true), evWire);
+
+  /* 3. Huge number */
+  const fmt = n => n.toLocaleString('en');
+  const MAIL = [['Lena', 'Lunch on Friday?'], ['Sam', 'Invoice for October'], ['Maya', 'Photos from the trip']];
+  const mailIcon = '<svg class="icon" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3.5 6.5l8.5 6.5 8.5-6.5"/></svg>';
+  const ib = (inner, label) => '<span class="icon-btn bd-ib" role="img" aria-label="' + label + '">' + inner + '</span>';
+  const hugeHtml = frame('<span>Home</span><span class="bd-ibs">' + ib('<svg class="icon"><use href="#i-search"/></svg>', 'Search') +
+    '<span class="badge-wrap" data-mail>' + ib(mailIcon, 'Mail') + '<span class="badge" data-b aria-hidden="true"></span></span>' + ib('<svg class="icon"><use href="#i-gear"/></svg>', 'Settings') + '</span>',
+    '<div class="app-body" style="gap:2px"><p class="bd-head" data-head></p>' + MAIL.map(m => '<div class="cs-row"><span class="grow"><b>' + m[0] + '</b> · ' + m[1] + '</span></div>').join('') + '</div>') +
+    '<button class="btn btn-secondary cs-sm" type="button" data-get>Get new mail</button>';
+  const hugeWire = fixed => d => {
+    const b = d.querySelector('[data-b]'), head = d.querySelector('[data-head]'), mail = d.querySelector('[data-mail] .bd-ib');
+    let n = 486;
+    const show = () => { b.textContent = fixed && n > 99 ? '99+' : String(n); head.textContent = 'Inbox · ' + fmt(n) + ' unread'; mail.setAttribute('aria-label', 'Mail, ' + (fixed && n > 99 ? 'more than 99' : n) + ' unread'); };
+    d.querySelector('[data-get]').addEventListener('click', () => { n += 800; show(); });
+    show();
+  };
+  D('badge-3b', hugeHtml, hugeWire(false));
+  D('badge-3f', hugeHtml, hugeWire(true));
+
+  /* 4. Unclear */
+  const UPD = ['Filters pack', 'Printing', 'Sync'];
+  const gear = fixed => fixed
+    ? '<span class="badge-wrap bd-tw"><button class="btn btn-secondary cs-sm" type="button" aria-label="Settings, 3 updates available" aria-expanded="false" data-open>' + icon('gear') + 'Settings</button><span class="badge" aria-hidden="true" data-b>3</span><span class="bd-tip" role="tooltip" hidden data-tip>3 updates available</span></span>'
+    : '<span class="badge-wrap bd-tw"><button class="icon-btn bd-gear" type="button" aria-label="Settings" aria-expanded="false" data-open>' + icon('gear') + '</button><span class="badge bd-red" aria-hidden="true" data-b>3</span></span>';
+  const unHtml = fixed => frame('<span>Photos</span>' + gear(fixed),
+    '<div class="app-body"><div class="bd-grid">' + [0, 1, 2].map(i => '<div class="thumb' + T[i] + '"></div>').join('') + '</div><div data-panel></div></div>');
+  const unWire = fixed => d => {
+    const btn = d.querySelector('[data-open]'), panel = d.querySelector('[data-panel]'), b = d.querySelector('[data-b]'), tip = d.querySelector('[data-tip]');
+    if (tip) {
+      const on = () => { if (!b.hidden) tip.hidden = false; }, off = () => { tip.hidden = true; };
+      btn.addEventListener('mouseenter', on); btn.addEventListener('focus', on);
+      btn.addEventListener('mouseleave', off); btn.addEventListener('blur', off);
+      btn.addEventListener('keydown', e => { if (e.key === 'Escape') off(); });
+    }
+    btn.addEventListener('click', () => {
+      if (tip) tip.hidden = true;
+      if (panel.innerHTML) { panel.innerHTML = ''; btn.setAttribute('aria-expanded', 'false'); return; }
+      btn.setAttribute('aria-expanded', 'true');
+      if (b.hidden) { panel.innerHTML = '<div class="bd-panel"><b>Settings</b><p class="cs-ok">Everything is up to date.</p></div>'; return; }
+      panel.innerHTML = '<div class="bd-panel"><b>Settings</b><span>3 updates available: ' + UPD.join(', ') + '.</span><button class="btn btn-secondary cs-sm" type="button" data-all style="align-self:flex-start">Update all</button></div>';
+      panel.querySelector('[data-all]').addEventListener('click', () => {
+        b.hidden = true; btn.setAttribute('aria-label', 'Settings');
+        panel.innerHTML = '<div class="bd-panel"><b>Settings</b><p class="cs-ok">Everything is up to date.</p></div>';
+        btn.focus();
+      });
+    });
+  };
+  D('badge-4b', unHtml(false), unWire(false));
+  D('badge-4f', unHtml(true), unWire(true));
+
+  csInit(cs);
+})();
+
+  </script>

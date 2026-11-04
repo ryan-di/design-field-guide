@@ -1,15 +1,15 @@
 ---
-// Old links point at one long page (index.html#some-id). Send each id to the page that now holds it,
-// and ids from chapters that aren't converted yet to the current book.
-import anchors from '../anchors.json';
-const live = 'https://ryan-di.github.io/design-field-guide/';
+// Old links point at one long page (index.html#some-id). Send each id to the page that now holds it.
 const base = import.meta.env.BASE_URL.replace(/\/?$/, '/');
 ---
 
-<script is:inline define:vars={{ anchors, live, base }}>
+<script is:inline define:vars={{ base }}>
 	const id = decodeURIComponent(location.hash.slice(1));
 	if (id) {
-		const page = anchors[id];
-		location.replace(page ? base + page + '/' + location.hash : live + location.hash);
+		fetch(base + 'anchors.json')
+			.then((r) => r.json())
+			.then((anchors) => {
+				if (anchors[id]) location.replace(base + anchors[id] + '/' + location.hash);
+			});
 	}
 </script>

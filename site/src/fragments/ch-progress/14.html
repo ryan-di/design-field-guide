@@ -1,0 +1,131 @@
+<script>
+(() => {
+  const cs = document.currentScript.closest('.cs');
+  const D = (k, html, wire) => csDemo(cs.querySelector('[data-d="' + k + '"]'), html, wire);
+  const icon = n => '<svg class="icon sm"><use href="#i-' + n + '"/></svg>';
+  const frame = (bar, body, extra) => '<div class="app-frame' + (extra ? ' ' + extra : '') + '" style="width:min(340px,100%)"><div class="app-bar">' + bar + '</div>' + body + '</div>';
+  const pbar = '<div class="bar" data-bar><span></span></div>';
+  const fill = (d, p) => { d.querySelector('[data-bar] > span').style.width = p + '%'; };
+
+  /* 1. Can't measure */
+  const STAGES = ['Checking files', 'Copying', 'Verifying'];
+  const restHtml = frame('<span>Backups</span>',
+    '<div class="app-body"><div class="cs-row" style="border:0;padding:0"><span class="grow"><b>Phone backup</b> · 12 Oct</span><button class="btn btn-primary cs-sm" type="button" data-go>Restore</button></div>' +
+    '<div class="pb-top"><span data-lab>Not started</span><span class="pb-num" data-num></span></div>' + pbar + '<p class="pb-stages" data-stages></p></div>');
+  const restWire = staged => (d, t) => {
+    const lab = d.querySelector('[data-lab]'), num = d.querySelector('[data-num]'), bar = d.querySelector('[data-bar]'), stg = d.querySelector('[data-stages]'), go = d.querySelector('[data-go]');
+    const done = () => { bar.classList.remove('indeterminate'); fill(d, 100); lab.innerHTML = '<span class="cs-ok">Restored</span>'; num.textContent = staged ? '' : '100%'; go.disabled = false; };
+    const showStage = i => {
+      lab.textContent = STAGES[i] + '…'; num.textContent = 'Step ' + (i + 1) + ' of 3';
+      stg.innerHTML = STAGES.map((s, k) => k < i ? '<span class="pb-done">' + icon('check') + s + '</span>' : k === i ? '<b>' + s + '</b>' : '<span>' + s + '</span>').join('<span aria-hidden="true"> · </span>');
+    };
+    go.addEventListener('click', () => {
+      go.disabled = true; fill(d, 0); stg.innerHTML = '';
+      if (!staged) { lab.textContent = 'Restoring backup…'; num.textContent = '0%'; t.after(done, 6000); return; }
+      bar.classList.add('indeterminate');
+      STAGES.forEach((s, i) => t.after(() => showStage(i), i * 2000));
+      t.after(() => { done(); stg.innerHTML = STAGES.map(s => '<span class="pb-done">' + icon('check') + s + '</span>').join('<span aria-hidden="true"> · </span>'); }, 6000);
+    });
+  };
+  D('progress-bar-1b', restHtml, restWire(false));
+  D('progress-bar-1f', restHtml, restWire(true));
+
+  /* 2. Stalls */
+  const expHtml = frame('<span>Photos</span>',
+    '<div class="app-body"><div class="cs-row" style="border:0;padding:0"><span class="grow"><b>Lisbon trip</b> · 30 photos</span><button class="btn btn-primary cs-sm" type="button" data-go>Export album</button></div>' +
+    '<div class="pb-top"><span data-lab>Not started</span><span class="pb-num" data-num></span></div>' + pbar + '<p class="cs-meta" data-clock></p></div>');
+  const expWire = honest => (d, t) => {
+    const lab = d.querySelector('[data-lab]'), num = d.querySelector('[data-num]'), bar = d.querySelector('[data-bar]'), clk = d.querySelector('[data-clock]'), go = d.querySelector('[data-go]');
+    go.addEventListener('click', () => {
+      go.disabled = true; bar.classList.remove('indeterminate'); fill(d, 0); lab.textContent = 'Exporting…'; num.textContent = '';
+      const t0 = Date.now();
+      const tick = t.every(() => { clk.textContent = 'Time: ' + ((Date.now() - t0) / 1000).toFixed(1) + ' s'; }, 100);
+      const finish = () => { clearInterval(tick); bar.classList.remove('indeterminate'); fill(d, 100); lab.innerHTML = '<span class="cs-ok">Exported</span>'; num.textContent = honest ? '30 of 30' : '100%'; go.disabled = false; };
+      if (!honest) {
+        [0, 30, 62, 85, 96, 99].forEach((p, i) => t.after(() => { fill(d, p); num.textContent = p + '%'; }, i * 220));
+        t.after(finish, 5000);
+        return;
+      }
+      for (let s = 1; s <= 30; s++) t.after(() => { fill(d, s / 30 * 100); num.textContent = 'Photo ' + s + ' of 30'; }, s * 110);
+      t.after(() => { lab.textContent = 'Finishing up…'; num.textContent = ''; bar.classList.add('indeterminate'); }, 31 * 110);
+      t.after(finish, 5000);
+    });
+  };
+  D('progress-bar-2b', expHtml, expWire(false));
+  D('progress-bar-2f', expHtml, expWire(true));
+
+  /* 3. Blocking */
+  const T = ['', ' b', ' c'];
+  const idle = '<span class="cs-meta">No exports running.</span>';
+  const edHtml = bg => frame('<span>Video editor</span><button class="btn btn-primary cs-sm" type="button" data-exp>Export</button>',
+    '<div class="app-body" data-body><label class="cs-f">Title<input class="input" value="Lisbon trip" data-title></label>' +
+    '<div class="pb-clips">' + [1, 2, 3].map(n => '<button class="pb-clip" type="button" aria-pressed="false"><span class="thumb' + T[n - 1] + '"></span>Clip ' + n + '</button>').join('') + '</div>' +
+    '<p class="cs-meta" data-m></p></div>' + (bg ? '<div class="pb-q" data-q>' + idle + '</div>' : ''), 'pb-rel');
+  const edWire = bg => (d, t) => {
+    const exp = d.querySelector('[data-exp]'), body = d.querySelector('[data-body]'), q = d.querySelector('[data-q]'), m = d.querySelector('[data-m]'), title = d.querySelector('[data-title]'), fr = d.querySelector('.app-frame');
+    d.querySelectorAll('.pb-clip').forEach(c => c.addEventListener('click', () => {
+      d.querySelectorAll('.pb-clip').forEach(x => x.setAttribute('aria-pressed', String(x === c)));
+      m.textContent = c.textContent + ' selected.';
+    }));
+    exp.addEventListener('click', () => {
+      exp.disabled = true; m.textContent = '';
+      const name = (title.value.trim() || 'Untitled') + '.mp4';
+      let p = 0, box;
+      if (bg) {
+        q.innerHTML = '<div class="pb-top"><span>Exporting video…</span><span class="pb-num" data-pct>0%</span></div><div class="pb-qrow">' + pbar + '<button class="btn btn-ghost cs-sm" type="button" data-cancel>Cancel</button></div>';
+        box = q;
+      } else {
+        box = document.createElement('div'); box.className = 'cs-modal';
+        box.innerHTML = '<div class="cs-dlg" role="dialog" aria-modal="true" aria-label="Exporting video"><div class="pb-top"><b>Exporting video…</b><span class="pb-num" data-pct>0%</span></div>' + pbar + '</div>';
+        fr.appendChild(box); body.inert = true; exp.blur();
+      }
+      const pct = box.querySelector('[data-pct]');
+      const id = t.every(() => {
+        p = Math.min(100, p + 2.5); fill(box, p); pct.textContent = Math.round(p) + '%';
+        if (p < 100) return;
+        clearInterval(id); exp.disabled = false;
+        if (bg) { q.innerHTML = idle; csToast(d, t, '“' + name + '” is ready', { ms: 4000 }); }
+        else { box.remove(); body.inert = false; m.textContent = 'Exported ' + name + '.'; }
+      }, 150);
+      if (bg) box.querySelector('[data-cancel]').addEventListener('click', () => { clearInterval(id); q.innerHTML = idle; exp.disabled = false; m.textContent = 'Export canceled.'; exp.focus(); });
+    });
+  };
+  D('progress-bar-3b', edHtml(false), edWire(false));
+  D('progress-bar-3f', edHtml(true), edWire(true));
+
+  /* 4. Out of sight */
+  const GB = 3, STEPS = 40;
+  const row = (ic, name, meta) => '<div class="cs-row"><span class="grow pb-name">' + icon(ic) + name + '</span><span class="cs-meta">' + meta + '</span></div>';
+  const driveHtml = fixed => frame('<span>My Drive</span><span data-chip></span>',
+    '<div class="app-body" style="gap:0" data-list>' + row('folder', 'Photos', '128 items') + row('book', 'Budget.xlsx', '24 KB') + row('book', 'Notes.txt', '3 KB') + '</div>' +
+    (fixed ? '' : '<div class="pb-foot"><span>Status</span><span class="bar pb-tiny" data-bar><span></span></span></div>')) +
+    '<button class="btn btn-secondary cs-sm" type="button" data-up>Upload trip-video.mov</button>';
+  const driveWire = fixed => (d, t) => {
+    const list = d.querySelector('[data-list]'), chip = d.querySelector('[data-chip]'), up = d.querySelector('[data-up]');
+    up.addEventListener('click', () => {
+      up.disabled = true;
+      list.insertAdjacentHTML('afterbegin', fixed
+        ? '<div class="pb-file"><div class="pb-top"><span class="pb-name">' + icon('play') + 'trip-video.mov</span><span class="pb-num" data-amt>0.0 of 3 GB</span></div><div class="bar" data-bar><span></span></div></div>'
+        : row('play', 'trip-video.mov', '3 GB'));
+      const r = list.firstElementChild;
+      if (fixed) chip.innerHTML = '<span class="pb-chip"><span class="spinner"></span>1 uploading</span>';
+      else fill(d, 0);
+      let s = 0;
+      const id = t.every(() => {
+        s++;
+        if (fixed) { fill(r, s / STEPS * 100); r.querySelector('[data-amt]').textContent = (GB * s / STEPS).toFixed(1) + ' of 3 GB'; }
+        else fill(d, s / STEPS * 100);
+        if (s < STEPS) return;
+        clearInterval(id);
+        if (fixed) { r.outerHTML = row('play', 'trip-video.mov', '3 GB'); chip.innerHTML = '<span class="pb-chip"><span class="cs-ok">Uploaded</span></span>'; }
+        else fill(d, 0);
+      }, 200);
+    });
+  };
+  D('progress-bar-4b', driveHtml(false), driveWire(false));
+  D('progress-bar-4f', driveHtml(true), driveWire(true));
+
+  csInit(cs);
+})();
+
+  </script>

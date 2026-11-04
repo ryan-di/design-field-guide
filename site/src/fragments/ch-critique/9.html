@@ -1,0 +1,85 @@
+<div class="stage tall" data-demo="good-heuristic-review">
+      <div class="p23-hr">
+        <div class="p23-dlg">
+          <p class="p23-cap" id="p23-hr-cap">Spot the problems</p>
+          <div class="surface p23-dlg-box" role="group" aria-labelledby="p23-hr-cap" aria-describedby="p23-hr-help">
+            <button type="button" class="p23-spot p23-dlg-title" data-spot="title">Export album</button>
+            <button type="button" class="p23-spot p23-fname" data-spot="filename">
+              <span class="p23-flabel">Filename</span>
+              <span class="p23-frow"><span class="p23-finput">final/v2?</span><span class="p23-ext">.zip</span></span>
+            </button>
+            <button type="button" class="p23-spot" data-spot="images"><span class="p23-box p23-on" aria-hidden="true"><svg class="icon"><use href="#i-check"/></svg></span><span>Include original photos<span class="p23-sr"> (ticked)</span></span></button>
+            <button type="button" class="p23-spot" data-spot="jargon"><span class="p23-box" aria-hidden="true"></span><span>Re-encode w/ EXIF strip (q=0.8)<span class="p23-sr"> (not ticked)</span></span></button>
+            <button type="button" class="p23-spot p23-status" data-spot="status"><span class="spinner" aria-hidden="true"></span><span>Preparing…</span></button>
+            <div class="p23-dlg-foot">
+              <button type="button" class="p23-spot p23-help" data-spot="help" aria-label="Small question mark icon">?</button>
+              <span class="p23-grow"></span>
+              <button type="button" class="p23-spot p23-bspot" data-spot="ok"><span class="p23-fbtn p23-fbtn-primary">OK</span></button>
+              <button type="button" class="p23-spot p23-bspot" data-spot="cancel"><span class="p23-fbtn p23-fbtn-off">Cancel</span><span class="p23-sr"> (grayed out)</span></button>
+            </div>
+          </div>
+          <p class="p23-hint" id="p23-hr-help">Every part of this mock dialog is a button. Some parts are fine.</p>
+        </div>
+        <div class="p23-side">
+          <div class="p23-bar">
+            <p class="p23-score"><b id="p23-hr-n">0</b> of 6 found</p>
+            <button class="btn btn-secondary p23-sm" type="button" id="p23-hr-reveal">Reveal all</button>
+            <button class="btn btn-ghost p23-sm" type="button" id="p23-hr-reset" hidden>Start over</button>
+          </div>
+          <p class="p23-say" id="p23-hr-say" role="status">Click anything in the dialog that looks wrong.</p>
+          <label class="check p23-sort"><input type="checkbox" id="p23-hr-sort"> Most severe first</label>
+          <ol class="p23-findings" id="p23-hr-list" aria-label="Problems found">
+            <li id="p23-hr-f-status" data-h="1" data-sev="3" hidden>
+              <p class="p23-fh"><b>1 · Visibility of system status</b><span class="p23-sev">Severity 3 · major</span></p>
+              <p>A spinner and “Preparing…” don’t say what’s happening or how long it will take. People can’t tell slow from stuck.</p>
+              <p class="p23-fix"><b>Fix:</b> name the step and show progress, like “Adding photos, 3 of 12”. A <a href="/part-3/progress/#progress-bar">progress bar</a> fits here.</p>
+            </li>
+            <li id="p23-hr-f-jargon" data-h="2" data-sev="2" hidden>
+              <p class="p23-fh"><b>2 · Match between the system and the real world</b><span class="p23-sev">Severity 2 · minor</span></p>
+              <p>“Re-encode w/ EXIF strip (q=0.8)” is the system’s language. People can’t tell what ticking it does to their photos.</p>
+              <p class="p23-fix"><b>Fix:</b> use their words and name the trade-off: “Make photos smaller (lower quality, removes location)”.</p>
+            </li>
+            <li id="p23-hr-f-cancel" data-h="3" data-sev="3" hidden>
+              <p class="p23-fh"><b>3 · User control and freedom</b><span class="p23-sev">Severity 3 · major</span></p>
+              <p>Cancel is grayed out while it prepares, and there’s no close button. Once the dialog opens, people can’t back out.</p>
+              <p class="p23-fix"><b>Fix:</b> keep Cancel and a close button working at every moment, and let Escape close it. See <a href="/part-3/dialogs/#dialog">Dialog</a>.</p>
+            </li>
+            <li id="p23-hr-f-ok" data-h="4" data-sev="2" hidden>
+              <p class="p23-fh"><b>4 · Consistency and standards</b><span class="p23-sev">Severity 2 · minor</span></p>
+              <p>“OK” doesn’t say what will happen, and it sits on the left, where other dialogs put Cancel. People press the wrong one out of habit.</p>
+              <p class="p23-fix"><b>Fix:</b> name the button for its action, “Export”, and keep the button order every other dialog uses.</p>
+            </li>
+            <li id="p23-hr-f-filename" data-h="5" data-sev="4" hidden>
+              <p class="p23-fh"><b>5 · Error prevention</b><span class="p23-sev">Severity 4 · catastrophe</span></p>
+              <p>The name field takes characters files can’t use, like “/” and “?”. Nothing warns before Export overwrites a file with the same name.</p>
+              <p class="p23-fix"><b>Fix:</b> catch bad characters as people type, and offer “final-2” when the name is taken. See <a href="/part-2/errors/#pat-constraints">Constraints</a>.</p>
+            </li>
+            <li id="p23-hr-f-help" data-h="10" data-sev="2" hidden>
+              <p class="p23-fh"><b>10 · Help and documentation</b><span class="p23-sev">Severity 2 · minor</span></p>
+              <p>The only help is a tiny “?” with no label, far from the options that need explaining.</p>
+              <p class="p23-fix"><b>Fix:</b> put one line of help right under the option that needs it, and link to the full docs from there.</p>
+            </li>
+          </ol>
+        </div>
+      </div>
+      <div class="acc surface p23-ten">
+        <details>
+          <summary>All ten heuristics</summary>
+          <div class="acc-body">
+            <ol class="p23-ten-list">
+              <li data-ten="1">Visibility of system status <span class="p23-hit" hidden>Broken here</span></li>
+              <li data-ten="2">Match between the system and the real world <span class="p23-hit" hidden>Broken here</span></li>
+              <li data-ten="3">User control and freedom <span class="p23-hit" hidden>Broken here</span></li>
+              <li data-ten="4">Consistency and standards <span class="p23-hit" hidden>Broken here</span></li>
+              <li data-ten="5">Error prevention <span class="p23-hit" hidden>Broken here</span></li>
+              <li data-ten="6">Recognition rather than recall</li>
+              <li data-ten="7">Flexibility and efficiency of use</li>
+              <li data-ten="8">Aesthetic and minimalist design</li>
+              <li data-ten="9">Help users recognize, diagnose, and recover from errors</li>
+              <li data-ten="10">Help and documentation <span class="p23-hit" hidden>Broken here</span></li>
+            </ol>
+          </div>
+        </details>
+      </div>
+      <p class="try"><b>Try it:</b> find the six problems in the export dialog. Click, or Tab and press Enter, on anything that looks wrong. Each find names the heuristic it breaks and a fix. Then tick Most severe first to see which one to fix first.</p>
+    </div>

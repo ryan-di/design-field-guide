@@ -1,0 +1,60 @@
+<div class="fm" data-fm>
+  
+  <div class="seg fm-seg" role="radiogroup" aria-label="Form">
+    <input type="radio" name="fm-radio" id="fm-radio-1" value="list" checked><label for="fm-radio-1">List</label>
+    <input type="radio" name="fm-radio" id="fm-radio-2" value="inline"><label for="fm-radio-2">Inline</label>
+    <input type="radio" name="fm-radio" id="fm-radio-3" value="cards"><label for="fm-radio-3">Cards</label>
+    <input type="radio" name="fm-radio" id="fm-radio-4" value="follow"><label for="fm-radio-4">With a follow-up</label>
+  </div>
+  <div class="fm-stage" data-fm-stage></div>
+  <p class="fig-cap" data-fm-when aria-live="polite"></p>
+  <script>
+  (() => {
+    const fm = document.currentScript.closest('[data-fm]'), stage = fm.querySelector('[data-fm-stage]'), when = fm.querySelector('[data-fm-when]');
+    const icon = n => '<svg class="icon sm"><use href="#i-' + n + '"/></svg>';
+    const r = (name, v, label, on, small) => '<label class="check"><input type="radio" name="' + name + '" value="' + v + '"' + (on ? ' checked' : '') + '><span>' + label + (small ? '<small>' + small + '</small>' : '') + '</span></label>';
+    const card = (name, v, title, price, small, on) => '<label class="rf-opt"><input type="radio" name="' + name + '" value="' + v + '"' + (on ? ' checked' : '') + '><span class="rf-t"><span class="rf-top"><span>' + title + '</span><span>' + price + '</span></span><small>' + small + '</small></span></label>';
+    const F = {
+      list: {
+        html: '<form class="rf-card surface"><fieldset><legend>Email me a summary of my account</legend>' + r('fm-radio-x1', 'daily', 'Every day') + r('fm-radio-x1', 'weekly', 'Every week', true) + r('fm-radio-x1', 'monthly', 'Every month') + r('fm-radio-x1', 'never', 'Never') + '</fieldset><button class="btn btn-primary" type="button" data-save>Save</button><p class="rf-out" data-out></p></form>',
+        use: 'Use it for three to six options. One under the other, they’re the easiest to read, and the labels can be as long as they need.',
+        wire: s => {
+          const out = s.querySelector('[data-out]');
+          s.querySelectorAll('input').forEach(i => i.addEventListener('change', () => { out.textContent = ''; }));
+          s.querySelector('[data-save]').addEventListener('click', () => { const c = s.querySelector('input:checked'); out.innerHTML = icon('check') + '<span>Saved. ' + (c.value === 'never' ? 'You won’t get summaries.' : 'You’ll get a summary ' + c.parentNode.textContent.toLowerCase() + '.') + '</span>'; });
+        }
+      },
+      inline: {
+        html: '<form class="rf-card surface"><fieldset><legend>Flights to Lisbon</legend><div class="rf-row">' + r('fm-radio-x2', 'return', 'Return', true) + r('fm-radio-x2', 'oneway', 'One way') + '</div></fieldset><div class="rf-dates" data-dates><label>Leave<input class="input" value="Fri 12 Jun"></label><label data-back>Come back<input class="input" value="Sun 21 Jun"></label></div><button class="btn btn-primary" type="button">Search flights</button></form>',
+        use: 'Use it for two or three short options that fit on one line. Keep each label to a word or two, or the row wraps and gets hard to read.',
+        wire: s => {
+          const back = s.querySelector('[data-back]'), dates = s.querySelector('[data-dates]');
+          s.querySelectorAll('input[type=radio]').forEach(i => i.addEventListener('change', () => { const one = i.value === 'oneway'; back.hidden = one; dates.classList.toggle('one', one); }));
+        }
+      },
+      cards: {
+        html: '<form class="rf-card surface"><fieldset><legend>Delivery</legend>' + card('fm-radio-x3', 'std', 'Standard', 'Free', 'Arrives Tue 16 – Thu 18 Jun', true) + card('fm-radio-x3', 'exp', 'Express', '$6.99', 'Arrives tomorrow by 9 pm') + card('fm-radio-x3', 'pick', 'Pick up in store', 'Free', 'Ready today from 4 pm at Market St') + '</fieldset><p class="cs-meta" data-total>Total $48.00</p></form>',
+        use: 'Use it when each option needs a price or a short detail to choose well. The whole card responds to a click, not just the small circle.',
+        wire: s => {
+          const t = s.querySelector('[data-total]');
+          s.querySelectorAll('input').forEach(i => i.addEventListener('change', () => { t.textContent = 'Total ' + (i.value === 'exp' ? '$54.99' : '$48.00'); }));
+        }
+      },
+      follow: {
+        html: '<form class="rf-card surface"><fieldset><legend>Why are you cancelling?</legend>' + r('fm-radio-x4', 'price', 'It costs too much') + r('fm-radio-x4', 'use', 'I don’t use it enough') + r('fm-radio-x4', 'other', 'Something else') + '<div class="rf-more" data-more hidden><label class="field-help">Tell us more (optional)<input class="input" placeholder="What made you leave?"></label></div></fieldset><button class="btn btn-secondary" type="button">Continue</button></form>',
+        use: 'Use it when one answer needs more detail. The extra field appears right under that option, and only once it’s picked.',
+        wire: s => {
+          const more = s.querySelector('[data-more]');
+          s.querySelectorAll('input[type=radio]').forEach(i => i.addEventListener('change', () => { more.hidden = i.value !== 'other'; }));
+        }
+      }
+    };
+    const show = k => {
+      stage.innerHTML = F[k].html; F[k].wire(stage);
+      when.innerHTML = '<b>' + fm.querySelector('.fm-seg input:checked + label').textContent + '.</b> ' + F[k].use;
+    };
+    fm.querySelectorAll('.fm-seg input').forEach(i => i.addEventListener('change', () => show(i.value)));
+    show('list');
+  })();
+  </script>
+</div>

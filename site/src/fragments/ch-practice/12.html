@@ -1,0 +1,194 @@
+<script>
+(() => {
+  const cs = document.currentScript.closest('.cs');
+  const run = () => {
+  const D = (k, html, wire) => csDemo(cs.querySelector('[data-d="' + k + '"]'), html, wire);
+  const st = document.createElement('style');
+  st.textContent = `
+#good-real-material .rm-card{width:min(360px,100%);background:var(--ui-surface);border:1px solid var(--ui-border);border-radius:12px;box-shadow:var(--ui-shadow);padding:12px 14px;display:flex;flex-direction:column;gap:10px;text-align:left}
+#good-real-material .rm-stamp{font:600 11.5px var(--font-mono);letter-spacing:.06em;text-transform:uppercase;color:var(--ui-muted)}
+#good-real-material .rm-q{display:flex;align-items:center;gap:8px;border:1.5px solid var(--ui-border);border-radius:9px;padding:8px 10px;color:var(--ui-text);background:var(--ui-bg)}
+#good-real-material .rm-q .icon{color:var(--ui-muted)}
+#good-real-material .rm-q input{all:unset;flex:1;min-width:0;font:400 15px var(--font-body)}
+#good-real-material .rm-q:focus-within{border-color:var(--ui-sel);box-shadow:0 0 0 3px var(--ui-sel-soft)}
+#good-real-material .rm-res{display:flex;flex-direction:column;min-height:120px}
+#good-real-material .rm-item{display:flex;align-items:center;gap:10px;padding:7px 0;border-bottom:1px solid var(--ui-border);font-size:14px;min-width:0}
+#good-real-material .rm-item:last-child{border-bottom:0}
+#good-real-material .rm-item .thumb{width:34px;flex:none;aspect-ratio:1}
+#good-real-material .rm-item span{flex:1;min-width:0}
+#good-real-material .rm-cut span{white-space:nowrap;overflow:hidden}
+#good-real-material .rm-wrap span{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;line-height:1.3}
+#good-real-material .rm-wait{display:flex;align-items:center;gap:8px;color:var(--ui-muted);font-size:14px;padding:8px 0}
+#good-real-material .rm-pr{width:min(380px,100%);background:var(--ui-surface);border:1px solid var(--ui-border);border-radius:12px;box-shadow:var(--ui-shadow);overflow:hidden;text-align:left}
+#good-real-material .rm-prh{padding:10px 14px;border-bottom:1px solid var(--ui-border);display:flex;flex-direction:column;gap:4px}
+#good-real-material .rm-prh b{font-size:15px}
+#good-real-material .rm-br{align-self:flex-start;font:500 12.5px var(--font-mono);background:var(--ui-hover);border-radius:5px;padding:2px 7px;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+#good-real-material .rm-br.proto{background:color-mix(in srgb,#d69e2e 22%,var(--ui-surface))}
+#good-real-material .rm-code{margin:0;padding:10px 14px;font:12.5px/1.55 var(--font-mono);background:var(--ui-bg);color:var(--ui-text);white-space:pre-wrap;border-bottom:1px solid var(--ui-border)}
+#good-real-material .rm-code i{font-style:normal;color:var(--ui-muted)}
+#good-real-material .rm-code em{font-style:normal;font-weight:700;color:var(--ui-text);background:color-mix(in srgb,#d69e2e 22%,var(--ui-surface))}
+#good-real-material .rm-foot{padding:10px 14px;display:flex;flex-direction:column;gap:8px;font-size:14px}
+#good-real-material .rm-later{border-left:3px solid var(--ui-danger);padding:4px 10px;font-size:14px;line-height:1.45}
+#good-real-material .rm-later.ok{border-left-color:var(--ui-ok)}
+#good-real-material .rm-show{width:min(360px,100%);background:var(--ui-surface);border:1px solid var(--ui-border);border-radius:12px;box-shadow:var(--ui-shadow);padding:12px;display:flex;flex-direction:column;gap:10px;text-align:left}
+#good-real-material .rm-photo{position:relative;aspect-ratio:16/9;border-radius:8px;overflow:hidden}
+#good-real-material .rm-photo .thumb{display:block;position:absolute;inset:0;aspect-ratio:auto;border-radius:0}
+#good-real-material .rm-cap{position:absolute;left:0;right:0;bottom:0;padding:8px 10px;background:color-mix(in srgb,#000 55%,transparent);color:#fff;font-size:13.5px;line-height:1.35}
+#good-real-material .rm-sl{display:grid;grid-template-columns:auto minmax(0,1fr) auto;align-items:center;gap:10px;font-size:14px}
+#good-real-material .rm-sl input{width:100%;accent-color:var(--ui-sel)}
+#good-real-material .rm-sl output{font:600 13px var(--font-mono);min-width:3.5em;text-align:right}
+#good-real-material .rm-goal{border:1px solid var(--ui-border);border-radius:9px;padding:8px 10px;font-size:13.5px;line-height:1.45;background:var(--ui-bg)}
+#good-real-material .rm-goal b{display:block;font:600 11.5px var(--font-mono);letter-spacing:.06em;text-transform:uppercase;color:var(--ui-muted)}
+#good-real-material .rm-chk{display:flex;align-items:center;gap:8px;font-size:14px;font-weight:600;color:var(--ui-danger)}
+#good-real-material .rm-chk.ok{color:var(--ui-ok)}
+#good-real-material .rm-pl{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;width:100%}
+#good-real-material .rm-pc{width:min(200px,100%);background:var(--ui-surface);border:1px solid var(--ui-border);border-radius:10px;padding:10px;display:flex;flex-direction:column;gap:6px;text-align:left;overflow:hidden;box-shadow:var(--ui-shadow)}
+#good-real-material .rm-pc .thumb{aspect-ratio:2/1}
+#good-real-material .rm-pc b{font-size:14px;line-height:1.3}
+#good-real-material .rm-pc.cut b{white-space:nowrap}
+#good-real-material .rm-pc.wrap b{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+#good-real-material .rm-pc .blank{aspect-ratio:2/1;border-radius:8px;background:var(--ui-bg);border:1px dashed var(--ui-border)}
+#good-real-material .rm-pc.narrow{width:min(140px,100%)}
+#good-real-material .rm-pc .acts{display:flex;gap:6px;flex-wrap:wrap}
+#good-real-material .rm-pc.squeeze .acts{flex-wrap:nowrap}
+#good-real-material .rm-pc.squeeze .acts .btn{flex:none}
+#good-real-material .rm-tag{font:600 11px var(--font-mono);letter-spacing:.06em;text-transform:uppercase;color:var(--ui-danger)}
+#good-real-material .rm-tag.ok{color:var(--ui-ok)}
+#good-real-material .rm-cases{display:flex;flex-wrap:wrap;gap:6px;justify-content:center}
+#good-real-material .rm-cases button[aria-pressed="true"]{background:var(--ui-sel-soft);border-color:var(--ui-sel)}
+#good-real-material .rm-cases button.seen::after{content:" ✓";color:var(--ui-ok)}
+`;
+  cs.prepend(st);
+  const icon = n => '<svg class="icon sm"><use href="#i-' + n + '"/></svg>';
+
+  /* 1. Prototype the risky part early */
+  const REAL = ['Desk lamp with dimmer and USB charging port, matte black', 'Clip-on reading lamp, warm white, battery or cable', 'Floor lamp with linen shade and foot switch, 160 cm'];
+  const TIDY = ['Desk lamp', 'Reading lamp', 'Floor lamp'];
+  const rows = (names, cls) => '<div class="' + cls + '">' + names.map((n, i) => '<div class="rm-item"><i class="thumb' + ['', ' b', ' c'][i] + '"></i><span>' + n + '</span></div>').join('') + '</div>';
+  const search = (val, ro) => '<label class="rm-q">' + icon('search') + '<input ' + (ro ? 'value="' + val + '" readonly tabindex="-1" aria-label="Search (picture)"' : 'placeholder="Search the shop" aria-label="Search the shop" autocomplete="off"') + '></label>';
+  const wireSearch = (d, t, fixed, onDone) => {
+    const inp = d.querySelector('input'), res = d.querySelector('[data-res]');
+    let gen = 0;
+    inp.addEventListener('input', () => {
+      const g = ++gen, q = inp.value.trim();
+      res.innerHTML = q && fixed ? '<div class="rm-wait"><span class="spinner"></span>Searching…</div>' : '';
+      if (!q) return;
+      t.after(() => {
+        if (g !== gen) return;
+        res.innerHTML = rows(REAL, fixed ? 'rm-wrap' : 'rm-cut');
+        onDone();
+      }, 1200);
+    });
+  };
+  D('good-real-material-1b',
+    '<div class="rm-card" data-stage><span class="rm-stamp">Week 1 · Mockup, approved</span>' + search('lamp', true) + '<div class="rm-res">' + rows(TIDY, 'rm-wrap') + '</div></div>' +
+    '<button class="btn btn-secondary cs-sm" type="button" data-build>Week 4: open the first build</button><p class="cs-meta" data-note></p>',
+    (d, t) => {
+      const note = d.querySelector('[data-note]');
+      d.querySelector('[data-build]').addEventListener('click', e => {
+        e.target.remove();
+        d.querySelector('[data-stage]').innerHTML = '<span class="rm-stamp">Week 4 · First build</span>' + search('', false) + '<div class="rm-res" data-res></div>';
+        wireSearch(d, t, false, () => { note.textContent = 'Found in week 4, after sign-off: nothing shows for a second, and long names are cut off.'; });
+        d.querySelector('input').focus();
+      });
+    });
+  D('good-real-material-1f',
+    '<div class="rm-card"><span class="rm-stamp">Week 1 · Prototype in code</span>' + search('', false) + '<div class="rm-res" data-res></div><p class="cs-meta">Real product names, real 1.2 s response.</p></div><p class="cs-meta" data-note></p>',
+    (d, t) => {
+      const note = d.querySelector('[data-note]');
+      wireSearch(d, t, true, () => { note.textContent = 'Found in week 1, before sign-off. The design now has a loading line and two-line names.'; });
+    });
+
+  /* 2. Throwaway code */
+  const pr = fixed => '<div class="rm-pr"><div class="rm-prh"><b>Add search suggestions</b><span class="rm-br' + (fixed ? ' proto' : '') + '">' + (fixed ? 'prototype/search-suggestions' : 'search-suggestions') + '</span></div>' +
+    '<pre class="rm-code">' + (fixed ? '<em>// PROTOTYPE. Throwaway: fake delay,\n// hard-coded colors, no tests.\n// Rebuild before shipping.</em>\n' : '') +
+    'const DELAY = 1200; <i>// fake server</i>\nlist.style.color = \'#3b6fd8\';\nshowSuggestions(words.slice(0, 5));</pre>' +
+    '<div class="rm-foot" data-foot><span class="cs-meta">1 approval · checks passed</span><button class="btn btn-primary cs-sm" type="button" data-merge style="align-self:flex-start">Merge</button></div></div>';
+  D('good-real-material-2b', pr(false), (d, t) => {
+    d.querySelector('[data-merge]').addEventListener('click', () => {
+      const f = d.querySelector('[data-foot]');
+      f.innerHTML = '<span class="cs-ok">Merged and shipped.</span><span class="cs-meta">Three months later…</span>';
+      t.after(() => { f.insertAdjacentHTML('beforeend', '<p class="rm-later">“Why do suggestions always take 1.2 seconds?” The delay was fake, and nobody remembered.</p>'); }, 700);
+    });
+  });
+  D('good-real-material-2f', pr(true), d => {
+    d.querySelector('[data-merge]').addEventListener('click', () => {
+      d.querySelector('[data-foot]').innerHTML = '<span class="cs-meta">Not merged.</span><p class="rm-later ok">This branch is a prototype. It proved the idea, so a task was opened to build it properly with tokens and tests.</p>';
+    });
+  });
+
+  /* 3. Goal first */
+  const show = goal => '<div class="rm-show"><div class="rm-photo"><i class="thumb b"></i><span class="rm-cap" data-cap>Ana and Leo on the ferry to Cacilhas, just before the rain started.</span></div>' +
+    '<label class="rm-sl"><span>Seconds per slide</span><input type="range" min="1" max="8" step="0.5" value="2" data-s><output data-o>2 s</output></label>' +
+    (goal ? '<div class="rm-goal"><b>Done when</b>People can read a two-line caption before the slide changes. That takes about 4 s.</div><p class="rm-chk" data-chk></p>' : '<p class="cs-meta" data-tw>Tweaks: 0</p>') + '</div>';
+  const fmt = v => (Number.isInteger(v) ? v : v.toFixed(1)) + ' s';
+  D('good-real-material-3b', show(false), d => {
+    const s = d.querySelector('[data-s]'), o = d.querySelector('[data-o]'), tw = d.querySelector('[data-tw]');
+    const MOOD = [[0, ''], [2, 'Looks OK? Maybe a little slower.'], [4, 'Or faster. Hard to say.'], [6, 'Still not sure. It’s getting late.'], [8, 'You stop because you’re tired, not because it works.']];
+    let n = 0, last = s.value;
+    s.addEventListener('change', () => {
+      if (s.value === last) return; last = s.value; n++;
+      const m = MOOD.filter(x => n >= x[0]).pop()[1];
+      tw.textContent = 'Tweaks: ' + n + (m ? '. ' + m : '');
+    });
+    s.addEventListener('input', () => { o.textContent = fmt(Number(s.value)); });
+  });
+  D('good-real-material-3f', show(true), d => {
+    const s = d.querySelector('[data-s]'), o = d.querySelector('[data-o]'), chk = d.querySelector('[data-chk]');
+    const r = () => {
+      const v = Number(s.value), ok = v >= 4 && v <= 6;
+      o.textContent = fmt(v);
+      chk.className = 'rm-chk' + (ok ? ' ok' : '');
+      chk.innerHTML = icon(ok ? 'check' : 'x') + (v < 4 ? fmt(v) + ': fails. The caption is gone before people finish it.' : ok ? fmt(v) + ': passes. Stop here.' : fmt(v) + ': fails the other way. People wait for the next photo.');
+    };
+    s.addEventListener('input', r); r();
+  });
+
+  /* 4. Messy cases */
+  const card = (cls, name, meta, body) => '<div class="rm-pc ' + cls + '">' + body + '<b>' + name + '</b><span class="cs-meta">' + meta + '</span></div>';
+  const art = '<i class="thumb"></i>';
+  const acts = '<div class="acts"><span class="btn btn-secondary cs-sm">Play</span><span class="btn btn-secondary cs-sm">Shuffle</span><span class="btn btn-ghost cs-sm">Share</span></div>';
+  const LONG = 'Songs for the long drive to Grandma’s house in the mountains';
+  D('good-real-material-4b',
+    '<div class="rm-pl" data-pl>' + card('cut', 'Morning mix', '24 songs', art) + '</div><span class="cs-meta" data-lab>Tried with sample data</span>' +
+    '<button class="btn btn-primary cs-sm" type="button" data-go>Launch</button>',
+    d => {
+      d.querySelector('[data-go]').addEventListener('click', e => {
+        e.target.remove();
+        d.querySelector('[data-lab]').textContent = 'After launch, people report:';
+        d.querySelector('[data-pl]').innerHTML =
+          card('cut', LONG, '<span class="rm-tag">Name cut off</span>', art) +
+          card('cut', 'New playlist', '<span class="rm-tag">Empty: blank card</span>', '<i class="blank"></i>') +
+          card('cut narrow squeeze', 'Morning mix', '<span class="rm-tag">Small phone: buttons cut</span>', art + acts);
+      });
+    });
+  const CASES = {
+    sample: ['Sample', () => card('wrap', 'Morning mix', '24 songs', art + acts)],
+    long: ['Long name', () => card('wrap', LONG, '31 songs · name wraps to two lines', art + acts)],
+    empty: ['Empty', () => card('wrap', 'New playlist', 'No songs yet', '<i class="blank"></i><span class="btn btn-secondary cs-sm" style="align-self:flex-start">Add songs</span>')],
+    slow: ['Slow', () => '<div class="rm-pc"><div class="skel" style="aspect-ratio:2/1"></div><div class="skel t"></div><div class="skel t2"></div></div>'],
+    narrow: ['Small phone', () => card('wrap narrow', 'Morning mix', '24 songs · buttons wrap', art + acts)]
+  };
+  D('good-real-material-4f',
+    '<div class="rm-cases" role="group" aria-label="Case">' + Object.keys(CASES).map(k => '<button class="btn btn-secondary cs-sm" type="button" aria-pressed="false" data-k="' + k + '">' + CASES[k][0] + '</button>').join('') + '</div>' +
+    '<div class="rm-pl" data-pl></div><p class="cs-meta" data-n></p>',
+    d => {
+      const pl = d.querySelector('[data-pl]'), n = d.querySelector('[data-n]'), btns = [...d.querySelectorAll('[data-k]')];
+      const seen = new Set();
+      const go = k => {
+        btns.forEach(b => b.setAttribute('aria-pressed', String(b.dataset.k === k)));
+        pl.innerHTML = CASES[k][1]();
+        if (k !== 'sample') { seen.add(k); d.querySelector('[data-k="' + k + '"]').classList.add('seen'); }
+        n.textContent = 'Messy cases tried before launch: ' + seen.size + ' of 4' + (seen.size === 4 ? '. Each one has a design.' : '');
+      };
+      btns.forEach(b => b.addEventListener('click', () => go(b.dataset.k)));
+      go('sample');
+    });
+
+  csInit(cs);
+  };
+  /* csDemo and csInit are defined further down the book, so wait for them */
+  if (window.csDemo) run(); else document.addEventListener('DOMContentLoaded', run);
+})();
+
+</script>

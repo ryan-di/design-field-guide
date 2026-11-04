@@ -1,0 +1,322 @@
+---
+title: "Containers"
+description: "Tabs, accordions and cards save space by hiding some content until people open it."
+eyebrow: "Chapter 22"
+sidebar:
+  label: "Containers"
+---
+
+import Raw from '../../../components/Raw.astro';
+import Learned from '../../../components/Learned.astro';
+import Runtime from '../../../components/Runtime.astro';
+import F0 from '../../../fragments/ch-containers/0.html?raw';
+import F1 from '../../../fragments/ch-containers/1.html?raw';
+import F2 from '../../../fragments/ch-containers/2.html?raw';
+import F3 from '../../../fragments/ch-containers/3.html?raw';
+import F4 from '../../../fragments/ch-containers/4.html?raw';
+import F5 from '../../../fragments/ch-containers/5.html?raw';
+import F6 from '../../../fragments/ch-containers/6.html?raw';
+import F7 from '../../../fragments/ch-containers/7.html?raw';
+import F8 from '../../../fragments/ch-containers/8.html?raw';
+import F9 from '../../../fragments/ch-containers/9.html?raw';
+import F10 from '../../../fragments/ch-containers/10.html?raw';
+import F11 from '../../../fragments/ch-containers/11.html?raw';
+import F12 from '../../../fragments/ch-containers/12.html?raw';
+import F13 from '../../../fragments/ch-containers/13.html?raw';
+import F14 from '../../../fragments/ch-containers/14.html?raw';
+import F15 from '../../../fragments/ch-containers/15.html?raw';
+import F16 from '../../../fragments/ch-containers/16.html?raw';
+import F17 from '../../../fragments/ch-containers/17.html?raw';
+import F18 from '../../../fragments/ch-containers/18.html?raw';
+import F19 from '../../../fragments/ch-containers/19.html?raw';
+import F20 from '../../../fragments/ch-containers/20.html?raw';
+import F21 from '../../../fragments/ch-containers/21.html?raw';
+import F22 from '../../../fragments/ch-containers/22.html?raw';
+import F23 from '../../../fragments/ch-containers/23.html?raw';
+
+<Runtime at="start" />
+
+<section class="dfg-chapter" id="ch-containers">
+
+Tabs, accordions and cards save space by hiding some content until people open it. Keep in view what people need every time or need to compare, and hide only the rest.
+
+<article class="entry essay" id="tabs" data-entry data-name="Tabs">
+
+<div class="entry-head">
+
+## Tabs \{#tabs-h\}
+
+<Learned id="tabs" />
+
+</div>
+
+Tabs split one thing into a few parts and show one part at a time. A hotel page might have Overview, Rooms and Reviews. The tab names sit in a row with the selected one marked, and picking a tab swaps the panel below it while the rest of the page stays where it is.
+
+Each tab holds different content, where a [segmented control](/part-3/inputs/#segmented) changes how the same content is shown, such as a list or a grid.
+
+<Raw html={F0} />
+
+### Forms \{#tabs-forms\}
+
+Tabs come in three common forms, which differ in who decides what the tabs are and in what each tab remembers. Line tabs split one section of a page, a tab bar holds the main sections of a phone app, and document tabs are ones people open and close themselves, like browser tabs.
+
+<Raw html={F1} />
+
+### Rules \{#tabs-rules\}
+
+Four rules keep tabs useful.
+
+<div class="cs essay-cs">
+
+<section class="rule" id="tabs-rule-1">
+
+#### 1. Put things to compare side by side \{#tabs-rule-1-h\}
+
+Tabs show one panel at a time, so when people need to compare, such as rooms and their prices, they flip back and forth and keep the numbers in their head. That is slow and easy to get wrong. Put the options side by side, or in one table with a column per option, so the eye does the comparing and the answer takes one look.
+
+<Raw html={F2} />
+
+</section>
+
+<section class="rule" id="tabs-rule-2">
+
+#### 2. Keep to a few tabs \{#tabs-rule-2-h\}
+
+Only so many tabs fit in a row, so the rest hide past the edge, often behind a faint fade, and people miss them or scroll sideways to look. For more than about six sections, list them top to bottom in [side navigation](/part-3/navigation/#side-nav), where every section is visible and the list has room to grow. Or keep a few tabs and put the rarely used sections in a select.
+
+<Raw html={F3} />
+
+</section>
+
+<section class="rule" id="tabs-rule-3">
+
+#### 3. Use a stepper for steps \{#tabs-rule-3-h\}
+
+Tabs tell people they can open them in any order, so when the parts have to happen in order, people jump ahead and only learn at the end that something earlier was needed. A [stepper](/part-3/navigation/#stepper) shows the order and where people are, and it checks each step before the next one, so nothing fails at the last moment.
+
+<Raw html={F4} />
+
+</section>
+
+<section class="rule" id="tabs-rule-4">
+
+#### 4. Keep short content on one page \{#tabs-rule-4-h\}
+
+When each tab holds a field or two, checking them all costs a click per tab, and people never see the whole thing before they save. On one short page with headings, they check everything at a glance and save with one click.
+
+<Raw html={F5} />
+
+</section>
+
+<Raw html={F6} />
+
+</div>
+
+### In real products \{#tabs-products\}
+
+<Raw html={F7} />
+
+</article>
+
+<article class="entry essay" id="accordion" data-entry data-name="Accordion">
+
+<div class="entry-head">
+
+## Accordion \{#accordion-h\}
+
+<Learned id="accordion" />
+
+</div>
+
+An accordion is a stack of headers. Each header opens to show the content under it and closes to hide it again, which keeps a long page short when most people need only part of it, like the answers on a help page or the filters in a shop.
+
+Where [tabs](#tabs) keep their names in a row and show one panel at a time, an accordion keeps its headers in a column, opens each section in place, and can show several at once.
+
+<Raw html={F8} />
+
+### Forms \{#accordion-forms\}
+
+Accordions differ in how their sections open and in what a closed header shows. In the most common form, each section opens on its own. In another, opening one section closes the others. In a filter panel, each closed header also shows what’s chosen inside it.
+
+<Raw html={F9} />
+
+### Rules \{#accordion-rules\}
+
+Four rules keep accordions useful.
+
+<div class="cs essay-cs">
+
+<section class="rule" id="accordion-rule-1">
+
+#### 1. Show what people come for \{#accordion-rule-1-h\}
+
+Most people open an order page to see when it arrives, so if that sits behind a closed header, every visit costs the same extra click. Show the part people come for as soon as the page loads, either open or above the accordion, and leave behind headers only what few people need.
+
+<Raw html={F10} />
+
+</section>
+
+<section class="rule" id="accordion-rule-2">
+
+#### 2. Don’t fold what people read in full \{#accordion-rule-2-h\}
+
+Some pages are read from top to bottom, like the details of a home before booking it. In an accordion, people open the sections one by one, and a closed header doesn’t show what’s inside. Put it all on one page instead, with headings to guide the eye and a few links at the top that jump to each part.
+
+<Raw html={F11} />
+
+</section>
+
+<section class="rule" id="accordion-rule-3">
+
+#### 3. Keep it one level deep \{#accordion-rule-3-h\}
+
+Each level of nesting costs another click and pushes the content further in, so a setting three levels down is hard to find and people lose track of where they are. Open one level, and group what’s inside with small headings. If that is still too much, split it into separate pages.
+
+<Raw html={F12} />
+
+</section>
+
+<section class="rule" id="accordion-rule-4">
+
+#### 4. Don’t hide what people must see \{#accordion-rule-4-h\}
+
+People read what’s open and skip what’s closed. If a problem sits in a closed section, such as an expired card, the page looks fine and people leave, and they find out later, when something stops working. Show the problem where people look first, with the fix next to it, and keep the accordion for extra detail.
+
+<Raw html={F13} />
+
+</section>
+
+<Raw html={F14} />
+
+</div>
+
+### In real products \{#accordion-products\}
+
+<Raw html={F15} />
+
+</article>
+
+<article class="entry essay" id="card" data-entry data-name="Card">
+
+<div class="entry-head">
+
+## Card \{#card-h\}
+
+<Learned id="card" />
+
+</div>
+
+A card is a box that holds one item: a photo album, a home to rent, a product. It shows just enough to tell items apart, such as a picture, a name and a detail or two, so people can scan a set of cards, compare them at a glance, and open one to see the rest.
+
+A row in a list lines up the same details in columns, which is better for comparing dates or prices. A card gives each item room for a picture instead, which helps when people know items by how they look.
+
+<Raw html={F16} />
+
+### Forms \{#card-forms\}
+
+Cards come in a few forms, and the form decides what a click on the card does. A media card leads with a picture, and a horizontal card puts the picture beside the text, so it fits in a list. A summary card shows a few key figures, like an account balance. A choice card is picked instead of opened, like a plan.
+
+<Raw html={F17} />
+
+### Rules \{#card-rules\}
+
+Four rules keep cards useful.
+
+<div class="cs essay-cs">
+
+<section class="rule" id="card-rule-1">
+
+#### 1. Give each card one main action \{#card-rule-1-h\}
+
+Every button on a card takes space from the name and the picture, so a page of busy cards is hard to scan. Risky actions like Delete also end up next to everyday ones, one slip away. Let a click anywhere on the card open it, and put the rarer actions in one ⋯ menu.
+
+<Raw html={F18} />
+
+</section>
+
+<section class="rule" id="card-rule-2">
+
+#### 2. Put the cards in order \{#card-rule-2-h\}
+
+With no order and no dates, every card is a guess, and people open them one by one to find the right one. Sort or group them the way people remember the items, such as newest first for albums, and show the date. For comparing details like photo counts, offer a list view, where the values line up in columns.
+
+<Raw html={F19} />
+
+</section>
+
+<section class="rule" id="card-rule-3">
+
+#### 3. Make the whole card one target \{#card-rule-3-h\}
+
+When a card holds several click targets, one inside another, people can’t predict what a click will do: a shop name might open the shop, and a heart might save the item and open it too. Make the card one link that always opens the item, and keep the one extra action, like save, outside that link, so it does only its own job.
+
+<Raw html={F20} />
+
+</section>
+
+<section class="rule" id="card-rule-4">
+
+#### 4. Don’t put everything in a card \{#card-rule-4-h\}
+
+Cards are for separate items of the same kind, like albums or homes to rent. When every setting sits in its own box, the page fills with borders and shadows, nothing groups, and the boxes look clickable when they aren’t. Use plain rows under headings, and let [the space between them](/part-1/clarity/#good-proximity) do the grouping.
+
+<Raw html={F21} />
+
+</section>
+
+<Raw html={F22} />
+
+</div>
+
+### In real products \{#card-products\}
+
+<Raw html={F23} />
+
+</article>
+
+<aside class="in-short" id="ch-containers-in-short" aria-labelledby="ch-containers-in-short-h" data-pagefind-ignore>
+
+## In short \{#ch-containers-in-short-h\}
+
+<div class="is-grid">
+
+<div>
+
+<a class="is-e" href="#tabs">Tabs</a>
+
+1. [Put things to compare side by side](#tabs-rule-1)
+2. [Keep to a few tabs](#tabs-rule-2)
+3. [Use a stepper for steps](#tabs-rule-3)
+4. [Keep short content on one page](#tabs-rule-4)
+
+</div>
+
+<div>
+
+<a class="is-e" href="#accordion">Accordion</a>
+
+1. [Show what people come for](#accordion-rule-1)
+2. [Don’t fold what people read in full](#accordion-rule-2)
+3. [Keep it one level deep](#accordion-rule-3)
+4. [Don’t hide what people must see](#accordion-rule-4)
+
+</div>
+
+<div>
+
+<a class="is-e" href="#card">Card</a>
+
+1. [Give each card one main action](#card-rule-1)
+2. [Put the cards in order](#card-rule-2)
+3. [Make the whole card one target](#card-rule-3)
+4. [Don’t put everything in a card](#card-rule-4)
+
+</div>
+
+</div>
+
+</aside>
+
+</section>
+
+<Runtime chapter="ch-containers" />

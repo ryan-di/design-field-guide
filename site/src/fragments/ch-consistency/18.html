@@ -1,0 +1,48 @@
+<div class="note comfy cw-wrap">
+  <div class="seg cw-seg" role="radiogroup" aria-label="Example">
+    <input type="radio" name="cw-good-break-on-purpose-w" id="cw-good-break-on-purpose-w-1" value="github" checked><label for="cw-good-break-on-purpose-w-1">GitHub</label>
+    <input type="radio" name="cw-good-break-on-purpose-w" id="cw-good-break-on-purpose-w-2" value="gmail"><label for="cw-good-break-on-purpose-w-2">Gmail</label>
+    <input type="radio" name="cw-good-break-on-purpose-w" id="cw-good-break-on-purpose-w-3" value="spotify"><label for="cw-good-break-on-purpose-w-3">Spotify</label>
+    <input type="radio" name="cw-good-break-on-purpose-w" id="cw-good-break-on-purpose-w-4" value="ios"><label for="cw-good-break-on-purpose-w-4">iOS</label>
+  </div>
+  <div class="cw" data-cw-view role="img" aria-label=""></div>
+  <p class="cw-cap" data-cw-cap aria-live="polite"></p>
+  
+  <script>
+  (() => {
+    const wrap = document.currentScript.closest('.cw-wrap');
+    const view = wrap.querySelector('[data-cw-view]'), cap = wrap.querySelector('[data-cw-cap]');
+    const ic = id => '<svg class="icon sm"><use href="#i-' + id + '"/></svg>';
+    const svg = d => '<svg class="icon sm" viewBox="0 0 24 24">' + d + '</svg>';
+    const row = (text, btn) => '<div class="cw-gbrk-r"><span>' + text + '</span><span class="cw-gbrk-b">' + btn + '</span></div>';
+    const line = w => '<i class="cw-line cw-gbrk-w' + w + '"></i>';
+    const item = (text, on, n) => '<span class="cw-gbrk-item' + (on ? ' on' : '') + '"><span>' + text + '</span>' + (n ? '<span>' + n + '</span>' : '') + '</span>';
+    const trk = '<div class="cw-gbrk-trk"><i class="sq"></i>' + line(70) + '</div>';
+    const mi = (text, icon, cls) => '<span class="cw-gbrk-mi' + (cls ? ' ' + cls : '') + '"><span>' + text + '</span>' + icon + '</span>';
+    const S = {
+      github: { html: '<div class="cw-gbrk-page"><span class="cw-gbrk-h">General</span>' + row('Repository name', 'Rename') + row('Default branch', 'Switch') +
+          '<span class="cw-gbrk-dz">Danger Zone</span><div class="cw-gbrk-zone">' + row('Change visibility', 'Change') + row('Archive this repository', 'Archive') + row('Delete this repository', 'Delete') + '</div></div>',
+        alt: 'A settings page with plain rows and plain buttons. At the bottom, under the heading Danger Zone, a red-bordered box holds Change visibility, Archive and Delete, with red button text.',
+        cap: 'GitHub: a repository’s settings page stays plain until the bottom. The few actions that are hard to undo, like Archive and Delete, sit together in a red-bordered “Danger Zone” with its own heading.' },
+      gmail: { html: '<div class="cw-gbrk-mail"><div class="cw-gbrk-side"><span class="cw-gbrk-comp">' + ic('plus') + 'Compose</span>' + item('Inbox', true, 12) + item('Starred') + item('Sent') + item('Drafts', false, 2) + '</div>' +
+          '<div class="cw-gbrk-list">' + line(90) + line(70) + line(90) + line(50) + line(70) + '</div></div>',
+        alt: 'A mail sidebar. Compose is a large filled button with a shadow. Inbox, Starred, Sent and Drafts below it are plain text rows.',
+        cap: 'Gmail: Compose is the only big filled button in the sidebar. Inbox, Starred, Sent and the rest are plain rows, so the one way to start something new is easy to find.' },
+      spotify: { html: '<div class="cw-gbrk-pl"><div class="cw-gbrk-top"><i class="cw-gbrk-cover"></i><span><b>Morning mix</b><em>Playlist · 32 songs</em></span></div>' +
+          '<div class="cw-gbrk-ctl"><span class="cw-gbrk-play">' + ic('play') + '</span>' + ic('plus') + svg('<circle cx="12" cy="12" r="9"/><path d="M12 7.5v8M8.5 12.5 12 16l3.5-3.5"/>') + ic('dots') + '</div>' + trk + trk + '</div>',
+        alt: 'A playlist page. One big round filled Play button, then three small plain icons for save, download and more. Song rows below.',
+        cap: 'Spotify: a playlist page has one big round Play button. Save, download and more options are small plain icons next to it, because playing is what most people came for.' },
+      ios: { html: '<div class="cw-gbrk-ios"><i class="cw-gbrk-photo"></i><div class="cw-gbrk-menu">' +
+          mi('Copy', svg('<rect x="8" y="8" width="12" height="12" rx="2"/><path d="M16 8V5a1 1 0 0 0-1-1H5a1 1 0 0 0-1 1v10a1 1 0 0 0 1 1h3"/>')) +
+          mi('Share', svg('<path d="M12 3v12M8 7l4-4 4 4"/><path d="M6 11v9h12v-9"/>')) +
+          mi('Favorite', svg('<path d="M12 20s-7-4.5-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.5-7 10-7 10z"/>')) +
+          mi('Delete', ic('trash'), 'gap del') + '</div></div>',
+        alt: 'A lifted photo with a menu below: Copy, Share and Favorite in plain text, then Delete in red with a trash icon, set apart at the end.',
+        cap: 'iOS: in a photo’s long-press menu, every item is plain except Delete. It’s red, has a trash icon and comes last, so it stands apart even without the color.' }
+    };
+    const render = k => { view.innerHTML = S[k].html; view.setAttribute('aria-label', 'Sketch: ' + S[k].alt); cap.textContent = S[k].cap; };
+    wrap.querySelectorAll('input[name="cw-good-break-on-purpose-w"]').forEach(r => r.addEventListener('change', () => render(r.value)));
+    render('github');
+  })();
+  </script>
+</div>

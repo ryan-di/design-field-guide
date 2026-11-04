@@ -1,0 +1,38 @@
+<div class="note comfy cw-wrap"><p>Notice which hard part each product carries for people, and where it still lets them take over.</p>
+  <div class="seg cw-seg" role="radiogroup" aria-label="Example">
+    <input type="radio" name="cw-pat-teslers-law-w" id="cw-pat-teslers-law-w-1" value="uber" checked><label for="cw-pat-teslers-law-w-1">Uber</label>
+    <input type="radio" name="cw-pat-teslers-law-w" id="cw-pat-teslers-law-w-2" value="ios"><label for="cw-pat-teslers-law-w-2">iOS</label>
+    <input type="radio" name="cw-pat-teslers-law-w" id="cw-pat-teslers-law-w-3" value="lr"><label for="cw-pat-teslers-law-w-3">Lightroom</label>
+  </div>
+  <div class="cw cw-tesler-view" data-cw-view role="img" aria-label=""></div>
+  <p class="cw-cap" data-cw-cap aria-live="polite"></p>
+  
+  <script>
+  (() => {
+    const wrap = document.currentScript.closest('.cw-wrap');
+    const view = wrap.querySelector('[data-cw-view]'), cap = wrap.querySelector('[data-cw-cap]');
+    const ic = id => '<svg class="icon sm" aria-hidden="true"><use href="#i-' + id + '"/></svg>';
+    const clock = '<svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3 2"/></svg>';
+    const place = name => '<span class="cw-tesler-place"><i>' + clock + '</i>' + name + '</span>';
+    const sl = (name, pos, val) => '<div class="cw-tesler-sl"><span>' + name + '</span><span class="cw-tesler-track"><i style="left:' + pos + '%"></i></span><em>' + val + '</em></div>';
+    const keys = ['1', '2', '3', '4', '5', '6', '7', '8', '9'].map(n => '<i>' + n + '</i>').join('');
+    const S = {
+      uber: { html: '<div class="cw-tesler-phone"><div class="cw-tesler-map"><span class="cw-tesler-pick">Pickup: your location</span><span class="cw-tesler-me"></span></div>' +
+          '<div class="cw-tesler-sheet"><span class="cw-tesler-to cw-tesler-hl">' + ic('search') + 'Where to?</span>' + place('Home') + place('Office') + '</div></div>',
+        alt: 'A phone map with a dot for your location, already labeled as the pickup. Below it, one field, Where to, with recent places Home and Office.',
+        cap: 'Uber: sets the pickup point from your location, so the only thing to type is where you’re going. You can still change the pickup if it’s off.' },
+      ios: { html: '<div class="cw-tesler-phone"><div class="cw-tesler-form"><b>Enter the code</b><i class="cw-line" style="width:80%"></i><span class="cw-tesler-boxes"><i></i><i></i><i></i><i></i><i></i><i></i></span></div>' +
+          '<div class="cw-tesler-kb"><span class="cw-tesler-sugg cw-tesler-hl"><small>From Messages</small><b>482 913</b></span><div class="cw-tesler-keys">' + keys + '</div></div></div>',
+        alt: 'A phone asking for a six-digit sign-in code. Above the number keyboard, a suggestion from Messages offers the code 482 913, ready to fill in with one tap.',
+        cap: 'iOS: when a sign-in code arrives by text, it’s offered above the keyboard. The security step stays, but nobody copies digits by hand.' },
+      lr: { html: '<div class="cw-tesler-panel"><div class="cw-tesler-thumb"></div><div class="cw-tesler-bar"><span>Light</span><span class="btn btn-secondary cw-tesler-hl">Auto</span></div>' +
+          sl('Exposure', 62, '+0.35') + sl('Contrast', 56, '+12') + sl('Highlights', 30, '−40') + sl('Shadows', 64, '+28') + '</div>',
+        alt: 'An edit panel for a photo. An Auto button sits in the Light section header. The Exposure, Contrast, Highlights and Shadows sliders have moved off center to the values Auto chose.',
+        cap: 'Lightroom: Auto sets exposure, contrast and more in one click, and moves the regular sliders, so you can see what it did and adjust any of it.' }
+    };
+    const render = k => { view.innerHTML = S[k].html; view.setAttribute('aria-label', 'Sketch: ' + S[k].alt); cap.textContent = S[k].cap; };
+    wrap.querySelectorAll('input[name="cw-pat-teslers-law-w"]').forEach(r => r.addEventListener('change', () => render(r.value)));
+    render('uber');
+  })();
+  </script>
+</div>

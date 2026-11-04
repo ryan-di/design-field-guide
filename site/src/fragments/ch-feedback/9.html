@@ -1,0 +1,107 @@
+<div class="fm" data-fm>
+  <div class="seg fm-seg" role="radiogroup" aria-label="Form">
+    <input type="radio" name="fm-toast" id="fm-toast-1" value="plain" checked><label for="fm-toast-1">Plain</label>
+    <input type="radio" name="fm-toast" id="fm-toast-2" value="undo"><label for="fm-toast-2">With Undo</label>
+    <input type="radio" name="fm-toast" id="fm-toast-3" value="progress"><label for="fm-toast-3">Progress</label>
+  </div>
+  <div class="fm-stage" data-fm-stage></div>
+  <p class="fig-cap" data-fm-when aria-live="polite"></p>
+  
+  <script>
+  (() => {
+    const fm = document.currentScript.closest('[data-fm]'), stage = fm.querySelector('[data-fm-stage]'), when = fm.querySelector('[data-fm-when]');
+    const icon = n => '<svg class="icon"><use href="#i-' + n + '"/></svg>';
+    const frame = (title, body) => '<div class="app-frame fm-frame tst-frame"><div class="app-bar"><span>' + title + '</span></div><div class="app-body tst-body">' + body + '</div><div class="tst-spot" data-spot role="status" aria-live="polite"></div></div>';
+    let gen = 0, cur = null;
+    // One toast at a time. ms = 0 keeps it until updated. Pauses while hovered or focused.
+    const toast = (text, o = {}) => {
+      const spot = stage.querySelector('[data-spot]');
+      if (!spot) return null;
+      if (cur) cur.kill();
+      const g = gen, el = document.createElement('div'), sp = document.createElement('span');
+      el.className = 'toast'; sp.textContent = text; el.appendChild(sp);
+      let t = 0, ms = o.ms;
+      const hide = () => { clearTimeout(t); if (g !== gen || cur !== el) return; cur = null; el.classList.add('leaving'); setTimeout(() => el.remove(), 220); };
+      const start = () => { clearTimeout(t); if (ms && cur === el) t = setTimeout(hide, ms); };
+      el.kill = () => { clearTimeout(t); el.remove(); if (cur === el) cur = null; };
+      el.set = (text2, ms2) => { const s = el.querySelector('.spinner'); if (s) s.remove(); sp.textContent = text2; ms = ms2; start(); };
+      if (o.spin) { const s = document.createElement('span'); s.className = 'spinner'; el.insertBefore(s, sp); }
+      if (o.action) {
+        const b = document.createElement('button'); b.type = 'button'; b.className = 'toast-action'; b.textContent = o.action.label;
+        b.addEventListener('click', () => { el.kill(); o.action.run(); });
+        el.appendChild(b);
+      }
+      el.addEventListener('mouseenter', () => clearTimeout(t));
+      el.addEventListener('mouseleave', start);
+      el.addEventListener('focusin', () => clearTimeout(t));
+      el.addEventListener('focusout', start);
+      spot.appendChild(el); cur = el; start();
+      return el;
+    };
+    const items = [['Rain jacket', '$120 · Size M'], ['Wool socks', '$14 · 2 pairs'], ['Water bottle', '$25 · Blue']];
+    const itemRow = m => '<div class="tst-item"><div class="grow"><b>' + m[0] + '</b><span>' + m[1] + '</span></div><button class="icon-btn" type="button" aria-label="Remove ' + m[0] + '" data-del>' + icon('trash') + '</button></div>';
+    const invite = () => frame('New event', '<div class="tst-f"><span>Event</span><span>Book club</span></div><div class="tst-f"><span>When</span><span>Thu 12 June, 7:00 pm</span></div><div class="tst-f"><span>Guests</span><span>Ana, Ben, Kai, Lea</span></div><div class="tst-acts"><button class="btn btn-primary cs-sm" type="button" data-send>Send invites</button></div>');
+    const F = {
+      plain: {
+        html: frame('Photos', '<div class="thumb tst-photo" role="img" aria-label="Beach photo"></div><div class="tst-row"><span>Beach, 14 June</span><button class="btn btn-secondary cs-sm" type="button" aria-pressed="false" data-fav>Favorite</button></div>'),
+        use: 'Use it to confirm something that worked, when nothing else needs doing.',
+        more: 'It leaves after about four seconds, and nothing is lost if people miss it.',
+        wire: s => {
+          const b = s.querySelector('[data-fav]');
+          b.addEventListener('click', () => {
+            const on = b.getAttribute('aria-pressed') !== 'true';
+            b.setAttribute('aria-pressed', on ? 'true' : 'false');
+            b.innerHTML = on ? icon('check') + 'Favorite' : 'Favorite';
+            toast(on ? 'Added to Favorites' : 'Removed from Favorites', { ms: 4000 });
+          });
+        }
+      },
+      undo: {
+        html: frame('Cart', '<div class="tst-list" data-list>' + items.map(itemRow).join('') + '</div><p class="cs-meta" data-out></p>'),
+        use: 'Use it after an action people may want to reverse, like removing something from a cart.',
+        more: 'It stays longer than a plain toast, and it waits while the pointer or keyboard focus is on it.',
+        wire: s => {
+          const list = s.querySelector('[data-list]'), out = s.querySelector('[data-out]');
+          const sync = () => { out.textContent = list.children.length ? '' : 'Your cart is empty.'; };
+          list.addEventListener('click', e => {
+            const b = e.target.closest('[data-del]');
+            if (!b) return;
+            const row = b.closest('.tst-item'), rows = Array.from(list.children), i = rows.indexOf(row);
+            const next = rows[i + 1] || rows[i - 1];
+            row.remove(); sync();
+            if (next) next.querySelector('[data-del]').focus();
+            toast('Removed ' + row.querySelector('b').textContent, { ms: 7000, action: { label: 'Undo', run: () => {
+              list.insertBefore(row, list.children[i] || null); sync();
+              row.querySelector('[data-del]').focus();
+              toast('Back in your cart', { ms: 3000 });
+            } } });
+          });
+        }
+      },
+      progress: {
+        html: invite(),
+        use: 'Use it for a short task that runs in the background, like sending invitations.',
+        more: 'It stays while the work runs, changes its text when it’s done, and then leaves.',
+        wire: function wire(s) {
+          const b = s.querySelector('[data-send]');
+          b.addEventListener('click', () => {
+            const g = gen;
+            s.querySelector('.tst-body').innerHTML = '<div class="tst-f"><span>Event</span><span>Book club</span></div><div class="tst-f"><span>When</span><span>Thu 12 June, 7:00 pm</span></div><p class="cs-meta">Saved to your calendar.</p><div class="tst-acts"><button class="btn btn-secondary cs-sm" type="button" data-new>New event</button></div>';
+            s.querySelector('[data-new]').addEventListener('click', () => { if (cur) cur.kill(); s.innerHTML = invite(); wire(s); s.querySelector('[data-send]').focus(); });
+            s.querySelector('[data-new]').focus();
+            const t = toast('Sending invitations…', { ms: 0, spin: true });
+            setTimeout(() => { if (g !== gen || cur !== t) return; t.set('Invitations sent to 4 people', 4000); }, 1600);
+          });
+        }
+      }
+    };
+    const show = k => {
+      gen++; if (cur) cur.kill();
+      stage.innerHTML = F[k].html; F[k].wire(stage);
+      when.innerHTML = '<b>' + fm.querySelector('.fm-seg input:checked + label').textContent + '.</b> ' + F[k].use + ' ' + F[k].more;
+    };
+    fm.querySelectorAll('.fm-seg input').forEach(i => i.addEventListener('change', () => show(i.value)));
+    show('plain');
+  })();
+  </script>
+</div>

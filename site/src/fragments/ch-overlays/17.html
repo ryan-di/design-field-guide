@@ -1,0 +1,161 @@
+<div class="fm" data-fm>
+  
+  <div class="seg fm-seg" role="radiogroup" aria-label="Form">
+    <input type="radio" name="fm-menu" id="fm-menu-1" value="more" checked><label for="fm-menu-1">More button</label>
+    <input type="radio" name="fm-menu" id="fm-menu-2" value="pick"><label for="fm-menu-2">Pick one</label>
+    <input type="radio" name="fm-menu" id="fm-menu-3" value="context"><label for="fm-menu-3">Context menu</label>
+    <input type="radio" name="fm-menu" id="fm-menu-4" value="bar"><label for="fm-menu-4">Menu bar</label>
+  </div>
+  <div class="fm-stage" data-fm-stage></div>
+  <p class="fig-cap" data-fm-when aria-live="polite"></p>
+  <script>
+  (() => {
+    const fm = document.currentScript.closest('[data-fm]'), stage = fm.querySelector('[data-fm-stage]'), when = fm.querySelector('[data-fm-when]');
+    const icon = n => '<svg class="icon"><use href="#i-' + n + '"/></svg>';
+    const lines = '<div class="line" style="width:86%"></div><div class="line" style="width:94%"></div><div class="line" style="width:62%"></div>';
+    const frame = (title, bar, body) => '<div class="app-frame mf-frame"><div class="app-bar"><span>' + title + '</span></div>' + bar + '<div class="app-body">' + body + '</div></div>';
+    const it = (t, k, cls) => '<button class="mf-it' + (cls ? ' ' + cls : '') + '" type="button" role="menuitem" tabindex="-1">' + t + (k ? '<span class="mf-k">' + k + '</span>' : '') + '</button>';
+    const hr = '<hr class="mf-hr">';
+    const list = (cls, label, items) => '<div class="mf-list ' + cls + '" role="menu" aria-label="' + label + '" hidden>' + items + '</div>';
+    const items = l => Array.from(l.querySelectorAll('[role^="menuitem"]'));
+    // keyboard + pointer behaviour for one open list
+    const keys = (l, close, side) => l.addEventListener('keydown', e => {
+      const a = items(l), i = a.indexOf(document.activeElement);
+      const go = { ArrowDown: (i + 1) % a.length, ArrowUp: (i - 1 + a.length) % a.length, Home: 0, End: a.length - 1 }[e.key];
+      if (go !== undefined) { e.preventDefault(); a[go].focus(); }
+      else if (e.key === 'Escape') { e.preventDefault(); e.stopPropagation(); close(true); }
+      else if (e.key === 'Tab') close(false);
+      else if (side && (e.key === 'ArrowLeft' || e.key === 'ArrowRight')) { e.preventDefault(); side(e.key === 'ArrowRight' ? 1 : -1); }
+      else if (e.key.length === 1 && /\S/.test(e.key)) { const j = a.findIndex((x, n) => n > i && x.textContent.trim().toLowerCase().startsWith(e.key.toLowerCase())); const k = j >= 0 ? j : a.findIndex(x => x.textContent.trim().toLowerCase().startsWith(e.key.toLowerCase())); if (k >= 0) a[k].focus(); }
+    });
+    const outside = (sig, l, trigs, close) => {
+      document.addEventListener('pointerdown', e => { if (!l.hidden && !l.contains(e.target) && !trigs.some(t => t.contains(e.target))) close(false); }, { signal: sig });
+      document.addEventListener('keydown', e => { if (e.key === 'Escape' && !l.hidden) close(false); }, { signal: sig });
+    };
+    // a button that opens a menu
+    const menuButton = (sig, btn, l, pick) => {
+      const set = (open, focus, last) => {
+        l.hidden = !open; btn.setAttribute('aria-expanded', String(open));
+        if (open && focus) { const a = items(l); (last ? a[a.length - 1] : (l.querySelector('[aria-checked="true"]') || a[0])).focus(); }
+        if (!open && focus) btn.focus();
+      };
+      btn.addEventListener('click', () => set(l.hidden, true));
+      btn.addEventListener('keydown', e => { if (e.key === 'ArrowDown' || e.key === 'ArrowUp') { e.preventDefault(); set(true, true, e.key === 'ArrowUp'); } });
+      keys(l, f => set(false, f));
+      outside(sig, l, [btn], f => set(false, f));
+      l.addEventListener('click', e => { const x = e.target.closest('[role^="menuitem"]'); if (!x) return; set(false, true); pick(x); });
+      set(true, false);
+    };
+    const prods = [['Studio headphones', 89, 4.6], ['Wireless earbuds', 49, 4.1], ['Noise-cancelling headphones', 199, 4.8], ['Kids’ headphones', 25, 4.3]];
+    const sorts = [['Relevance', null], ['Price: low to high', (a, b) => a[1] - b[1]], ['Price: high to low', (a, b) => b[1] - a[1]], ['Customer rating', (a, b) => b[2] - a[2]]];
+    const F = {
+      more: {
+        html: frame('Documents', '', ['Trip budget', 'Packing list', 'Lisbon itinerary'].map((n, i) => '<div class="mf-row">' + icon('book') + '<div class="grow"><b>' + n + '</b><small>Edited ' + ['today', 'yesterday', 'last week'][i] + '</small></div><button class="icon-btn" type="button" aria-label="More actions for ' + n + '" aria-haspopup="menu" aria-expanded="false" data-more="' + n + '">' + icon('dots') + '</button></div>').join('') + '<p class="mf-out" data-out></p>'),
+        use: 'Use it for the actions people need now and then on one item.',
+        more: 'Put the common ones first, and anything that deletes last, set apart by a line.',
+        wire: (s, sig) => {
+          const out = s.querySelector('[data-out]');
+          s.querySelectorAll('[data-more]').forEach((b, i) => {
+            const n = b.dataset.more;
+            b.insertAdjacentHTML('afterend', list('mf-more', 'Actions for ' + n, it('Rename') + it('Duplicate') + it('Download') + hr + it('Delete', '', 'danger')));
+            const l = b.nextElementSibling;
+            const res = { Rename: 'Renaming “' + n + '”…', Duplicate: 'Made a copy: “' + n + ' (copy)”.', Download: 'Downloading “' + n + '”.', Delete: 'Moved “' + n + '” to the bin.' };
+            menuButton(sig, b, l, x => { out.textContent = res[x.textContent.trim()]; });
+            if (i) { l.hidden = true; b.setAttribute('aria-expanded', 'false'); }
+          });
+        }
+      },
+      pick: {
+        html: frame('Shop', '', '<div class="mf-head"><span>Headphones · 4 results</span><button class="btn btn-secondary cs-sm mf-sortbtn" type="button" aria-haspopup="menu" aria-expanded="false" data-sort>Sort: <span data-cur>Relevance</span><span aria-hidden="true">▾</span></button></div><div data-prods></div>'),
+        use: 'Use it for one setting with a few short choices, like sort order.',
+        more: 'Put a check next to the current choice, and show it in the button too.',
+        wire: (s, sig) => {
+          const btn = s.querySelector('[data-sort]'), box = s.querySelector('[data-prods]');
+          btn.insertAdjacentHTML('afterend', list('mf-sort', 'Sort by', sorts.map((x, i) => '<button class="mf-it chk" type="button" role="menuitemradio" tabindex="-1" aria-checked="' + (i === 0) + '">' + icon('check') + x[0] + '</button>').join('')));
+          const l = btn.nextElementSibling;
+          const paint = i => {
+            const p = sorts[i][1] ? prods.slice().sort(sorts[i][1]) : prods;
+            box.innerHTML = p.map(x => '<div class="mf-prod"><span>' + x[0] + '<small>★ ' + x[2] + '</small></span><span>£' + x[1] + '</span></div>').join('');
+            items(l).forEach((x, j) => x.setAttribute('aria-checked', String(j === i)));
+            s.querySelector('[data-cur]').textContent = sorts[i][0];
+          };
+          menuButton(sig, btn, l, x => paint(items(l).indexOf(x)));
+          paint(0);
+        }
+      },
+      context: {
+        html: frame('Photos', '', '<div class="mf-photos" data-photos>' + [0, 1, 2, 3, 4, 5].map(i => '<button class="mf-ph thumb' + ['', ' b', ' c'][i % 3] + '" type="button" aria-label="Photo ' + (i + 1) + '. Right-click, long-press or press Shift+F10 for actions."></button>').join('') + '</div><p class="mf-out" data-out></p>'),
+        use: 'Use it for shortcuts on items people can right-click or long-press.',
+        more: 'Many people never find it, so every action in it must also be somewhere in view.',
+        wire: (s, sig) => {
+          const wrap = s.querySelector('[data-photos]'), out = s.querySelector('[data-out]'), ph = Array.from(wrap.querySelectorAll('.mf-ph'));
+          wrap.insertAdjacentHTML('beforeend', list('mf-ctx', 'Photo actions', it('Add to album') + it('Share') + it('Copy') + it('Set as wallpaper') + hr + it('Delete', '', 'danger')));
+          const l = wrap.lastElementChild;
+          let on = ph[1];
+          const close = f => { l.hidden = true; ph.forEach(p => p.classList.remove('on')); if (f && on) on.focus(); };
+          const open = (p, x, y, focus) => {
+            on = p; ph.forEach(q => q.classList.toggle('on', q === p)); l.hidden = false;
+            const w = wrap.getBoundingClientRect();
+            if (x !== undefined) { l.style.left = Math.max(0, Math.min(x - w.left, w.width - l.offsetWidth)) + 'px'; l.style.top = Math.max(0, y - w.top) + 'px'; }
+            if (focus) items(l)[0].focus();
+          };
+          wrap.addEventListener('contextmenu', e => { const p = e.target.closest('.mf-ph'); if (!p) return; e.preventDefault(); open(p, e.clientX, e.clientY, true); });
+          wrap.addEventListener('keydown', e => { const p = e.target.closest('.mf-ph'); if (p && (e.key === 'ContextMenu' || (e.shiftKey && e.key === 'F10'))) { e.preventDefault(); const r = p.getBoundingClientRect(); open(p, r.left + r.width / 2, r.top + r.height / 2, true); } });
+          keys(l, close);
+          outside(sig, l, [], close);
+          l.addEventListener('click', e => { const x = e.target.closest('[role="menuitem"]'); if (!x) return; out.textContent = x.textContent.trim() + ': ' + on.getAttribute('aria-label').split('.')[0] + '.'; close(true); });
+          open(on);
+        }
+      },
+      bar: {
+        html: frame('Trip notes', '<div class="mf-bar" role="menubar" aria-label="Trip notes" data-bar></div>', lines + lines + '<p class="mf-out" data-out></p>'),
+        use: 'Use it in a large app with many commands, like a document editor.',
+        more: 'Group the commands under a few short words, and show each one’s keyboard shortcut.',
+        wire: (s, sig) => {
+          const bar = s.querySelector('[data-bar]'), out = s.querySelector('[data-out]');
+          const M = { File: [['New document', '⌘N'], ['Open…', '⌘O'], ['Make a copy'], 0, ['Download'], ['Print', '⌘P']], Edit: [['Undo', '⌘Z'], ['Redo', '⇧⌘Z'], 0, ['Cut', '⌘X'], ['Copy', '⌘C'], ['Paste', '⌘V']], View: [['Zoom in', '⌘+'], ['Zoom out', '⌘−'], 0, ['Full screen']], Help: [['Search the help'], ['Keyboard shortcuts', '⌘/']] };
+          const names = Object.keys(M);
+          bar.innerHTML = names.map((n, i) => '<button class="mf-top" type="button" role="menuitem" aria-haspopup="menu" aria-expanded="false" tabindex="' + (i ? -1 : 0) + '">' + n + '</button>').join('');
+          const tops = Array.from(bar.querySelectorAll('.mf-top'));
+          const lists = names.map(n => { bar.insertAdjacentHTML('beforeend', list('mf-drop', n, M[n].map(x => x ? it(x[0], x[1]) : hr).join(''))); return bar.lastElementChild; });
+          let open = -1, viaHover = -1;
+          const set = (i, focus) => {
+            lists.forEach((l, j) => { l.hidden = j !== i; tops[j].setAttribute('aria-expanded', String(j === i)); });
+            open = i; viaHover = -1;
+            if (i >= 0) {
+              tops.forEach((t, j) => { t.tabIndex = j === i ? 0 : -1; });
+              const l = lists[i], b = bar.getBoundingClientRect();
+              if (b.width) l.style.left = Math.max(6, Math.min(tops[i].offsetLeft, b.width - l.offsetWidth - 6)) + 'px';
+              if (focus) items(l)[0].focus();
+            }
+          };
+          const close = f => { const i = open; set(-1); if (f && i >= 0) tops[i].focus(); };
+          tops.forEach((t, i) => {
+            t.addEventListener('click', () => { if (open === i && viaHover === i) { viaHover = -1; items(lists[i])[0].focus(); } else if (open === i) close(true); else set(i, true); });
+            t.addEventListener('pointerenter', e => { if (e.pointerType !== 'touch' && open >= 0 && open !== i) { set(i, false); viaHover = i; } });
+            t.addEventListener('keydown', e => {
+              if (e.key === 'ArrowRight' || e.key === 'ArrowLeft') { e.preventDefault(); const n = (i + (e.key === 'ArrowRight' ? 1 : -1) + tops.length) % tops.length; tops.forEach((x, j) => { x.tabIndex = j === n ? 0 : -1; }); tops[n].focus(); if (open >= 0) set(n, false); }
+              else if (e.key === 'ArrowDown') { e.preventDefault(); set(i, true); }
+              else if (e.key === 'Escape' && open >= 0) { e.preventDefault(); close(true); }
+            });
+          });
+          lists.forEach((l, i) => {
+            keys(l, close, d => set((i + d + lists.length) % lists.length, true));
+            l.addEventListener('click', e => { const x = e.target.closest('[role="menuitem"]'); if (!x) return; out.textContent = names[i] + ' › ' + x.firstChild.textContent + ' chosen.'; close(true); });
+          });
+          lists.forEach(l => outside(sig, l, tops, () => set(-1)));
+          set(0, false);
+        }
+      }
+    };
+    let gen = 0, ctl = null;
+    const show = k => {
+      gen++; if (ctl) ctl.abort(); ctl = new AbortController();
+      stage.innerHTML = F[k].html; F[k].wire(stage, ctl.signal);
+      when.innerHTML = '<b>' + fm.querySelector('.fm-seg input:checked + label').textContent + '.</b> ' + F[k].use + ' ' + F[k].more;
+    };
+    fm.querySelectorAll('.fm-seg input').forEach(i => i.addEventListener('change', () => show(i.value)));
+    show('more');
+  })();
+  </script>
+</div>

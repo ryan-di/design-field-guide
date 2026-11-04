@@ -1,0 +1,165 @@
+<script>
+(() => {
+  const cs = document.currentScript.closest('.cs');
+  /* Part 2 sits before the shared case helpers in the book, so wait for them when needed. */
+  const run = () => {
+  const D = (k, html, wire) => csDemo(cs.querySelector('[data-d="' + k + '"]'), html, wire);
+  const css = document.createElement('style');
+  css.textContent = `
+#pat-version-history .vh-app{width:min(380px,100%);text-align:left}
+#pat-version-history .vh-split{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.1fr);gap:10px;padding:10px}
+#pat-version-history .vh-list{display:flex;flex-direction:column;gap:2px}
+#pat-version-history .vh-v{all:unset;cursor:pointer;display:flex;flex-direction:column;gap:1px;padding:6px 8px;border-radius:7px;font-size:13px;color:var(--ui-text)}
+#pat-version-history .vh-v:hover{background:var(--ui-hover)}
+#pat-version-history .vh-v:focus-visible{outline:2px solid var(--ui-sel)}
+#pat-version-history .vh-v.on{background:var(--ui-sel-soft)}
+#pat-version-history .vh-v b{font-weight:600}
+#pat-version-history .vh-v small{font-size:12px;color:var(--ui-muted)}
+#pat-version-history .vh-v.seen b::after{content:" ·  opened";font-weight:400;color:var(--ui-muted);font-size:11.5px}
+#pat-version-history .vh-page{border:1px solid var(--ui-border);border-radius:8px;background:var(--ui-bg);padding:9px;display:flex;flex-direction:column;gap:6px;min-height:160px;font-size:12.5px}
+#pat-version-history .vh-page b{font-size:13.5px}
+#pat-version-history .vh-ph{display:flex;gap:4px}
+#pat-version-history .vh-ph .thumb{flex:1;height:30px;aspect-ratio:auto;border-radius:4px}
+#pat-version-history .vh-menu{border:1px dashed var(--ui-border);border-radius:5px;padding:3px 6px;color:var(--ui-muted)}
+#pat-version-history .vh-note{font-size:13.5px;text-align:center;max-width:340px;margin:0}
+#pat-version-history .vh-note:empty{display:none}
+#pat-version-history .vh-row{display:flex;align-items:center;gap:8px;padding:7px 0;border-bottom:1px solid var(--ui-border);font-size:13.5px}
+#pat-version-history .vh-row:last-child{border-bottom:0}
+#pat-version-history .vh-row .grow{flex:1;min-width:0;display:flex;flex-direction:column}
+#pat-version-history .vh-row small{font-size:12px;color:var(--ui-muted)}
+#pat-version-history .vh-row.new{animation:vh-in 1.4s ease-out}
+@keyframes vh-in{from{background:var(--ui-sel-soft)}}
+#pat-version-history .vh-slides{display:flex;gap:6px;flex-wrap:wrap;padding:10px}
+#pat-version-history .vh-slide{width:calc(33.3% - 4px);min-width:80px;aspect-ratio:4/3;border:1px solid var(--ui-border);border-radius:5px;background:var(--ui-bg);padding:5px;font-size:11.5px;display:flex;flex-direction:column;gap:3px;color:var(--ui-text);flex:1 1 80px;max-width:110px}
+#pat-version-history .vh-slide i{display:block;height:5px;border-radius:3px;background:var(--ui-skel)}
+#pat-version-history .vh-slide.title{font-weight:700}
+#pat-version-history .vh-old{border-top:1px solid var(--ui-border);padding:10px;display:flex;flex-direction:column;gap:8px;font-size:13.5px}
+#pat-version-history .vh-old .head{display:flex;align-items:center;justify-content:space-between;gap:8px}
+#pat-version-history .vh-sum{margin:0;padding-left:18px;font-size:13px}
+#pat-version-history .vh-info{font-size:12.5px;padding:7px 10px;background:var(--ui-sel-soft);border-bottom:1px solid var(--ui-border)}
+#pat-version-history .vh-left{color:var(--ui-muted)}
+#pat-version-history .vh-left.soon{color:var(--ui-danger);font-weight:600}
+#pat-version-history .vh-empty{padding:14px 0;text-align:center;color:var(--ui-muted);font-size:13.5px}
+@media (max-width:440px){#pat-version-history .vh-split{grid-template-columns:1fr}}
+`;
+  cs.appendChild(css);
+
+  /* 1. Timestamps only: newsletter */
+  const NEWS = [
+    { n: 5, t: 'Oct 21, 16:42', what: 'Fixed typos in the menu', ph: 1, menu: 1 },
+    { n: 4, t: 'Oct 21, 15:10', what: 'Added three photos from last year', ph: 1, menu: 1 },
+    { n: 3, t: 'Oct 20, 18:03', what: 'Added the menu', ph: 0, menu: 1 },
+    { n: 2, t: 'Oct 20, 11:27', what: 'Changed the date to 14 June', ph: 0, menu: 0 },
+    { n: 1, t: 'Oct 19, 09:55', what: 'First draft', ph: 0, menu: 0 }
+  ];
+  const newsHtml = fixed => '<div class="app-frame vh-app"><div class="app-bar"><span>Newsletter history</span><span class="cs-meta" data-c>Opened: 1</span></div><div class="vh-split"><div class="vh-list" data-list>' +
+    NEWS.map((v, i) => '<button class="vh-v' + (i ? '' : ' on seen') + '" type="button" data-n="' + v.n + '">' + (fixed ? '<b>' + v.what + '</b><small>' + v.t + (i ? '' : ' · Current') + '</small>' : '<b>' + v.t + '</b>' + (i ? '' : '<small>Current</small>')) + '</button>').join('') +
+    '</div><div class="vh-page" data-page aria-live="polite"></div></div></div><p class="vh-note" data-note></p>';
+  const newsWire = () => d => {
+    const page = d.querySelector('[data-page]'), c = d.querySelector('[data-c]'), note = d.querySelector('[data-note]');
+    const seen = new Set([5]);
+    const show = v => {
+      page.innerHTML = '<b>Spring picnic</b><span>' + (v.n >= 2 ? 'Saturday 14 June, noon' : 'Date to be decided') + '</span><i class="line" style="width:90%;height:7px"></i><i class="line" style="width:70%;height:7px"></i>' +
+        (v.ph ? '<span class="vh-ph"><i class="thumb"></i><i class="thumb b"></i><i class="thumb c"></i></span>' : '') + (v.menu ? '<span class="vh-menu">Menu: sandwiches, lemonade</span>' : '');
+      note.textContent = v.n === 3 ? 'Found it: the last version before the photos.' : '';
+    };
+    d.querySelector('[data-list]').addEventListener('click', e => {
+      const b = e.target.closest('.vh-v'); if (!b) return;
+      const v = NEWS.find(x => x.n === Number(b.dataset.n));
+      d.querySelectorAll('.vh-v').forEach(x => x.classList.toggle('on', x === b));
+      b.classList.add('seen'); seen.add(v.n); c.textContent = 'Opened: ' + seen.size;
+      show(v);
+    });
+    show(NEWS[0]);
+  };
+  D('pat-version-history-1b', newsHtml(false), newsWire());
+  D('pat-version-history-1f', newsHtml(true), newsWire());
+
+  /* 2. Restore deletes newer work: recipe */
+  const recipeHtml = '<div class="app-frame vh-app"><div class="app-bar"><span>Lentil soup · Versions</span></div><div class="app-body" data-list></div></div><p class="vh-note" data-note></p>';
+  const recipeWire = fixed => d => {
+    const list = d.querySelector('[data-list]'), note = d.querySelector('[data-note]');
+    let vers = [{ n: 3, what: 'Added a vegan option', when: 'Today' }, { n: 2, what: 'Used less salt', when: 'Yesterday' }, { n: 1, what: 'First draft', when: 'Monday' }];
+    const draw = fresh => {
+      list.innerHTML = vers.map((v, i) => '<div class="vh-row' + (fresh && i === 0 ? ' new' : '') + '"><span class="grow"><b>v' + v.n + ' · ' + v.what + '</b><small>' + v.when + (i ? '' : ' · Current') + '</small></span>' +
+        (i ? '<button class="btn btn-secondary cs-sm" type="button" data-r="' + v.n + '" aria-label="Restore v' + v.n + '">Restore</button>' : '') + '</div>').join('');
+    };
+    list.addEventListener('click', e => {
+      const b = e.target.closest('[data-r]'); if (!b) return;
+      const n = Number(b.dataset.r), v = vers.find(x => x.n === n);
+      if (fixed) {
+        const top = vers[0].n + 1;
+        vers.unshift({ n: top, what: 'Restored v' + n + ' (' + v.what.toLowerCase() + ')', when: 'Just now' });
+        note.textContent = 'v' + n + ' is now v' + top + '. Every other version is still here.';
+      } else {
+        const lost = vers.filter(x => x.n > n).map(x => 'v' + x.n);
+        vers = vers.filter(x => x.n <= n);
+        note.textContent = 'Restored v' + n + '. ' + lost.join(' and ') + (lost.length > 1 ? ' are' : ' is') + ' gone for good.';
+      }
+      draw(true);
+      const nb = list.querySelector('[data-r]'); (nb || list.closest('.app-frame')).focus();
+    });
+    list.closest('.app-frame').tabIndex = -1;
+    draw();
+  };
+  D('pat-version-history-2b', recipeHtml, recipeWire(false));
+  D('pat-version-history-2f', recipeHtml, recipeWire(true));
+
+  /* 3. Unclear what restore changes: book club slides */
+  const NOW = [['Book club 2026', 1], ['This month'], ['Next month'], ['Votes'], ['Snacks']];
+  const MON = [['Book club', 1], ['This month'], ['Next month']];
+  const slides = list => list.map(s => '<span class="vh-slide' + (s[1] ? ' title' : '') + '">' + s[0] + '<i style="width:80%"></i><i style="width:60%"></i></span>').join('');
+  const slidesHtml = fixed => '<div class="app-frame vh-app"><div class="app-bar"><span>Book club slides</span><span class="cs-meta" data-c>5 slides</span></div><div class="vh-slides" data-sl>' + slides(NOW) + '</div>' +
+    '<div class="vh-old" data-old><div class="head"><span><b>Version from Monday, 19:20</b></span><button class="btn btn-secondary cs-sm" type="button" data-r>Restore</button></div>' +
+    (fixed ? '<span>Restoring this version will:</span><ul class="vh-sum"><li>Remove 2 slides: Votes and Snacks</li><li>Bring back the old title, “Book club”</li><li>Keep today’s version in the history</li></ul>' : '') + '</div></div><p class="vh-note" data-note></p>';
+  const slidesWire = fixed => d => {
+    const sl = d.querySelector('[data-sl]'), note = d.querySelector('[data-note]'), c = d.querySelector('[data-c]'), old = d.querySelector('[data-old]');
+    d.querySelector('[data-r]').addEventListener('click', () => {
+      sl.innerHTML = slides(MON); c.textContent = '3 slides';
+      old.innerHTML = '<span class="cs-meta">Monday’s version restored.</span>';
+      note.textContent = fixed ? 'Restored. It matches the summary you read.' : 'The Votes and Snacks slides are gone, and the title is the old one.';
+    });
+  };
+  D('pat-version-history-3b', slidesHtml(false), slidesWire(false));
+  D('pat-version-history-3f', slidesHtml(true), slidesWire(true));
+
+  /* 4. Trash empties without warning: email */
+  const MAILS = [['Flight booking · Lisbon', 12], ['Dentist reminder', 5], ['Weekly newsletter', 22]];
+  const mailHtml = fixed => '<div class="app-frame vh-app"><div class="app-bar"><span>Trash</span><button class="btn btn-secondary cs-sm" type="button" data-skip>Skip a week</button></div>' +
+    (fixed ? '<div class="vh-info">Emails in Trash are deleted for good after 30 days.</div>' : '') + '<div class="app-body" data-list></div></div><p class="vh-note" data-note></p>';
+  const mailWire = fixed => d => {
+    const list = d.querySelector('[data-list]'), note = d.querySelector('[data-note]');
+    let day = 0;
+    const items = MAILS.map(m => ({ name: m[0], ago: m[1], back: false }));
+    const draw = () => {
+      const live = items.filter(m => !m.back && m.ago + day < 30);
+      list.innerHTML = live.length ? live.map(m => {
+        const left = 30 - m.ago - day;
+        return '<div class="vh-row"><span class="grow"><b>' + m.name + '</b><small>' + (fixed ? '<span class="vh-left' + (left <= 7 ? ' soon' : '') + '">' + left + (left === 1 ? ' day' : ' days') + ' left</span>' : 'Deleted ' + (m.ago + day) + ' days ago') + '</small></span>' +
+          '<button class="btn btn-secondary cs-sm" type="button" data-r="' + m.name + '" aria-label="Restore ' + m.name + '">Restore</button></div>';
+      }).join('') : '<div class="vh-empty">Trash is empty.</div>';
+    };
+    d.querySelector('[data-skip]').addEventListener('click', () => {
+      day += 7;
+      const gone = items.filter(m => !m.back && !m.gone && m.ago + day >= 30);
+      gone.forEach(m => { m.gone = true; });
+      note.textContent = 'A week later.' + (gone.length && fixed ? ' ' + gone.map(m => m.name).join(', ') + ' ran out of days, as the trash said.' : '');
+      draw();
+    });
+    list.addEventListener('click', e => {
+      const b = e.target.closest('[data-r]'); if (!b) return;
+      items.find(m => m.name === b.dataset.r).back = true;
+      note.textContent = b.dataset.r + ' is back in the inbox.';
+      draw();
+    });
+    draw();
+  };
+  D('pat-version-history-4b', mailHtml(false), mailWire(false));
+  D('pat-version-history-4f', mailHtml(true), mailWire(true));
+
+  csInit(cs);
+  };
+  if (window.csDemo) run(); else document.addEventListener('DOMContentLoaded', run);
+})();
+
+</script>

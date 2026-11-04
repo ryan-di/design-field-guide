@@ -1,0 +1,168 @@
+<script>
+(() => {
+  const cs = document.currentScript.closest('.cs');
+  /* Part 2 sits before the shared case helpers in the book, so wait for them when needed. */
+  const run = () => {
+  const D = (k, html, wire) => csDemo(cs.querySelector('[data-d="' + k + '"]'), html, wire);
+  const css = document.createElement('style');
+  css.textContent = `
+#pat-preview .pv-card{width:min(330px,100%);display:flex;flex-direction:column;gap:10px;text-align:left;background:var(--ui-surface);border:1px solid var(--ui-border);border-radius:12px;padding:14px;box-shadow:var(--ui-shadow);color:var(--ui-text)}
+#pat-preview .pv-lab{font:600 12px var(--font-mono);color:var(--ui-muted);text-transform:uppercase;letter-spacing:.06em}
+#pat-preview .pv-badge{width:220px;max-width:100%;border:1.5px solid var(--ui-border);border-radius:10px;background:var(--ui-bg);padding:10px 12px;display:flex;flex-direction:column;gap:4px;align-self:center}
+#pat-preview .pv-badge small{font:600 11px var(--font-mono);color:var(--ui-sel);letter-spacing:.08em}
+#pat-preview .pv-badge span{display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font:700 24px/1.2 var(--font-body)}
+#pat-preview .pv-badge.pv-small span{font-size:15px}
+#pat-preview .pv-out{display:flex;flex-direction:column;gap:6px;align-items:center}
+#pat-preview .pv-out:empty{display:none}
+#pat-preview .pv-warn{font-size:13px;color:var(--ui-danger)}
+#pat-preview .pv-warn:empty{display:none}
+#pat-preview .pv-row{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+#pat-preview .pv-row .input{flex:1 1 140px;padding:8px 10px;font-size:14px}
+#pat-preview .pv-page{height:150px;overflow:hidden;border:1px solid var(--ui-border);border-radius:8px;background:var(--ui-bg);padding:10px 12px;position:relative}
+#pat-preview .pv-page p{margin:0;line-height:1.45;color:var(--ui-text);transition:filter .1s}
+#pat-preview .pv-page.rough p{filter:blur(.7px);opacity:.85}
+#pat-preview .pv-busy{position:absolute;right:8px;top:8px;display:flex;align-items:center;gap:6px;font:500 12px var(--font-mono);color:var(--ui-muted);background:var(--ui-surface);border-radius:6px;padding:2px 6px}
+#pat-preview .pv-busy[hidden]{display:none}
+#pat-preview .pv-busy .spinner{width:12px;height:12px;border-width:2px}
+#pat-preview .pv-sl{display:grid;grid-template-columns:auto minmax(0,1fr) 42px;gap:10px;align-items:center;font:600 14px var(--font-body)}
+#pat-preview .pv-sl input{accent-color:var(--ui-sel);width:100%;margin:0}
+#pat-preview .pv-sl output{font:500 13px var(--font-mono);text-align:right}
+#pat-preview .pv-set{width:min(330px,100%);text-align:left;background:var(--ui-surface);border:1px solid var(--ui-border);border-radius:12px;box-shadow:var(--ui-shadow);color:var(--ui-text);position:relative;overflow:hidden}
+#pat-preview .pv-top{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:8px 12px;border-bottom:1px solid var(--ui-border);font:600 14px var(--font-body)}
+#pat-preview .pv-body{padding:12px;display:flex;flex-direction:column;gap:10px}
+#pat-preview .pv-tabs{display:flex;gap:4px;flex-wrap:wrap}
+#pat-preview .pv-mock{border:1.5px solid var(--ui-border);border-radius:8px;padding:10px;display:flex;flex-direction:column;gap:6px;background:#fff}
+#pat-preview .pv-mock i{display:block;height:8px;border-radius:4px;background:#d9d6cf}
+#pat-preview .pv-mock.dark{background:#1d1f26}
+#pat-preview .pv-mock.dark i{background:#4a4d57}
+#pat-preview .pv-mock.sepia{background:#f3e7cf}
+#pat-preview .pv-mock.sepia i{background:#d6c3a0}
+#pat-preview .pv-mock.on{border-color:var(--ui-sel);box-shadow:0 0 0 2px var(--ui-sel-soft)}
+#pat-preview .pv-chip{align-self:flex-start;font:600 12.5px/1 var(--font-body);padding:5px 8px;border-radius:999px;background:var(--ui-sel-soft);border:1px solid var(--ui-sel)}
+#pat-preview .pv-chip[hidden]{display:none}
+#pat-preview .pv-acts{display:flex;justify-content:flex-end;gap:8px}
+#pat-preview .pv-ask{position:absolute;inset:0;background:color-mix(in srgb,var(--ui-text) 38%,transparent);display:grid;place-items:center;padding:12px}
+#pat-preview .pv-note{font-size:13.5px;text-align:center;max-width:320px;margin:0}
+#pat-preview .pv-note:empty{display:none}
+#pat-preview .pv-sw{display:flex;flex-direction:column}
+#pat-preview .pv-sw .switch{padding:10px 0;font-size:14.5px}
+#pat-preview .pv-pre{display:flex;flex-direction:column;gap:8px;padding:10px;border:1.5px dashed var(--ui-sel);border-radius:8px;font-size:13.5px;margin-bottom:6px}
+`;
+  cs.appendChild(css);
+
+  /* 1. Preview doesn't match the result: name badge */
+  const badgeHtml = fixed => '<div class="pv-card"><label class="cs-f">Name on badge<input class="input" value="Sam Lee" data-name></label>' +
+    '<span class="pv-lab">Preview</span><div class="pv-badge' + (fixed ? '' : ' pv-small') + '" data-prev><small>HELLO, MY NAME IS</small><span data-pt>Sam Lee</span></div>' +
+    '<span class="pv-warn" data-warn aria-live="polite"></span><div class="pv-acts"><button class="btn btn-primary cs-sm" type="button" data-print>Print</button></div></div><div class="pv-out" data-out></div>';
+  const badgeWire = fixed => d => {
+    const name = d.querySelector('[data-name]'), pt = d.querySelector('[data-pt]'), warn = d.querySelector('[data-warn]'), out = d.querySelector('[data-out]');
+    const sync = () => {
+      pt.textContent = name.value || ' ';
+      warn.textContent = fixed && pt.scrollWidth > pt.clientWidth + 1 ? 'The name won’t fit on one line. Shorten it before printing.' : '';
+    };
+    name.addEventListener('input', () => { out.innerHTML = ''; sync(); });
+    d.querySelector('[data-print]').addEventListener('click', () => {
+      out.innerHTML = '<span class="pv-lab">Printed badge</span><div class="pv-badge"><small>HELLO, MY NAME IS</small><span></span></div><p class="pv-note"></p>';
+      const s = out.querySelector('.pv-badge span'); s.textContent = name.value;
+      const cut = s.scrollWidth > s.clientWidth + 1;
+      out.querySelector('.pv-note').textContent = cut ? (fixed ? 'Cut off, as the preview showed.' : 'Cut off. The preview showed the whole name.') : 'Printed as the preview showed.';
+    });
+    sync();
+  };
+  D('pat-preview-1b', badgeHtml(false), badgeWire(false));
+  D('pat-preview-1f', badgeHtml(true), badgeWire(true));
+
+  /* 2. Slow preview: reading app text size */
+  const readHtml = '<div class="pv-card"><span class="pv-lab">Reading · Chapter 3</span><div class="pv-page" data-page><p>The train left the coast at dawn. Mara watched the sea fall away behind the hills, and for the first time in weeks she did not check her phone. The fields were still gray, and the town ahead was only a line of roofs.</p><span class="pv-busy" data-busy hidden><span class="spinner"></span>Redrawing…</span></div>' +
+    '<label class="pv-sl"><span>Text size</span><input type="range" min="12" max="22" step="1" value="14" data-size><output data-o>14</output></label></div>';
+  const readWire = fixed => (d, t) => {
+    const page = d.querySelector('[data-page]'), p = page.querySelector('p'), size = d.querySelector('[data-size]'), o = d.querySelector('[data-o]'), busy = d.querySelector('[data-busy]');
+    const set = v => { p.style.fontSize = v + 'px'; };
+    set(14);
+    if (fixed) {
+      size.addEventListener('input', () => { o.textContent = size.value; page.classList.add('rough'); set(size.value); });
+      size.addEventListener('change', () => t.after(() => page.classList.remove('rough'), 250));
+      return;
+    }
+    const queue = [];
+    let last = '14';
+    size.addEventListener('input', () => { o.textContent = size.value; if (size.value !== last) { queue.push(size.value); last = size.value; } busy.hidden = false; });
+    t.every(() => { if (!queue.length) { busy.hidden = true; return; } set(queue.shift()); }, 380);
+  };
+  D('pat-preview-2b', readHtml, readWire(false));
+  D('pat-preview-2f', readHtml, readWire(true));
+
+  /* 3. Forgotten preview: theme */
+  const THEMES = ['Light', 'Dark', 'Sepia'];
+  const themeHtml = fixed => '<div class="pv-set"><div class="pv-top"><button class="btn btn-ghost cs-sm" type="button" data-back>← Back</button><span>Appearance</span></div><div class="pv-body" data-body>' +
+    '<div class="pv-tabs" role="radiogroup" aria-label="Theme">' + THEMES.map(n => '<button class="cs-tab" type="button" role="radio" aria-checked="false" data-t="' + n + '">' + n + '</button>').join('') + '</div>' +
+    (fixed ? '<span class="pv-chip" data-chip role="status" hidden>Preview · not applied</span>' : '') +
+    '<div class="pv-mock" data-mock><i style="width:60%"></i><i style="width:90%"></i><i style="width:75%"></i></div>' +
+    '<div class="pv-acts"' + (fixed ? ' data-acts hidden' : '') + '>' + (fixed ? '<button class="btn btn-secondary cs-sm" type="button" data-cancel>Cancel</button>' : '') + '<button class="btn btn-primary cs-sm" type="button" data-apply>Apply</button></div></div></div><p class="pv-note" data-note></p>';
+  const themeWire = fixed => d => {
+    const mock = d.querySelector('[data-mock]'), note = d.querySelector('[data-note]'), body = d.querySelector('[data-body]'), box = d.querySelector('.pv-set');
+    const radios = Array.from(d.querySelectorAll('[data-t]'));
+    let applied = 'Light', draft = 'Light';
+    const sync = () => {
+      mock.className = 'pv-mock ' + draft.toLowerCase() + (fixed && draft !== applied ? ' on' : '');
+      radios.forEach(r => { const on = r.dataset.t === draft; r.classList.toggle('on', on); r.setAttribute('aria-checked', String(on)); });
+      if (fixed) { d.querySelector('[data-chip]').hidden = draft === applied; d.querySelector('[data-acts]').hidden = draft === applied; }
+    };
+    const leave = () => {
+      body.innerHTML = '<span class="pv-lab">Home</span><div class="pv-mock ' + applied.toLowerCase() + '"><i style="width:50%"></i><i style="width:85%"></i></div>';
+      d.querySelector('[data-back]').disabled = true;
+      note.textContent = 'You left Appearance. The app is ' + applied + (draft !== applied ? '. The ' + draft + ' preview was never applied.' : '.');
+    };
+    radios.forEach(r => r.addEventListener('click', () => { draft = r.dataset.t; note.textContent = ''; sync(); }));
+    d.querySelector('[data-apply]').addEventListener('click', () => { applied = draft; sync(); note.textContent = applied + ' theme applied.'; });
+    if (fixed) d.querySelector('[data-cancel]').addEventListener('click', () => { draft = applied; sync(); note.textContent = 'Preview dropped. Still ' + applied + '.'; });
+    d.querySelector('[data-back]').addEventListener('click', () => {
+      if (!fixed || draft === applied) { leave(); return; }
+      const m = document.createElement('div'); m.className = 'pv-ask';
+      m.innerHTML = '<div class="cs-dlg" role="alertdialog" aria-modal="true" aria-label="Apply the theme?"><b>Apply the ' + draft + ' theme?</b><p>You’re leaving with a preview that isn’t applied.</p><div class="acts"><button class="btn btn-secondary cs-sm" type="button" data-no>Don’t apply</button><button class="btn btn-primary cs-sm" type="button" data-yes>Apply</button></div></div>';
+      box.appendChild(m);
+      m.querySelector('[data-yes]').focus();
+      m.querySelector('[data-no]').addEventListener('click', () => { m.remove(); draft = applied; leave(); });
+      m.querySelector('[data-yes]').addEventListener('click', () => { m.remove(); applied = draft; leave(); });
+      m.addEventListener('keydown', e => { if (e.key === 'Escape') { e.stopPropagation(); m.remove(); d.querySelector('[data-back]').focus(); } });
+    });
+    sync();
+  };
+  D('pat-preview-3b', themeHtml(false), themeWire(false));
+  D('pat-preview-3f', themeHtml(true), themeWire(true));
+
+  /* 4. Preview for everything: notification switches */
+  const NOTES = [['Sounds', 'You won’t hear a sound for new messages.'], ['Badges', 'The app icon won’t show a count.'], ['Email summary', 'You won’t get a weekly email.']];
+  const notifHtml = '<div class="pv-card"><span class="pv-lab">Notifications</span><div class="pv-sw" data-list>' +
+    NOTES.map((n, i) => '<label class="switch"><span class="grow">' + n[0] + '</span><input type="checkbox" role="switch" checked data-i="' + i + '"></label>').join('') +
+    '</div><span class="cs-meta" data-clicks>Clicks: 0</span></div>';
+  const notifWire = fixed => (d, t) => {
+    const list = d.querySelector('[data-list]'), clicksEl = d.querySelector('[data-clicks]'), boxes = Array.from(list.querySelectorAll('input'));
+    let clicks = 0;
+    const click = () => { clicks++; clicksEl.textContent = 'Clicks: ' + clicks; };
+    d.querySelector('.pv-card').addEventListener('click', e => { if (e.target.closest('input,button')) click(); });
+    boxes.forEach(b => b.addEventListener('change', () => {
+      const i = Number(b.dataset.i), want = b.checked;
+      if (fixed) {
+        csToast(d, t, NOTES[i][0] + ' turned ' + (want ? 'on' : 'off'), { ms: 5000, replace: true, action: { label: 'Undo', run: () => { b.checked = !want; b.focus(); } } });
+        return;
+      }
+      b.checked = !want;
+      const old = list.querySelector('.pv-pre'); if (old) old.remove();
+      const pre = document.createElement('div'); pre.className = 'pv-pre';
+      pre.innerHTML = '<b>Preview</b><span>' + (want ? 'You’ll get ' + NOTES[i][0].toLowerCase() + ' again.' : NOTES[i][1]) + '</span><div class="pv-acts"><button class="btn btn-secondary cs-sm" type="button" data-no>Cancel</button><button class="btn btn-primary cs-sm" type="button" data-yes>Apply</button></div>';
+      b.closest('.switch').after(pre);
+      pre.querySelector('[data-yes]').focus();
+      pre.querySelector('[data-no]').addEventListener('click', () => { pre.remove(); b.focus(); });
+      pre.querySelector('[data-yes]').addEventListener('click', () => { b.checked = want; pre.remove(); b.focus(); });
+    }));
+  };
+  D('pat-preview-4b', notifHtml, notifWire(false));
+  D('pat-preview-4f', notifHtml, notifWire(true));
+
+  csInit(cs);
+  };
+  if (window.csDemo) run(); else document.addEventListener('DOMContentLoaded', run);
+})();
+
+</script>

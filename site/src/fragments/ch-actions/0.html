@@ -1,0 +1,15 @@
+<div class="stage tall" data-demo="buttons">
+      <div class="row">
+        <button class="btn btn-primary" type="button" data-say="Primary: the one main action here">Save playlist</button>
+        <button class="btn btn-secondary" type="button" data-say="Secondary: other likely actions">Duplicate</button>
+        <button class="btn btn-ghost" type="button" data-say="Tertiary: rare or low-stakes">Export song list</button>
+        <button class="btn btn-danger" type="button" data-say="Destructive: names what it destroys">Delete playlist</button>
+      </div>
+      <div class="row" style="margin-top:6px">
+        <button class="btn btn-primary" type="button" disabled>Play</button>
+        <span class="try" style="max-width:none">vs</span>
+        <button class="btn btn-primary" type="button" data-act="explain"><svg class="icon sm"><use href="#i-play"/></svg>Play</button>
+      </div>
+      <p class="result" data-out aria-live="polite">Click a button to see its role</p>
+      <p class="try"><b>Try it:</b> the disabled Play can’t tell you why it’s disabled. The enabled one explains what’s missing when you press it.</p>
+    </div>

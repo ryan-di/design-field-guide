@@ -1,0 +1,102 @@
+<script>
+(() => {
+  const cs = document.currentScript.closest('.cs');
+  const D = (k, html, wire) => csDemo(cs.querySelector('[data-d="' + k + '"]'), html, wire);
+  const warn = '<svg class="icon" style="width:15px;height:15px"><use href="#i-warn"/></svg>';
+  const msg = text => '<p class="field-msg">' + warn + '<span>' + text + '</span></p>';
+  const frame = (bar, body) => '<div class="app-frame" style="width:min(340px,100%)"><div class="app-bar">' + bar + '</div><div class="app-body cb-body" data-body>' + body + '</div></div>';
+
+  /* 1. Only one */
+  const DEL = [['Standard', 'Free · 3–5 days', 0, 'arrives in 3–5 days'], ['Express', '$9 · tomorrow', 9, 'arrives tomorrow'], ['Pick up in store', 'Free · ready today', 0, 'ready to pick up today']];
+  const delHtml = fixed => frame('<span>Checkout</span><span class="cs-meta">Order $40.00</span>',
+    '<form data-f><fieldset><legend>Delivery</legend>' + DEL.map(([n, s], i) => '<label class="check"><input type="' + (fixed ? 'radio' : 'checkbox') + '" name="del" value="' + i + '"' + (i === 0 ? ' checked' : '') + '><span>' + n + '<small>' + s + '</small></span></label>').join('') +
+    '</fieldset></form><div class="cs-msgs" data-m></div><button type="button" class="btn btn-primary" data-go style="align-self:flex-start">Continue</button><p class="cs-ok" data-ok></p>');
+  const delWire = d => {
+    const f = d.querySelector('[data-f]'), m = d.querySelector('[data-m]'), ok = d.querySelector('[data-ok]');
+    f.addEventListener('submit', e => e.preventDefault());
+    f.addEventListener('change', () => { m.innerHTML = ''; ok.textContent = ''; });
+    d.querySelector('[data-go]').addEventListener('click', () => {
+      const picked = Array.from(f.querySelectorAll('input:checked')).map(i => DEL[+i.value]);
+      ok.textContent = '';
+      if (picked.length !== 1) { m.innerHTML = msg(picked.length ? 'Choose only one delivery option.' : 'Choose a delivery option.'); return; }
+      m.innerHTML = ''; ok.textContent = picked[0][0] + ': ' + picked[0][3] + '. Total $' + (40 + picked[0][2]).toFixed(2) + '.';
+    });
+  };
+  D('checkbox-1b', delHtml(false), delWire);
+  D('checkbox-1f', delHtml(true), delWire);
+
+  /* 2. Applies now */
+  const dndHtml = fixed => frame('<span>Messages</span><span class="cb-st" data-st aria-live="polite"><i class="cb-dot"></i><span>Available</span></span>',
+    '<div class="cb-card">' + (fixed ? '<label class="switch"><span class="grow">Do not disturb</span><span class="state">Off</span><input type="checkbox" role="switch"></label>'
+      : '<label class="check"><input type="checkbox"><span>Do not disturb</span></label>') + '</div><p class="field-help">Mutes alerts for new messages.</p>' +
+    '<div class="cb-chat" aria-hidden="true"><div class="line" style="width:70%"></div><div class="line" style="width:52%;align-self:flex-end"></div><div class="line" style="width:62%"></div></div>');
+  const dndWire = d => {
+    const i = d.querySelector('.cb-card input'), st = d.querySelector('[data-st]'), state = d.querySelector('.state');
+    i.addEventListener('change', () => {
+      st.toggleAttribute('data-dnd', i.checked); st.querySelector('span').textContent = i.checked ? 'Do not disturb' : 'Available';
+      if (state) state.textContent = i.checked ? 'On' : 'Off';
+    });
+  };
+  D('checkbox-2b', dndHtml(false), dndWire);
+  D('checkbox-2f', dndHtml(true), dndWire);
+
+  /* 3. Negative label */
+  const signHtml = neg => '<div class="cs-form"><b style="font-size:15px">Create account</b><label class="cs-f">Name<input class="input" value="Maya Lee"></label><label class="cs-f">Email<input class="input" value="maya@mail.com"></label>' +
+    '<label class="check" style="font-size:14.5px"><input type="checkbox" data-cb><span>' + (neg ? 'Don’t send me updates' : 'Send me updates') + '</span></label>' +
+    '<button type="button" class="btn btn-primary" data-go>Create account</button><p class="cs-ok" data-ok></p><p class="cs-meta" data-st></p></div>';
+  const signWire = neg => d => {
+    const cb = d.querySelector('[data-cb]'), ok = d.querySelector('[data-ok]'), st = d.querySelector('[data-st]');
+    cb.addEventListener('change', () => { ok.textContent = ''; st.textContent = ''; });
+    d.querySelector('[data-go]').addEventListener('click', () => {
+      const updates = neg ? !cb.checked : cb.checked;
+      ok.textContent = 'Account created.'; st.textContent = updates ? 'You’ll get updates by email.' : 'You won’t get any updates.';
+    });
+  };
+  D('checkbox-3b', signHtml(true), signWire(true));
+  D('checkbox-3f', signHtml(false), signWire(false));
+
+  /* 4. Long list */
+  const PEOPLE = ['Aaron Bell', 'Priya Bose', 'Alex Chen', 'Jo Cole', 'Sam Diaz', 'Lena Dorn', 'Mia Evans', 'Tom Ford', 'Nina Gray', 'Omar Hale', 'Kate Hart', 'Ben Ives', 'Ravi Jones', 'Alex Kim', 'Lily Lane',
+    'Ian Mehta', 'Zoe Moss', 'Eva Nash', 'Leo Ortiz', 'Ana Park', 'Max Quinn', 'Ella Reed', 'Alex Ruiz', 'Noah Shaw', 'Ivy Stone', 'Dan Tran', 'Rosa Vega', 'Alex Webb', 'Sara West', 'Luca Young'];
+  const rows = PEOPLE.map((p, i) => '<label class="check" data-p="' + i + '"><input type="checkbox" value="' + i + '"><span>' + p + '</span></label>').join('');
+  const foot = '<div class="cb-foot"><span class="cs-meta" data-n>0 selected</span><button type="button" class="btn btn-primary cs-sm" data-go>Send invites</button></div><p class="cs-ok" data-ok></p><p class="cs-meta" data-who></p>';
+  const sendWire = d => {
+    const boxes = Array.from(d.querySelectorAll('[data-list] input')), n = d.querySelector('[data-n]'), ok = d.querySelector('[data-ok]'), who = d.querySelector('[data-who]');
+    const count = () => { n.textContent = boxes.filter(b => b.checked).length + ' selected'; ok.textContent = ''; who.textContent = ''; };
+    boxes.forEach(b => b.addEventListener('change', count));
+    d.querySelector('[data-go]').addEventListener('click', () => {
+      const names = boxes.filter(b => b.checked).map(b => PEOPLE[+b.value]);
+      ok.textContent = names.length ? 'Invites sent to ' + names.length + (names.length === 1 ? ' person.' : ' people.') : '';
+      who.textContent = names.length ? names.join(', ') : 'Pick at least one person.';
+    });
+    return count;
+  };
+  D('checkbox-4b', frame('<span>Invite to Trip plan</span>', '<div class="cb-list" data-list>' + rows + '</div>' + foot), sendWire);
+  D('checkbox-4f', frame('<span>Invite to Trip plan</span>',
+    '<input class="input" type="search" data-q placeholder="Search people" aria-label="Search people" style="padding:8px 11px">' +
+    '<label class="check cb-all"><input type="checkbox" data-all><span data-all-l>Select all (30)</span></label>' +
+    '<div class="cb-list" data-list style="max-height:170px">' + rows + '<p class="cb-empty" data-empty hidden></p></div>' + foot), d => {
+    const count = sendWire(d);
+    const q = d.querySelector('[data-q]'), all = d.querySelector('[data-all]'), allL = d.querySelector('[data-all-l]'), empty = d.querySelector('[data-empty]');
+    const labels = Array.from(d.querySelectorAll('[data-list] .check'));
+    const visible = () => labels.filter(l => !l.hidden).map(l => l.querySelector('input'));
+    const sync = () => {
+      const v = visible(), c = v.filter(b => b.checked).length;
+      all.checked = c > 0 && c === v.length; all.indeterminate = c > 0 && c < v.length; all.disabled = !v.length;
+      allL.textContent = 'Select all (' + v.length + ')';
+    };
+    q.addEventListener('input', () => {
+      const s = q.value.trim().toLowerCase();
+      labels.forEach(l => { l.hidden = !!s && !PEOPLE[+l.dataset.p].toLowerCase().includes(s); });
+      empty.hidden = visible().length > 0; empty.textContent = 'No one matches “' + q.value.trim() + '”.';
+      sync();
+    });
+    labels.forEach(l => l.querySelector('input').addEventListener('change', sync));
+    all.addEventListener('change', () => { visible().forEach(b => { b.checked = all.checked; }); sync(); count(); });
+    sync();
+  });
+
+  csInit(cs);
+})();
+
+  </script>

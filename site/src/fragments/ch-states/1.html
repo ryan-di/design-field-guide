@@ -1,0 +1,82 @@
+<div class="fm" data-fm>
+  <div class="seg fm-seg" role="radiogroup" aria-label="Form">
+    <input type="radio" name="fm-interaction-states" id="fm-interaction-states-1" value="pointer" checked><label for="fm-interaction-states-1">Hover and press</label>
+    <input type="radio" name="fm-interaction-states" id="fm-interaction-states-2" value="focus"><label for="fm-interaction-states-2">Focus</label>
+    <input type="radio" name="fm-interaction-states" id="fm-interaction-states-3" value="selected"><label for="fm-interaction-states-3">Selected</label>
+    <input type="radio" name="fm-interaction-states" id="fm-interaction-states-4" value="disabled"><label for="fm-interaction-states-4">Disabled</label>
+    <input type="radio" name="fm-interaction-states" id="fm-interaction-states-5" value="loading"><label for="fm-interaction-states-5">Loading</label>
+  </div>
+  <div class="fm-stage" data-fm-stage></div>
+  <p class="fig-cap" data-fm-when aria-live="polite"></p>
+  
+  <script>
+  (() => {
+    const fm = document.currentScript.closest('[data-fm]'), stage = fm.querySelector('[data-fm-stage]'), when = fm.querySelector('[data-fm-when]');
+    const icon = n => '<svg class="icon"><use href="#i-' + n + '"/></svg>';
+    const frame = (title, body, right) => '<div class="app-frame fm-frame"><div class="app-bar"><span>' + title + '</span>' + (right || '') + '</div><div class="app-body isf-body">' + body + '</div></div>';
+    const tracks = [['Golden Hour', 'Mara Vale', '3:12'], ['Night Drive', 'The Lanes', '4:05'], ['Slow River', 'Ada North', '2:48']];
+    let gen = 0;
+    const F = {
+      pointer: {
+        html: frame('Road trip playlist', '<div class="isf-tracks">' + tracks.map((t, i) => '<button class="isf-track" type="button"><span class="n"><i>' + (i + 1) + '</i>' + icon('play') + '</span><span class="t"><b>' + t[0] + '</b><span>' + t[1] + '</span></span><span class="d">' + t[2] + '</span></button>').join('') + '</div><p class="cs-meta" data-out></p>'),
+        use: 'Use them on anything people can click: hover says it reacts, and pressed says the click landed.',
+        more: 'Touch screens have no hover, so there the pressed state does all the work.',
+        wire: s => s.querySelectorAll('.isf-track').forEach(b => b.addEventListener('click', () => { s.querySelector('[data-out]').textContent = 'Playing “' + b.querySelector('b').textContent + '”.'; }))
+      },
+      focus: {
+        html: frame('Flights', '<div class="isf-two"><label class="isf-f">From<input class="input" value="Lisbon"></label><label class="isf-f">To<input class="input" value="Berlin"></label></div><div class="isf-acts"><button class="btn btn-secondary cs-sm" type="button">12–16 June</button><button class="btn btn-primary cs-sm" type="button" data-go>Search</button></div><p class="cs-meta" data-out>Click in From, then press Tab a few times.</p>'),
+        use: 'Use it to show which control the keyboard is on. It moves with Tab.',
+        more: 'It has to stand out on every background, and look different from selected.',
+        wire: s => s.querySelector('[data-go]').addEventListener('click', () => { s.querySelector('[data-out]').textContent = 'Found 14 flights.'; })
+      },
+      selected: {
+        html: frame('Share photos', '<div class="isf-head"><span data-count></span></div><div class="isf-grid">' + ['', 'b', 'c', 'c', '', 'b'].map((c, i) => '<button class="isf-ph ' + c + '" type="button" aria-label="Photo ' + (i + 1) + '" aria-pressed="' + (i === 1 || i === 3) + '"><span class="isf-ck">' + icon('check') + '</span></button>').join('') + '</div>'),
+        use: 'Use it to show what’s chosen or switched on, like photos picked for sharing.',
+        more: 'It lasts until people change it, so it must look clearly different from hover and focus.',
+        wire: s => {
+          const ph = Array.from(s.querySelectorAll('.isf-ph')), count = s.querySelector('[data-count]');
+          const sync = () => { const n = ph.filter(p => p.getAttribute('aria-pressed') === 'true').length; count.textContent = n ? n + ' selected' : 'Select photos to share'; };
+          ph.forEach(p => p.addEventListener('click', () => { p.setAttribute('aria-pressed', p.getAttribute('aria-pressed') === 'true' ? 'false' : 'true'); sync(); }));
+          sync();
+        }
+      },
+      disabled: {
+        html: frame('Send money', '<div class="isf-to">To<span>Dana Kim</span></div><label class="isf-f">Amount<input class="input" inputmode="decimal" placeholder="0.00" autocomplete="off" data-amt></label><div class="isf-acts"><button class="btn btn-primary cs-sm" type="button" disabled data-go>Continue</button><span class="field-help" data-help>Enter an amount to continue.</span></div><p class="cs-meta" data-out></p>'),
+        use: 'Use it when a control can’t work yet, like Continue before there’s an amount.',
+        more: 'It looks faded and ignores clicks, and it turns on as soon as the reason is gone.',
+        wire: s => {
+          const amt = s.querySelector('[data-amt]'), go = s.querySelector('[data-go]'), help = s.querySelector('[data-help]'), out = s.querySelector('[data-out]');
+          amt.addEventListener('input', () => { const v = parseFloat(amt.value.replace(',', '.')); const ok = v > 0; go.disabled = !ok; help.hidden = ok; out.textContent = ''; });
+          go.addEventListener('click', () => { out.textContent = 'Next: review $' + parseFloat(amt.value.replace(',', '.')).toFixed(2) + ' to Dana Kim.'; });
+        }
+      },
+      loading: {
+        html: frame('Trip plan', '<div class="line" style="width:78%"></div><div class="line" style="width:92%"></div><div class="line" style="width:64%"></div><div class="line" style="width:84%"></div><div class="isf-acts"><button class="btn btn-secondary cs-sm isf-add" type="button" data-add>Export as PDF</button></div><p class="cs-meta" data-out></p>'),
+        use: 'Use it when an action takes more than a moment, like exporting a file.',
+        more: 'Show that it’s working, then show the result before the control goes back to normal.',
+        wire: s => {
+          const b = s.querySelector('[data-add]'), out = s.querySelector('[data-out]');
+          let busy = false;
+          b.addEventListener('click', () => {
+            if (busy) return;
+            busy = true; const g = gen;
+            b.setAttribute('aria-busy', 'true'); b.innerHTML = '<span class="spinner"></span>Exporting…'; out.textContent = '';
+            setTimeout(() => {
+              if (g !== gen) return;
+              b.innerHTML = icon('check') + 'Exported'; out.textContent = 'Saved “Trip plan.pdf” to Downloads.';
+              setTimeout(() => { if (g !== gen) return; busy = false; b.removeAttribute('aria-busy'); b.textContent = 'Export as PDF'; }, 1500);
+            }, 1300);
+          });
+        }
+      }
+    };
+    const show = k => {
+      gen++;
+      stage.innerHTML = F[k].html; F[k].wire(stage);
+      when.innerHTML = '<b>' + fm.querySelector('.fm-seg input:checked + label').textContent + '.</b> ' + F[k].use + ' ' + F[k].more;
+    };
+    fm.querySelectorAll('.fm-seg input').forEach(i => i.addEventListener('change', () => show(i.value)));
+    show('pointer');
+  })();
+  </script>
+</div>

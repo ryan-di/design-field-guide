@@ -1,0 +1,104 @@
+<div class="fm" data-fm>
+  
+  <div class="seg fm-seg" role="radiogroup" aria-label="Form">
+    <input type="radio" name="fm-popover" id="fm-popover-1" value="options" checked><label for="fm-popover-1">Options</label>
+    <input type="radio" name="fm-popover" id="fm-popover-2" value="picker"><label for="fm-popover-2">Picker</label>
+    <input type="radio" name="fm-popover" id="fm-popover-3" value="details"><label for="fm-popover-3">Details</label>
+    <input type="radio" name="fm-popover" id="fm-popover-4" value="tip"><label for="fm-popover-4">Tip</label>
+  </div>
+  <div class="fm-stage" data-fm-stage></div>
+  <p class="fig-cap" data-fm-when aria-live="polite"></p>
+  <script>
+  (() => {
+    const fm = document.currentScript.closest('[data-fm]'), stage = fm.querySelector('[data-fm-stage]'), when = fm.querySelector('[data-fm-when]');
+    const icon = n => '<svg class="icon"><use href="#i-' + n + '"/></svg>';
+    const lines = '<div class="line" style="width:86%"></div><div class="line" style="width:94%"></div><div class="line" style="width:62%"></div>';
+    const frame = (title, right, body) => '<div class="app-frame pvf-frame"><div class="app-bar"><span>' + title + '</span>' + right + '</div><div class="app-body">' + body + '</div></div>';
+    const fav = [1, 0, 0, 1, 0, 1, 0, 0, 1, 0, 0, 0];
+    const thumbs = fav.map((f, i) => '<div class="thumb' + ['', ' b', ' c'][i % 3] + '" data-fav="' + f + '"></div>').join('');
+    // open/close for a trigger + box: toggle, Esc, click outside, focus leaving
+    const popper = (s, sig, trig, box) => {
+      const set = (open, focus) => {
+        box.hidden = !open; trig.setAttribute('aria-expanded', String(open));
+        if (open && focus) { const f = box.querySelector('input, button'); if (f) f.focus(); }
+        if (!open && focus) trig.focus();
+      };
+      trig.addEventListener('click', () => set(box.hidden, true));
+      document.addEventListener('pointerdown', e => { if (!box.hidden && !box.contains(e.target) && !trig.contains(e.target)) set(false); }, { signal: sig });
+      document.addEventListener('keydown', e => { if (e.key === 'Escape' && !box.hidden) set(false, box.contains(document.activeElement) || trig === document.activeElement); }, { signal: sig });
+      box.addEventListener('focusout', e => { if (e.relatedTarget && !box.contains(e.relatedTarget) && e.relatedTarget !== trig) set(false); });
+      set(true, false);
+      return set;
+    };
+    const F = {
+      options: {
+        html: frame('Photos', '<button class="btn btn-secondary cs-sm" type="button" aria-haspopup="dialog" data-trig>' + icon('sliders') + 'View</button>',
+          '<div class="pvf-grid" data-grid>' + thumbs + '</div>') ,
+        box: '<div class="pvf-box pvf-view" role="dialog" aria-label="View" data-box><b>View</b><label class="switch fm-row"><span class="grow">Favorites only</span><input type="checkbox" role="switch" data-favs></label><span class="pvf-lab">Size</span><div class="pvf-sz" role="group" aria-label="Size"><button type="button" aria-pressed="true" data-sz="small">Small</button><button type="button" aria-pressed="false" data-sz="big">Large</button></div></div>',
+        host: '.pvf-frame',
+        use: 'Use it for a few settings that change the view, like size or filters.',
+        more: 'Apply each change at once, so people see the result as they go.',
+        wire: s => {
+          const grid = s.querySelector('[data-grid]');
+          s.querySelector('[data-favs]').addEventListener('change', e => grid.querySelectorAll('[data-fav="0"]').forEach(t => { t.hidden = e.target.checked; }));
+          s.querySelectorAll('[data-sz]').forEach(b => b.addEventListener('click', () => { s.querySelectorAll('[data-sz]').forEach(x => x.setAttribute('aria-pressed', String(x === b))); grid.classList.toggle('big', b.dataset.sz === 'big'); }));
+        }
+      },
+      picker: {
+        html: frame('Stays', '', '<div class="pvf-search" data-host><div class="pvf-field"><small>Where</small>Lisbon</div><button class="pvf-field" type="button" aria-haspopup="dialog" data-trig><small>Guests</small><span data-sum>2 guests</span></button></div><button class="btn btn-primary" type="button" style="align-self:flex-start">Search</button>' + lines),
+        box: '<div class="pvf-box pvf-guests" role="dialog" aria-label="Guests" data-box>' +
+          '<div class="pvf-cnt"><div>Adults<small>Ages 13 or above</small></div><div class="pvf-step"><button class="icon-btn" type="button" aria-label="Fewer adults" data-d="a,-1">' + icon('minus') + '</button><output data-n="a">2</output><button class="icon-btn" type="button" aria-label="More adults" data-d="a,1">' + icon('plus') + '</button></div></div>' +
+          '<div class="pvf-cnt"><div>Children<small>Ages 2 to 12</small></div><div class="pvf-step"><button class="icon-btn" type="button" aria-label="Fewer children" data-d="c,-1">' + icon('minus') + '</button><output data-n="c">0</output><button class="icon-btn" type="button" aria-label="More children" data-d="c,1">' + icon('plus') + '</button></div></div></div>',
+        host: '[data-host]',
+        use: 'Use it to set one value, like dates or the number of guests.',
+        more: 'The field shows the new value as soon as it changes.',
+        wire: s => {
+          const n = { a: 2, c: 0 }, lim = { a: [1, 8], c: [0, 6] };
+          const paint = () => {
+            s.querySelector('[data-n="a"]').textContent = n.a; s.querySelector('[data-n="c"]').textContent = n.c;
+            s.querySelectorAll('[data-d]').forEach(b => { const [k, d] = b.dataset.d.split(','); b.setAttribute('aria-disabled', String(d < 0 ? n[k] <= lim[k][0] : n[k] >= lim[k][1])); });
+            const t = n.a + n.c; s.querySelector('[data-sum]').textContent = t + (t === 1 ? ' guest' : ' guests');
+          };
+          s.querySelectorAll('[data-d]').forEach(b => b.addEventListener('click', () => { const [k, d] = b.dataset.d.split(','); n[k] = Math.max(lim[k][0], Math.min(lim[k][1], n[k] + Number(d))); paint(); }));
+          paint();
+        }
+      },
+      details: {
+        html: frame('Inbox', '', '<b>Dinner on Friday?</b><div class="pvf-from" data-host>From <button class="pvf-name" type="button" aria-haspopup="dialog" data-trig>Maya Chen</button> to me</div>' + lines + '<p class="pvf-out" data-out></p>'),
+        box: '<div class="pvf-box pvf-card" role="dialog" aria-label="Maya Chen" data-box><div class="pvf-who"><i></i><b>Maya Chen</b><span>maya.chen@example.com</span></div><div class="pvf-acts"><button class="btn btn-secondary cs-sm" type="button" data-act="New message to Maya Chen.">Send email</button><button class="btn btn-ghost cs-sm" type="button" data-act="Address copied.">Copy address</button></div></div>',
+        host: '[data-host]',
+        use: 'Use it to show more about a person, a place or a link without leaving the page.',
+        more: 'Keep it to a few facts and one or two actions.',
+        wire: (s, set) => s.querySelectorAll('[data-act]').forEach(b => b.addEventListener('click', () => { s.querySelector('[data-out]').textContent = b.dataset.act; set(false, true); }))
+      },
+      tip: {
+        html: frame('Trip notes', '<div class="pvf-tools"><button class="btn btn-primary cs-sm" type="button">Share</button><button class="icon-btn" type="button" aria-label="Work offline" aria-pressed="false" data-off>' + icon('cloud-off') + '</button></div>', lines + lines + '<p class="pvf-out" data-out></p>'),
+        box: '<div class="pvf-box pvf-tip" role="dialog" aria-label="New: work offline" data-box><b>New: work offline</b><p>Keep editing with no connection. Your changes sync when you’re back online.</p><button class="btn btn-secondary cs-sm" type="button" data-ok>Got it</button></div>',
+        host: '.pvf-frame',
+        use: 'Use it once, to point out something new right where it is.',
+        more: 'It closes with one click and doesn’t come back.'
+      }
+    };
+    let gen = 0, ctl = null;
+    const show = k => {
+      gen++; if (ctl) ctl.abort(); ctl = new AbortController();
+      stage.innerHTML = F[k].html;
+      stage.querySelector(F[k].host).insertAdjacentHTML('beforeend', F[k].box);
+      const box = stage.querySelector('[data-box]');
+      if (k === 'tip') {
+        const off = stage.querySelector('[data-off]'), out = stage.querySelector('[data-out]');
+        const close = () => { box.hidden = true; out.textContent = 'Tip closed. It won’t show again.'; off.focus(); };
+        box.querySelector('[data-ok]').addEventListener('click', close);
+        document.addEventListener('keydown', e => { if (e.key === 'Escape' && !box.hidden) close(); }, { signal: ctl.signal });
+        off.addEventListener('click', () => { const on = off.getAttribute('aria-pressed') !== 'true'; off.setAttribute('aria-pressed', String(on)); out.textContent = on ? 'Offline on. Changes will sync later.' : 'Back online.'; });
+      } else {
+        const set = popper(stage, ctl.signal, stage.querySelector('[data-trig]'), box);
+        if (F[k].wire) F[k].wire(stage, set);
+      }
+      when.innerHTML = '<b>' + fm.querySelector('.fm-seg input:checked + label').textContent + '.</b> ' + F[k].use + ' ' + F[k].more;
+    };
+    fm.querySelectorAll('.fm-seg input').forEach(i => i.addEventListener('change', () => show(i.value)));
+    show('options');
+  })();
+  </script>
+</div>

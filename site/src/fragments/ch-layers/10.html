@@ -1,0 +1,107 @@
+<div class="fm" data-fm>
+  <div class="seg fm-seg" role="radiogroup" aria-label="Kind">
+    <input type="radio" name="fm-pat-shortcuts" id="fm-pat-shortcuts-1" value="single" checked><label for="fm-pat-shortcuts-1">Single key</label>
+    <input type="radio" name="fm-pat-shortcuts" id="fm-pat-shortcuts-2" value="combo"><label for="fm-pat-shortcuts-2">With Ctrl or ⌘</label>
+    <input type="radio" name="fm-pat-shortcuts" id="fm-pat-shortcuts-3" value="seq"><label for="fm-pat-shortcuts-3">Sequence</label>
+    <input type="radio" name="fm-pat-shortcuts" id="fm-pat-shortcuts-4" value="palette"><label for="fm-pat-shortcuts-4">Command palette</label>
+  </div>
+  <div class="fm-stage" data-fm-stage></div>
+  <p class="fig-cap" data-fm-when aria-live="polite"></p>
+  
+  <script>
+  (() => {
+    const fm = document.currentScript.closest('[data-fm]'), stage = fm.querySelector('[data-fm-stage]'), when = fm.querySelector('[data-fm-when]');
+    const mod = /Mac|iP/.test(navigator.platform) ? '⌘' : 'Ctrl';
+    const k = s => '<kbd class="p16-kbd">' + s + '</kbd>';
+    const MAIL = [['Sam', 'Dinner on Friday?'], ['Bank', 'Your statement is ready'], ['Mia', 'Photos from the trip'], ['Airline', 'Check-in is open'], ['Leo', 'Book club moved to 7']];
+    const frame = (title, body) => '<div class="app-frame fm-frame fsc-frame"><div class="app-bar"><span>' + title + '</span></div><div class="app-body">' + body + '</div></div>';
+    const F = {
+      single: {
+        html: frame('Inbox', '<div class="fsc-list" tabindex="0" role="group" aria-label="Inbox. J and K move, E archives." data-list></div><p class="fsc-hint">Click the list, then press ' + k('J') + k('K') + 'to move and ' + k('E') + 'to archive.</p><p class="cs-meta" data-out></p>'),
+        use: 'Use it for commands people repeat many times in one area, like moving through a list.',
+        note: 'It only works while focus is in that area, never in a text field.',
+        wire: s => {
+          const list = s.querySelector('[data-list]'), out = s.querySelector('[data-out]');
+          let mails = MAIL.slice(0, 4), at = 0;
+          const draw = () => { list.innerHTML = mails.length ? mails.map((m, i) => '<div class="fsc-mail' + (i === at ? ' on' : '') + '"><b>' + m[0] + '</b><span>' + m[1] + '</span></div>').join('') : '<p class="cs-meta">Inbox empty.</p>'; };
+          list.addEventListener('keydown', e => {
+            if (e.ctrlKey || e.metaKey || e.altKey) return;
+            const key = e.key.toLowerCase();
+            if (key === 'j') at = Math.min(at + 1, mails.length - 1);
+            else if (key === 'k') at = Math.max(at - 1, 0);
+            else if (key === 'e' && mails.length) { out.textContent = 'Archived “' + mails[at][1] + '”.'; mails.splice(at, 1); at = Math.min(at, mails.length - 1); }
+            else return;
+            e.preventDefault(); draw();
+          });
+          draw();
+        }
+      },
+      combo: {
+        html: frame('Reply to Sam', '<textarea class="input fsc-area" aria-label="Reply" aria-keyshortcuts="Control+Enter Meta+Enter" data-area>Friday works. See you at 7!</textarea><div class="fsc-acts"><span class="fsc-hint">' + k(mod) + k('Enter') + '</span><button class="btn btn-primary cs-sm" type="button" data-send>Send</button></div><p class="cs-meta" data-out></p>'),
+        use: 'Use it for commands that should work anywhere, even while people type, like sending.',
+        note: 'Click in the reply and press ' + mod + ' and Enter together. Plain Enter still adds a line.',
+        wire: s => {
+          const area = s.querySelector('[data-area]'), out = s.querySelector('[data-out]');
+          const send = how => { if (!area.value.trim()) { out.textContent = 'Write something first.'; return; } out.textContent = 'Sent ' + how + '.'; area.value = ''; };
+          area.addEventListener('keydown', e => { if (e.key === 'Enter' && (e.ctrlKey || e.metaKey)) { e.preventDefault(); send('with ' + mod + ' Enter'); } });
+          s.querySelector('[data-send]').addEventListener('click', () => send('with the button'));
+        }
+      },
+      seq: {
+        html: frame('Mail', '<div class="fsc-list" tabindex="0" role="group" aria-label="Mail. Press G, then I, S or T to change folder." data-list><div class="fsc-nav" data-nav><span data-f="i">Inbox</span><span data-f="s">Starred</span><span data-f="t">Sent</span></div></div><p class="fsc-hint">Click above, then press ' + k('G') + 'followed by ' + k('I') + k('S') + 'or ' + k('T') + '.</p><p class="fsc-hint fsc-wait" data-wait></p>'),
+        use: 'Use it when there are more commands than free keys. Gmail uses G then I to go to the inbox.',
+        note: 'The first key waits for the second, so show that it’s waiting.',
+        wire: s => {
+          const list = s.querySelector('[data-list]'), wait = s.querySelector('[data-wait]');
+          let armed = false, timer = 0, my = gen;
+          const go = f => s.querySelectorAll('[data-f]').forEach(x => x.classList.toggle('on', x.dataset.f === f));
+          const disarm = () => { armed = false; wait.innerHTML = ''; clearTimeout(timer); };
+          list.addEventListener('keydown', e => {
+            if (e.ctrlKey || e.metaKey || e.altKey) return;
+            const key = e.key.toLowerCase();
+            if (!armed && key === 'g') { e.preventDefault(); armed = true; wait.innerHTML = k('G') + ' waiting for the next key…'; clearTimeout(timer); timer = setTimeout(() => { if (my === gen) disarm(); }, 1600); return; }
+            if (armed && 'ist'.includes(key) && key.length === 1) { e.preventDefault(); go(key); disarm(); wait.textContent = 'Went to ' + s.querySelector('[data-f="' + key + '"]').textContent + '.'; return; }
+            if (armed) disarm();
+          });
+          go('i');
+        }
+      },
+      palette: {
+        html: frame('Inbox', '<button class="btn btn-secondary cs-sm fsc-open" type="button" aria-keyshortcuts="Control+K Meta+K" data-open>Search commands ' + k(mod) + k('K') + '</button>' +
+          '<div class="fsc-list" tabindex="0" role="group" aria-label="Inbox" data-list>' + MAIL.slice(0, 3).map((m, i) => '<div class="fsc-mail' + (i ? '' : ' on') + '"><b>' + m[0] + '</b><span>' + m[1] + '</span></div>').join('') + '</div>' +
+          '<div class="fsc-pal" data-pal hidden><input class="input" aria-label="Type a command" placeholder="Type a command" data-q><div data-cmds></div></div><p class="cs-meta" data-out></p>'),
+        use: 'Use it when there are many commands. People type part of a name and pick from the list.',
+        note: 'The list shows each command’s key, so people learn it on the way.',
+        wire: s => {
+          const pal = s.querySelector('[data-pal]'), q = s.querySelector('[data-q]'), cmds = s.querySelector('[data-cmds]'), out = s.querySelector('[data-out]'), btn = s.querySelector('[data-open]');
+          const ALL = [['Archive', 'E'], ['Reply', 'R'], ['Forward', 'F'], ['Mark as unread', '⇧ U'], ['Snooze', 'B'], ['Go to Starred', 'G S']];
+          let hits = ALL, at = 0;
+          const draw = () => {
+            const t = q.value.trim().toLowerCase();
+            hits = ALL.filter(c => c[0].toLowerCase().includes(t)); at = Math.min(at, Math.max(hits.length - 1, 0));
+            cmds.innerHTML = hits.length ? hits.map((c, i) => '<div class="fsc-cmd' + (i === at ? ' on' : '') + '"><span>' + c[0] + '</span>' + k(c[1]) + '</div>').join('') : '<p class="cs-meta">No command matches.</p>';
+          };
+          const open = () => { pal.hidden = false; q.value = ''; at = 0; draw(); q.focus(); };
+          const close = () => { pal.hidden = true; btn.focus(); };
+          btn.addEventListener('click', open);
+          s.querySelector('.fsc-frame').addEventListener('keydown', e => { if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'k') { e.preventDefault(); e.stopPropagation(); open(); } });
+          q.addEventListener('input', () => { at = 0; draw(); });
+          q.addEventListener('keydown', e => {
+            if (e.key === 'Escape') { e.preventDefault(); close(); }
+            else if (e.key === 'ArrowDown' || e.key === 'ArrowUp') { e.preventDefault(); at = Math.max(0, Math.min(hits.length - 1, at + (e.key === 'ArrowDown' ? 1 : -1))); draw(); }
+            else if (e.key === 'Enter' && hits[at]) { e.preventDefault(); out.textContent = hits[at][0] + ' done. Next time, press ' + hits[at][1] + '.'; close(); }
+          });
+        }
+      }
+    };
+    let gen = 0;
+    const show = key => {
+      gen++;
+      stage.innerHTML = F[key].html; F[key].wire(stage);
+      when.innerHTML = '<b>' + fm.querySelector('.fm-seg input:checked + label').textContent + '.</b> ' + F[key].use + ' ' + F[key].note;
+    };
+    fm.querySelectorAll('.fm-seg input').forEach(i => i.addEventListener('change', () => show(i.value)));
+    show('single');
+  })();
+  </script>
+</div>

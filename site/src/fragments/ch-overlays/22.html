@@ -1,0 +1,226 @@
+<script>
+(() => {
+  const cs = document.currentScript.closest('.cs');
+  const D = (k, html, wire) => csDemo(cs.querySelector('[data-d="' + k + '"]'), html, wire);
+  const icon = n => '<svg class="icon sm"><use href="#i-' + n + '"/></svg>';
+  const dots = label => '<button class="icon-btn" type="button" aria-label="' + label + '" aria-haspopup="menu" aria-expanded="false" data-btn style="width:36px;height:36px">' + icon('dots') + '</button>';
+  const it = (label, attrs, cls) => '<button class="mn-it' + (cls ? ' ' + cls : '') + '" type="button" role="menuitem" tabindex="-1" ' + (attrs || '') + '>' + label + '</button>';
+  const danger = x => x === 'Move to trash' ? 'danger' : '';
+  const hr = '<hr class="mn-hr">';
+  // Listeners on the demo element itself survive Reset, so drop the previous run's ones first. Call once per wire.
+  const scoped = d => { (d._mnOff || []).forEach(f => f()); d._mnOff = []; return (type, fn, capture) => { d.addEventListener(type, fn, !!capture); d._mnOff.push(() => d.removeEventListener(type, fn, !!capture)); }; };
+  // Put a menu under its button, inside the positioned stage.
+  const placeUnder = (stage, btn, menu, right) => {
+    const s = stage.getBoundingClientRect(), b = btn.getBoundingClientRect();
+    menu.style.top = (b.bottom - s.top + 6) + 'px';
+    if (right) { menu.style.right = (s.right - b.right) + 'px'; menu.style.left = 'auto'; } else menu.style.left = (b.left - s.left) + 'px';
+  };
+  // Arrow keys, Home/End, Esc and Tab inside a role="menu".
+  const menuKeys = (menu, close) => menu.addEventListener('keydown', e => {
+    if (e.defaultPrevented) return;
+    if (e.target.tagName === 'INPUT' && e.key !== 'Escape' && e.key !== 'Tab') return;
+    if (e.key === 'Escape') { e.preventDefault(); close(true); return; }
+    if (e.key === 'Tab') { close(false); return; }
+    const items = Array.from(menu.querySelectorAll('[role="menuitem"]')).filter(x => !x.hidden && x.offsetParent);
+    const i = items.indexOf(document.activeElement);
+    const k = { ArrowDown: i + 1, ArrowUp: i < 0 ? items.length - 1 : i - 1, Home: 0, End: items.length - 1 }[e.key];
+    if (k === undefined || !items.length) return;
+    e.preventDefault(); items[(k + items.length) % items.length].focus();
+  });
+  // A button that opens one menu. onPick(item) runs after the menu closes.
+  const menuButton = (on, stage, btn, menu, right, onPick, onOpen) => {
+    const set = (open, focus) => {
+      if (open) { placeUnder(stage, btn, menu, right); if (onOpen) onOpen(); }
+      menu.hidden = !open; btn.setAttribute('aria-expanded', String(open));
+      if (open) { const f = menu.querySelector('input, [role="menuitem"]'); if (f) f.focus(); } else if (focus) btn.focus();
+    };
+    btn.addEventListener('click', () => set(menu.hidden));
+    menuKeys(menu, f => set(false, f));
+    menu.addEventListener('click', e => { const x = e.target.closest('[role="menuitem"]'); if (!x) return; set(false, true); onPick(x); });
+    on('pointerdown', e => { if (!menu.hidden && !menu.contains(e.target) && !btn.contains(e.target)) set(false); });
+    return set;
+  };
+
+  /* 1. Too long */
+  const ALL = ['Open', 'Open with…', 'Preview', 'Rename', 'Make a copy', 'Download', 'Move to…', 'Add shortcut', 'Add to starred', 'Change color…', 'Version history', 'Details', 'Activity', 'Lock file', 'Share…', 'Copy link', 'Email collaborators…', 'Print', 'Report…', 'Move to trash'];
+  const GROUPS = [['Share…', 'Copy link'], ['Download', 'Rename', 'Make a copy', 'Move to…'], ['Move to trash']];
+  const fileRow = '<div class="app-frame"><div class="mn-file"><div class="grow"><b>Budget 2026.xlsx</b><small>Edited yesterday</small></div>' + dots('More actions for Budget 2026.xlsx') + '</div></div>';
+  const longHtml = fixed => '<div class="mn-stage" data-stage style="height:380px">' + fileRow +
+    (fixed
+      ? '<div class="mn-menu" role="menu" aria-label="File actions" data-menu hidden><label class="mn-find">' + icon('search') + '<input type="text" placeholder="Search all actions" aria-label="Search all actions" data-q></label>' +
+        '<div data-groups style="display:flex;flex-direction:column">' + GROUPS.map(g => g.map(x => it(x, '', danger(x))).join('')).join(hr) + '</div>' +
+        '<div data-res hidden style="display:flex;flex-direction:column"></div></div>'
+      : '<div class="mn-menu mn-scroll" role="menu" aria-label="File actions" data-menu hidden>' + ALL.map(x => it(x)).join('') + '</div>') +
+    '</div><p class="cs-meta" data-m></p>';
+  const longWire = fixed => (d, t) => {
+    const on = scoped(d);
+    const stage = d.querySelector('[data-stage]'), btn = d.querySelector('[data-btn]'), menu = d.querySelector('[data-menu]'), m = d.querySelector('[data-m]');
+    let opened = 0;
+    menuButton(on, stage, btn, menu, true, x => {
+      const s = ((Date.now() - opened) / 1000).toFixed(1);
+      m.textContent = (x.textContent === 'Copy link' ? 'Link copied' : 'You chose ' + x.textContent) + ', ' + s + ' s after opening the menu.';
+    }, () => {
+      opened = Date.now(); menu.scrollTop = 0; m.textContent = '';
+      if (fixed) { const q = d.querySelector('[data-q]'); q.value = ''; q.dispatchEvent(new Event('input')); }
+    });
+    if (!fixed) return;
+    const q = d.querySelector('[data-q]'), groups = d.querySelector('[data-groups]'), res = d.querySelector('[data-res]');
+    q.addEventListener('input', () => {
+      const v = q.value.trim().toLowerCase();
+      groups.hidden = !!v; res.hidden = !v;
+      if (!v) { res.innerHTML = ''; return; }
+      const hits = ALL.filter(x => x.toLowerCase().includes(v));
+      res.innerHTML = hits.length ? hits.map(x => it(x, '', danger(x))).join('') : '<span class="mn-none">No actions match.</span>';
+    });
+    q.addEventListener('keydown', e => {
+      const first = menu.querySelector((q.value.trim() ? '[data-res]' : '[data-groups]') + ' [role="menuitem"]');
+      if (e.key === 'ArrowDown' && first) { e.preventDefault(); first.focus(); }
+      if (e.key === 'Enter' && q.value.trim() && first) { e.preventDefault(); first.click(); }
+    });
+  };
+  D('menu-1b', longHtml(false), longWire(false));
+  D('menu-1f', longHtml(true), longWire(true));
+
+  /* 2. Hidden action */
+  const RARE = ['Forward', 'Mark as unread', 'Snooze', 'Move to…', 'Add label', 'Print'];
+  const mailHtml = fixed => '<div class="mn-stage" data-stage style="min-height:310px"><div class="app-frame"><div class="app-bar"><span>Lunch on Friday?</span><span style="display:flex;gap:6px;align-items:center">' +
+    (fixed ? '<button class="btn btn-primary cs-sm" type="button" data-reply>Reply</button>' : '') + dots('More actions for this email') + '</span></div>' +
+    '<div class="app-body"><div><b>Lena Park</b> <span class="cs-meta">9:14</span></div><p style="margin:0;font-size:14.5px;line-height:1.45">Are you free for lunch on Friday? There’s a new place near the office.</p><div data-box></div></div></div>' +
+    '<div class="mn-menu" role="menu" aria-label="Email actions" data-menu hidden>' +
+    (fixed ? RARE.map(x => it(x)).join('') : ['Mark as unread', 'Snooze', 'Move to…', 'Add label', 'Reply', 'Forward', 'Print'].map(x => it(x)).join('')) + '</div></div><p class="cs-meta" data-m></p>';
+  const mailWire = fixed => d => {
+    const on = scoped(d);
+    const stage = d.querySelector('[data-stage]'), btn = d.querySelector('[data-btn]'), menu = d.querySelector('[data-menu]'), m = d.querySelector('[data-m]'), box = d.querySelector('[data-box]');
+    let clicks = 0;
+    const tick = () => { m.textContent = 'Clicks so far: ' + clicks; };
+    const reply = () => {
+      if (!box.firstChild) {
+        box.innerHTML = '<div class="mn-reply"><textarea class="input" aria-label="Reply to Lena" placeholder="Reply to Lena…"></textarea><button class="btn btn-primary cs-sm" type="button" style="align-self:flex-start" data-send>Send</button></div>';
+        box.querySelector('[data-send]').addEventListener('click', () => { box.innerHTML = '<p class="cs-ok">Reply sent.</p>'; });
+      }
+      const ta = box.querySelector('textarea'); if (ta) ta.focus();
+      m.textContent = 'Reply opened after ' + clicks + (clicks === 1 ? ' click.' : ' clicks.');
+    };
+    // Capture phase: count the click before the button's own handler runs.
+    on('click', e => { if (e.target.closest('button') && !e.target.closest('[data-send]')) { clicks++; tick(); } }, true);
+    menuButton(on, stage, btn, menu, true, x => {
+      if (x.textContent === 'Reply') reply(); else m.textContent = 'You chose ' + x.textContent + '. Clicks so far: ' + clicks;
+    });
+    if (fixed) d.querySelector('[data-reply]').addEventListener('click', reply);
+    tick();
+  };
+  D('menu-2b', mailHtml(false), mailWire(false));
+  D('menu-2f', mailHtml(true), mailWire(true));
+
+  /* 3. Comparing */
+  const SHIP = [['Standard', 0, 'Arrives Thu 29 Oct'], ['Express', 6, 'Arrives Tue 27 Oct'], ['Next day', 15, 'Arrives Mon 26 Oct'], ['Pick up in store', 0, 'Ready Wed 28 Oct']];
+  const price = n => n ? '$' + n.toFixed(2) : 'Free';
+  const shipHtml = fixed => '<div class="mn-stage" data-stage style="min-height:330px"><div class="app-frame"><div class="app-bar"><span>Checkout</span><span class="cs-meta">1 item · $48.00</span></div><div class="app-body">' +
+    (fixed
+      ? '<fieldset class="mn-cards"><legend class="mn-lab" style="margin-bottom:6px">Delivery</legend>' + SHIP.map((s, i) => '<label class="mn-card"><input type="radio" name="menu-3f-ship" value="' + i + '"' + (i ? '' : ' checked') + '><span class="grow"><b>' + s[0] + '</b><span class="cs-meta">' + s[2] + '</span></span><b>' + price(s[1]) + '</b></label>').join('') + '</fieldset>'
+      : '<span class="mn-lab">Delivery</span><button class="btn btn-secondary mn-sel" type="button" aria-haspopup="menu" aria-expanded="false" data-btn><span data-cur>Standard</span><span aria-hidden="true">▾</span></button>' +
+        '<p class="cs-meta" data-info style="margin:0"></p>') +
+    '<div class="mn-sum"><span>Total</span><b data-total>$48.00</b></div></div></div>' +
+    (fixed ? '' : '<div class="mn-menu" role="menu" aria-label="Delivery" data-menu hidden>' + SHIP.map((s, i) => it(s[0], 'data-i="' + i + '"')).join('') + '</div>') +
+    '</div><p class="cs-meta" data-m></p>';
+  const shipWire = fixed => d => {
+    const on = scoped(d);
+    const total = d.querySelector('[data-total]'), m = d.querySelector('[data-m]');
+    const pick = i => { total.textContent = '$' + (48 + SHIP[i][1]).toFixed(2); return SHIP[i]; };
+    if (fixed) {
+      d.querySelectorAll('input[type="radio"]').forEach(r => r.addEventListener('change', () => { const s = pick(Number(r.value)); m.textContent = 'Chosen: ' + s[0] + ' (' + price(s[1]) + ', ' + s[2] + ').'; }));
+      return;
+    }
+    const stage = d.querySelector('[data-stage]'), btn = d.querySelector('[data-btn]'), menu = d.querySelector('[data-menu]'), cur = d.querySelector('[data-cur]'), info = d.querySelector('[data-info]');
+    let opens = 0;
+    const show = i => { const s = pick(i); cur.textContent = s[0]; info.textContent = price(s[1]) + ' · ' + s[2]; };
+    menuButton(on, stage, btn, menu, false, x => { show(Number(x.dataset.i)); m.textContent = 'Opened the menu ' + opens + (opens === 1 ? ' time.' : ' times.'); }, () => { opens++; });
+    show(0);
+  };
+  D('menu-3b', shipHtml(false), shipWire(false));
+  D('menu-3f', shipHtml(true), shipWire(true));
+
+  /* 4. Deep nesting */
+  const docBody = '<div class="app-body"><b style="font-size:16px">Trip plan</b><div class="line" style="width:90%"></div><div class="line" style="width:76%"></div><div class="line" style="width:84%"></div><div class="line" style="width:40%"></div></div>';
+  const FMT = [['PDF', 'pdf', 'Best for sharing and printing'], ['Word', 'docx', 'Best for editing later'], ['Plain text', 'txt', 'Words only, no formatting']];
+  const deepHtml = fixed => '<div class="mn-stage" data-stage style="width:min(430px,100%);min-height:330px"><div class="app-frame"><div class="app-bar" style="justify-content:flex-start;gap:2px">' +
+    '<button class="cs-tab" type="button" aria-haspopup="menu" aria-expanded="false" data-btn>File</button><span class="cs-tab" aria-hidden="true" style="cursor:default">Edit</span><span class="cs-tab" aria-hidden="true" style="cursor:default">View</span></div>' + docBody + '</div>' +
+    '<div class="mn-menu' + (fixed ? '' : ' mn-casc') + '" role="menu" aria-label="File" data-menu hidden>' + it('Make a copy') +
+    (fixed ? it('Download…', 'data-dl') : it('Download<span aria-hidden="true">›</span>', 'data-sub="l2" aria-haspopup="menu"')) + it('Print') + '</div>' +
+    (fixed ? '' : '<div class="mn-menu mn-casc" role="menu" aria-label="Download" data-l="l2" hidden>' +
+      it('Whole document<span aria-hidden="true">›</span>', 'data-sub="l3" data-branch="whole document" aria-haspopup="menu"') +
+      it('Selected text<span aria-hidden="true">›</span>', 'data-sub="l3" data-branch="selected text only" aria-haspopup="menu"') + '</div>' +
+      '<div class="mn-menu mn-casc" role="menu" aria-label="Format" data-l="l3" hidden>' + FMT.map(f => it(f[0], 'data-ext="' + f[1] + '"')).join('') + '</div>') +
+    '</div><p class="cs-meta" data-m></p>';
+  const deepWire = fixed => d => {
+    const on = scoped(d);
+    const stage = d.querySelector('[data-stage]'), btn = d.querySelector('[data-btn]'), menu = d.querySelector('[data-menu]'), m = d.querySelector('[data-m]');
+    const done = (ext, what) => { m.textContent = 'Downloaded “Trip plan.' + ext + '” (' + what + ').'; };
+    if (fixed) {
+      const set = menuButton(on, stage, btn, menu, false, x => {
+        if (!x.hasAttribute('data-dl')) { m.textContent = x.textContent === 'Print' ? 'Print preview opened.' : 'Copy made: “Copy of Trip plan”.'; return; }
+        const modal = document.createElement('div'); modal.className = 'cs-modal';
+        modal.innerHTML = '<div class="cs-dlg mn-dlg" role="dialog" aria-modal="true" aria-label="Download Trip plan"><b>Download “Trip plan”</b>' +
+          '<fieldset><legend>Format</legend>' + FMT.map((f, i) => '<label class="mn-opt"><input type="radio" name="menu-4f-fmt" value="' + f[1] + '"' + (i ? '' : ' checked') + '><span>' + f[0] + '<small>' + f[2] + '</small></span></label>').join('') + '</fieldset>' +
+          '<fieldset><legend>Include</legend><div class="mn-inline" style="display:flex"><label class="mn-opt"><input type="radio" name="menu-4f-inc" value="whole document" checked>Whole document</label><label class="mn-opt"><input type="radio" name="menu-4f-inc" value="selected text only">Selected text</label></div></fieldset>' +
+          '<div class="acts"><button class="btn btn-secondary cs-sm" type="button" data-c>Cancel</button><button class="btn btn-primary cs-sm" type="button" data-ok>Download</button></div></div>';
+        d.appendChild(modal);
+        const shut = () => { modal.remove(); btn.focus(); };
+        modal.querySelector('input').focus();
+        modal.addEventListener('keydown', e => { if (e.key === 'Escape') { e.stopPropagation(); shut(); } });
+        modal.querySelector('[data-c]').addEventListener('click', shut);
+        modal.querySelector('[data-ok]').addEventListener('click', () => {
+          const v = n => (modal.querySelector('input[name="' + n + '"]:checked') || {}).value;
+          done(v('menu-4f-fmt'), v('menu-4f-inc')); shut();
+        });
+      });
+      return set;
+    }
+    const l2 = d.querySelector('[data-l="l2"]'), l3 = d.querySelector('[data-l="l3"]');
+    let branch = '';
+    const rel = el => { const s = stage.getBoundingClientRect(), r = el.getBoundingClientRect(); return { l: r.left - s.left, t: r.top - s.top, r: r.right - s.left, b: r.bottom - s.top }; };
+    const closeFrom = level => {
+      if (level <= 3) { l3.hidden = true; l2.querySelectorAll('.mn-it').forEach(x => x.classList.remove('on')); }
+      if (level <= 2) { l2.hidden = true; menu.querySelectorAll('.mn-it').forEach(x => x.classList.remove('on')); }
+    };
+    const openSub = (item, focus) => {
+      const sub = item.dataset.sub === 'l2' ? l2 : l3, parentMenu = item.closest('[role="menu"]');
+      if (sub === l3) branch = item.dataset.branch;
+      closeFrom(sub === l2 ? 2 : 3);
+      parentMenu.querySelectorAll('.mn-it').forEach(x => x.classList.toggle('on', x === item));
+      sub.hidden = false;
+      // Like desktop menus: open to the right, else to the left, else drop below the item.
+      const p = rel(parentMenu), i = rel(item), w = sub.offsetWidth, sw = stage.clientWidth;
+      let left = p.r - 6, top = i.t - 5;
+      if (left + w > sw) left = p.l - w + 6;
+      if (left < 0) { left = Math.min(p.l + 24, sw - w); top = i.b + 2; }
+      sub.style.left = Math.max(0, left) + 'px'; sub.style.top = top + 'px';
+      if (focus) sub.querySelector('[role="menuitem"]').focus();
+    };
+    const set = menuButton(on, stage, btn, menu, false, x => { closeFrom(2); m.textContent = x.textContent === 'Print' ? 'Print preview opened.' : 'Copy made: “Copy of Trip plan”.'; });
+    // Hover opens a submenu right away and closes it as soon as the pointer touches a neighbor. No grace period.
+    [menu, l2].forEach((mn, lv) => mn.querySelectorAll('.mn-it').forEach(x => {
+      x.addEventListener('pointerenter', e => { if (e.pointerType !== 'mouse') return; if (x.dataset.sub) openSub(x); else closeFrom(lv + 2); });
+      if (x.dataset.sub) {
+        x.addEventListener('click', e => { e.stopPropagation(); openSub(x, true); });
+        x.addEventListener('keydown', e => { if (e.key === 'ArrowRight') { e.preventDefault(); e.stopPropagation(); openSub(x, true); } });
+      }
+    }));
+    [l2, l3].forEach((mn, lv) => mn.addEventListener('keydown', e => {
+      if (e.key === 'ArrowLeft' || e.key === 'Escape') {
+        e.preventDefault(); e.stopPropagation();
+        const owner = (lv ? l2 : menu).querySelector('.mn-it.on'); closeFrom(lv + 2); if (owner) owner.focus();
+      } else if (e.key === 'Tab') { closeFrom(2); set(false); }
+    }));
+    menuKeys(l2, () => {}); menuKeys(l3, () => {});
+    l3.addEventListener('click', e => { const x = e.target.closest('[data-ext]'); if (!x) return; closeFrom(2); set(false, true); done(x.dataset.ext, branch); });
+    on('pointerdown', e => { if (!e.target.closest('[role="menu"]') && !btn.contains(e.target)) closeFrom(2); });
+    btn.addEventListener('click', () => closeFrom(2));
+  };
+  D('menu-4b', deepHtml(false), deepWire(false));
+  D('menu-4f', deepHtml(true), deepWire(true));
+
+  csInit(cs);
+})();
+
+  </script>

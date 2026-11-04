@@ -1,0 +1,47 @@
+<div class="note comfy cw-wrap"><p>Notice that the main view stays visible and usable while the panel is open, and what changes when space runs out.</p>
+      <div class="seg cw-seg" role="radiogroup" aria-label="Example">
+        <input type="radio" name="cw-side-panel-w" id="cw-side-panel-w-1" value="slack" checked><label for="cw-side-panel-w-1">Slack</label>
+        <input type="radio" name="cw-side-panel-w" id="cw-side-panel-w-2" value="figma"><label for="cw-side-panel-w-2">Figma</label>
+        <input type="radio" name="cw-side-panel-w" id="cw-side-panel-w-3" value="vscode"><label for="cw-side-panel-w-3">VS Code</label>
+        <input type="radio" name="cw-side-panel-w" id="cw-side-panel-w-4" value="maps"><label for="cw-side-panel-w-4">Google Maps</label>
+      </div>
+      <div class="cw" data-cw-view role="img" aria-label=""></div>
+      <p class="cw-cap" data-cw-cap aria-live="polite"></p>
+      
+      <script>
+      (() => {
+        const wrap = document.currentScript.closest('.cw-wrap');
+        const view = wrap.querySelector('[data-cw-view]'), cap = wrap.querySelector('[data-cw-cap]');
+        const ic = id => '<svg class="icon sm"><use href="#i-' + id + '"/></svg>';
+        const ln = (w, cls) => '<i class="cw-spnw-ln' + (cls ? ' ' + cls : '') + '"' + (w ? ' style="width:' + w + '"' : '') + '></i>';
+        const msg = (extra, on) => '<div class="cw-spnw-msg' + (on ? ' on' : '') + '"><i class="cw-spnw-av"></i><span>' + ln('40%') + ln('92%') + (extra || '') + '</span></div>';
+        const tree = (pad, w, icon, on) => '<span class="cw-spnw-tree' + (on ? ' on' : '') + '" style="padding-left:' + pad + 'px">' + ic(icon) + ln(w) + '</span>';
+        const road = (css) => '<i class="cw-spnw-road" style="' + css + '"></i>';
+        const map = road('left:0;right:0;top:58%;height:6px') + road('left:0;right:0;top:22%;height:4px') + road('top:0;bottom:0;left:30%;width:5px') + road('top:0;bottom:0;left:72%;width:4px') + '<i class="cw-spnw-pin"></i>';
+        const S = {
+          slack: { html: '<div class="cw-spnw-win cw-spnw-slack"><div class="cw-spnw-nav">' + ln('80%') + ln('66%', 'on') + ln('74%') + ln('58%') + ln('70%') + '</div>' +
+              '<div class="cw-spnw-col"><div class="cw-spnw-hd">Channel</div>' + msg() + msg('<em>2 replies</em>', true) + msg() + '<div class="cw-spnw-box"></div></div>' +
+              '<div class="cw-spnw-panel"><div class="cw-spnw-hd">Thread' + ic('x') + '</div>' + msg() + '<span class="cw-spnw-rep">2 replies</span>' + msg() + msg() + '<div class="cw-spnw-box"></div></div></div>',
+            alt: 'A chat channel on the left and an open thread in a panel on the right, each with its own reply box. Nothing is dimmed.',
+            cap: 'Slack: opening a thread puts it in a panel on the right. The channel stays readable beside it, and people can reply in either place without losing their spot.' },
+          figma: { html: '<div class="cw-spnw-win cw-spnw-fig"><div class="cw-spnw-cv"><div class="cw-spnw-rect"><i style="left:-4px;top:-4px"></i><i style="right:-4px;top:-4px"></i><i style="left:-4px;bottom:-4px"></i><i style="right:-4px;bottom:-4px"></i></div><div class="cw-spnw-circ"></div></div>' +
+              '<div class="cw-spnw-panel"><div class="cw-spnw-tabs"><b>Design</b><span>Prototype</span></div><span class="cw-spnw-lab">Position</span><div class="cw-spnw-kv"><span><i>X</i>120</span><span><i>Y</i>48</span></div>' +
+              '<span class="cw-spnw-lab">Size</span><div class="cw-spnw-kv"><span><i>W</i>64</span><span><i>H</i>50</span></div><span class="cw-spnw-lab">Fill</span><span class="cw-spnw-fill"><i></i>100%</span></div></div>',
+            alt: 'A canvas with a selected rectangle and a circle. The panel on the right shows the rectangle’s position, size and fill.',
+            cap: 'Figma: the panel on the right always shows the selected layer’s properties. Select another layer and it updates in place, while the canvas stays fully usable.' },
+          vscode: { html: '<div class="cw-spnw-win cw-spnw-code"><div class="cw-spnw-act"><span class="on">' + ic('folder') + '</span><span>' + ic('search') + '</span><span>' + ic('layers') + '</span><span>' + ic('cube') + '</span></div>' +
+              '<div class="cw-spnw-side"><div class="cw-spnw-hd">Explorer</div>' + tree(0, '70%', 'folder') + tree(10, '60%', 'folder') + tree(20, '54%', 'book', true) + tree(20, '62%', 'book') + tree(10, '48%', 'book') + tree(0, '56%', 'folder') + '</div>' +
+              '<div class="cw-spnw-ed"><span class="cw-spnw-tab">app.ts</span><div class="cw-spnw-code-ln">' + ln('46%') + ln('70%') + ln('58%') + ln('34%') + ln('64%') + ln('40%') + '</div></div></div>',
+            alt: 'A code editor. A strip of icons on the far left: files, search, source control, extensions. Files is active, so the side bar beside it shows the file tree. The editor fills the rest.',
+            cap: 'VS Code: the icons on the far left swap which view fills the one side bar, such as files or search, instead of opening a new panel for each.' },
+          maps: { html: '<div class="cw-spnw-maps"><div class="cw-spnw-desk"><div class="cw-spnw-place"><i class="cw-spnw-ph"></i><b>Café</b>' + ln('80%') + ln('60%') + '<span class="cw-spnw-btns"><i></i><i></i><i></i></span>' + ln('90%') + '</div><div class="cw-spnw-map">' + map + '</div></div>' +
+              '<div class="cw-spnw-phone"><div class="cw-spnw-map">' + map + '</div><div class="cw-spnw-sheet"><i class="cw-spnw-grab"></i><b>Café</b>' + ln('86%') + ln('64%') + '<span class="cw-spnw-btns"><i></i><i></i><i></i></span></div></div></div>',
+            alt: 'Left: a computer screen with a place’s details in a panel beside the map. Right: a phone where the same details sit in a sheet over the bottom of the map, with a drag handle.',
+            cap: 'Google Maps: on a computer, a place’s details open in a panel beside the map, which you can still pan. On a phone, the same details come up as a sheet you drag up from the bottom.' }
+        };
+        const render = k => { view.innerHTML = S[k].html; view.setAttribute('aria-label', 'Sketch: ' + S[k].alt); cap.textContent = S[k].cap; };
+        wrap.querySelectorAll('input[name="cw-side-panel-w"]').forEach(r => r.addEventListener('change', () => render(r.value)));
+        render('slack');
+      })();
+      </script>
+    </div>

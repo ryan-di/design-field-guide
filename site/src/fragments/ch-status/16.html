@@ -1,0 +1,22 @@
+<div class="stage tall" data-demo="pat-background-work">
+      <div class="app-frame">
+        <div class="app-bar">
+          <span>Holiday album</span>
+          <span class="p12-queue">
+            <span class="bar p12-qbar" role="progressbar" aria-label="Current export" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" hidden><span></span></span>
+            <span class="badge-wrap"><button class="btn btn-secondary p12-qbtn" type="button" data-queue aria-label="Exports, empty">Exports</button><span class="badge" aria-hidden="true" hidden>0</span></span>
+          </span>
+        </div>
+        <div class="app-body">
+          <div class="field"><label class="field-label" for="p12-bg-prompt">Caption</label><input class="input" id="p12-bg-prompt" value="Lighthouse at dusk" autocomplete="off"></div>
+          <div class="row p12-left">
+            <button class="btn btn-primary" type="button" data-start><svg class="icon sm"><use href="#i-play"/></svg>Start a 6-second export</button>
+            <button class="btn btn-secondary" type="button" data-add><svg class="icon sm"><use href="#i-plus"/></svg>Add photo</button>
+          </div>
+          <div class="row p12-left" data-nodes aria-label="Photos in the album"><span class="node">Beach</span><span class="node">Harbour</span></div>
+          <p class="field-help" data-out aria-live="polite">Nothing running.</p>
+          <div class="p12-outs" data-outs hidden><p class="field-help">Finished</p><div class="p12-thumbs" data-thumbs></div></div>
+        </div>
+      </div>
+      <p class="try"><b>Try it:</b> start an export, then keep typing the caption or add a few photos. The corner shows progress the whole time. When it’s done, a toast offers View and the Exports badge clears. Start two in a row to see the count go up.</p>
+    </div>

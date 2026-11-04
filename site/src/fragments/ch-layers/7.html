@@ -1,0 +1,164 @@
+<script>
+(() => {
+  const cs = document.currentScript.closest('.cs');
+  /* This entry sits before the shared case helpers in the book, so start once they exist. */
+  const go = () => {
+  const D = (k, html, wire) => csDemo(cs.querySelector('[data-d="' + k + '"]'), html, wire);
+  const P = '#pat-layered-ui ';
+  const css = document.createElement('style');
+  css.textContent = [
+    P + '.lu-fr{width:min(340px,100%)}',
+    P + '.lu-fr .app-body{padding:12px;gap:9px}',
+    P + '.lu-mode{display:flex;gap:4px;padding:3px;border-radius:9px;background:var(--ui-hover)}',
+    P + '.lu-mode .cs-tab{padding:4px 10px;font-size:13px}',
+    P + '.lu-mode .cs-tab.on{background:var(--ui-surface);box-shadow:0 1px 2px rgba(0,0,0,.15)}',
+    P + '.lu-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}',
+    P + '.lu-fr .cs-f{font-size:13px}',
+    P + '.lu-fr .input,' + P + '.lu-fr .select{padding:7px 9px;font-size:14px}',
+    P + '.lu-chk{display:flex;gap:8px;align-items:center;font-size:13.5px}',
+    P + '.lu-fr .btn{align-self:flex-start}',
+    P + '.lu-icon{width:30px;height:30px;border-radius:8px;opacity:.7}',
+    P + '.lu-icon .icon{width:14px;height:14px}',
+    P + '.lu-chips{display:flex;gap:6px;flex-wrap:wrap;align-items:center;font-size:13px}',
+    P + '.lu-chips button{all:unset;cursor:pointer;padding:3px 10px;border-radius:7px;border:1px solid var(--ui-border);background:var(--ui-surface)}',
+    P + '.lu-chips button[aria-pressed="true"]{border-color:var(--ui-sel);background:var(--ui-sel-soft);font-weight:600}',
+    P + '.lu-chips button:focus-visible{outline:2px solid var(--ui-sel)}',
+    P + '.lu-photo{height:120px;width:100%;aspect-ratio:auto;transition:filter .15s}',
+    P + '.lu-sl{display:flex;gap:8px;align-items:center;font-size:13.5px}',
+    P + '.lu-sl span{width:70px}',
+    P + '.lu-sl input{flex:1;min-width:0;accent-color:var(--ui-sel)}',
+    P + '.lu-note{display:flex;flex-wrap:wrap;align-items:center;gap:4px 6px;padding:7px 9px;border-radius:8px;background:var(--ui-sel-soft);font-size:13px}',
+    P + '.lu-note .grow{flex:1 1 140px}',
+    P + '.lu-note .btn{padding:3px 8px;font-size:12.5px}',
+    P + '.lu-set{all:unset;box-sizing:border-box;cursor:pointer;display:flex;justify-content:space-between;width:100%;padding:6px 2px;border-bottom:1px solid var(--ui-border);font-size:13.5px}',
+    P + '.lu-set:focus-visible{outline:2px solid var(--ui-sel)}',
+    P + '.lu-set span{color:var(--ui-muted)}',
+    P + '.lu-grp{font:600 11.5px var(--font-mono);color:var(--ui-muted);text-transform:uppercase;letter-spacing:.05em;margin-top:4px}',
+    P + '.lu-hint{font-size:12.5px;color:var(--ui-muted);line-height:1.4}'
+  ].join('\n');
+  cs.appendChild(css);
+
+  const icon = n => '<svg class="icon"><use href="#i-' + n + '"/></svg>';
+  const say = (d, t) => { d.querySelector('[data-out]').textContent = t; };
+  const modeBar = '<span class="lu-mode" role="group" aria-label="Mode"><button class="cs-tab on" type="button" aria-pressed="true" data-m="s">Simple</button><button class="cs-tab" type="button" aria-pressed="false" data-m="a">Advanced</button></span>';
+  const wireMode = (d, fn) => {
+    const bs = [...d.querySelectorAll('[data-m]')];
+    bs.forEach(b => b.addEventListener('click', () => { bs.forEach(x => { const on = x === b; x.classList.toggle('on', on); x.setAttribute('aria-pressed', String(on)); }); fn(b.dataset.m === 'a'); }));
+  };
+
+  /* 1. Two separate forms (flight search) */
+  const basic = '<div class="lu-grid"><label class="cs-f">From<input class="input" value="Lisbon" data-k="from"></label><label class="cs-f">To<input class="input" placeholder="City or airport" data-k="to"></label></div><label class="cs-f">Date<input class="input" value="12 Nov" data-k="date"></label>';
+  const extra = '<div class="lu-grid"><label class="cs-f">Return<input class="input" placeholder="One way" data-k="ret"></label><label class="cs-f">Cabin<select class="select" data-k="cabin"><option>Economy</option><option>Business</option></select></label></div><label class="lu-chk"><input type="checkbox" data-k="direct"> Direct flights only</label>';
+  const flightHtml = fixed => '<div class="app-frame lu-fr"><div class="app-bar"><span>Flights</span>' + modeBar + '</div><div class="app-body">' +
+    (fixed ? basic + '<div data-adv hidden>' + extra + '</div>'
+      : '<div data-form="s">' + basic + '</div><div data-form="a" hidden>' + basic.replace('value="Lisbon"', 'value=""') + extra + '</div>') +
+    '<button class="btn btn-primary cs-sm" type="button" data-go>Search</button></div></div><p class="cs-meta" data-out></p>';
+  const flightWire = fixed => d => {
+    let adv = false;
+    wireMode(d, a => {
+      adv = a;
+      if (fixed) d.querySelector('[data-adv]').hidden = !a;
+      else { d.querySelector('[data-form="s"]').hidden = a; d.querySelector('[data-form="a"]').hidden = !a; }
+      say(d, '');
+    });
+    d.querySelector('[data-go]').addEventListener('click', () => {
+      const scope = fixed ? d : d.querySelector('[data-form="' + (adv ? 'a' : 's') + '"]');
+      const v = k => scope.querySelector('[data-k="' + k + '"]').value.trim();
+      say(d, !v('from') || !v('to') ? 'Search needs a From and a To.' : 'Searching ' + v('from') + ' to ' + v('to') + ', ' + (v('date') || 'any date') + '.');
+    });
+  };
+  D('pat-layered-ui-1b', flightHtml(false), flightWire(false));
+  D('pat-layered-ui-1f', flightHtml(true), flightWire(true));
+
+  /* 2. Hidden way to more (shop filters) */
+  const SHIRTS = [['Linen shirt', 'S, M', 42], ['Oxford shirt', 'L', 38], ['Striped tee', 'M, L', 19], ['Denim shirt', 'S', 55], ['Polo', 'M', 29], ['Flannel shirt', 'L', 34]];
+  const shopHtml = fixed => '<div class="app-frame lu-fr"><div class="app-bar"><span>Shirts</span>' +
+    (fixed ? '' : '<button class="icon-btn lu-icon" type="button" aria-label="Options" aria-expanded="false" data-open>' + icon('sliders') + '</button>') + '</div><div class="app-body">' +
+    (fixed ? '<button class="btn btn-secondary cs-sm" type="button" aria-expanded="false" data-open>Filters: size, color, price</button>' : '') +
+    '<div class="lu-chips" data-panel hidden><b>Size</b><button type="button" aria-pressed="false" data-s="S">S</button><button type="button" aria-pressed="false" data-s="M">M</button><button type="button" aria-pressed="false" data-s="L">L</button></div>' +
+    '<div data-list></div></div></div><p class="cs-meta" data-out></p>';
+  const shopWire = d => {
+    const list = d.querySelector('[data-list]'), panel = d.querySelector('[data-panel]'), open = d.querySelector('[data-open]');
+    let size = null;
+    const draw = () => {
+      const rows = SHIRTS.filter(s => !size || s[1].includes(size));
+      list.innerHTML = rows.map(s => '<div class="cs-row"><span class="grow"><b>' + s[0] + '</b> <span class="cs-meta">' + s[1] + '</span></span><span>$' + s[2] + '</span></div>').join('');
+      say(d, rows.length + ' shirts' + (size ? ' in size ' + size : '') + '.');
+    };
+    open.addEventListener('click', () => { panel.hidden = !panel.hidden; open.setAttribute('aria-expanded', String(!panel.hidden)); });
+    panel.addEventListener('click', e => {
+      const b = e.target.closest('[data-s]'); if (!b) return;
+      size = size === b.dataset.s ? null : b.dataset.s;
+      panel.querySelectorAll('[data-s]').forEach(x => x.setAttribute('aria-pressed', String(x.dataset.s === size)));
+      draw();
+    });
+    draw();
+  };
+  D('pat-layered-ui-2b', shopHtml(false), shopWire);
+  D('pat-layered-ui-2f', shopHtml(true), shopWire);
+
+  /* 3. Advanced changes invisible in Simple (photo editor) */
+  const LOOKS = { Original: [100, 100], Vivid: [115, 150], Mono: [105, 0] };
+  const photoHtml = fixed => '<div class="app-frame lu-fr"><div class="app-bar"><span>Edit photo</span>' + modeBar + '</div><div class="app-body">' +
+    '<div class="thumb lu-photo" data-ph></div>' +
+    '<div data-simple><div class="lu-chips" role="group" aria-label="Look">' + Object.keys(LOOKS).map((k, i) => '<button type="button" aria-pressed="' + (i === 0) + '" data-look="' + k + '">' + k + '</button>').join('') + '</div>' +
+    (fixed ? '<div class="lu-note" data-note hidden style="margin-top:8px">' + icon('sliders') + '<span class="grow" data-nt></span><button class="btn btn-ghost" type="button" data-show>Show</button><button class="btn btn-ghost" type="button" data-reset>Reset</button></div>' : '') + '</div>' +
+    '<div data-adv hidden><label class="lu-sl"><span>Contrast</span><input type="range" min="50" max="150" value="100" data-c></label><label class="lu-sl"><span>Warmth</span><input type="range" min="0" max="100" value="0" data-w></label></div>' +
+    '</div></div><p class="cs-meta" data-out></p>';
+  const photoWire = fixed => d => {
+    const ph = d.querySelector('[data-ph]'), c = d.querySelector('[data-c]'), w = d.querySelector('[data-w]');
+    let look = 'Original';
+    const draw = () => {
+      const L = LOOKS[look];
+      ph.style.filter = 'contrast(' + (L[0] * c.value / 100) + '%) saturate(' + L[1] + '%) sepia(' + (w.value / 100) + ') saturate(' + (100 + Number(w.value)) + '%) hue-rotate(-' + (w.value / 10) + 'deg)';
+      if (!fixed) return;
+      const ch = [Number(c.value) !== 100 && 'contrast', Number(w.value) !== 0 && 'warmth'].filter(Boolean);
+      d.querySelector('[data-note]').hidden = !ch.length;
+      d.querySelector('[data-nt]').textContent = ch.length + ' advanced setting' + (ch.length === 1 ? '' : 's') + ' changed: ' + ch.join(', ');
+    };
+    const setMode = a => { d.querySelector('[data-simple]').hidden = a; d.querySelector('[data-adv]').hidden = !a; draw(); };
+    wireMode(d, setMode);
+    [c, w].forEach(x => x.addEventListener('input', draw));
+    d.querySelector('[data-simple] .lu-chips').addEventListener('click', e => {
+      const b = e.target.closest('[data-look]'); if (!b) return;
+      look = b.dataset.look;
+      d.querySelectorAll('[data-look]').forEach(x => x.setAttribute('aria-pressed', String(x === b)));
+      draw(); say(d, 'Look: ' + look + '.');
+    });
+    if (fixed) {
+      d.querySelector('[data-show]').addEventListener('click', () => { d.querySelector('[data-m="a"]').click(); (Number(w.value) ? w : c).focus(); });
+      d.querySelector('[data-reset]').addEventListener('click', () => { c.value = 100; w.value = 0; draw(); say(d, 'Advanced settings back to their defaults.'); d.querySelector('[data-look]').focus(); });
+    }
+    draw();
+  };
+  D('pat-layered-ui-3b', photoHtml(false), photoWire(false));
+  D('pat-layered-ui-3f', photoHtml(true), photoWire(true));
+
+  /* 4. Everything lands in Advanced (email settings) */
+  const B_S = [['Name', 'Ana Silva'], ['Theme', 'Light'], ['Language', 'English']];
+  const B_A = [['Undo send delay', '5 s'], ['Keyboard shortcuts', 'Off'], ['Convert links automatically', 'On'], ['Image loading', 'Ask'], ['Forwarding', 'Off'], ['Conversation view', 'On'], ['Signature', 'None'], ['Read receipts', 'Off'], ['Export mail', ''], ['Out-of-office reply', 'Off'], ['Default reply', 'Reply']];
+  const F_S = [['Name', 'Ana Silva'], ['Signature', 'None'], ['Out-of-office reply', 'Off'], ['Theme', 'Light']];
+  const F_A = [['Sending'], ['Undo send delay', '5 s'], ['Default reply', 'Reply'], ['Read receipts', 'Off'], ['Your data'], ['Forwarding', 'Off'], ['Export mail', '']];
+  const rows = list => list.map(r => r.length === 1 ? '<p class="lu-grp">' + r[0] + '</p>' : '<button class="lu-set" type="button" data-set>' + r[0] + '<span>' + r[1] + '</span></button>').join('');
+  const mailHtml = fixed => '<div class="app-frame lu-fr"><div class="app-bar"><span>Mail</span>' + modeBar + '</div><div class="app-body">' +
+    '<div data-simple>' + rows(fixed ? F_S : B_S) + '</div><div data-adv hidden>' + rows(fixed ? F_A : B_A) +
+    (fixed ? '<p class="lu-hint">Links are now always converted, so that option is gone.</p>' : '') + '</div></div></div><p class="cs-meta" data-out></p>';
+  const mailWire = d => {
+    let clicks = 0;
+    wireMode(d, a => { clicks++; d.querySelector('[data-simple]').hidden = a; d.querySelector('[data-adv]').hidden = !a; });
+    d.querySelector('.app-body').addEventListener('click', e => {
+      const b = e.target.closest('[data-set]'); if (!b) return;
+      clicks++;
+      const name = b.firstChild.textContent;
+      say(d, name === 'Out-of-office reply' ? 'Found it, after ' + clicks + (clicks === 1 ? ' click.' : ' clicks.') : name + ' opened. Not what you were after.');
+    });
+  };
+  D('pat-layered-ui-4b', mailHtml(false), mailWire);
+  D('pat-layered-ui-4f', mailHtml(true), mailWire);
+
+  csInit(cs);
+  };
+  if (window.csDemo) go(); else document.addEventListener('DOMContentLoaded', go);
+})();
+
+</script>

@@ -1,0 +1,96 @@
+<script>
+(() => {
+  const cs = document.currentScript.closest('.cs');
+  const D = (k, html, wire) => csDemo(cs.querySelector('[data-d="' + k + '"]'), html, wire);
+  const icon = n => '<svg class="icon sm"><use href="#i-' + n + '"/></svg>';
+  const warn = '<svg class="icon" style="width:15px;height:15px"><use href="#i-warn"/></svg>';
+  const sw = (label, on, state) => '<label class="switch"><span class="grow">' + label + '</span>' + (state ? '<span class="state">' + (on ? 'On' : 'Off') + '</span>' : '') +
+    '<input type="checkbox" role="switch"' + (on ? ' checked' : '') + '></label>';
+  const syncState = input => { const r = input.closest('.switch'), s = r && r.querySelector('.state'); if (s) s.textContent = input.checked ? 'On' : 'Off'; };
+  const frame = (bar, body, cls) => '<div class="app-frame" style="width:min(340px,100%)"><div class="app-bar"' + (cls || '') + '>' + bar + '</div><div class="app-body sw-body" data-body>' + body + '</div></div>';
+
+  /* 1. Needs Save */
+  const OPTS = [['Weekly summary email', false], ['Replies to your comments', true]];
+  const prefHtml = fixed => frame('<button type="button" class="btn btn-ghost cs-sm sw-ghost" data-leave>← Inbox</button><span data-title>Email settings</span>',
+    '<div data-form>' + OPTS.map(([l, on]) => fixed ? '<label class="check"><input type="checkbox"' + (on ? ' checked' : '') + '><span>' + l + '</span></label>' : sw(l, on, true)).join('') + '</div>' +
+    '<div class="sw-foot"><button type="button" class="btn btn-secondary cs-sm" data-cancel>Cancel</button><button type="button" class="btn btn-primary cs-sm" data-save>Save</button></div><p class="cs-ok" data-ok></p>',
+    ' style="justify-content:flex-start"');
+  const prefWire = d => {
+    const body = d.querySelector('[data-body]'), inputs = Array.from(d.querySelectorAll('[data-form] input')), ok = d.querySelector('[data-ok]'), leave = d.querySelector('[data-leave]');
+    let saved = OPTS.map(o => o[1]);
+    inputs.forEach(i => i.addEventListener('change', () => { syncState(i); ok.textContent = ''; }));
+    d.querySelector('[data-save]').addEventListener('click', () => { saved = inputs.map(i => i.checked); ok.textContent = 'Saved.'; });
+    d.querySelector('[data-cancel]').addEventListener('click', () => { inputs.forEach((i, k) => { i.checked = saved[k]; syncState(i); }); ok.textContent = ''; });
+    leave.addEventListener('click', () => {
+      const k = inputs.findIndex((i, n) => i.checked !== saved[n]);
+      const name = OPTS[Math.max(k, 0)][0], on = saved[Math.max(k, 0)] ? 'on' : 'off';
+      const note = k >= 0 ? '<p class="field-msg">' + warn + '<span>Your change wasn’t saved. ' + name + ' is still ' + on + '.</span></p>'
+        : '<p class="cs-meta">' + name + ' is ' + on + '.</p>';
+      body.innerHTML = '<div class="sw-mail"><div class="line" style="width:86%"></div><div class="line" style="width:64%"></div><div class="line" style="width:76%"></div></div>' + note;
+      d.querySelector('[data-title]').textContent = 'Inbox'; leave.remove();
+      d.querySelector('.app-frame').setAttribute('tabindex', '-1'); d.querySelector('.app-frame').focus({ preventScroll: true });
+    });
+  };
+  D('switch-1b', prefHtml(false), prefWire);
+  D('switch-1f', prefHtml(true), prefWire);
+
+  /* 2. Unclear label */
+  const q2Html = fixed => '<div class="settings surface">' + (fixed ? sw('Push notifications', true, true) + sw('Email me when someone comments', true, true) : sw('Notifications', true) + sw('Turn off emails', false)) + '</div>' +
+    '<div class="sw-q"><p>Sam comments on your photo. Will you get an email?</p><div class="acts"><button type="button" class="btn btn-secondary cs-sm" data-a="yes">Yes</button><button type="button" class="btn btn-secondary cs-sm" data-a="no">No</button></div><div data-ans aria-live="polite"></div></div>';
+  const q2Wire = fixed => d => {
+    const inputs = Array.from(d.querySelectorAll('.settings input')), ans = d.querySelector('[data-ans]');
+    inputs.forEach(i => i.addEventListener('change', () => { syncState(i); ans.innerHTML = ''; }));
+    d.querySelectorAll('[data-a]').forEach(b => b.addEventListener('click', () => {
+      const email = fixed ? inputs[1].checked : !inputs[1].checked;
+      const why = fixed ? '“Email me when someone comments” is ' + (email ? 'On.' : 'Off.')
+        : (email ? '“Turn off emails” is off, so emails are on. “Notifications” only meant alerts on your phone.' : '“Turn off emails” is on, so emails are off.');
+      const right = (b.dataset.a === 'yes') === email;
+      ans.innerHTML = '<p style="font-size:13.5px;line-height:1.45"><b style="color:var(' + (right ? '--ui-ok' : '--ui-danger') + ')"></b> <span></span></p>';
+      ans.querySelector('b').textContent = right ? 'Right, ' + (email ? 'you will.' : 'you won’t.') : 'Not quite, ' + (email ? 'you will.' : 'you won’t.');
+      ans.querySelector('span').textContent = why;
+    }));
+  };
+  D('switch-2b', q2Html(false), q2Wire(false));
+  D('switch-2f', q2Html(true), q2Wire(true));
+
+  /* 3. Slow or failing */
+  const bkHtml = frame('<span>Photo settings</span><span class="cs-meta" style="display:inline-flex;align-items:center;gap:5px">' + icon('cloud-off') + 'Offline</span>',
+    sw('Back up photos', false, true) + '<div class="cs-msgs" data-m aria-live="polite"></div><p class="cs-meta" data-st>Backed up: 0 of 248 photos</p>');
+  D('switch-3b', bkHtml, d => {
+    const i = d.querySelector('.switch input');
+    i.addEventListener('change', () => syncState(i));
+  });
+  D('switch-3f', bkHtml, (d, t) => {
+    const i = d.querySelector('.switch input'), m = d.querySelector('[data-m]'), st = d.querySelector('[data-st]'), state = d.querySelector('.switch .state');
+    i.addEventListener('click', e => { if (i.getAttribute('aria-busy') === 'true') e.preventDefault(); });
+    i.addEventListener('change', () => {
+      m.innerHTML = '';
+      if (!i.checked) { syncState(i); return; }
+      i.setAttribute('aria-busy', 'true'); state.textContent = '…'; st.textContent = 'Turning on backup…';
+      t.after(() => {
+        i.removeAttribute('aria-busy'); i.checked = false; syncState(i); st.textContent = 'Backed up: 0 of 248 photos';
+        m.innerHTML = '<p class="field-msg">' + warn + '<span>Couldn’t turn on backup: you’re offline. It’s still off.</span></p>';
+      }, 1500);
+    });
+  });
+
+  /* 4. More than two */
+  const RATE = { Low: 'about 1 MB a minute', Normal: 'about 2 MB a minute', High: 'about 5 MB a minute' };
+  const rate = q => 'Streaming at ' + q + ' quality, ' + RATE[q] + '.';
+  D('switch-4b', frame('<span>Music settings</span>', sw('High quality streaming', true, true) + '<p class="cs-meta" data-st></p>'), d => {
+    const i = d.querySelector('.switch input'), st = d.querySelector('[data-st]');
+    const show = () => { syncState(i); st.textContent = rate(i.checked ? 'High' : 'Normal'); };
+    i.addEventListener('change', show); show();
+  });
+  D('switch-4f', frame('<span>Music settings</span>', '<form data-f style="display:flex;flex-direction:column;gap:8px"><span class="sw-lab">Streaming quality</span><div class="sw-seg" role="radiogroup" aria-label="Streaming quality">' +
+    ['Low', 'Normal', 'High'].map(q => '<label><input type="radio" name="q" value="' + q + '"' + (q === 'High' ? ' checked' : '') + '>' + q + '</label>').join('') + '</div><p class="cs-meta" data-st></p></form>'), d => {
+    const f = d.querySelector('[data-f]'), st = d.querySelector('[data-st]');
+    const show = () => { st.textContent = rate(f.querySelector('input:checked').value); };
+    f.addEventListener('submit', e => e.preventDefault());
+    f.addEventListener('change', show); show();
+  });
+
+  csInit(cs);
+})();
+
+  </script>

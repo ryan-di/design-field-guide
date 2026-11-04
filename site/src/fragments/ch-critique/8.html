@@ -1,0 +1,46 @@
+<div class="note comfy cw-wrap"><p>Notice that each one ties feedback to a goal or to one spot, and leaves the fix to the owner.</p>
+  <div class="seg cw-seg" role="radiogroup" aria-label="Example">
+    <input type="radio" name="cw-good-critique-w" id="cw-good-critique-w-1" value="grammarly" checked><label for="cw-good-critique-w-1">Grammarly</label>
+    <input type="radio" name="cw-good-critique-w" id="cw-good-critique-w-2" value="figma"><label for="cw-good-critique-w-2">Figma</label>
+    <input type="radio" name="cw-good-critique-w" id="cw-good-critique-w-3" value="github"><label for="cw-good-critique-w-3">GitHub</label>
+    <input type="radio" name="cw-good-critique-w" id="cw-good-critique-w-4" value="airbnb"><label for="cw-good-critique-w-4">Airbnb</label>
+  </div>
+  <div class="cw" data-cw-view role="img" aria-label=""></div>
+  <p class="cw-cap" data-cw-cap aria-live="polite"></p>
+  
+  <script>
+  (() => {
+    const wrap = document.currentScript.closest('.cw-wrap');
+    const view = wrap.querySelector('[data-cw-view]'), cap = wrap.querySelector('[data-cw-cap]');
+    const L = w => '<i class="cw-line" style="width:' + w + '"></i>';
+    const check = '<svg class="icon sm"><use href="#i-check"/></svg>';
+    const rate = (name, n, low) => '<span class="cw-gcr-r' + (low ? ' low' : '') + '"><span>' + name + '</span><i><b style="width:' + n * 20 + '%"></b></i><em>' + n + '</em></span>';
+    const S = {
+      grammarly: { html: '<div class="cw-gcr-row"><div class="cw-gcr-card"><b class="cw-gcr-h">Goals</b><span class="cw-gcr-k">Audience</span><span class="cw-gcr-chips"><em>General</em><em class="on">Expert</em></span>' +
+          '<span class="cw-gcr-k">Formality</span><span class="cw-gcr-chips"><em>Neutral</em><em class="on">Formal</em></span></div>' +
+          '<div class="cw-gcr-card"><b class="cw-gcr-h">Clarity</b><span>This sentence is wordy, so the point gets lost.</span><span class="cw-gcr-fix"><s>in order to be able to run</s> → <b>to run</b></span>' +
+          '<span class="cw-gcr-acts"><span class="btn btn-primary">Accept</span><span class="btn btn-ghost">Dismiss</span></span></div></div>',
+        alt: 'Two cards. Goals: audience Expert, formality Formal. A Clarity suggestion: the sentence is wordy, replace in order to be able to run with to run, with Accept and Dismiss.',
+        cap: 'Grammarly: you set goals such as audience and formality first. Each suggestion then names the problem before it offers a rewrite, and you can accept or dismiss it.' },
+      figma: { html: '<div class="cw-gcr-row"><div class="cw-gcr-frame"><div class="cw-gcr-tb">' + L('28px') + '<span>Run</span><span>Share</span></div>' + L('80%') + L('64%') + L('72%') + '<span class="cw-gcr-pin">A</span></div>' +
+          '<div class="cw-gcr-card"><span class="cw-gcr-who"><span class="cw-gcr-av">A</span><b>Ana</b><span class="cw-gcr-res">' + check + 'Resolve</span></span>' +
+          '<span>New users need to find Run fast, but it looks like the buttons next to it.</span><span class="cw-gcr-who"><span class="cw-gcr-av">B</span><b>Ben</b></span><span class="cw-gcr-reply">Trying a filled style. Better?</span></div></div>',
+        alt: 'A screen design with a comment pin on its Run button. Beside it the thread: New users need to find Run fast, but it looks like the buttons next to it. A reply: Trying a filled style. A Resolve button.',
+        cap: 'Figma: a comment is pinned to the exact spot on the canvas, so feedback is about one specific thing. The thread is resolved once it’s dealt with.' },
+      github: { html: '<div class="cw-gcr-diff"><div class="cw-gcr-ln"><em>41</em>' + L('55%') + '</div><div class="cw-gcr-ln add"><em>42</em><code>notify("Export failed")</code></div>' +
+          '<div class="cw-gcr-cmt"><span>People can’t tell which file failed, so they can’t retry it.</span><div class="cw-gcr-sug"><b class="cw-gcr-h">Suggested change</b><code>notify(`Couldn’t export ${name}`)</code></div>' +
+          '<span class="cw-gcr-acts"><span class="btn btn-secondary">Commit suggestion</span></span></div><div class="cw-gcr-ln"><em>43</em>' + L('40%') + '</div></div>' +
+          '<div class="cw-gcr-verdict"><span>Comment</span><span>Approve</span><span class="on">Request changes</span></div>',
+        alt: 'A code diff with a review comment under line 42: People can’t tell which file failed. A suggested change with a Commit suggestion button. Below: Comment, Approve, Request changes, with Request changes picked.',
+        cap: 'GitHub: a review comment sits on the exact line and can carry a suggested change. The reviewer explains the problem, and the author decides whether to commit the fix.' },
+      airbnb: { html: '<div class="cw-gcr-card cw-gcr-rate"><b class="cw-gcr-h">Rate your stay</b>' + rate('Cleanliness', 5) + rate('Accuracy', 5) + rate('Check-in', 2, true) + rate('Communication', 5) + rate('Location', 4) + rate('Value', 4) +
+          '<span class="cw-gcr-q">“The door code in the listing was out of date.”</span></div>',
+        alt: 'A review with six ratings: cleanliness 5, accuracy 5, check-in 2, communication 5, location 4, value 4. Check-in stands out, with a note that the door code was out of date.',
+        cap: 'Airbnb: guests rate cleanliness, accuracy, check-in, communication, location and value separately. A host learns what to fix, not just that the stay got four stars.' }
+    };
+    const render = k => { view.innerHTML = S[k].html; view.setAttribute('aria-label', 'Sketch: ' + S[k].alt); cap.textContent = S[k].cap; };
+    wrap.querySelectorAll('input[name="cw-good-critique-w"]').forEach(r => r.addEventListener('change', () => render(r.value)));
+    render('grammarly');
+  })();
+  </script>
+</div>

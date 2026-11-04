@@ -1,0 +1,52 @@
+<div class="note comfy cw-wrap"><p>Notice that each step is small, leaves things working, and gets checked before the next one builds on it.</p>
+        <div class="seg cw-seg" role="radiogroup" aria-label="Example">
+          <input type="radio" name="cw-eff-small-steps-w" id="cw-eff-small-steps-w-1" value="shapeup" checked><label for="cw-eff-small-steps-w-1">Shape Up</label>
+          <input type="radio" name="cw-eff-small-steps-w" id="cw-eff-small-steps-w-2" value="google"><label for="cw-eff-small-steps-w-2">Google code review</label>
+          <input type="radio" name="cw-eff-small-steps-w" id="cw-eff-small-steps-w-3" value="flags"><label for="cw-eff-small-steps-w-3">LaunchDarkly</label>
+          <input type="radio" name="cw-eff-small-steps-w" id="cw-eff-small-steps-w-4" value="duo"><label for="cw-eff-small-steps-w-4">Duolingo</label>
+        </div>
+        <div class="cw" data-cw-view role="img" aria-label=""></div>
+        <p class="cw-cap" data-cw-cap aria-live="polite"></p>
+        
+        <script>
+        (() => {
+          const wrap = document.currentScript.closest('.cw-wrap');
+          const view = wrap.querySelector('[data-cw-view]'), cap = wrap.querySelector('[data-cw-cap]');
+          const ic = id => '<svg class="icon sm"><use href="#i-' + id + '"/></svg>';
+          /* Hill chart: a sine hill in a 100 x 50 box, dots placed on the curve by their x. */
+          const hy = x => 47 - 43 * Math.sin(Math.PI * x / 100);
+          const pts = Array.from({ length: 51 }, (_, i) => (i * 2) + ',' + hy(i * 2).toFixed(2)).join(' ');
+          const dot = (x, label, cls) => '<i class="cw-ess-dot ' + (cls || '') + '" style="left:' + x + '%;top:' + (hy(x) * 2) + '%"></i><span class="cw-ess-lab" style="left:' + Math.min(Math.max(x, 14), 86) + '%;top:' + (hy(x) * 2) + '%">' + label + '</span>';
+          const cl = (n, t, size, st) => '<div class="cw-ess-cl' + (st === 'rev' ? ' now' : '') + '"><span class="cw-ess-n">' + n + '</span><span>' + t + '<small>' + size + '</small></span>' +
+            (st === 'ok' ? '<span class="cw-ess-st ok">' + ic('check') + 'LGTM</span>' : '<span class="cw-ess-st rev">In review</span>') + '</div>';
+          const S = {
+            shapeup: { html: '<div class="cw-ess-card"><b>Scopes</b><div class="cw-ess-plot"><svg viewBox="0 0 100 50" preserveAspectRatio="none" aria-hidden="true">' +
+                '<line class="mid" x1="50" y1="0" x2="50" y2="50" vector-effect="non-scaling-stroke"/><polyline class="curve" points="' + pts + '" vector-effect="non-scaling-stroke"/></svg>' +
+                dot(26, 'Close dialog', 'warm') + dot(66, 'Tab dot') + dot(90, 'Store') + '</div>' +
+                '<div class="cw-ess-sides"><span>Figuring things out</span><span>Making it happen</span></div></div>',
+              alt: 'A hill chart. Three scopes sit as dots on a hill: Close dialog is still going uphill on the figuring things out side, Tab dot is just past the top, and Store is near the bottom of the making it happen side.',
+              cap: 'Basecamp’s Shape Up: a project is split into scopes, each a slice that works end to end. A hill chart shows each scope moving from “figuring things out” to “making it happen”, so a stuck one is easy to spot.' },
+            google: { html: '<div class="cw-ess-card"><b>Changes for one feature</b><div class="cw-ess-cls">' +
+                cl(1, 'Track unsaved changes', '+40 −3', 'ok') + cl(2, 'Dot on unsaved tabs', '+62 −8', 'ok') + cl(3, 'Ask before closing', '+85 −10', 'rev') + '</div>' +
+                '<div class="cw-ess-big"><span>Instead of</span><s>one change, 900 lines</s></div></div>',
+              alt: 'Three small code changes for one feature, each a few dozen lines. The first two are approved with LGTM, the third is in review. Below, a struck-out alternative: one change of 900 lines.',
+              cap: 'Google’s code review guide: each change should be small and do one self-contained thing. Small changes get reviewed faster and more carefully, and a bad one is easy to roll back.' },
+            flags: { html: '<div class="cw-ess-card"><div class="cw-ess-fh"><code>new-close-dialog</code><span class="cw-ess-tog">On<i></i></span></div>' +
+                '<span class="cw-ess-sub">Merged behind the flag</span><div class="cw-ess-chips"><span>' + ic('check') + 'Store</span><span>' + ic('check') + 'Tab dot</span><span>' + ic('check') + 'Close dialog</span></div>' +
+                '<div class="cw-ess-rule"><span>Your team</span><b>New</b></div>' +
+                '<div class="cw-ess-rule"><span>Everyone else</span><b>5% new</b><span class="cw-ess-roll"><i style="width:5%"></i></span></div></div>',
+              alt: 'A feature flag named new-close-dialog, switched on. Three steps are merged behind it: Store, Tab dot and Close dialog. Your team gets the new version; everyone else gets it at 5 percent.',
+              cap: 'LaunchDarkly: each step can merge behind a feature flag that’s off for most people, so the app keeps working in between. When the last step lands, you can turn it on for your team first, then a few percent of people, then everyone.' },
+            duo: { html: '<div class="cw-ess-phone"><div class="cw-ess-unit">Unit 2<small>Short lessons, one at a time</small></div><div class="cw-ess-path">' +
+                '<span class="cw-ess-node done">' + ic('check') + '</span><span class="cw-ess-node done l1">' + ic('check') + '</span>' +
+                '<span class="cw-ess-node now">' + ic('play') + '<span class="cw-ess-go">Next</span></span>' +
+                '<span class="cw-ess-node r1"></span><span class="cw-ess-node"></span></div></div>',
+              alt: 'A phone showing a learning path for Unit 2. Two lessons are done with checks, the next one is highlighted, and two more below are gray until you get there.',
+              cap: 'Duolingo: a course is a path of short lessons. Each takes a few minutes and opens the next one when you finish, so you always know where you are and never face a whole unit at once.' }
+          };
+          const render = k => { view.innerHTML = S[k].html; view.setAttribute('aria-label', 'Sketch: ' + S[k].alt); cap.textContent = S[k].cap; };
+          wrap.querySelectorAll('input[name="cw-eff-small-steps-w"]').forEach(r => r.addEventListener('change', () => render(r.value)));
+          render('shapeup');
+        })();
+        </script>
+      </div>

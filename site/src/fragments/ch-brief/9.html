@@ -1,0 +1,30 @@
+<div class="stage tall" data-demo="eff-context-pack">
+      <div class="seg p26-seg" role="radiogroup" aria-label="Context">
+        <input type="radio" name="p26-cp-mode" id="p26-cp-before" value="none" checked><label for="p26-cp-before">No context</label>
+        <input type="radio" name="p26-cp-mode" id="p26-cp-after" value="all"><label for="p26-cp-after">With a context pack</label>
+      </div>
+      <div class="p26-wrap p26-cp">
+        <p class="p26-req"><b>Same request:</b> “Warn people before they close a tab with unsaved changes.”</p>
+        <div class="p26-cp-grid">
+          <div class="surface p26-pack" role="group" aria-labelledby="p26-cp-pack-h">
+            <p class="p26-lint-h" id="p26-cp-pack-h">Context pack</p>
+            <label class="check"><input type="checkbox" data-k="tokens"> Design tokens</label>
+            <label class="check"><input type="checkbox" data-k="comp"> Components to reuse</label>
+            <label class="check"><input type="checkbox" data-k="copy"> Copy rules</label>
+            <label class="check"><input type="checkbox" data-k="ex"> Examples of good screens</label>
+            <label class="check"><input type="checkbox" data-k="conv"> Repo conventions</label>
+            <label class="check"><input type="checkbox" data-k="figma"> Figma frames</label>
+          </div>
+          <div class="p26-result">
+            <p class="p26-lint-h">What the agent made</p>
+            <div class="p26-app" id="p26-cp-app" role="img" aria-label=""></div>
+            <p class="p26-file" id="p26-cp-file"></p>
+          </div>
+        </div>
+        <div class="surface p26-lint">
+          <p class="p26-lint-sum" id="p26-cp-sum" role="status"></p>
+          <ul class="p26-lint-list" id="p26-cp-list"></ul>
+        </div>
+      </div>
+      <p class="try"><b>Try it:</b> compare No context with the full pack. Then tick items one at a time and watch which guess each one removes.</p>
+    </div>

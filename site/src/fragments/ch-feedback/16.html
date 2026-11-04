@@ -1,0 +1,37 @@
+<div class="note comfy cw-wrap">
+      <div class="seg cw-seg" role="radiogroup" aria-label="Example">
+        <input type="radio" name="cw-toast-w" id="cw-toast-w-1" value="gmail" checked><label for="cw-toast-w-1">Gmail</label>
+        <input type="radio" name="cw-toast-w" id="cw-toast-w-2" value="macos"><label for="cw-toast-w-2">macOS</label>
+        <input type="radio" name="cw-toast-w" id="cw-toast-w-3" value="spotify"><label for="cw-toast-w-3">Spotify</label>
+      </div>
+      <div class="cw" data-cw-view role="img" aria-label=""></div>
+      <p class="cw-cap" data-cw-cap aria-live="polite"></p>
+      
+      <script>
+      (() => {
+        const wrap = document.currentScript.closest('.cw-wrap');
+        const view = wrap.querySelector('[data-cw-view]'), cap = wrap.querySelector('[data-cw-cap]');
+        const line = w => '<i class="cw-line" style="width:' + w + '%"></i>';
+        const act = t => '<span class="toast-action">' + t + '</span>';
+        const row = (a, b) => '<div class="cw-toastw-row">' + line(a) + line(b) + '</div>';
+        const track = (n, art, w) => '<div class="cw-toastw-track"><span>' + n + '</span><i class="cw-toastw-art' + art + '"></i>' + line(w) + '<span>3:12</span></div>';
+        const S = {
+          gmail: { html: '<div class="cw-toastw-win"><div class="cw-toastw-top">Inbox</div><div class="cw-toastw-rows">' + row(90, 80) + row(70, 60) + row(85, 72) + '</div>' +
+              '<div class="cw-toastw-spot"><div class="toast">Message sent' + act('Undo') + act('View message') + '</div></div></div>',
+            alt: 'A mail inbox. In the bottom-left corner a toast says Message sent, with Undo and View message.',
+            cap: 'Gmail: after you send, a toast offers Undo for a few seconds, and the email only goes out once that time is up. A slip costs one click instead of a follow-up email.' },
+          macos: { html: '<div class="cw-toastw-win cw-toastw-desk"><div class="cw-toastw-menu"></div><div class="cw-toastw-app">' + line(60) + line(90) + line(75) + line(85) + '</div>' +
+              '<div class="cw-toastw-shot"><div class="thumb"></div></div></div>',
+            alt: 'A desktop with one window. A small screenshot thumbnail sits in the bottom-right corner.',
+            cap: 'macOS: after a screenshot, a thumbnail slides into the corner. Click it to mark up or share, or ignore it and it saves on its own a few seconds later.' },
+          spotify: { html: '<div class="cw-toastw-win"><div class="cw-toastw-top">Album</div><div class="cw-toastw-rows">' + track(1, '', 70) + track(2, ' b', 55) + track(3, ' c', 80) + '</div>' +
+              '<div class="cw-toastw-spot center"><div class="toast solo">Added to Road trip</div></div></div>',
+            alt: 'A list of songs. A toast at the bottom center says Added to Road trip.',
+            cap: 'Spotify: adding a song to a playlist from a menu shows a short toast with the playlist’s name. The menu has already closed, so the toast is how you know it worked.' }
+        };
+        const render = k => { view.innerHTML = S[k].html; view.setAttribute('aria-label', 'Sketch: ' + S[k].alt); cap.textContent = S[k].cap; };
+        wrap.querySelectorAll('input[name="cw-toast-w"]').forEach(r => r.addEventListener('change', () => render(r.value)));
+        render('gmail');
+      })();
+      </script>
+    </div>

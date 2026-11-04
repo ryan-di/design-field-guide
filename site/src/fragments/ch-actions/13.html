@@ -1,0 +1,136 @@
+<script>
+(() => {
+  const cs = document.currentScript.closest('.cs');
+  const D = (k, html, wire) => csDemo(cs.querySelector('[data-d="' + k + '"]'), html, wire);
+  const icon = (n, c) => '<svg class="icon' + (c ? ' ' + c : '') + '"><use href="#i-' + n + '"/></svg>';
+  const ib = (n, name, extra) => '<button class="icon-btn ib-b" type="button" aria-label="' + name + '" data-name="' + name + '"' + (extra || '') + '>' + icon(n, 'sm') + '</button>';
+  const lb = (n, name, extra) => '<button class="btn btn-secondary cs-sm ib-lb" type="button" data-name="' + name + '"' + (extra || '') + '>' + icon(n, 'sm') + name + '</button>';
+
+  /* Tooltip that works on hover and focus, kept inside the frame */
+  const tips = frame => {
+    const tip = document.createElement('div'); tip.className = 'ib-tip'; tip.hidden = true; tip.setAttribute('aria-hidden', 'true'); frame.appendChild(tip);
+    const show = b => {
+      tip.textContent = b.dataset.name; tip.hidden = false;
+      const fr = frame.getBoundingClientRect(), r = b.getBoundingClientRect();
+      const x = Math.max(6, Math.min(r.left - fr.left + r.width / 2 - tip.offsetWidth / 2, fr.width - tip.offsetWidth - 6));
+      tip.style.left = x + 'px'; tip.style.top = (r.bottom - fr.top + 6) + 'px';
+    };
+    frame.querySelectorAll('.icon-btn[data-name]').forEach(b => {
+      b.addEventListener('pointerenter', () => show(b)); b.addEventListener('focus', () => show(b));
+      b.addEventListener('pointerleave', () => { tip.hidden = true; }); b.addEventListener('blur', () => { tip.hidden = true; });
+    });
+    return tip;
+  };
+
+  /* 1. Unknown icon: photo editor */
+  const TOOLS = [['layers', 'Layers', 'Layers: Photo, Text “Summer”'], ['sliders', 'Adjust', 'Adjust: brightness, contrast, warmth'], ['fit', 'Crop', 'Crop: drag the corners.']];
+  const edHtml = fixed => '<div class="app-frame ib-frame"><div class="app-bar"><span>beach.jpg</span>' +
+    '<button class="icon-btn ib-b" type="button" aria-label="Close" data-close>' + icon('x', 'sm') + '</button></div>' +
+    '<div data-open><div class="ib-tools" role="toolbar" aria-label="Tools">' +
+    TOOLS.map(([n, name], i) => (fixed ? lb(n, name, ' data-t="' + i + '" aria-pressed="false"') : '<button class="icon-btn ib-b" type="button" aria-label="' + name + '" data-t="' + i + '" aria-pressed="false">' + icon(n, 'sm') + '</button>')).join('') +
+    '</div><div class="app-body"><div class="ib-photo"><div class="thumb"></div><div class="ib-crop" data-crop hidden><i></i><i></i><i></i><i></i></div></div>' +
+    '<p class="ib-panel" data-panel aria-live="polite">Pick a tool.</p><p class="cs-meta" data-tries></p></div></div>' +
+    '<div class="app-body ib-closed" data-shut hidden><p>beach.jpg is closed.</p><button class="btn btn-secondary cs-sm" type="button" data-reopen>Open beach.jpg</button></div></div>';
+  const edWire = d => {
+    const btns = Array.from(d.querySelectorAll('[data-t]')), panel = d.querySelector('[data-panel]'), crop = d.querySelector('[data-crop]'), tries = d.querySelector('[data-tries]');
+    const open = d.querySelector('[data-open]'), shut = d.querySelector('[data-shut]');
+    let n = 0, found = false;
+    btns.forEach((b, i) => b.addEventListener('click', () => {
+      btns.forEach(x => x.setAttribute('aria-pressed', String(x === b)));
+      panel.textContent = TOOLS[i][2]; crop.hidden = i !== 2;
+      if (!found) { n++; found = i === 2; tries.textContent = found ? 'Found Crop on try ' + n + '.' : 'Tries: ' + n; }
+    }));
+    d.querySelector('[data-close]').addEventListener('click', () => { open.hidden = true; shut.hidden = false; d.querySelector('[data-reopen]').focus(); });
+    d.querySelector('[data-reopen]').addEventListener('click', () => { open.hidden = false; shut.hidden = true; d.querySelector('[data-close]').focus(); });
+  };
+  D('icon-button-1b', edHtml(false), edWire);
+  D('icon-button-1f', edHtml(true), edWire);
+
+  /* 2. Long row: PDF viewer */
+  const ACT = {
+    'Zoom in': 'zin', 'Zoom out': 'zout', 'Fit to page': 'fit', 'Find in document': 'Find: type a word to search.', 'Save a copy': 'save',
+    'Export as image': 'Exported page 1 as an image.', 'Bookmarks': 'No bookmarks yet.', 'Page thumbnails': 'Showing page thumbnails.',
+    'Display settings': 'Display: single page, light.', 'Properties': 'Lease.pdf · 12 pages · 1.4 MB'
+  };
+  const ALL = [['plus', 'Zoom in'], ['minus', 'Zoom out'], ['fit', 'Fit to page'], ['search', 'Find in document'], ['folder', 'Save a copy'],
+    ['image', 'Export as image'], ['book', 'Bookmarks'], ['layers', 'Page thumbnails'], ['sliders', 'Display settings'], ['gear', 'Properties']];
+  const RARE = ALL.slice(5);
+  const sep = '<span class="ib-sep" aria-hidden="true"></span>';
+  const pdfHtml = fixed => '<div class="app-frame ib-frame ib-pdf"><div class="app-bar"><span>Lease.pdf</span></div><div class="ib-tools" role="toolbar" aria-label="Document tools">' +
+    (fixed
+      ? ib('plus', 'Zoom in') + ib('minus', 'Zoom out') + ib('fit', 'Fit to page') + sep + ib('search', 'Find in document') + lb('folder', 'Save a copy') +
+        '<span class="ib-anchor">' + ib('dots', 'More', ' aria-haspopup="menu" aria-expanded="false" data-more') +
+        '<span class="surface ib-menu" role="menu" aria-label="More" hidden>' + RARE.map(([n, name]) => '<button type="button" role="menuitem" tabindex="-1" data-name="' + name + '">' + icon(n, 'sm') + name + '</button>').join('') + '</span></span>'
+      : ALL.map(([n, name]) => ib(n, name)).join('')) +
+    '</div><div class="app-body ib-page"><div class="ib-sheet" data-sheet><div class="line" style="width:58%"></div><div class="line" style="width:92%"></div><div class="line" style="width:86%"></div><div class="line" style="width:90%"></div><div class="line" style="width:70%"></div></div>' +
+    '<p class="ib-panel" data-panel aria-live="polite">Zoom 100%</p><p class="cs-meta" data-seen></p></div></div>';
+  const pdfWire = fixed => d => {
+    const frame = d.querySelector('.app-frame'), panel = d.querySelector('[data-panel]'), seen = d.querySelector('[data-seen]'), sheet = d.querySelector('[data-sheet]');
+    tips(frame);
+    let zoom = 100, saved = false;
+    const checked = new Set();
+    const count = () => { seen.textContent = 'Buttons checked: ' + checked.size; };
+    const run = name => {
+      const a = ACT[name];
+      if (a === 'zin' || a === 'zout') { zoom = Math.max(50, Math.min(200, zoom + (a === 'zin' ? 10 : -10))); panel.textContent = 'Zoom ' + zoom + '%'; }
+      else if (a === 'fit') { zoom = 100; panel.textContent = 'Fit to page · Zoom 100%'; }
+      else if (a === 'save') { panel.textContent = 'Saved “Lease copy.pdf”.'; if (!saved) { saved = true; seen.textContent = 'Found it after checking ' + checked.size + (checked.size === 1 ? ' button.' : ' buttons.'); } }
+      else panel.textContent = a;
+      sheet.style.setProperty('--z', zoom / 100);
+    };
+    d.querySelectorAll('.ib-tools [data-name]').forEach(b => {
+      const name = b.dataset.name, look = () => { if (!saved && name !== 'More' && !b.closest('.ib-menu')) { checked.add(name); count(); } };
+      b.addEventListener('pointerenter', look); b.addEventListener('focus', look);
+      if (name !== 'More' && !b.closest('.ib-menu')) b.addEventListener('click', () => run(name));
+    });
+    count();
+    if (!fixed) return;
+    const more = d.querySelector('[data-more]'), menu = d.querySelector('.ib-menu'), items = Array.from(menu.querySelectorAll('[role="menuitem"]'));
+    const close = focus => { menu.hidden = true; more.setAttribute('aria-expanded', 'false'); if (focus) more.focus(); };
+    const openMenu = () => { menu.hidden = false; more.setAttribute('aria-expanded', 'true'); items[0].focus(); };
+    more.addEventListener('click', () => (menu.hidden ? openMenu() : close(true)));
+    items.forEach((it, i) => {
+      it.addEventListener('click', () => { close(true); run(it.dataset.name); });
+      it.addEventListener('keydown', e => {
+        const k = { ArrowDown: i + 1, ArrowUp: i - 1, Home: 0, End: items.length - 1 }[e.key];
+        if (k !== undefined) { e.preventDefault(); items[(k + items.length) % items.length].focus(); }
+        else if (e.key === 'Escape') { e.preventDefault(); close(true); }
+        else if (e.key === 'Tab') close(false);
+      });
+    });
+    d.addEventListener('pointerdown', e => { if (!menu.hidden && !e.target.closest('.ib-anchor')) close(false); });
+  };
+  D('icon-button-2b', pdfHtml(false), pdfWire(false));
+  D('icon-button-2f', pdfHtml(true), pdfWire(true));
+
+  /* 3. Tiny targets: mini player */
+  const plHtml = fixed => '<div class="surface ib-player' + (fixed ? ' big' : '') + '" data-pl><div class="ib-finger" aria-hidden="true" hidden></div>' +
+    '<div data-on class="ib-prow"><div class="ib-song"><div class="thumb c"></div><div><b>Late night mix</b><span>Track 3 of 12</span></div></div>' +
+    '<div class="ib-ctl" data-ctl>' +
+    '<button type="button" class="ib-c" aria-label="Play" data-play>' + icon('play') + '</button>' +
+    '<button type="button" class="ib-c" aria-label="Add to playlist" data-add>' + icon('plus') + '</button>' +
+    '<button type="button" class="ib-c ib-x" aria-label="Close player" data-x>' + icon('x') + '</button></div></div>' +
+    '<div data-off class="ib-prow" hidden><span>Player closed.</span><button class="btn btn-secondary cs-sm" type="button" data-open>Open player</button></div></div>' +
+    '<p class="ib-panel" data-st aria-live="polite"></p><p class="cs-meta">' + (fixed ? 'Buttons: 40 × 40 px, 8 px apart' : 'Buttons: 16 × 16 px, no gap') + '</p>';
+  const plWire = d => {
+    const pl = d.querySelector('[data-pl]'), fin = d.querySelector('.ib-finger'), st = d.querySelector('[data-st]'), on = d.querySelector('[data-on]'), off = d.querySelector('[data-off]');
+    let playing = false;
+    pl.addEventListener('pointermove', e => {
+      if (e.pointerType === 'touch') return;
+      const r = pl.getBoundingClientRect(); fin.hidden = false;
+      fin.style.left = (e.clientX - r.left) + 'px'; fin.style.top = (e.clientY - r.top) + 'px';
+    });
+    pl.addEventListener('pointerleave', () => { fin.hidden = true; });
+    d.querySelector('[data-ctl]').addEventListener('pointerdown', e => { if (!e.target.closest('button')) st.textContent = 'Missed. That tap hit the gap.'; });
+    d.querySelector('[data-play]').addEventListener('click', () => { playing = !playing; st.textContent = playing ? 'Playing.' : 'Paused.'; });
+    d.querySelector('[data-add]').addEventListener('click', () => { st.textContent = 'Added to your playlist.'; });
+    d.querySelector('[data-x]').addEventListener('click', () => { on.hidden = true; off.hidden = false; d.querySelector('[data-open]').focus(); });
+    d.querySelector('[data-open]').addEventListener('click', () => { on.hidden = false; off.hidden = true; st.textContent = ''; d.querySelector('[data-add]').focus(); });
+  };
+  D('icon-button-3b', plHtml(false), plWire);
+  D('icon-button-3f', plHtml(true), plWire);
+
+  csInit(cs);
+})();
+
+  </script>

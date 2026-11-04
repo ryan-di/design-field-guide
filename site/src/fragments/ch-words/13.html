@@ -1,0 +1,44 @@
+<div class="note comfy cw-wrap">
+  <div class="seg cw-seg" role="radiogroup" aria-label="Example">
+    <input type="radio" name="cw-good-error-copy-w" id="cw-good-error-copy-w-1" value="vscode" checked><label for="cw-good-error-copy-w-1">VS Code</label>
+    <input type="radio" name="cw-good-error-copy-w" id="cw-good-error-copy-w-2" value="github"><label for="cw-good-error-copy-w-2">GitHub</label>
+    <input type="radio" name="cw-good-error-copy-w" id="cw-good-error-copy-w-3" value="gmail"><label for="cw-good-error-copy-w-3">Gmail</label>
+    <input type="radio" name="cw-good-error-copy-w" id="cw-good-error-copy-w-4" value="google"><label for="cw-good-error-copy-w-4">Google sign-in</label>
+  </div>
+  <div class="cw" data-cw-view role="img" aria-label=""></div>
+  <p class="cw-cap" data-cw-cap aria-live="polite"></p>
+  
+  <script>
+  (() => {
+    const wrap = document.currentScript.closest('.cw-wrap');
+    const view = wrap.querySelector('[data-cw-view]'), cap = wrap.querySelector('[data-cw-cap]');
+    const ic = id => '<svg class="icon sm"><use href="#i-' + id + '"/></svg>';
+    const line = w => '<i class="cw-line cw-gerr-w' + w + '"></i>';
+    const S = {
+      vscode: { html: '<div class="cw-gerr-mid"><div class="cw-gerr-ed"><div class="cw-gerr-tabs"><span class="cw-gerr-tab">app.ts ●</span></div><div class="cw-gerr-code">' + line(60) + line(80) + line(40) + '</div>' +
+          '<div class="cw-gerr-noti"><span class="cw-gerr-msg">' + ic('warn') + '<span>Couldn’t save “app.ts”. The file on disk is newer than your copy.</span></span>' +
+          '<span class="cw-gerr-acts"><span class="btn btn-primary">Compare</span><span class="btn btn-secondary">Overwrite</span></span></div></div></div>',
+        alt: 'An editor with an unsaved tab. A notification says the save failed because the file on disk is newer, with Compare and Overwrite buttons.',
+        cap: 'VS Code: if a file changed on disk after you opened it, saving stops and says why. The message offers Compare and Overwrite, so both ways forward are right there.' },
+      github: { html: '<div class="cw-gerr-mid"><div class="cw-gerr-box"><span class="cw-gerr-warn">' + ic('warn') + '<span><b>This branch has conflicts to resolve</b><em>Conflicting files</em></span></span>' +
+          '<span class="cw-gerr-files"><span>src/app.ts</span><span>README.md</span></span><span class="cw-gerr-row"><span class="btn btn-secondary">Resolve conflicts</span></span>' +
+          '<span class="cw-gerr-row"><span class="btn btn-primary cw-gerr-off">Merge pull request</span></span></div></div>',
+        alt: 'A merge box says the branch has conflicts and lists two conflicting files, with a Resolve conflicts button. The merge button below is disabled.',
+        cap: 'GitHub: a pull request that can’t merge says the branch has conflicts, lists the files, and puts a Resolve conflicts button right there. No error code, no blame.' },
+      gmail: { html: '<div class="cw-gerr-mid"><div class="cw-gerr-mail"><span class="cw-gerr-from"><i></i>Mail delivery</span><b>Address not found</b>' +
+          '<span>Your message wasn’t delivered to sam@example.org because the address couldn’t be found.</span>' +
+          '<span class="cw-gerr-small"><span>The response was:</span><code>550 5.1.1 …</code></span></div></div>',
+        alt: 'A bounce email. The heading says Address not found, then one plain sentence names the address. A server code sits last, in small gray text.',
+        cap: 'Gmail: a bounced email leads with “Address not found” and one plain sentence about which address failed. The server’s code comes last, in small print, for whoever needs it.' },
+      google: { html: '<div class="cw-gerr-mid"><div class="cw-gerr-sign"><b>Sign in</b><span class="cw-gerr-lab">Password</span><span class="cw-gerr-in">••••••••</span>' +
+          '<span class="cw-gerr-fm">' + ic('warn') + '<span>Wrong password. Try again, or reset it.</span></span>' +
+          '<span class="cw-gerr-foot"><span class="cw-gerr-link">Forgot password?</span><span class="btn btn-primary">Next</span></span></div></div>',
+        alt: 'A sign-in form with a red password field. The message under it says Wrong password, try again or reset it. A Forgot password link sits next to the Next button.',
+        cap: 'Google sign-in: a wrong password gets a short, neutral message right under the field, with both ways forward: try again, or reset the password.' }
+    };
+    const render = k => { view.innerHTML = S[k].html; view.setAttribute('aria-label', 'Sketch: ' + S[k].alt); cap.textContent = S[k].cap; };
+    wrap.querySelectorAll('input[name="cw-good-error-copy-w"]').forEach(r => r.addEventListener('change', () => render(r.value)));
+    render('vscode');
+  })();
+  </script>
+</div>

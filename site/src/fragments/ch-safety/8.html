@@ -1,0 +1,24 @@
+<div class="stage tall" data-demo="pat-preview">
+      <div class="surface p11-rs">
+        <div class="p11-rs-head"><b>Resize image</b><span class="p11-chip" data-chip hidden>Preview · not applied</span></div>
+        <div class="p11-rs-view" data-view aria-hidden="true">
+          <div class="p11-rs-img" data-img><svg class="icon"><use href="#i-image"/></svg></div>
+          <div class="p11-rs-was" data-was hidden></div>
+        </div>
+        <p class="p11-rs-dims" data-dims aria-live="polite">1024 × 768 · no changes</p>
+        <div class="p11-rs-ctl">
+          <div class="seg p11-seg-sm" role="radiogroup" aria-label="Shape">
+            <input type="radio" name="p11-rs-shape" id="p11-rs-s43" value="4:3" checked><label for="p11-rs-s43">4:3</label>
+            <input type="radio" name="p11-rs-shape" id="p11-rs-s11" value="1:1"><label for="p11-rs-s11">1:1</label>
+            <input type="radio" name="p11-rs-shape" id="p11-rs-s34" value="3:4"><label for="p11-rs-s34">3:4</label>
+            <input type="radio" name="p11-rs-shape" id="p11-rs-s169" value="16:9"><label for="p11-rs-s169">16:9</label>
+          </div>
+          <div class="slider-row"><label for="p11-rs-long">Long side</label><input type="range" id="p11-rs-long" min="512" max="2048" step="64" value="1024"><output for="p11-rs-long" data-out>1024 px</output></div>
+        </div>
+        <div class="p11-rs-actions">
+          <button class="btn btn-secondary" type="button" data-act="cancel">Cancel</button>
+          <button class="btn btn-primary" type="button" data-act="apply">Apply</button>
+        </div>
+      </div>
+      <p class="try"><b>Try it:</b> pick 3:4 and drag Long side. The dashed outline is the image now and the filled box is the preview. Then press Apply, or Cancel to go back.</p>
+    </div>

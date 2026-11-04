@@ -1,0 +1,43 @@
+<div class="note comfy cw-wrap">
+  <div class="seg cw-seg" role="radiogroup" aria-label="Example">
+    <input type="radio" name="cw-good-design-rationale-w" id="cw-good-design-rationale-w-1" value="material" checked><label for="cw-good-design-rationale-w-1">Material Design</label>
+    <input type="radio" name="cw-good-design-rationale-w" id="cw-good-design-rationale-w-2" value="govuk"><label for="cw-good-design-rationale-w-2">GOV.UK</label>
+    <input type="radio" name="cw-good-design-rationale-w" id="cw-good-design-rationale-w-3" value="python"><label for="cw-good-design-rationale-w-3">Python</label>
+    <input type="radio" name="cw-good-design-rationale-w" id="cw-good-design-rationale-w-4" value="wikipedia"><label for="cw-good-design-rationale-w-4">Wikipedia</label>
+  </div>
+  <div class="cw" data-cw-view role="img" aria-label=""></div>
+  <p class="cw-cap" data-cw-cap aria-live="polite"></p>
+  
+  <script>
+  (() => {
+    const wrap = document.currentScript.closest('.cw-wrap');
+    const view = wrap.querySelector('[data-cw-view]'), cap = wrap.querySelector('[data-cw-cap]');
+    const L = w => '<i class="cw-line" style="width:' + w + '"></i>';
+    const ic = id => '<svg class="icon sm"><use href="#i-' + id + '"/></svg>';
+    const ex = (no, acts, label, why) => '<div class="cw-gdr-ex' + (no ? ' no' : '') + '"><div class="cw-gdr-mock">' + L('55%') + L('90%') + L('75%') + '<span class="cw-gdr-acts">' + acts + '</span></div><b>' + ic(no ? 'x' : 'check') + label + '</b><span>' + why + '</span></div>';
+    const sec = (title, lines, on) => '<span class="cw-gdr-sec' + (on ? ' on' : '') + '"><b>' + title + '</b>' + lines.map(L).join('') + '</span>';
+    const msg = (cls, w, who) => '<span class="cw-gdr-msg' + (cls ? ' ' + cls : '') + '">' + L(w) + '<em>— ' + who + '</em></span>';
+    const S = {
+      material: { html: '<div class="cw-gdr-dd">' + ex(false, '<span>Cancel</span><span class="fill">Delete</span>', 'Do', 'One main action, so it’s clear which one to press.') +
+          ex(true, '<span class="fill">Cancel</span><span class="fill">Delete</span>', 'Don’t', 'Two filled buttons compete, so neither reads as the main one.') + '</div>',
+        alt: 'Two small dialogs side by side. Do: Cancel as a text button and Delete filled, because there is one main action. Don’t: both buttons filled, because they compete.',
+        cap: 'Material Design: guidelines pair a “Do” with a “Don’t” and a line on why, so the rejected option sits on the page next to the chosen one.' },
+      govuk: { html: '<div class="cw-gdr-doc">' + L('40%') + sec('When to use', ['85%']) + sec('When not to use', ['90%', '70%'], true) + sec('How it works', ['80%']) + sec('Research', ['88%', '60%'], true) + '</div>',
+        alt: 'A component page with sections: When to use, When not to use, How it works, and Research. When not to use and Research are highlighted.',
+        cap: 'GOV.UK Design System: component pages say when not to use them and what research found, so teams see why a component works the way it does before they change it.' },
+      python: { html: '<div class="cw-gdr-doc"><span class="cw-gdr-meta">PEP · Proposal</span>' + sec('Motivation', ['85%']) + sec('Specification', ['80%']) +
+          '<span class="cw-gdr-sec on"><b>Rejected ideas</b><span class="cw-gdr-rej"><b>Add a new keyword</b><i>Breaks code that already uses the word.</i></span><span class="cw-gdr-rej"><b>Use a function instead</b><i>Hard to read inside long expressions.</i></span></span></div>',
+        alt: 'A language proposal with Motivation and Specification sections, then a highlighted Rejected ideas section listing two alternatives and why each was turned down.',
+        cap: 'Python: a proposal to change the language, called a PEP, has a Rejected Ideas section that lists the alternatives raised and why each was turned down.' },
+      wikipedia: { html: '<div class="cw-gdr-doc"><div class="cw-gdr-tabs"><span>Article</span><span class="on">Talk</span><span class="r">History</span></div>' +
+          '<div class="cw-gdr-faq"><span><b>Q</b>Why doesn’t the first line say more?</span><span><b>A</b>Proposed twice and turned down. See the archive.</span></div>' +
+          '<div class="cw-gdr-th"><b>Shorten the first line?</b>' + msg('', '70%', 'Ana') + msg('re', '62%', 'Ben') + msg('re2', '50%', 'Ana') + '</div></div>',
+        alt: 'An article’s Talk tab. A FAQ box answers a common question: proposed twice and turned down, see the archive. Below, a signed discussion thread with indented replies.',
+        cap: 'Wikipedia: every article has a talk page that keeps the discussion behind its wording, so a new editor can see what was already proposed and why it was turned down.' }
+    };
+    const render = k => { view.innerHTML = S[k].html; view.setAttribute('aria-label', 'Sketch: ' + S[k].alt); cap.textContent = S[k].cap; };
+    wrap.querySelectorAll('input[name="cw-good-design-rationale-w"]').forEach(r => r.addEventListener('change', () => render(r.value)));
+    render('material');
+  })();
+  </script>
+</div>

@@ -1,0 +1,325 @@
+---
+title: "Newcomers & experts"
+description: "The same product serves someone on day one and someone on day five hundred."
+eyebrow: "Chapter 14"
+sidebar:
+  label: "Newcomers & experts"
+---
+
+import Raw from '../../../components/Raw.astro';
+import Learned from '../../../components/Learned.astro';
+import Runtime from '../../../components/Runtime.astro';
+import F0 from '../../../fragments/ch-layers/0.html?raw';
+import F1 from '../../../fragments/ch-layers/1.html?raw';
+import F2 from '../../../fragments/ch-layers/2.html?raw';
+import F3 from '../../../fragments/ch-layers/3.html?raw';
+import F4 from '../../../fragments/ch-layers/4.html?raw';
+import F5 from '../../../fragments/ch-layers/5.html?raw';
+import F6 from '../../../fragments/ch-layers/6.html?raw';
+import F7 from '../../../fragments/ch-layers/7.html?raw';
+import F8 from '../../../fragments/ch-layers/8.html?raw';
+import F9 from '../../../fragments/ch-layers/9.html?raw';
+import F10 from '../../../fragments/ch-layers/10.html?raw';
+import F11 from '../../../fragments/ch-layers/11.html?raw';
+import F12 from '../../../fragments/ch-layers/12.html?raw';
+import F13 from '../../../fragments/ch-layers/13.html?raw';
+import F14 from '../../../fragments/ch-layers/14.html?raw';
+import F15 from '../../../fragments/ch-layers/15.html?raw';
+import F16 from '../../../fragments/ch-layers/16.html?raw';
+import F17 from '../../../fragments/ch-layers/17.html?raw';
+import F18 from '../../../fragments/ch-layers/18.html?raw';
+import F19 from '../../../fragments/ch-layers/19.html?raw';
+import F20 from '../../../fragments/ch-layers/20.html?raw';
+import F21 from '../../../fragments/ch-layers/21.html?raw';
+import F22 from '../../../fragments/ch-layers/22.html?raw';
+import F23 from '../../../fragments/ch-layers/23.html?raw';
+import F24 from '../../../fragments/ch-layers/24.html?raw';
+
+<Runtime at="start" />
+
+<section class="dfg-chapter" id="ch-layers">
+
+<Raw html={F0} />
+
+The same product serves someone on day one and someone on day five hundred. Newcomers need few choices and an obvious next step, while experts want speed and control. Serve both with a calm surface first and faster paths underneath for the people who look for them, kept out of each other’s way. Nielsen’s heuristic calls this “flexibility and efficiency of use”.
+
+<article class="entry essay" id="pat-layered-ui" data-entry data-name="Layered interface">
+
+<div class="entry-head">
+
+## Layered interface \{#pat-layered-ui-h\}
+
+<Learned id="pat-layered-ui" />
+
+</div>
+
+A layered interface shows a simple set of controls first and keeps the full set one step away. New and occasional users get the few choices that matter, and experts open the advanced layer to change the rest. Both layers change the same settings, so switching between them loses nothing.
+
+Where [progressive disclosure](/part-2/overload/#pat-progressive-disclosure) tucks away the settings few people change, a layered interface gives newcomers and experts each a named layer of the same controls, and people pick the one they work in.
+
+<Raw html={F1} />
+
+### Ways to do it \{#pat-layered-ui-ways\}
+
+There are a few ways to layer. Show more and a separate page work as in [progressive disclosure](/part-2/overload/#pat-progressive-disclosure). The other two split the work into two versions: a mode switch flips the whole screen between a basic and a full version, and a quick form handles the common case and opens the full form for the rest.
+
+<Raw html={F2} />
+
+### Rules \{#pat-layered-ui-rules\}
+
+Four rules keep a layered interface useful.
+
+<div class="cs essay-cs">
+
+<section class="rule" id="pat-layered-ui-rule-1">
+
+#### 1. Build both layers on one set of settings \{#pat-layered-ui-rule-1-h\}
+
+If Simple and Advanced are two separate forms, they drift apart: a value typed in one is missing in the other, and some settings work in only one mode. Build Simple on top of the same settings as Advanced, so it only hides fields and keeps their values.
+
+<Raw html={F3} />
+
+</section>
+
+<section class="rule" id="pat-layered-ui-rule-2">
+
+#### 2. Keep the way to more in sight \{#pat-layered-ui-rule-2-h\}
+
+If the way to the full controls is hard to find, people assume the simple layer is all there is, and they scroll through everything or leave. Put the way in a fixed, visible place, as a named button or a [segmented control](/part-3/inputs/#segmented), and [say what’s behind it](/part-2/overload/#pat-progressive-disclosure), such as “Filters: size, color, price”.
+
+<Raw html={F4} />
+
+</section>
+
+<section class="rule" id="pat-layered-ui-rule-3">
+
+#### 3. Show what changed out of sight \{#pat-layered-ui-rule-3-h\}
+
+Settings changed in the advanced layer still apply after people go back to the simple one, and [a change nobody can see](/part-2/overload/#pat-progressive-disclosure) makes results look wrong for no clear reason. Show a short summary in the simple layer, such as “1 advanced setting changed”, with a way to show it and a way to reset it.
+
+<Raw html={F5} />
+
+</section>
+
+<section class="rule" id="pat-layered-ui-rule-4">
+
+#### 4. Decide where each new option goes \{#pat-layered-ui-rule-4-h\}
+
+When nobody decides where a new option goes, it lands in Advanced, which over time becomes a long, unsorted list where settings many people need get buried. For each option, choose the simple layer, the advanced layer, or a better default that makes it unnecessary. Keep Advanced for real expert choices, grouped in a sensible order.
+
+<Raw html={F6} />
+
+</section>
+
+<Raw html={F7} />
+
+</div>
+
+### In real products \{#pat-layered-ui-products\}
+
+<Raw html={F8} />
+
+</article>
+
+<article class="entry essay" id="pat-shortcuts" data-entry data-name="Keyboard shortcuts">
+
+<div class="entry-head">
+
+## Keyboard shortcuts and accelerators \{#pat-shortcuts-h\}
+
+<Learned id="pat-shortcuts" />
+
+</div>
+
+A keyboard shortcut runs a command from the keyboard, without the mouse. People who repeat the same commands all day save a second or two each time, and that adds up. Shortcuts are for people who already know the command, while new people find it in a button or a menu and learn the key from there.
+
+Where a [command palette](/part-2/find/#pat-command-palette) lets people search for a command by name, a shortcut runs one they already know with a single key press.
+
+<Raw html={F9} />
+
+### Ways to do it \{#pat-shortcuts-ways\}
+
+Shortcuts come in four shapes. A single key is the fastest, but it only works where people aren’t typing. A key with Ctrl or ⌘ works anywhere. A sequence of two keys gives room for more commands. A command palette lets people type the name of any command and shows its key on the way.
+
+<Raw html={F10} />
+
+### Rules \{#pat-shortcuts-rules\}
+
+Four rules keep shortcuts useful.
+
+<div class="cs essay-cs">
+
+<section class="rule" id="pat-shortcuts-rule-1">
+
+#### 1. Show the keys where people look \{#pat-shortcuts-rule-1-h\}
+
+A shortcut nobody knows about saves nobody any time, and people don’t read help pages, so they never learn the key and keep clicking. Show each key next to its command, in buttons, menus and [tooltips](/part-3/overlays/#tooltip), and keep the full list behind “?”.
+
+<Raw html={F11} />
+
+</section>
+
+<section class="rule" id="pat-shortcuts-rule-2">
+
+#### 2. Don’t take keys the browser already uses \{#pat-shortcuts-rule-2-h\}
+
+People rely on keys like copy, paste, undo, find and close tab in every app. If your app uses one of them, either the browser wins and your command never runs, or your app wins and people lose a key they rely on. Pick keys that are free, and let people see and change all of them in one place.
+
+<Raw html={F12} />
+
+</section>
+
+<section class="rule" id="pat-shortcuts-rule-3">
+
+#### 3. Ignore single keys while people type \{#pat-shortcuts-rule-3-h\}
+
+A single-letter shortcut is fast in a list, but in a text field the same letter is part of a word. As with [a palette that opens on “/”](/part-2/find/#pat-command-palette), a shortcut that still fires there runs commands people didn’t ask for. Turn single keys off while focus is in a text field, and give each shortcut a clear area where it works.
+
+<Raw html={F13} />
+
+</section>
+
+<section class="rule" id="pat-shortcuts-rule-4">
+
+#### 4. Keep a visible way to do it \{#pat-shortcuts-rule-4-h\}
+
+Some people never use the keyboard: they use a mouse, a touch screen or voice. Others haven’t learned the key yet, and if a command only has a shortcut, none of them can use it. Give every command a button or a menu item, and treat the shortcut as the faster path to it.
+
+<Raw html={F14} />
+
+</section>
+
+<Raw html={F15} />
+
+</div>
+
+### In real products \{#pat-shortcuts-products\}
+
+<Raw html={F16} />
+
+</article>
+
+<article class="entry essay" id="pat-customization" data-entry data-name="Customization">
+
+<div class="entry-head">
+
+## Customization: favorites and pinning \{#pat-customization-h\}
+
+<Learned id="pat-customization" />
+
+</div>
+
+Customization lets people shape a product around the few things they use most, such as starring a contact, pinning a chat or adding a button to a toolbar. The full list stays as it was, and their own picks sit on top of it, one step away.
+
+It differs from personalization, where the product guesses, like a “Recently used” list that changes by itself. With customization people choose, so it only changes when they change it.
+
+<Raw html={F17} />
+
+### Ways to do it \{#pat-customization-ways\}
+
+There are four common ways, which differ in what people pick: an item to star, an item to pin at the top of a list sorted by date, the buttons a toolbar shows, or the sections of a home screen.
+
+<Raw html={F18} />
+
+### Rules \{#pat-customization-rules\}
+
+Four rules keep customization useful.
+
+<div class="cs essay-cs">
+
+<section class="rule" id="pat-customization-rule-1">
+
+#### 1. Fix the defaults first \{#pat-customization-rule-1-h\}
+
+It’s tempting to leave a weak screen as it is, because “people can set it up themselves”, but most people never do: they keep the screen they were given and work around it. Make the default right for most people first, and offer customization on top for the rest.
+
+<Raw html={F19} />
+
+</section>
+
+<section class="rule" id="pat-customization-rule-2">
+
+#### 2. Offer it when it helps \{#pat-customization-rule-2-h\}
+
+A setting nobody finds doesn’t help anybody, and few people go looking in Settings. The best moment to offer customization is when someone keeps doing the same thing: after they share with the same person a few times, offer to make that person a favorite, right there.
+
+<Raw html={F20} />
+
+</section>
+
+<section class="rule" id="pat-customization-rule-3">
+
+#### 3. Add on top, don’t reorder \{#pat-customization-rule-3-h\}
+
+Help articles and support staff say things like “open the third item”. If customizing moves items around in the main list, those directions no longer match what people see. Keep pins in a separate place at the top and leave the full list in its usual order, with “Reset to default” in one obvious place.
+
+<Raw html={F21} />
+
+</section>
+
+<section class="rule" id="pat-customization-rule-4">
+
+#### 4. Keep the pinned list short \{#pat-customization-rule-4-h\}
+
+Pins are added in a second but often removed only from a settings page, so the pinned section keeps growing until it is as long as the list it was meant to shorten. Let people unpin right where the pin appears, and when nothing is pinned, show an [empty state](/part-3/states/#empty-state) that explains how pinning works.
+
+<Raw html={F22} />
+
+</section>
+
+<Raw html={F23} />
+
+</div>
+
+### In real products \{#pat-customization-products\}
+
+<Raw html={F24} />
+
+</article>
+
+<aside class="in-short" id="ch-layers-in-short" aria-labelledby="ch-layers-in-short-h" data-pagefind-ignore>
+
+## In short \{#ch-layers-in-short-h\}
+
+<div class="is-grid">
+
+<div>
+
+<a class="is-e" href="#pat-layered-ui">Layered interface</a>
+
+1. [Build both layers on one set of settings](#pat-layered-ui-rule-1)
+2. [Keep the way to more in sight](#pat-layered-ui-rule-2)
+3. [Show what changed out of sight](#pat-layered-ui-rule-3)
+4. [Decide where each new option goes](#pat-layered-ui-rule-4)
+
+</div>
+
+<div>
+
+<a class="is-e" href="#pat-shortcuts">Keyboard shortcuts and accelerators</a>
+
+1. [Show the keys where people look](#pat-shortcuts-rule-1)
+2. [Don’t take keys the browser already uses](#pat-shortcuts-rule-2)
+3. [Ignore single keys while people type](#pat-shortcuts-rule-3)
+4. [Keep a visible way to do it](#pat-shortcuts-rule-4)
+
+</div>
+
+<div>
+
+<a class="is-e" href="#pat-customization">Customization: favorites and pinning</a>
+
+1. [Fix the defaults first](#pat-customization-rule-1)
+2. [Offer it when it helps](#pat-customization-rule-2)
+3. [Add on top, don’t reorder](#pat-customization-rule-3)
+4. [Keep the pinned list short](#pat-customization-rule-4)
+
+</div>
+
+</div>
+
+</aside>
+
+</section>
+
+<Runtime chapter="ch-layers" />

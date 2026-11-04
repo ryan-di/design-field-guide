@@ -1,0 +1,115 @@
+<script>
+(() => {
+  const cs = document.currentScript.closest('.cs');
+  const D = (k, html, wire) => csDemo(cs.querySelector('[data-d="' + k + '"]'), html, wire);
+  const icon = n => '<svg class="icon sm"><use href="#i-' + n + '"/></svg>';
+  const radio = (name, value, label, o = {}) => '<label class="check"><input type="radio" name="' + name + '" value="' + value + '"' + (o.on ? ' checked' : '') + '><span>' + label + (o.small ? '<small>' + o.small + '</small>' : '') + '</span></label>';
+  const seg = (name, items, on, aria) => '<div class="rd-seg" role="radiogroup" aria-label="' + aria + '">' + items.map(v => '<label><input type="radio" name="' + name + '" value="' + v.toLowerCase() + '"' + (v === on ? ' checked' : '') + '><span>' + v + '</span></label>').join('') + '</div>';
+
+  /* 1. Too many */
+  const COUNTRIES = ['Argentina', 'Australia', 'Austria', 'Belgium', 'Brazil', 'Canada', 'Chile', 'China', 'Colombia', 'Croatia', 'Czechia', 'Denmark', 'Egypt', 'Estonia', 'Finland', 'France', 'Germany', 'Greece', 'Hungary', 'Iceland', 'India', 'Indonesia', 'Ireland', 'Israel', 'Italy', 'Japan', 'Kenya', 'Latvia', 'Lithuania', 'Luxembourg', 'Malaysia', 'Mexico', 'Morocco', 'Netherlands', 'New Zealand', 'Nigeria', 'Norway', 'Peru', 'Philippines', 'Poland', 'Portugal', 'Romania', 'Singapore', 'Slovakia', 'Slovenia', 'South Africa', 'South Korea', 'Spain', 'Sweden', 'Switzerland', 'Thailand', 'Turkey', 'United Kingdom', 'United States', 'Vietnam'];
+  const manyHtml = (key, fixed) => '<div class="cs-form" style="max-height:320px;overflow:auto"><b class="rd-h">Shipping address</b>' +
+    '<label class="cs-f">Full name<input class="input" value="Maya Lee"></label>' +
+    (fixed
+      ? '<div class="cs-f"><span>Country</span><div class="rd-cb">' + icon('search') + '<input class="input" data-q role="combobox" aria-label="Country" aria-expanded="false" aria-autocomplete="list" autocomplete="off" placeholder="Start typing a country"></div><ul class="listbox surface rd-opts" role="listbox" aria-label="Countries" hidden></ul></div>'
+      : '<fieldset class="rd-fs"><legend>Country</legend>' + COUNTRIES.map(c => radio(key, c, c)).join('') + '</fieldset>') +
+    '<button class="btn btn-primary" type="button" data-go>Continue</button><p class="cs-ok" data-ok></p><div class="cs-msgs" data-err></div></div>';
+  const manyWire = fixed => d => {
+    const ok = d.querySelector('[data-ok]'), err = d.querySelector('[data-err]');
+    let chosen = null;
+    const done = () => { err.innerHTML = ''; ok.textContent = ''; };
+    if (fixed) {
+      const q = d.querySelector('[data-q]'), ul = d.querySelector('.rd-opts');
+      let list = [], act = 0;
+      const close = () => { ul.hidden = true; q.setAttribute('aria-expanded', 'false'); };
+      const mark = () => ul.querySelectorAll('[role=option]').forEach((li, i) => li.setAttribute('aria-selected', String(i === act)));
+      const pick = i => { if (!list[i]) return; chosen = list[i]; q.value = chosen; close(); done(); };
+      const render = () => {
+        const v = q.value.trim().toLowerCase();
+        list = v ? COUNTRIES.filter(c => c.toLowerCase().startsWith(v)).concat(COUNTRIES.filter(c => !c.toLowerCase().startsWith(v) && c.toLowerCase().includes(v))).slice(0, 5) : [];
+        act = 0;
+        ul.innerHTML = list.length ? list.map(c => '<li role="option" aria-selected="false">' + c + '</li>').join('') : '<li class="none">No matches</li>';
+        mark();
+        ul.querySelectorAll('[role=option]').forEach((li, i) => { li.addEventListener('mousedown', e => e.preventDefault()); li.addEventListener('click', () => pick(i)); });
+        ul.hidden = !v; q.setAttribute('aria-expanded', String(!!v));
+      };
+      q.addEventListener('input', () => { chosen = null; done(); render(); });
+      q.addEventListener('keydown', e => {
+        if (ul.hidden || !list.length) return;
+        if (e.key === 'ArrowDown' || e.key === 'ArrowUp') { e.preventDefault(); act = (act + (e.key === 'ArrowDown' ? 1 : -1) + list.length) % list.length; mark(); }
+        else if (e.key === 'Enter') { e.preventDefault(); pick(act); }
+        else if (e.key === 'Escape') close();
+      });
+    } else {
+      d.querySelectorAll('input[type=radio]').forEach(r => r.addEventListener('change', () => { chosen = r.value; done(); }));
+    }
+    d.querySelector('[data-go]').addEventListener('click', () => {
+      if (chosen) { err.innerHTML = ''; ok.textContent = 'Shipping to ' + chosen + '.'; return; }
+      ok.textContent = '';
+      err.innerHTML = '<p class="field-msg">' + icon('warn') + '<span>Choose a country.</span></p>';
+    });
+  };
+  D('radio-1b', manyHtml('radio-1b', false), manyWire(false));
+  D('radio-1f', manyHtml('radio-1f', true), manyWire(true));
+
+  /* 2. No default */
+  const WHO = [['me', 'Only me', 'Private to you'], ['team', 'My team', 'Everyone at Lee Travel'], ['link', 'Anyone with the link', 'No sign-in needed']];
+  const RES = { me: 'Only you can open it.', team: 'People on your team can open it.', link: 'Anyone with the link can open it.' };
+  const shareHtml = (key, fixed) => '<div class="app-frame" style="width:min(340px,100%)"><div class="app-bar"><span>Share “Trip budget”</span></div><div class="app-body">' +
+    '<fieldset class="rd-fs"><legend>Who can open this file</legend>' + WHO.map(w => radio(key, w[0], w[1], { small: w[2], on: fixed && w[0] === 'me' })).join('') + '</fieldset>' +
+    '<button class="btn btn-primary" type="button" data-go style="align-self:flex-start">Copy link</button><p class="rd-res" data-res></p></div></div>';
+  const shareWire = d => {
+    const res = d.querySelector('[data-res]');
+    d.querySelectorAll('input[type=radio]').forEach(r => r.addEventListener('change', () => { res.textContent = ''; }));
+    d.querySelector('[data-go]').addEventListener('click', () => {
+      let c = d.querySelector('input[type=radio]:checked');
+      if (!c) { c = d.querySelector('input[value="link"]'); c.checked = true; }
+      res.innerHTML = icon('check') + '<span>Link copied. ' + RES[c.value] + '</span>';
+    });
+  };
+  D('radio-2b', shareHtml('radio-2b', false), shareWire);
+  D('radio-2f', shareHtml('radio-2f', true), shareWire);
+
+  /* 3. Long labels */
+  const PLANS = [
+    { v: 'monthly', name: 'Monthly', long: '$8 a month, billed every month, cancel anytime', price: '$8', note: 'Billed monthly. Cancel anytime.', today: '$8' },
+    { v: 'yearly', name: 'Yearly', long: '$77 billed once a year, works out to $6.42 a month, saves 20%, no refunds after 14 days', price: '$6.42', note: 'Billed $77 a year. Save 20%.', today: '$77' },
+    { v: 'family', name: 'Family', long: '$12 a month for up to 6 people, billed monthly, each person gets their own account', price: '$12', note: 'Up to 6 people, each with their own account.', today: '$12' }
+  ];
+  const planHtml = (key, fixed) => '<div class="cs-form rd-plan' + (fixed ? ' wide' : '') + '"><b class="rd-h">Choose a plan</b>' +
+    (fixed
+      ? '<div class="rd-cards" role="radiogroup" aria-label="Plan">' + PLANS.map(p => '<label class="rd-card"><input type="radio" name="' + key + '" value="' + p.v + '"' + (p.v === 'monthly' ? ' checked' : '') + '><span class="rd-card-n">' + p.name + '</span><span class="rd-card-p">' + p.price + ' <small>a month</small></span><small class="rd-card-d">' + p.note + '</small></label>').join('') + '</div>'
+      : '<fieldset class="rd-fs rd-cram" aria-label="Plan">' + PLANS.map(p => radio(key, p.v, p.name + ' (' + p.long + ')', { on: p.v === 'monthly' })).join('') + '</fieldset>') +
+    '<p class="cs-meta" data-sum></p></div>';
+  const planWire = d => {
+    const sum = d.querySelector('[data-sum]');
+    const upd = () => { const c = d.querySelector('input:checked'), p = PLANS.find(x => x.v === c.value); sum.textContent = p.name + ': you’ll pay ' + p.today + ' today.'; };
+    d.querySelectorAll('input[type=radio]').forEach(r => r.addEventListener('change', upd));
+    upd();
+  };
+  D('radio-3b', planHtml('radio-3b', false), planWire);
+  D('radio-3f', planHtml('radio-3f', true), planWire);
+
+  /* 4. View switch */
+  const EVENTS = [[1, 18, 30], [2, 52, 22], [3, 26, 40], [4, 70, 26], [5, 40, 30]];
+  const VIEWS = {
+    day: '<div class="rd-day"><b>Thursday 12</b><div class="cs-row"><span class="cs-meta">9:00</span><span class="grow">Team standup</span></div><div class="cs-row"><span class="cs-meta">12:30</span><span class="grow">Lunch with Lena</span></div><div class="cs-row"><span class="cs-meta">15:00</span><span class="grow">Dentist</span></div></div>',
+    week: '<div class="rd-week">' + ['M', 'T', 'W', 'T', 'F', 'S', 'S'].map(x => '<span>' + x + '</span>').join('') + EVENTS.map(e => '<i style="left:calc(' + e[0] + ' * 100% / 7 + 2px);top:' + (22 + e[1]) + 'px;height:' + e[2] + 'px"></i>').join('') + '</div>',
+    month: '<div class="rd-month">' + Array.from({ length: 35 }, (_, i) => { const n = i + 1; return '<span' + (n > 30 ? ' class="out"' : '') + '>' + (n > 30 ? n - 30 : n) + ([3, 9, 12, 17, 24].includes(n) ? '<i></i>' : '') + '</span>'; }).join('') + '</div>'
+  };
+  const viewHtml = (key, fixed) => '<div class="app-frame rd-cal" style="width:min(420px,100%)"><div class="app-bar"><span>November</span>' + (fixed ? seg(key, ['Day', 'Week', 'Month'], 'Week', 'View') : '') + '</div><div class="app-body">' +
+    (fixed ? '' : '<fieldset class="rd-fs"><legend>View</legend>' + ['Day', 'Week', 'Month'].map(v => radio(key, v.toLowerCase(), v, { on: v === 'Week' })).join('') + '</fieldset>') +
+    '<div class="rd-view" data-view></div></div></div>';
+  const viewWire = d => {
+    const view = d.querySelector('[data-view]');
+    const show = () => { view.innerHTML = VIEWS[d.querySelector('input:checked').value]; };
+    d.querySelectorAll('input[type=radio]').forEach(r => r.addEventListener('change', show));
+    show();
+  };
+  D('radio-4b', viewHtml('radio-4b', false), viewWire);
+  D('radio-4f', viewHtml('radio-4f', true), viewWire);
+
+  csInit(cs);
+})();
+
+  </script>

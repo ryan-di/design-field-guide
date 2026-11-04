@@ -1,0 +1,41 @@
+<div class="note comfy cw-wrap">
+      <div class="seg cw-seg" role="radiogroup" aria-label="Example">
+        <input type="radio" name="cw-progress-bar-w" id="cw-progress-bar-w-1" value="blender" checked><label for="cw-progress-bar-w-1">Blender</label>
+        <input type="radio" name="cw-progress-bar-w" id="cw-progress-bar-w-2" value="finder"><label for="cw-progress-bar-w-2">Finder</label>
+        <input type="radio" name="cw-progress-bar-w" id="cw-progress-bar-w-3" value="youtube"><label for="cw-progress-bar-w-3">YouTube</label>
+        <input type="radio" name="cw-progress-bar-w" id="cw-progress-bar-w-4" value="whatsapp"><label for="cw-progress-bar-w-4">WhatsApp</label>
+      </div>
+      <div class="cw" data-cw-view role="img" aria-label=""></div>
+      <p class="cw-cap" data-cw-cap aria-live="polite"></p>
+      
+      <script>
+      (() => {
+        const wrap = document.currentScript.closest('.cw-wrap');
+        const view = wrap.querySelector('[data-cw-view]'), cap = wrap.querySelector('[data-cw-cap]');
+        const ic = id => '<svg class="icon sm"><use href="#i-' + id + '"/></svg>';
+        const line = w => '<i class="cw-line" style="width:' + w + '%"></i>';
+        const bar = pct => '<div class="bar"><span style="width:' + pct + '%"></span></div>';
+        const x = '<span class="cw-progw-x">' + ic('x') + '</span>';
+        const ring = '<span class="cw-progw-ring"><svg class="ring" viewBox="0 0 34 34"><circle class="trk" cx="17" cy="17" r="15"/><circle cx="17" cy="17" r="15" stroke-dasharray="94.2" stroke-dashoffset="56"/></svg>' + ic('x') + '</span>';
+        const S = {
+          blender: { html: '<div class="cw-progw-win"><div class="cw-progw-stats"><span>Frame <b>1</b></span><span>Sample <b>45 / 128</b></span><span>Remaining <b>0:20</b></span></div>' +
+              '<div class="cw-progw-render"></div><div class="cw-progw-status">Render ' + bar(35) + x + '</div></div>',
+            alt: 'A render window. The header reads Frame 1, Sample 45 of 128, Remaining 0:20. The image below is still grainy. A status bar shows a progress bar about a third full and a cancel button.',
+            cap: 'Blender: while rendering, the render window counts samples and shows the time left. Samples are real units of work, so the count is honest, and Esc stops the render.' },
+          finder: { html: '<div class="cw-progw-copy">' + ic('folder') + '<span>Copying 12 items to Backup</span><span class="row">' + bar(30) + x + '</span><small>1.2 GB of 4 GB, about 2 minutes</small></div>',
+            alt: 'A small copy window: Copying 12 items to Backup. A progress bar about a third full with a stop button, and 1.2 GB of 4 GB, about 2 minutes.',
+            cap: 'Finder: a long copy shows how much is done, about how long is left, and a button to stop it. You can keep using Finder while it runs.' },
+          youtube: { html: '<div class="cw-progw-dlg"><b>Details</b><div class="cw-progw-form"><span>Title</span><span class="cw-progw-in focus">Morning run, part 2</span><span>Description</span><span class="cw-progw-in">' + line(90) + line(60) + '</span></div>' +
+              '<div class="cw-progw-foot"><span class="grow">Uploading 45%, 3 minutes left</span><span class="btn btn-primary">Next</span></div></div>',
+            alt: 'An upload dialog with Title and Description fields being filled in. The footer says Uploading 45%, 3 minutes left, next to a Next button.',
+            cap: 'YouTube: while a video uploads, the dialog shows the percent and time left at the bottom, and you fill in the title and description meanwhile.' },
+          whatsapp: { html: '<div class="cw-progw-phone"><div class="cw-progw-in-msg">' + line(90) + line(55) + '</div><div class="cw-progw-out"><div class="cw-progw-media">' + ring + '</div></div></div>',
+            alt: 'A chat on a phone. The photo being sent shows a ring about 40 percent around, with a cancel button in its middle.',
+            cap: 'WhatsApp: a photo or video you send shows a ring around a cancel button, right on the message, so stopping takes one tap.' }
+        };
+        const render = k => { view.innerHTML = S[k].html; view.setAttribute('aria-label', 'Sketch: ' + S[k].alt); cap.textContent = S[k].cap; };
+        wrap.querySelectorAll('input[name="cw-progress-bar-w"]').forEach(r => r.addEventListener('change', () => render(r.value)));
+        render('blender');
+      })();
+      </script>
+    </div>

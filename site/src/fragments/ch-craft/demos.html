@@ -1,0 +1,270 @@
+<script>
+(() => {
+  const { $, $$, store, demo, toast } = window.dfg;
+
+  /* js-45-craft.js */
+  demo('good-motion', st => {
+    const dur = $('#p22-mo-dur', st), out = $('#p22-mo-ms', st), ease = $('#p22-mo-ease', st);
+    const play = $('#p22-mo-play', st), panel = $('#p22-mo-panel', st);
+    const pill = $('#p22-mo-pill', st), why = $('#p22-mo-why', st);
+    const rm = $('#p22-mo-rm', st), force = $('#p22-mo-force', st);
+    const EASE = {
+      linear: ['linear', 'Linear keeps the same speed the whole way, which reads as mechanical for things that move.'],
+      out: ['ease-out', 'Ease-out starts fast and settles gently. It’s the usual pick for things that enter.'],
+      in: ['ease-in', 'Ease-in starts slow and speeds up, so an entering panel feels late. It suits things that leave.'],
+      over: ['cubic-bezier(0.34, 1.36, 0.64, 1)', 'Gentle overshoot goes a little past and settles back. It’s playful, so keep it for rare moments.']
+    };
+    let mq = null;
+    try { mq = window.matchMedia('(prefers-reduced-motion: reduce)'); } catch (e) { mq = null; }
+    const reduced = () => !!(mq && mq.matches);
+    const ms = () => (reduced() && !force.checked ? 0 : Number(dur.value));
+    const feel = v => {
+      if (v === 0) return ['Instant', '', 'No motion at all. Fine for small changes, though people can miss where a big one came from.'];
+      if (v < 100) return ['Feels abrupt', '', 'Too quick for the eye to follow. It’s almost a jump cut.'];
+      if (v <= 300) return ['Feels snappy', 'good', 'Quick enough to stay out of the way, slow enough to see where the panel came from.'];
+      if (v <= 500) return ['Feels slow', 'bad', 'Fine for a big, rare change. For a panel people open all day, it starts to drag.'];
+      return ['Feels sluggish', 'bad', 'People wait for the interface. By the tenth time, it feels broken.'];
+    };
+    const apply = () => {
+      const d = ms();
+      panel.style.removeProperty('transition-duration');
+      // The page shortens every transition under reduced motion. Only the opt-in overrides that, for this one panel.
+      if (reduced() && force.checked) panel.style.setProperty('transition-duration', d + 'ms', 'important');
+      else panel.style.transitionDuration = d + 'ms';
+      panel.style.transitionTimingFunction = EASE[ease.value][0];
+    };
+    const render = () => {
+      const v = Number(dur.value), f = feel(v);
+      out.textContent = v + ' ms';
+      dur.setAttribute('aria-valuetext', v + ' ms, ' + f[0].toLowerCase());
+      pill.textContent = f[0];
+      if (f[1]) pill.dataset.tone = f[1]; else delete pill.dataset.tone;
+      why.textContent = f[2] + ' ' + EASE[ease.value][1];
+      rm.hidden = !reduced();
+      apply();
+    };
+    let timers = [];
+    play.addEventListener('click', () => {
+      timers.forEach(clearTimeout);
+      timers = [];
+      // Snap closed without animating, so every Play starts from the same place.
+      panel.style.setProperty('transition-duration', '0ms', 'important');
+      panel.classList.remove('p22-open');
+      void panel.offsetWidth;
+      apply();
+      const d = ms();
+      panel.classList.add('p22-open');
+      panel.setAttribute('aria-hidden', 'false');
+      timers.push(setTimeout(() => {
+        panel.classList.remove('p22-open');
+        timers.push(setTimeout(() => panel.setAttribute('aria-hidden', 'true'), d));
+      }, d + 900));
+    });
+    dur.addEventListener('input', render);
+    ease.addEventListener('change', render);
+    force.addEventListener('change', render);
+    if (mq) {
+      if (mq.addEventListener) mq.addEventListener('change', render);
+      else if (mq.addListener) mq.addListener(render);
+    }
+    render();
+  });
+
+  demo('good-edge-cases', st => {
+    const box = $('#p22-ec-box', st), cap = $('#p22-ec-cap', st);
+    const flags = $$('[data-flag]', st), allBtn = $('#p22-ec-all', st), reload = $('#p22-ec-reload', st);
+    const NAME = 'Bike lanes, part 2', LONG = 'Interview with the mayor about the new bike lanes, part 2';
+    const DESC = 'The mayor answers questions about the new bike routes.', WHEN = 'Posted 2 hours ago';
+    const MSG = {
+      long: ['The name runs straight out of the card.', 'The middle of the name is cut, so “part 2” stays visible. Hover for the full name.'],
+      nothumb: ['No image, so the card shrinks and shows broken alt text.', 'A fallback fills the same space, so cards stay the same size.'],
+      huge: ['“1234567” is hard to read and makes the row wider.', 'The count reads 1.2M, with the exact number on hover.'],
+      nodesc: ['The field is missing, so the code prints “undefined”.', 'It says “No description” in muted text.'],
+      narrow: ['Nothing wraps, so text spills out of the card.', 'The details stack to fit.']
+    };
+    let loading = false, timer = null;
+    const mode = () => ($('input[name="p22-ec-mode"]:checked', st) || {}).value || 'after';
+    const on = k => flags.some(f => f.dataset.flag === k && f.checked);
+    const el = (tag, cls, text) => {
+      const n = document.createElement(tag);
+      if (cls) n.className = cls;
+      if (text != null) n.textContent = text;
+      return n;
+    };
+    const compact = n => {
+      try { return new Intl.NumberFormat('en', { notation: 'compact', maximumFractionDigits: 1 }).format(n); } catch (e) { return n >= 1e6 ? (n / 1e6).toFixed(1) + 'M' : String(n); }
+    };
+    const data = () => ({ name: on('long') ? LONG : NAME, thumb: !on('nothumb'), runs: on('huge') ? 1234567 : 128, desc: on('nodesc') ? undefined : DESC });
+    const sk = (cls, lines) => {
+      const w = el('div', 'p22-sk ' + cls);
+      for (let i = 0; i < lines; i++) w.append(el('div', 'skel'));
+      return w;
+    };
+    // Before: the card a first draft gets, built for the data in the mockup.
+    const naive = d => {
+      const c = el('div', 'surface p22-card p22-naive');
+      if (!loading) c.append(d.thumb ? el('div', 'thumb') : el('span', 'p22-broken', 'episode-cover.png'));
+      c.append(el('h5', '', d.name));
+      if (!loading) c.append(el('p', 'p22-desc', String(d.desc)));
+      c.append(el('p', 'p22-meta', d.runs + ' plays · ' + WHEN));
+      return c;
+    };
+    // After: the same card, designed for the extremes.
+    const careful = d => {
+      const c = el('div', 'surface p22-card p22-good');
+      if (loading) {
+        c.setAttribute('aria-busy', 'true');
+        c.append(el('div', 'skel p22-sk-thumb'), sk('p22-skt', 1), sk('p22-skd', 2), sk('p22-skm', 2));
+        return c;
+      }
+      if (d.thumb) c.append(el('div', 'thumb'));
+      else {
+        const fb = el('div', 'p22-fallback');
+        fb.innerHTML = '<svg class="icon"><use href="#i-image"/></svg><span>No preview</span>';
+        c.append(fb);
+      }
+      const h = el('h5');
+      h.title = d.name;
+      if (d.name.length > 20) h.append(el('span', 'p22-start', d.name.slice(0, -8)), el('span', 'p22-end', d.name.slice(-8)));
+      else h.append(el('span', 'p22-start', d.name));
+      c.append(h);
+      c.append(d.desc ? el('p', 'p22-desc', d.desc) : el('p', 'p22-desc p22-none', 'No description'));
+      const meta = el('p', 'p22-meta');
+      const runs = el('span', '', compact(d.runs) + (d.runs === 1 ? ' play' : ' plays'));
+      runs.title = d.runs.toLocaleString('en') + (d.runs === 1 ? ' play' : ' plays');
+      meta.append(runs, el('span', '', WHEN));
+      c.append(meta);
+      return c;
+    };
+    const render = () => {
+      const after = mode() === 'after', d = data();
+      box.classList.toggle('p22-narrow', on('narrow'));
+      box.replaceChildren(after ? careful(d) : naive(d));
+      const all = flags.every(f => f.checked);
+      allBtn.textContent = all ? 'Turn all off' : 'Turn all on';
+      if (loading) {
+        cap.textContent = after ? 'Loading. Skeletons hold the exact space, so nothing moves when the data lands.' : 'Loading. The image and description arrive late and push everything down.';
+        return;
+      }
+      const active = flags.filter(f => f.checked).map(f => MSG[f.dataset.flag][after ? 1 : 0]);
+      cap.textContent = active.length ? active.join(' ') : (after ? 'Ideal data. Turn on a few toggles to stress the card.' : 'Ideal data, so the first draft looks fine. Turn on a few toggles.');
+    };
+    flags.forEach(f => f.addEventListener('change', render));
+    $$('input[name="p22-ec-mode"]', st).forEach(r => r.addEventListener('change', render));
+    allBtn.addEventListener('click', () => {
+      const all = flags.every(f => f.checked);
+      flags.forEach(f => { f.checked = !all; });
+      render();
+    });
+    reload.addEventListener('click', () => {
+      clearTimeout(timer);
+      loading = true;
+      render();
+      timer = setTimeout(() => { loading = false; render(); }, 1200);
+    });
+    render();
+  });
+
+  demo('good-keyboard-focus', st => {
+    const host = $('#p22-kf-host', st), log = $('#p22-kf-log', st), sum = $('#p22-kf-sum', st), clear = $('#p22-kf-clear', st);
+    if (!host.attachShadow) { sum.textContent = 'This demo needs a browser with shadow DOM support.'; return; }
+    // The form lives in its own shadow root: a positive tabindex there only reorders focus inside it, never the rest of the page.
+    const root = host.attachShadow({ mode: 'open' });
+    const CSS = ':host{display:block}*{box-sizing:border-box}' +
+      '.p22-kcard{background:var(--ui-surface);border:1px solid var(--ui-border);border-radius:12px;box-shadow:var(--ui-shadow);color:var(--ui-text);padding:16px 18px;display:flex;flex-direction:column;gap:12px;text-align:left;font:400 15px/1.4 var(--font-body)}' +
+      'h5{margin:0;font:700 14.5px var(--font-body)}' +
+      '.p22-kfield{display:flex;flex-direction:column;gap:6px;min-width:0}' +
+      'label{font:600 14px var(--font-body)}' +
+      '.p22-kinput{font:400 15px/1.3 var(--font-body);color:var(--ui-text);background:var(--ui-surface);border:1.5px solid var(--ui-border);border-radius:9px;padding:8px 10px;width:100%;min-width:0;margin:0}' +
+      '.p22-kgrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}' +
+      '.p22-kactions{display:flex;justify-content:flex-end;flex-wrap:wrap;gap:8px}' +
+      '.p22-kbtn{display:inline-flex;align-items:center;font:600 15px/1.2 var(--font-body);border-radius:10px;padding:10px 16px;border:1.5px solid transparent;background:transparent;color:var(--ui-text);cursor:pointer;user-select:none;-webkit-user-select:none}' +
+      '.p22-kbtn.p22-kprimary{background:var(--ui-primary);color:var(--ui-on-primary)}' +
+      '.p22-kbtn.p22-kprimary:hover{background:var(--ui-primary-hover)}' +
+      '.p22-kbtn.p22-kghost{text-decoration:underline;text-underline-offset:3px;padding-inline:10px}' +
+      '.p22-kbtn.p22-kghost:hover{background:var(--ui-hover)}' +
+      ':focus{outline:none}' +
+      '.p22-kafter :focus-visible{outline:3px solid var(--ui-sel);outline-offset:2px}' +
+      '.p22-kafter .p22-kinput:focus{border-color:var(--ui-sel)}';
+    const ORDER = ['name', 'model', 'seed', 'cancel', 'run'];
+    const NAMES = { name: ['Name', 'text field'], model: ['Time', 'dropdown'], seed: ['Guests', 'text field'], cancel: ['Cancel', 'button'], run: ['Book', 'button'] };
+    let visited = new Set(), last = -1, back = false, viaTab = false;
+    const mode = () => ($('input[name="p22-kf-mode"]:checked', st) || {}).value || 'after';
+    const summarize = () => {
+      const before = mode() === 'before', n = visited.size;
+      sum.textContent = '';
+      if (!n) { sum.textContent = 'Press Tab from the Before | After switch to start.'; return; }
+      const b = document.createElement('b');
+      b.textContent = 'Reached ' + n + ' of ' + ORDER.length + ' controls.';
+      sum.append(b, ' ');
+      if (before) sum.append(n >= 4 ? 'Book is a div, so the keyboard can’t reach it, and there’s no ring to show where you are.' : 'No ring on screen, so this list is the only way to tell where you are.');
+      else sum.append(n === ORDER.length ? 'Every control, in reading order, with a visible ring.' : 'The order follows the layout, and the ring shows where you are.');
+    };
+    const reset = () => { log.replaceChildren(); visited = new Set(); last = -1; summarize(); };
+    const add = li => {
+      log.append(li);
+      while (log.children.length > 8) log.firstElementChild.remove();
+    };
+    const render = () => {
+      const before = mode() === 'before';
+      const t = n => (before ? ' tabindex="' + n + '"' : '');
+      root.innerHTML = '<style>' + CSS + '</style>' +
+        '<div class="p22-kcard ' + (before ? 'p22-kbefore' : 'p22-kafter') + '" role="group" aria-labelledby="p22-kf-title">' +
+          '<h5 id="p22-kf-title">Book a table</h5>' +
+          '<div class="p22-kfield"><label for="p22-kf-name">Name</label><input class="p22-kinput" id="p22-kf-name" data-k="name" value="Alex Kim" autocomplete="off" spellcheck="false"' + t(2) + '></div>' +
+          '<div class="p22-kgrid">' +
+            '<div class="p22-kfield"><label for="p22-kf-model">Time</label><select class="p22-kinput" id="p22-kf-model" data-k="model"' + t(3) + '><option>18:00</option><option>19:00</option><option>20:00</option></select></div>' +
+            '<div class="p22-kfield"><label for="p22-kf-seed">Guests</label><input class="p22-kinput" id="p22-kf-seed" data-k="seed" inputmode="numeric" value="2" autocomplete="off"' + t(1) + '></div>' +
+          '</div>' +
+          '<div class="p22-kactions">' +
+            '<button type="button" class="p22-kbtn p22-kghost" data-k="cancel">Cancel</button>' +
+            (before ? '<div class="p22-kbtn p22-kprimary" data-k="run">Book</div>' : '<button type="button" class="p22-kbtn p22-kprimary" data-k="run">Book</button>') +
+          '</div>' +
+        '</div>';
+      reset();
+    };
+    st.addEventListener('keydown', e => { if (e.key === 'Tab') { viaTab = true; back = e.shiftKey; } });
+    st.addEventListener('mousedown', () => { viaTab = false; back = false; });
+    root.addEventListener('focusin', e => {
+      const k = e.target.dataset && e.target.dataset.k;
+      if (!k) return;
+      const i = ORDER.indexOf(k), li = document.createElement('li');
+      const b = document.createElement('b'), s = document.createElement('small');
+      b.textContent = NAMES[k][0];
+      s.textContent = ' ' + NAMES[k][1];
+      li.append(b, s);
+      let jump = '';
+      if (!viaTab) jump = '';
+      else if (!back && last === -1 && i > 0) jump = 'skipped ahead';
+      else if (!back && last >= 0 && i < last) jump = 'jumped back up';
+      else if (back && last >= 0 && i > last) jump = 'jumped down';
+      if (jump) { const j = document.createElement('span'); j.className = 'p22-jump'; j.textContent = '· ' + jump; li.append(j); }
+      add(li);
+      visited.add(k);
+      last = i;
+      summarize();
+    });
+    root.addEventListener('focusout', e => {
+      if (e.relatedTarget && root.contains(e.relatedTarget)) return;
+      last = -1;
+      const prev = log.lastElementChild;
+      if (!prev || prev.classList.contains('p22-out')) return;
+      const li = document.createElement('li');
+      li.className = 'p22-out';
+      li.textContent = 'Left the form';
+      add(li);
+    });
+    root.addEventListener('click', e => {
+      const c = e.target.closest('[data-k]');
+      if (!c) return;
+      if (c.dataset.k === 'run') toast(st, mode() === 'before' ? 'Table booked. Only a mouse could do that.' : 'Table booked');
+      else if (c.dataset.k === 'cancel') toast(st, 'Cancelled');
+    });
+    clear.addEventListener('click', reset);
+    $$('input[name="p22-kf-mode"]', st).forEach(r => r.addEventListener('change', render));
+    render();
+  });
+
+
+})();
+</script>

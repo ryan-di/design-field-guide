@@ -1,0 +1,137 @@
+<script>
+(() => {
+  const cs = document.currentScript.closest('.cs');
+  const D = (k, html, wire) => csDemo(cs.querySelector('[data-d="' + k + '"]'), html, wire);
+  const st = document.createElement('style');
+  st.textContent = [
+    '#eff-toolkit .tk-card{width:min(400px,100%);background:var(--ui-surface);border:1px solid var(--ui-border);border-radius:12px;padding:14px;box-shadow:var(--ui-shadow);display:flex;flex-direction:column;gap:10px;text-align:left;font-size:14px;line-height:1.45;color:var(--ui-text)}',
+    '#eff-toolkit .tk-lbl{font:600 11.5px var(--font-mono);letter-spacing:.06em;text-transform:uppercase;color:var(--ui-muted)}',
+    '#eff-toolkit .tk-meta{font:500 12.5px var(--font-mono);color:var(--ui-muted)}',
+    '#eff-toolkit .tk-meta:empty{display:none}',
+    '#eff-toolkit .tk-bad{color:var(--ui-danger);font-weight:600}',
+    '#eff-toolkit .tk-good{color:var(--ui-ok);font-weight:600}',
+    '#eff-toolkit .tk-jobs{display:flex;flex-direction:column;gap:6px}',
+    '#eff-toolkit .tk-job{display:grid;grid-template-columns:72px minmax(0,1fr);gap:4px 10px;padding:8px 10px;border:1px solid var(--ui-border);border-radius:8px}',
+    '#eff-toolkit .tk-job > b{font-weight:600}',
+    '#eff-toolkit .tk-job > small{grid-column:2;font-size:12.5px;color:var(--ui-muted)}',
+    '#eff-toolkit .tk-job > small i{font-style:normal;color:var(--ui-text);font-weight:600}',
+    '#eff-toolkit .tk-job.bad{border-color:var(--ui-danger)}',
+    '#eff-toolkit .tk-ov{display:grid;justify-items:start;align-items:start;padding:14px;border:1px dashed var(--ui-border);border-radius:8px;background:var(--ui-bg)}',
+    '#eff-toolkit .tk-ov > *{grid-area:1/1}',
+    '#eff-toolkit .tk-btn{font:600 15px/1.2 var(--font-body);border:0;border-radius:10px;padding:10px 16px;background:var(--ui-primary);color:var(--ui-on-primary);cursor:default}',
+    '#eff-toolkit .tk-btn.guess{font-size:14px;border-radius:5px;padding:8px 13px;background:color-mix(in srgb,var(--ui-primary) 60%,var(--ui-sel))}',
+    '#eff-toolkit .tk-ghost{font:600 15px/1.2 var(--font-body);border-radius:10px;padding:10px 16px;color:transparent;outline:2px dashed var(--ui-sel);outline-offset:-1px;pointer-events:none;visibility:hidden}',
+    '#eff-toolkit .tk-ov.on .tk-ghost{visibility:visible}',
+    '#eff-toolkit .tk-vals{display:grid;grid-template-columns:auto minmax(0,1fr);gap:3px 12px;font-size:13px}',
+    '#eff-toolkit .tk-vals dt{color:var(--ui-muted)}',
+    '#eff-toolkit .tk-vals dd{margin:0;font-family:var(--font-mono);font-size:12.5px}',
+    '#eff-toolkit .tk-shop{display:flex;flex-direction:column;gap:8px;padding:10px;border:1px solid var(--ui-border);border-radius:8px;background:var(--ui-bg)}',
+    '#eff-toolkit .tk-shop > div{display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap}',
+    '#eff-toolkit .tk-agent{padding:8px 10px;border-radius:8px;background:var(--ui-hover);font-size:13.5px}',
+    '#eff-toolkit .tk-test{display:flex;flex-direction:column;gap:3px;font:500 12.5px var(--font-mono)}',
+    '#eff-toolkit .tk-test:empty{display:none}',
+    '#eff-toolkit .tk-msg{padding:8px 10px;border-radius:8px;background:var(--ui-hover);font-size:13.5px}',
+    '#eff-toolkit .tk-msg b{font-weight:600}',
+    '#eff-toolkit .tk-video{all:unset;cursor:pointer;display:flex;flex-direction:column;border-radius:8px;overflow:hidden;border:1px solid var(--ui-border);background:var(--ui-bg)}',
+    '#eff-toolkit .tk-video:focus-visible{outline:2px solid var(--ui-sel)}',
+    '#eff-toolkit .tk-scr{padding:12px;display:flex;flex-direction:column;gap:6px;opacity:.85}',
+    '#eff-toolkit .tk-fake{display:flex;gap:8px}',
+    '#eff-toolkit .tk-fake span{padding:4px 10px;border-radius:6px;border:1px solid var(--ui-border);font-size:13px;font-weight:600}',
+    '#eff-toolkit .tk-fake span.p{background:var(--ui-primary);color:var(--ui-on-primary);border-color:transparent}',
+    '#eff-toolkit .tk-vbar{display:flex;align-items:center;gap:8px;padding:6px 10px;border-top:1px solid var(--ui-border);font:500 12px var(--font-mono);color:var(--ui-muted)}',
+    '#eff-toolkit .tk-vbar .icon{width:14px;height:14px}',
+    '#eff-toolkit .tk-track{flex:1;height:5px;border-radius:3px;background:var(--ui-skel);overflow:hidden}',
+    '#eff-toolkit .tk-track i{display:block;height:100%;width:0;background:var(--ui-muted)}',
+    '#eff-toolkit .tk-proto{display:flex;flex-direction:column;gap:8px;padding:12px;border:1px solid var(--ui-border);border-radius:8px;background:var(--ui-bg)}',
+    '#eff-toolkit .tk-proto .tk-fake{gap:8px}',
+    '#eff-toolkit .tk-link{color:var(--ui-sel);text-decoration:underline;text-underline-offset:3px;font-weight:600}'
+  ].join('\n');
+  cs.appendChild(st);
+  const icon = n => '<svg class="icon sm" aria-hidden="true"><use href="#i-' + n + '"/></svg>';
+
+  /* 1. One chat vs split by job: a date picker for a booking site */
+  const job = (j, tool, left, bad) => '<div class="tk-job' + (bad ? ' bad' : '') + '"><b>' + j + '</b><span>' + tool + '</span><small>Left behind: <i>' + left + '</i></small></div>';
+  D('eff-toolkit-1b', '<div class="tk-card"><span class="tk-lbl">Better date picker for hotel bookings</span><div class="tk-jobs">' +
+    job('Everything', 'One chat: “Explore, pick and build a better date picker.”', 'one picker, built straight into main, 40 changed files and a 300-message chat', true) +
+    '</div><p class="tk-bad">Which other directions were tried, and why this one? Nobody can tell.</p></div>', () => {});
+  D('eff-toolkit-1f', '<div class="tk-card"><span class="tk-lbl">Better date picker for hotel bookings</span><div class="tk-jobs">' +
+    job('Explore', 'Three subagents, one direction each.', 'three clickable prototypes') +
+    job('Decide', 'A shared artifact page with all three.', 'a choice, with the reason written down') +
+    job('Build', 'Claude Code in a worktree, tests first.', 'a PR with a list of behaviors and checks') +
+    '</div><p class="tk-good">Each step can be checked, and the choice is yours.</p></div>', () => {});
+
+  /* 2. Screenshot vs connector: a Book now button */
+  const ovHtml = fixed => '<div class="tk-card"><span class="tk-lbl">Built button · ' + (fixed ? 'from the Figma connector' : 'from a screenshot') + '</span>' +
+    '<div class="tk-ov" data-ov><span class="tk-btn' + (fixed ? '' : ' guess') + '">Book now</span><span class="tk-ghost" aria-hidden="true">Book now</span></div>' +
+    '<label class="switch"><span class="grow">Overlay the design</span><input type="checkbox" role="switch" data-sw></label>' +
+    '<dl class="tk-vals">' + (fixed
+      ? '<dt>Color</dt><dd>color/primary <span class="tk-good">✓</span></dd><dt>Radius</dt><dd>radius/md · 10px <span class="tk-good">✓</span></dd><dt>Padding</dt><dd>10 × 16px <span class="tk-good">✓</span></dd><dt>Text</dt><dd>15px semibold <span class="tk-good">✓</span></dd>'
+      : '<dt>Color</dt><dd>a blue picked from the image</dd><dt>Radius</dt><dd>5px (design: 10px)</dd><dt>Padding</dt><dd>8 × 13px (design: 10 × 16px)</dd><dt>Text</dt><dd>14px (design: 15px)</dd>') +
+    '</dl><p class="tk-meta" aria-live="polite" data-note></p></div>';
+  const ovWire = fixed => d => d.querySelector('[data-sw]').addEventListener('change', e => {
+    d.querySelector('[data-ov]').classList.toggle('on', e.target.checked);
+    d.querySelector('[data-note]').textContent = !e.target.checked ? '' : fixed ? 'The dashed outline of the design sits exactly on the button.' : 'The dashed outline of the design doesn’t match the button.';
+  });
+  D('eff-toolkit-2b', ovHtml(false), ovWire(false));
+  D('eff-toolkit-2f', ovHtml(true), ovWire(true));
+
+  /* 3. Trust vs failing test: keep the cart on sign-in */
+  const shopHtml = fixed => '<div class="tk-card"><p class="tk-agent"><b>Agent:</b> Done. The cart is now kept when people sign in.' + (fixed ? ' Here is a test that failed before the change and passes now.' : '') + '</p>' +
+    (fixed ? '<button class="btn btn-secondary cs-sm" type="button" style="align-self:flex-start" data-test>Run the test</button><div class="tk-test" aria-live="polite" data-res></div>' : '') +
+    '<div class="tk-shop"><div><span><b>Running socks</b> · €9</span><button class="btn btn-secondary cs-sm" type="button" data-add>Add to cart</button></div>' +
+    '<div><span class="tk-meta" data-who>Not signed in</span><span>Cart: <b data-n>0</b></span><button class="btn btn-primary cs-sm" type="button" data-in>Sign in</button></div></div>' +
+    '<p class="tk-meta" aria-live="polite" data-note></p></div>';
+  const shopWire = fixed => (d, t) => {
+    let n = 0, signed = false;
+    const draw = () => { d.querySelector('[data-n]').textContent = n; };
+    d.querySelector('[data-add]').addEventListener('click', () => { n++; draw(); });
+    d.querySelector('[data-in]').addEventListener('click', e => {
+      if (signed) return; signed = true; e.target.disabled = true; d.querySelector('[data-who]').textContent = 'Signed in as Alex';
+      const note = d.querySelector('[data-note]');
+      if (!fixed && n) { n = 0; note.innerHTML = '<span class="tk-bad">Signed in. The cart is empty again.</span>'; }
+      else if (n) note.innerHTML = '<span class="tk-good">Signed in. The cart still has ' + n + ' item' + (n > 1 ? 's' : '') + '.</span>';
+      else note.textContent = 'Signed in. Add something first to see what happens to the cart.';
+      draw();
+    });
+    if (fixed) d.querySelector('[data-test]').addEventListener('click', e => {
+      e.target.disabled = true; const r = d.querySelector('[data-res]');
+      r.innerHTML = 'Test: add 1 item, sign in, cart has 1 item.';
+      t.after(() => r.insertAdjacentHTML('beforeend', '<span class="tk-bad">Before the change: failed. Cart had 0 items.</span>'), 500);
+      t.after(() => r.insertAdjacentHTML('beforeend', '<span class="tk-good">After the change: passed. Cart had 1 item.</span>'), 1000);
+    });
+  };
+  D('eff-toolkit-3b', shopHtml(false), shopWire(false));
+  D('eff-toolkit-3f', shopHtml(true), shopWire(true));
+
+  /* 4. Recording vs clickable link: a new sign-up walkthrough */
+  const step = (n, title) => '<span class="tk-meta">Step ' + n + ' of 4</span><b>' + title + '</b>';
+  D('eff-toolkit-4b', '<div class="tk-card"><p class="tk-msg"><b>You:</b> Here’s the new walkthrough for first-time users.</p>' +
+    '<button class="tk-video" type="button" aria-label="Screen recording, 0:48. Click to play or pause." data-vid><span class="tk-scr">' + step(2, 'Pick what you like to read') +
+    '<span class="tk-fake"><span>Skip</span><span class="p">Next</span></span></span><span class="tk-vbar">' + icon('play') + '<span class="tk-track"><i data-pos></i></span><span>0:48</span></span></button>' +
+    '<p class="tk-msg"><b>Lee:</b> What happens if I skip step 2?</p><p class="tk-meta" aria-live="polite" data-note></p></div>', (d, t) => {
+    let pos = 0, timer = null, clicks = 0;
+    d.querySelector('[data-vid]').addEventListener('click', () => {
+      clicks++;
+      if (timer) { clearInterval(timer); timer = null; } else timer = t.every(() => { pos = Math.min(100, pos + 4); d.querySelector('[data-pos]').style.width = pos + '%'; }, 200);
+      d.querySelector('[data-note]').textContent = clicks === 1 ? 'The recording plays. Skip is part of the picture, so it can’t be pressed.' : 'Still a recording. The answer to Lee’s question isn’t in it.';
+    });
+  });
+  D('eff-toolkit-4f', '<div class="tk-card"><span class="tk-lbl">Ticket · New walkthrough for first-time users</span>' +
+    '<p>Prototype: <a href="#" class="tk-link" data-open>Walkthrough prototype (artifact link)</a></p><div data-proto></div>' +
+    '<p class="tk-msg"><b>Lee:</b> What happens if I skip step 2?</p><p class="tk-meta" aria-live="polite" data-note></p></div>', d => {
+    const STEPS = { 2: ['Pick what you like to read', 3], 3: ['Turn on notifications', 4], 4: ['You’re all set', 0] };
+    const show = n => {
+      const s = STEPS[n];
+      d.querySelector('[data-proto]').innerHTML = '<div class="tk-proto">' + step(n, s[0]) + (s[1] ? '<span class="tk-fake"><button class="btn btn-secondary cs-sm" type="button" data-to="' + s[1] + '">Skip</button><button class="btn btn-primary cs-sm" type="button" data-to="' + s[1] + '">Next</button></span>' : '') + '</div>';
+      d.querySelectorAll('[data-to]').forEach(b => b.addEventListener('click', () => {
+        if (n === 2 && b.textContent === 'Skip') d.querySelector('[data-note]').textContent = 'Lee tried it himself: Skip goes straight to notifications.';
+        show(+b.dataset.to);
+      }));
+    };
+    d.querySelector('[data-open]').addEventListener('click', e => { e.preventDefault(); show(2); });
+  });
+
+  csInit(cs);
+})();
+
+</script>

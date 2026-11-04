@@ -1,0 +1,169 @@
+<script>
+(() => {
+  const cs = document.currentScript.closest('.cs');
+  const D = (k, html, wire) => csDemo(cs.querySelector('[data-d="' + k + '"]'), html, wire);
+  const P = '#eff-prototype-in-code ';
+  const st = document.createElement('style');
+  st.textContent = [
+    '.pc-wrap{width:min(420px,100%);display:flex;flex-direction:column;gap:10px;text-align:left;color:var(--ui-text)}',
+    '.pc-q{font-size:13.5px;line-height:1.45;margin:0}',
+    '.pc-q b{font-weight:600}',
+    '.pc-out{font-size:13.5px;line-height:1.45;margin:0}',
+    '.pc-out:empty{display:none}',
+    '.pc-acts{display:flex;flex-wrap:wrap;gap:8px;align-items:center}',
+    '.pc-app{position:relative;background:var(--ui-bg);border:1px solid var(--ui-border);border-radius:12px;overflow:hidden;box-shadow:var(--ui-shadow);min-height:190px}',
+    '.pc-bar{display:flex;justify-content:space-between;align-items:center;padding:8px 12px;border-bottom:1px solid var(--ui-border);background:var(--ui-surface);font:600 13.5px var(--font-body)}',
+    '.pc-rows{padding:4px 12px 56px}',
+    '.pc-rows .cs-row{font-size:13.5px}',
+    '.pc-pic{all:unset;cursor:pointer;display:block;width:100%;box-sizing:border-box}',
+    '.pc-pic:focus-visible{outline:2px solid var(--ui-sel);outline-offset:3px;border-radius:12px}',
+    '.pc-tag{font:600 10.5px var(--font-mono);color:var(--ui-muted);letter-spacing:.06em;text-transform:uppercase}',
+    '.pc-fake{font:600 12px var(--font-body);border:1px solid var(--ui-border);border-radius:7px;padding:3px 8px;color:var(--ui-muted)}',
+    '.pc-toast{position:absolute;left:12px;right:12px;bottom:10px;display:flex;flex-direction:column;gap:0;padding:0;overflow:hidden;animation:none}',
+    '.pc-toast .row{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:8px 10px 8px 12px}',
+    '.pc-toast .tm{height:3px;background:var(--ui-toast-action,var(--ui-on-toast));opacity:.7;transform-origin:left}',
+    '.pc-note{position:absolute;right:14px;bottom:52px;font:500 11.5px var(--font-mono);color:var(--ui-danger)}',
+    '.pc-meter{display:flex;flex-direction:column;gap:4px;font:500 12.5px var(--font-mono);color:var(--ui-muted)}',
+    '.pc-track{height:10px;border-radius:5px;background:var(--ui-hover);overflow:hidden;display:flex}',
+    '.pc-track i{display:block;height:100%;background:var(--ui-sel);border-right:1px solid var(--ui-surface)}',
+    '.pc-track i.waste{background:var(--ui-danger)}',
+    '.pc-log{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:4px;font-size:13px}',
+    '.pc-log:empty{display:none}',
+    '.pc-doc{background:var(--ui-surface);border:1px solid var(--ui-border);border-radius:12px;box-shadow:var(--ui-shadow);display:flex;flex-direction:column}',
+    '.pc-doc-h{padding:9px 12px;border-bottom:1px solid var(--ui-border);font:600 13.5px var(--font-body);display:flex;justify-content:space-between;gap:8px}',
+    '.pc-doc-b{padding:10px 12px;display:flex;flex-direction:column;gap:8px;font-size:13.5px;line-height:1.45}',
+    '.pc-qh{background:var(--ui-sel-soft);border-left:3px solid var(--ui-sel);border-radius:0 6px 6px 0;padding:6px 10px;font-size:13px}',
+    '.pc-feats{display:flex;flex-wrap:wrap;gap:5px}',
+    '.pc-feats span{border:1px solid var(--ui-border);border-radius:999px;padding:2px 8px;font-size:12px;background:var(--ui-bg)}',
+    '.pc-code{font:500 11.5px/1.6 var(--font-mono);background:var(--ui-hover);border-radius:7px;padding:8px 10px;white-space:pre-wrap;margin:0;overflow:hidden}',
+    '.pc-code .bad{color:var(--ui-danger)}',
+    '.pc-ck{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:4px;font-size:13px}',
+    '.pc-ck li{display:flex;gap:6px;align-items:center}',
+    '.pc-ok{color:var(--ui-ok)}',
+    '.pc-bad{color:var(--ui-danger)}'
+  ].map(r => P + r.replace(/,(?=[^{}]*\{)/g, ',' + P)).join('\n');
+  cs.appendChild(st);
+
+  const ic = (n, cls) => '<svg class="icon sm' + (cls ? ' ' + cls : '') + '" aria-hidden="true"><use href="#i-' + n + '"/></svg>';
+  const btn = (label, attr, kind) => '<button class="btn ' + (kind || 'btn-secondary') + ' cs-sm" type="button" ' + (attr || '') + '>' + label + '</button>';
+
+  /* 1. Timing */
+  const MODELS = ['Watercolor style', 'Line art', 'Film grain'];
+  const q1 = '<p class="pc-q"><b>Question:</b> is 4 seconds long enough to press Undo?</p>';
+  D('eff-prototype-in-code-1b', '<div class="pc-wrap">' + q1 + '<span class="pc-tag">Static mock · frame 2 of 3 · note: toast fades after 4 s</span><button class="pc-pic" type="button" data-pic aria-label="Static mock of the Undo toast"><span class="pc-app" style="display:block"><span class="pc-bar"><span>Model library</span></span><span class="pc-rows" style="display:block">' +
+    MODELS.slice(1).map(m => '<span class="cs-row"><span class="grow">' + m + '</span><span class="pc-fake">Remove</span></span>').join('') +
+    '</span><span class="toast pc-toast"><span class="row"><span>Watercolor style removed</span><span class="pc-fake" style="color:inherit">Undo</span></span></span></span></button><p class="pc-out" role="status" data-out></p></div>', d => {
+    d.querySelector('[data-pic]').addEventListener('click', () => {
+      d.querySelector('[data-out]').textContent = 'It’s a picture. Nothing moves, so you can’t tell whether 4 seconds is enough.';
+    });
+  });
+  D('eff-prototype-in-code-1f', '<div class="pc-wrap">' + q1 + '<span class="pc-tag">Clickable page · real timer</span><div class="pc-app"><div class="pc-bar"><span>Model library</span></div><div class="pc-rows" data-rows></div><div data-toast></div></div><p class="pc-out" role="status" data-out></p></div>', (d, t) => {
+    const rows = d.querySelector('[data-rows]'), slot = d.querySelector('[data-toast]'), out = d.querySelector('[data-out]');
+    let list = MODELS.slice(), timer = null;
+    const draw = () => {
+      rows.innerHTML = list.map(m => '<div class="cs-row"><span class="grow">' + m + '</span>' + btn('Remove', 'data-rm="' + m + '"') + '</div>').join('');
+      rows.querySelectorAll('[data-rm]').forEach(b => b.addEventListener('click', () => remove(b.dataset.rm)));
+    };
+    const remove = name => {
+      const idx = list.indexOf(name); list.splice(idx, 1); draw();
+      if (timer) { clearInterval(timer); timer = null; }
+      const start = Date.now();
+      slot.innerHTML = '<div class="toast pc-toast"><div class="row"><span>' + name + ' removed</span><button class="toast-action" type="button" data-undo>Undo</button></div><div class="tm" data-tm></div></div>';
+      const tm = slot.querySelector('[data-tm]');
+      slot.querySelector('[data-undo]').addEventListener('click', () => {
+        clearInterval(timer); timer = null;
+        const left = Math.max(0, 4 - (Date.now() - start) / 1000).toFixed(1);
+        list.splice(idx, 0, name); draw(); slot.innerHTML = '';
+        out.textContent = 'Undone with ' + left + ' s to spare. Try it again while reading the message first.';
+      });
+      timer = t.every(() => {
+        const p = (Date.now() - start) / 4000;
+        tm.style.transform = 'scaleX(' + Math.max(0, 1 - p) + ')';
+        if (p >= 1) { clearInterval(timer); timer = null; slot.innerHTML = ''; out.textContent = 'Time ran out. Was 4 seconds enough for you? Now you know how it feels.'; }
+      }, 50);
+      out.textContent = '';
+    };
+    draw();
+  });
+
+  /* 2. Sketch before you branch */
+  const DIRS = ['Folders', 'Tags', 'Smart search'];
+  const q2 = '<p class="pc-q"><b>Question:</b> which way of organizing saved workflows should we build?</p>';
+  const meter = '<div class="pc-meter"><span data-total>Time spent: 0</span><div class="pc-track" data-track></div></div>';
+  const fmt = mins => { const days = Math.floor(mins / 480), rest = mins % 480; return (days ? days + (days > 1 ? ' days' : ' day') : '') + (days && rest ? ' ' : '') + (rest || !days ? rest + ' min' : ''); };
+  const branchWire = fixed => d => {
+    const log = d.querySelector('[data-log]'), track = d.querySelector('[data-track]'), total = d.querySelector('[data-total]'), out = d.querySelector('[data-out]');
+    let spent = 0; const parts = []; let picked = null; const DIRS_BUILT = [];
+    const add = (mins, text, cls) => {
+      spent += mins; parts.push([mins, cls]);
+      if (mins) track.insertAdjacentHTML('beforeend', '<i style="width:' + (mins / 1920 * 100) + '%"></i>');
+      total.textContent = 'Time spent: ' + fmt(spent);
+      log.insertAdjacentHTML('beforeend', '<li>' + text + '</li>');
+    };
+    d.querySelectorAll('[data-dir]').forEach(b => b.addEventListener('click', () => {
+      b.disabled = true;
+      DIRS_BUILT.push(b.dataset.dir);
+      add(fixed ? 10 : 480, fixed ? 'Sketched ' + b.dataset.dir + ': 10 min.' : 'Built ' + b.dataset.dir + ' in a branch: 1 day.');
+      if (Array.from(d.querySelectorAll('[data-dir]')).every(x => x.disabled)) d.querySelectorAll('[data-pick]').forEach(x => { x.disabled = false; });
+    }));
+    d.querySelectorAll('[data-pick]').forEach(b => b.addEventListener('click', () => {
+      picked = b.dataset.pick;
+      d.querySelectorAll('[data-pick]').forEach(x => { x.disabled = true; });
+      if (fixed) { const go = d.querySelector('[data-build]'); go.disabled = false; go.textContent = 'Build ' + picked + ' in a branch'; out.textContent = 'Picked ' + picked + ' from the sketches.'; }
+      else { d.querySelectorAll('[data-track] i').forEach((x, k) => { if (DIRS_BUILT[k] !== picked) x.classList.add('waste'); }); add(0, 'Picked ' + picked + '.'); out.innerHTML = ic('x', 'pc-bad') + ' 3 days to compare three ideas. Two of the branches get thrown away.'; }
+    }));
+    const go = d.querySelector('[data-build]');
+    if (go) go.addEventListener('click', () => { go.disabled = true; add(480, 'Built ' + picked + ' in a branch: 1 day.'); out.innerHTML = ic('check', 'pc-ok') + ' 30 min of sketches and one day of building. Nothing thrown away but sketches.'; });
+  };
+  const branchHtml = fixed => '<div class="pc-wrap">' + q2 + '<div class="pc-acts">' + DIRS.map(n => btn((fixed ? 'Sketch ' : 'Build ') + n, 'data-dir="' + n + '"')).join('') + '</div>' +
+    '<div class="pc-acts"><span class="pc-tag">Pick:</span>' + DIRS.map(n => btn(n, 'data-pick="' + n + '" disabled', 'btn-ghost')).join('') + '</div>' +
+    (fixed ? '<div class="pc-acts">' + btn('Build it in a branch', 'data-build disabled') + '</div>' : '') +
+    meter + '<ul class="pc-log" data-log></ul><p class="pc-out" role="status" data-out></p></div>';
+  D('eff-prototype-in-code-2b', branchHtml(false), branchWire(false));
+  D('eff-prototype-in-code-2f', branchHtml(true), branchWire(true));
+
+  /* 3. Question at the top */
+  const EXTRA = ['Dark mode', 'Animations', 'A settings page', 'Sign-in', 'Keyboard shortcuts', 'Sample data'];
+  D('eff-prototype-in-code-3b', '<div class="pc-wrap"><div class="pc-doc"><div class="pc-doc-h"><span>prototype-tab-menu.html</span></div><div class="pc-doc-b"><span>A tab menu with Reopen closed tab.</span><div class="pc-feats" data-f></div><div class="pc-acts">' + btn('Add something', 'data-add') + '</div></div></div><p class="pc-out" role="status" data-out></p></div>', d => {
+    let n = 0; const f = d.querySelector('[data-f]'), out = d.querySelector('[data-out]'), add = d.querySelector('[data-add]');
+    add.addEventListener('click', () => {
+      f.insertAdjacentHTML('beforeend', '<span>' + EXTRA[n] + '</span>'); n++;
+      out.textContent = n + (n > 1 ? ' hours' : ' hour') + ' in. ' + (n >= 3 ? 'What was this prototype for? Nobody can say when it’s done.' : 'It keeps growing.');
+      if (n === EXTRA.length) add.disabled = true;
+    });
+  });
+  D('eff-prototype-in-code-3f', '<div class="pc-wrap"><div class="pc-doc"><div class="pc-doc-h"><span>prototype-tab-menu.html</span></div><div class="pc-doc-b"><div class="pc-qh"><b>Question:</b> do people find Reopen closed tab in the tab menu without help?</div><span>A tab menu with Reopen closed tab.</span><div class="pc-acts">' + btn('Add dark mode', 'data-add') + btn('Watch three people', 'data-watch') + '</div></div></div><p class="pc-out" role="status" data-out></p></div>', d => {
+    const out = d.querySelector('[data-out]');
+    d.querySelector('[data-add]').addEventListener('click', e => { e.target.disabled = true; out.textContent = 'Skipped. Dark mode doesn’t help answer the question.'; });
+    d.querySelector('[data-watch]').addEventListener('click', e => {
+      e.target.disabled = true; d.querySelector('[data-add]').disabled = true;
+      out.textContent = 'All three found it in under ten seconds. The question is answered, so the prototype is done.';
+    });
+  });
+
+  /* 4. Decide what happens to the branch */
+  const code = '<pre class="pc-code">draft-store.ts\n  <span class="bad">// TODO: hack, saves on every keystroke</span>\n  <span class="bad">console.log(draft)</span>\n  localStorage.setItem(key, draft)\n\nTests: <span class="bad">none</span></pre>';
+  const head = '<div class="pc-doc-h"><span>prototype/autosave-drafts</span><span class="pc-tag">branch</span></div>';
+  D('eff-prototype-in-code-4b', '<div class="pc-wrap"><div class="pc-doc">' + head + '<div class="pc-doc-b"><span>The prototype answered its question: people like drafts kept on close.</span>' + code + '<div class="pc-acts">' + btn('Merge as it is', 'data-m') + '</div></div></div><p class="pc-out" role="status" data-out></p></div>', d => {
+    d.querySelector('[data-m]').addEventListener('click', e => {
+      e.target.disabled = true;
+      d.querySelector('[data-out]').innerHTML = ic('x', 'pc-bad') + ' Merged. No tests, and the hack ships to everyone. It saves on every keystroke and logs each draft.';
+    });
+  });
+  D('eff-prototype-in-code-4f', '<div class="pc-wrap"><div class="pc-doc">' + head + '<div class="pc-doc-b"><span>The prototype answered its question: people like drafts kept on close.</span>' + code + '<div class="pc-acts">' + btn('Rewrite with tests', 'data-w="rewrite"') + btn('Keep it after review', 'data-w="keep"') + '</div><ul class="pc-ck" data-ck></ul></div></div><p class="pc-out" role="status" data-out></p></div>', d => {
+    const ck = d.querySelector('[data-ck]'), out = d.querySelector('[data-out]');
+    const L = {
+      rewrite: ['New branch from main', 'Saves after a pause, not on every keystroke', 'Playwright spec: a draft survives closing the tab', 'Prototype branch deleted'],
+      keep: ['Hack and logging removed', 'Playwright spec: a draft survives closing the tab', 'Reviewed like any other change', 'Approved by a reviewer']
+    };
+    d.querySelectorAll('[data-w]').forEach(b => b.addEventListener('click', () => {
+      d.querySelectorAll('[data-w]').forEach(x => { x.disabled = true; });
+      ck.innerHTML = L[b.dataset.w].map(s => '<li>' + ic('check', 'pc-ok') + s + '</li>').join('');
+      out.textContent = b.dataset.w === 'rewrite' ? 'Rewritten with tests. The prototype did its job and is gone.' : 'Kept, but only after the same review as any other change.';
+    }));
+  });
+
+  csInit(cs);
+})();
+
+</script>

@@ -1,0 +1,44 @@
+<div class="note comfy cw-wrap"><p>Notice where focus lands in each one, and how it’s marked.</p>
+  <div class="seg cw-seg" role="radiogroup" aria-label="Example">
+    <input type="radio" name="cw-good-keyboard-focus-w" id="cw-good-keyboard-focus-w-1" value="vscode" checked><label for="cw-good-keyboard-focus-w-1">VS Code</label>
+    <input type="radio" name="cw-good-keyboard-focus-w" id="cw-good-keyboard-focus-w-2" value="github"><label for="cw-good-keyboard-focus-w-2">GitHub</label>
+    <input type="radio" name="cw-good-keyboard-focus-w" id="cw-good-keyboard-focus-w-3" value="gmail"><label for="cw-good-keyboard-focus-w-3">Gmail</label>
+    <input type="radio" name="cw-good-keyboard-focus-w" id="cw-good-keyboard-focus-w-4" value="youtube"><label for="cw-good-keyboard-focus-w-4">YouTube</label>
+  </div>
+  <div class="cw" data-cw-view role="img" aria-label=""></div>
+  <p class="cw-cap" data-cw-cap aria-live="polite"></p>
+  
+  <script>
+  (() => {
+    const wrap = document.currentScript.closest('.cw-wrap');
+    const view = wrap.querySelector('[data-cw-view]'), cap = wrap.querySelector('[data-cw-cap]');
+    const L = (w, extra) => '<i class="cw-line" style="width:' + w + (extra ? ';' + extra : '') + '"></i>';
+    const keys = (...g) => '<div class="cw-gkf-keys">' + g.map(([k, t]) => '<span>' + k.split(' ').map(x => '<kbd>' + x + '</kbd>').join('') + t + '</span>').join('') + '</div>';
+    const opt = (name, key, on) => '<div class="cw-gkf-opt' + (on ? ' on' : '') + '"><span>' + name + '</span>' + (key ? '<em>' + key + '</em>' : '') + '</div>';
+    const row = cur => '<div class="cw-gkf-row' + (cur ? ' cur' : '') + '"><span class="cw-gkf-box"></span>' + L('56px', 'flex:none') + L('auto', 'flex:1') + '</div>';
+    const S = {
+      vscode: { html: '<div class="cw-gkf-win"><div class="cw-gkf-code">' + ['40%', '62%', '55%', '70%', '35%', '58%', '66%', '30%'].map(w => L(w)).join('') + '</div>' +
+          '<div class="cw-gkf-pal"><div class="cw-gkf-in">&gt; format<span class="cw-gkf-caret"></span></div>' + opt('Format document', '⇧⌥F', true) + opt('Format selection', '⌘K ⌘F') + opt('Format document with…') + '</div></div>' +
+          keys(['↑ ↓', 'move'], ['Enter', 'run'], ['Esc', 'back to the editor']),
+        alt: 'A code editor with a command palette open on top. The search box has a focus ring and the first command is highlighted. Keys below: arrows move, Enter runs, Esc goes back to the editor.',
+        cap: 'VS Code: the Command Palette opens with focus already in its search box, arrows move the highlight, and Esc puts focus back where you were typing.' },
+      github: { html: '<div class="cw-gkf-win"><div class="cw-gkf-head"><span class="cw-gkf-logo"></span>' + L('28px') + L('34px') + L('24px') + L('38px') + L('30px') + '<span class="cw-gkf-search"></span></div>' +
+          '<span class="cw-gkf-skip">Skip to content</span><div class="cw-gkf-main"><b>Enter lands here</b>' + L('48%', 'height:9px') + L('92%') + L('78%') + '</div></div>' +
+          keys(['Tab', 'shows the link'], ['Enter', 'skips the header']),
+        alt: 'A web page header with a focused Skip to content link on top of it. Below, the main content is outlined: Enter lands here.',
+        cap: 'GitHub: the first Tab press shows a “Skip to content” link at the top. Keyboard users jump past the long header in one key instead of tabbing through every link.' },
+      gmail: { html: '<div class="cw-gkf-win">' + row() + row() + row(true) + row() + row() + '</div>' +
+          keys(['k', 'up'], ['j', 'down'], ['Enter', 'open'], ['?', 'all shortcuts']),
+        alt: 'An inbox list of five conversations. The third one is marked as current with a bar on its left. Keys below: k up, j down, Enter open, question mark for all shortcuts.',
+        cap: 'Gmail: with keyboard shortcuts turned on in settings, j and k move through the inbox and a marker shows the current conversation, so you always know what Enter will open.' },
+      youtube: { html: '<div class="cw-gkf-video"><span class="cw-gkf-flash"><span class="cw-gkf-pz"><i></i><i></i></span></span><div class="cw-gkf-prog"><i></i></div></div>' +
+          keys(['k', 'pause'], ['j', 'back 10 s'], ['l', 'ahead 10 s'], ['m', 'mute'], ['f', 'full screen']),
+        alt: 'A video player with a pause icon flashing in the middle. Keys below: k pause, j back 10 seconds, l ahead 10 seconds, m mute, f full screen.',
+        cap: 'YouTube: on a video, k pauses, j and l jump 10 seconds, m mutes and f goes full screen. The player flashes an icon when you pause or mute, so you can tell the key worked.' }
+    };
+    const render = k => { view.innerHTML = S[k].html; view.setAttribute('aria-label', 'Sketch: ' + S[k].alt); cap.textContent = S[k].cap; };
+    wrap.querySelectorAll('input[name="cw-good-keyboard-focus-w"]').forEach(r => r.addEventListener('change', () => render(r.value)));
+    render('vscode');
+  })();
+  </script>
+</div>

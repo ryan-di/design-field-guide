@@ -1,0 +1,155 @@
+<script>
+(() => {
+  const cs = document.currentScript.closest('.cs');
+  const D = (k, html, wire) => csDemo(cs.querySelector('[data-d="' + k + '"]'), html, wire);
+  const P = '#eff-axes ';
+  const st = document.createElement('style');
+  st.textContent = [
+    '.ax-wrap{width:min(470px,100%);display:flex;flex-direction:column;gap:10px;text-align:left;color:var(--ui-text)}',
+    '.ax-prob{font-size:13.5px;line-height:1.45;margin:0}',
+    '.ax-prob b{font-weight:600}',
+    '.ax-req{font:500 12.5px/1.5 var(--font-mono);background:var(--ui-surface);border:1px solid var(--ui-border);border-radius:10px;padding:10px 12px}',
+    '.ax-acts{display:flex;flex-wrap:wrap;gap:8px;align-items:center}',
+    '.ax-out{font-size:13.5px;line-height:1.45;margin:0}',
+    '.ax-out:empty{display:none}',
+    '.ax-res{display:grid;grid-template-columns:repeat(auto-fill,minmax(100px,1fr));gap:8px}',
+    '.ax-card{background:var(--ui-surface);border:1px solid var(--ui-border);border-radius:10px;padding:8px;display:flex;flex-direction:column;gap:6px;font-size:12.5px;line-height:1.35;min-width:0}',
+    '.ax-pt{font:600 11px var(--font-mono);color:var(--ui-sel);text-transform:uppercase;letter-spacing:.06em}',
+    '.ax-mini{height:54px;border:1px solid var(--ui-border);border-radius:6px;background:var(--ui-bg);position:relative;overflow:hidden}',
+    '.ax-mini .tb{position:absolute;left:0;right:0;top:0;height:12px;border-bottom:1px solid var(--ui-border);background:var(--ui-surface)}',
+    '.ax-mini .dot{position:absolute;right:6px;top:3px;width:6px;height:6px;border-radius:50%;background:var(--ui-ok)}',
+    '.ax-mini .toast{position:absolute;right:4px;bottom:4px;left:auto;max-width:calc(100% - 8px);padding:3px 6px;font-size:9.5px;border-radius:5px;animation:none;gap:4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;display:block}',
+    '.ax-mini .bn{position:absolute;left:0;right:0;top:12px;height:10px;background:var(--ui-sel-soft);border-bottom:1.5px solid var(--ui-sel)}',
+    '.ax-mini .scrim{position:absolute;inset:0;background:color-mix(in srgb,var(--ui-text) 30%,transparent);display:grid;place-items:center}',
+    '.ax-mini .dlg{width:58%;height:26px;border-radius:5px;background:var(--ui-surface)}',
+    '.ax-mx{display:grid;gap:5px;align-items:stretch}',
+    '.ax-hd{font:600 11px var(--font-mono);color:var(--ui-muted);display:flex;align-items:center;justify-content:center;text-align:center;padding:2px}',
+    '.ax-hd.row{justify-content:flex-start;text-align:left}',
+    '.ax-cell{all:unset;cursor:pointer;box-sizing:border-box;min-height:58px;border:1px solid var(--ui-border);border-radius:8px;background:var(--ui-surface);padding:6px;display:flex;flex-direction:column;gap:5px;justify-content:center;font-size:12px;line-height:1.3;min-width:0}',
+    '.ax-cell:focus-visible{outline:2px solid var(--ui-sel);outline-offset:2px}',
+    '.ax-cell[aria-pressed="true"]{border-color:var(--ui-sel);box-shadow:0 0 0 1px var(--ui-sel)}',
+    '.ax-cell.drop{background:transparent;border-style:dashed;color:var(--ui-muted)}',
+    '.ax-cell.drop s{font-size:11.5px}',
+    '.ax-sw{height:16px;border-radius:8px;border-bottom:2px solid;font-size:10px;display:flex;align-items:center;padding:0 6px;white-space:nowrap;overflow:hidden}',
+    '.ax-sw.blue{background:var(--ui-sel-soft);border-color:var(--ui-sel)}',
+    '.ax-sw.orange{background:color-mix(in srgb,#d69e2e 20%,var(--ui-surface));border-color:#d69e2e}',
+    '.ax-sw.square{border-radius:0}',
+    '.ax-detail{font-size:13.5px;line-height:1.45;min-height:40px;padding:8px 10px;border-radius:8px;background:var(--ui-surface);border:1px solid var(--ui-border);margin:0}',
+    '.ax-opt{background:var(--ui-surface);border:1px solid var(--ui-border);border-radius:10px;padding:8px 10px;display:flex;flex-wrap:wrap;gap:5px;align-items:center;font-size:12.5px}',
+    '.ax-opt b{min-width:20px}',
+    '.ax-chip{border:1px solid var(--ui-border);border-radius:999px;padding:2px 8px;background:var(--ui-bg)}',
+    '.ax-score{margin-left:auto;font:600 12px var(--font-mono);color:var(--ui-muted)}',
+    '.ax-score.win{color:var(--ui-ok)}',
+    '.ax-fixed{font:500 12px var(--font-mono);color:var(--ui-muted)}',
+    '.ax-opts{display:flex;flex-direction:column;gap:6px}'
+  ].map(r => P + r.replace(/,(?=[^{}]*\{)/g, ',' + P)).join('\n');
+  cs.appendChild(st);
+
+  const btn = (label, attr) => '<button class="btn btn-secondary cs-sm" type="button" ' + (attr || '') + '>' + label + '</button>';
+  const frame = inner => '<span class="ax-mini" aria-hidden="true"><span class="tb"></span>' + inner + '</span>';
+
+  /* 1. Name the axis */
+  const prob1 = '<p class="ax-prob"><b>Problem:</b> people miss that a long export has finished.</p>';
+  const R1B = [['Version 1', frame('<span class="toast">Export done!</span>'), 'Toast: “Export done!”'],
+    ['Version 2', frame('<span class="toast">Your export is ready</span>'), 'Toast: “Your export is ready.”'],
+    ['Version 3', frame('<span class="toast">Export complete</span>'), 'Toast: “Export complete.”']];
+  const R1F = [['Silent', frame('<span class="dot"></span>'), 'A green dot on Exports.'],
+    ['Quiet', frame('<span class="toast">Export ready</span>'), 'A toast with Open.'],
+    ['Loud', frame('<span class="bn"></span>'), 'A banner until you open it.'],
+    ['Blocking', frame('<span class="scrim"><span class="dlg"></span></span>'), 'A dialog: Open or Later.']];
+  const askHtml = fixed => '<div class="ax-wrap">' + prob1 + '<div class="ax-req">' +
+    (fixed ? 'Vary how loud the message is, from silent to blocking. One direction per point: silent, quiet, loud, blocking.' : 'Make three versions of the export-finished message.') +
+    '</div><div class="ax-acts">' + btn('Send', 'data-send') + '</div><div class="ax-res" data-res></div><p class="ax-out" role="status" data-out></p></div>';
+  const askWire = rows => (d, t) => {
+    const s = d.querySelector('[data-send]');
+    s.addEventListener('click', () => {
+      s.disabled = true;
+      t.after(() => {
+        d.querySelector('[data-res]').innerHTML = rows.map(r => '<div class="ax-card"><span class="ax-pt">' + r[0] + '</span>' + r[1] + '<span>' + r[2] + '</span></div>').join('');
+        d.querySelector('[data-out]').textContent = rows.length === 3 ? 'Three toasts in the same corner. Only the words changed.' : 'Four directions, each a step louder than the last.';
+      }, 400);
+    });
+  };
+  D('eff-axes-1b', askHtml(false), askWire(R1B));
+  D('eff-axes-1f', askHtml(true), askWire(R1F));
+
+  /* 2. What people notice */
+  const prob2 = '<p class="ax-prob"><b>Problem:</b> a shared workflow needs two files the person doesn’t have.</p>';
+  const mx = (cols, rows, cell) => '<div class="ax-mx" style="grid-template-columns:72px repeat(' + cols.length + ',minmax(0,1fr))"><span></span>' +
+    cols.map(c => '<span class="ax-hd">' + c + '</span>').join('') +
+    rows.map((r, ri) => '<span class="ax-hd row">' + r + '</span>' + cols.map((c, ci) => cell(ri, ci)).join('')).join('') + '</div>';
+  const B2 = { cols: ['Blue', 'Orange'], rows: ['Round', 'Square'] };
+  const F2 = { cols: ['On open', 'On run'], rows: ['On the item', 'App-wide'],
+    text: [['A warning icon on each missing input as soon as it opens.', 'Run stops and outlines the missing inputs in red.'],
+      ['A banner on open: “2 files missing. Download them?”', 'A dialog on run that lists the missing files.']] };
+  const pickWire = (fixed) => d => {
+    const det = d.querySelector('[data-det]'); let picks = [];
+    d.querySelectorAll('.ax-cell').forEach(c => c.addEventListener('click', () => {
+      picks = picks.filter(p => p !== c).concat(c).slice(-2);
+      d.querySelectorAll('.ax-cell').forEach(x => x.setAttribute('aria-pressed', String(picks.includes(x))));
+      const r = +c.dataset.r, k = +c.dataset.c;
+      if (!fixed) {
+        det.textContent = picks.length < 2 ? B2.cols[k] + ', ' + B2.rows[r].toLowerCase() + '. Same message, same place, same moment.'
+          : 'Two picks, one experience. Someone using the app sees the same banner at the same moment, whatever its color or corners.';
+        return;
+      }
+      if (picks.length < 2) { det.textContent = F2.text[r][k]; return; }
+      const [a, b] = picks.map(p => [+p.dataset.r, +p.dataset.c]);
+      const diff = a[0] !== b[0] && a[1] !== b[1] ? 'where it shows up and when' : a[0] !== b[0] ? 'where it shows up' : 'when it happens';
+      det.textContent = F2.text[r][k] + ' Compared with your other pick, it differs in ' + diff + '. People would notice.';
+    }));
+  };
+  D('eff-axes-2b', '<div class="ax-wrap">' + prob2 + mx(B2.cols, B2.rows, (r, c) => '<button class="ax-cell" type="button" aria-pressed="false" data-r="' + r + '" data-c="' + c + '"><span class="ax-sw ' + (c ? 'orange' : 'blue') + (r ? ' square' : '') + '">2 files missing</span></button>') +
+    '<p class="ax-detail" role="status" data-det>Pick a cell.</p></div>', pickWire(false));
+  D('eff-axes-2f', '<div class="ax-wrap">' + prob2 + mx(F2.cols, F2.rows, (r, c) => '<button class="ax-cell" type="button" aria-pressed="false" data-r="' + r + '" data-c="' + c + '">' + ['Icon on input', 'Outline on run', 'Banner', 'Dialog'][r * 2 + c] + '</button>') +
+    '<p class="ax-detail" role="status" data-det>Pick a cell.</p></div>', pickWire(true));
+
+  /* 3. Two at a time */
+  const prob3 = '<p class="ax-prob"><b>Problem:</b> people put off installing updates for months.</p>';
+  const B3 = [['A', ['Quiet', 'At start', 'Top bar', '“Update ready”'], '3.0'], ['B', ['Loud', 'When idle', 'Dialog', '“Restart to update now”'], '4.1'], ['C', ['Silent', 'Next launch', 'Settings', '“Version 2.4 is out”'], '2.6']];
+  const F3 = [['A', ['Quiet', 'At start'], '3.1'], ['B', ['Quiet', 'When idle'], '4.2'], ['C', ['Loud', 'At start'], '2.4'], ['D', ['Loud', 'When idle'], '2.9']];
+  const optHtml = (rows, fixed) => '<div class="ax-wrap">' + prob3 + (fixed ? '<span class="ax-fixed">Same for all: in the top bar, “Update ready”.</span>' : '') + '<div class="ax-opts">' +
+    rows.map(r => '<div class="ax-opt"><b>' + r[0] + '</b>' + r[1].map(c => '<span class="ax-chip">' + c + '</span>').join('') + '<span class="ax-score" data-s hidden>' + r[2] + '</span></div>').join('') +
+    '</div><div class="ax-acts">' + btn('Show the test results', 'data-show') + '</div><p class="ax-out" role="status" data-out></p></div>';
+  const optWire = (fixed) => d => {
+    const s = d.querySelector('[data-show]');
+    s.addEventListener('click', () => {
+      s.disabled = true;
+      d.querySelectorAll('[data-s]').forEach(x => { x.hidden = false; });
+      d.querySelectorAll('.ax-opt')[1].querySelector('[data-s]').classList.add('win');
+      d.querySelector('[data-out]').textContent = fixed
+        ? 'People liked B best. A differs from B only in timing and scored lower, so waiting until idle helped. C and D are loud and scored lowest, so loudness hurt.'
+        : 'People liked B best. But B differs from A in all four ways. Was it the timing, the place or the words? The test can’t say.';
+    });
+  };
+  D('eff-axes-3b', optHtml(B3, false), optWire(false));
+  D('eff-axes-3f', optHtml(F3, true), optWire(true));
+
+  /* 4. Odd cells */
+  const prob4 = '<p class="ax-prob"><b>Problem:</b> people start large downloads without knowing they’ll run out of space.</p>';
+  const C4 = { cols: ['Before', 'During', 'After'], rows: ['Quiet', 'Blocking'],
+    text: [['The size shows next to Download: 12 GB.', 'The progress bar shows how much space is left.', 'A note in Downloads: “12 GB used. 3 GB left.”'],
+      ['A dialog before it starts: “This is 12 GB. Download?”', 'The download pauses halfway: “Space is low. Continue?”', 'A dialog after it finishes: “That used 12 GB. Free up space?”']],
+    short: [['Size on button', 'Space in progress', 'Note after'], ['Ask before', 'Pause midway', 'Dialog after']] };
+  const ODD = { '1,1': 1, '1,2': 1 };
+  const oddHtml = fixed => '<div class="ax-wrap">' + prob4 + mx(C4.cols, C4.rows, (r, c) => {
+    const drop = !fixed && ODD[r + ',' + c];
+    return '<button class="ax-cell' + (drop ? ' drop' : '') + '" type="button" aria-pressed="false" data-r="' + r + '" data-c="' + c + '">' + (drop ? '<s>' + C4.short[r][c] + '</s>' : C4.short[r][c]) + '</button>';
+  }) + '<p class="ax-detail" role="status" data-det>Pick a cell.</p></div>';
+  const oddWire = fixed => d => {
+    const det = d.querySelector('[data-det]');
+    d.querySelectorAll('.ax-cell').forEach(c => c.addEventListener('click', () => {
+      d.querySelectorAll('.ax-cell').forEach(x => x.setAttribute('aria-pressed', String(x === c)));
+      const r = +c.dataset.r, k = +c.dataset.c;
+      if (!fixed && ODD[r + ',' + k]) { det.textContent = 'Dropped because it looked odd. Nobody read it, so whatever it could teach is lost.'; return; }
+      if (fixed && r === 1 && k === 2) { det.textContent = C4.text[r][k] + ' Too late to help. But it shows people care about space after the download. That’s why its neighbor, the quiet note after, works.'; return; }
+      det.textContent = C4.text[r][k];
+    }));
+  };
+  D('eff-axes-4b', oddHtml(false), oddWire(false));
+  D('eff-axes-4f', oddHtml(true), oddWire(true));
+
+  csInit(cs);
+})();
+
+</script>

@@ -1,0 +1,40 @@
+<div class="note comfy cw-wrap"><p>Notice that each empty screen says what belongs there and puts the first step inside the empty space.</p>
+      <div class="seg cw-seg" role="radiogroup" aria-label="Example">
+        <input type="radio" name="cw-empty-state-w" id="cw-empty-state-w-1" value="github" checked><label for="cw-empty-state-w-1">GitHub</label>
+        <input type="radio" name="cw-empty-state-w" id="cw-empty-state-w-2" value="trello"><label for="cw-empty-state-w-2">Trello</label>
+        <input type="radio" name="cw-empty-state-w" id="cw-empty-state-w-3" value="spotify"><label for="cw-empty-state-w-3">Spotify</label>
+        <input type="radio" name="cw-empty-state-w" id="cw-empty-state-w-4" value="gmail"><label for="cw-empty-state-w-4">Gmail</label>
+      </div>
+      <div class="cw" data-cw-view role="img" aria-label=""></div>
+      <p class="cw-cap" data-cw-cap aria-live="polite"></p>
+      
+      <script>
+      (() => {
+        const wrap = document.currentScript.closest('.cw-wrap');
+        const view = wrap.querySelector('[data-cw-view]'), cap = wrap.querySelector('[data-cw-cap]');
+        const ic = id => '<svg class="icon sm"><use href="#i-' + id + '"/></svg>';
+        const line = w => '<i class="cw-line" style="width:' + w + '%"></i>';
+        const S = {
+          github: { html: '<div class="cw-esw-app"><div class="cw-esw-head">' + ic('book') + '<span class="cw-esw-l">ana</span><span class="cw-esw-sep">/</span><b>new-site</b></div>' +
+              '<div class="cw-esw-box"><b>Quick setup</b><div class="cw-esw-url"><span>https://example.com/ana/new-site.git</span>' + ic('layers') + '</div>' +
+              '<span class="cw-esw-m">Or push from the command line:</span><div class="cw-esw-code"><span>git init</span><span>git add .</span><span>git commit -m "first"</span><span>git push -u origin main</span></div></div></div>',
+            alt: 'A new repository page with no files. A Quick setup box shows the address to copy and four command lines to make the first push.',
+            cap: 'GitHub: a new, empty repository shows the setup commands to copy, so the first push is one paste away.' },
+          trello: { html: '<div class="cw-esw-app"><div class="cw-esw-head"><b>Launch plan</b></div><div class="cw-esw-board"><span class="cw-esw-add">' + ic('plus') + 'Add a list</span></div></div>',
+            alt: 'A new, empty board. The only thing on it is a button in the spot where the first list will go: Add a list.',
+            cap: 'Trello: on a new board, the spot where the first list will go is itself the Add a list button.' },
+          spotify: { html: '<div class="cw-esw-app"><div class="cw-esw-pl"><span class="cw-esw-cover">' + ic('image') + '</span><div><small>Playlist</small><b>New playlist</b></div></div>' +
+              '<div class="cw-esw-find"><b>Find songs for this playlist</b><span class="cw-esw-in">' + ic('search') + 'Search for songs</span></div></div>',
+            alt: 'A new playlist with a blank cover and no songs. Where the songs will go, a heading invites you to find songs, with a search box ready to type in.',
+            cap: 'Spotify: a new, empty playlist puts a song search right where the songs will appear, so adding the first one doesn’t mean going anywhere else.' },
+          gmail: { html: '<div class="cw-esw-app"><div class="cw-esw-head"><span class="cw-esw-q">' + ic('search') + '<span>invoice from:ana</span></span></div>' +
+              '<div class="cw-esw-none"><b>No messages match</b><span>Try search options</span></div></div>',
+            alt: 'A mail search for invoice from ana with no results. The empty list says no messages match and offers a link to search options.',
+            cap: 'Gmail: a search with no results says nothing matched and points to search options like sender and date. It’s a no-results state, not a first-use one, so it helps you change the search.' }
+        };
+        const render = k => { view.innerHTML = S[k].html; view.setAttribute('aria-label', 'Sketch: ' + S[k].alt); cap.textContent = S[k].cap; };
+        wrap.querySelectorAll('input[name="cw-empty-state-w"]').forEach(r => r.addEventListener('change', () => render(r.value)));
+        render('github');
+      })();
+      </script>
+    </div>

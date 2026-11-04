@@ -1,0 +1,155 @@
+<script>
+(() => {
+  const { $, $$, store, demo, toast } = window.dfg;
+
+  /* js-20-overload.js */
+  demo('pat-progressive-disclosure', st => {
+    const KEY = 'cfg-p10-advanced-open';
+    const toggle = $('#p10-pd-toggle', st), adv = $('#p10-pd-adv', st), sum = $('#p10-pd-sum', st);
+    const advFields = $$('[data-default]', adv);
+    let open = store.get(KEY, false) === true;
+    const mode = () => ($('input[name="p10-pd-mode"]:checked', st) || {}).value || 'after';
+    const isChanged = el => el.type === 'number' ? Number(el.value) !== Number(el.dataset.default) : el.value !== el.dataset.default;
+    const nameOf = el => $('label[for="' + el.id + '"]', st).textContent.trim();
+    const shown = el => el.tagName === 'SELECT' ? el.options[el.selectedIndex].text : el.value;
+    const render = () => {
+      const after = mode() === 'after';
+      toggle.hidden = !after;
+      adv.hidden = after && !open;
+      toggle.setAttribute('aria-expanded', String(!adv.hidden));
+      toggle.textContent = open ? 'Hide advanced' : 'Show advanced (' + advFields.length + ')';
+      const changed = advFields.filter(isChanged);
+      sum.hidden = !after || open || !changed.length;
+      sum.textContent = '';
+      if (sum.hidden) return;
+      sum.append('Changed from default: ');
+      changed.forEach((el, i) => {
+        if (i) sum.append(', ');
+        const b = document.createElement('b');
+        b.textContent = nameOf(el) + ' ' + shown(el);
+        sum.append(b);
+      });
+    };
+    toggle.addEventListener('click', () => { open = !open; store.set(KEY, open); render(); });
+    adv.addEventListener('input', render);
+    adv.addEventListener('change', render);
+    $$('input[name="p10-pd-mode"]', st).forEach(r => r.addEventListener('change', render));
+    render();
+  });
+
+  demo('pat-smart-defaults', st => {
+    const defaults = { name: 'beach-0016', format: 'jpg', size: 'original', folder: 'Pictures/Holiday', embed: 'yes' };
+    const fields = $$('[data-key]', st);
+    const exportBtn = $('#p10-sd-export', st), cancel = $('#p10-sd-cancel', st), reset = $('#p10-sd-reset', st);
+    const mode = () => ($('input[name="p10-sd-mode"]:checked', st) || {}).value || 'after';
+    const part = (attr, el) => $('[' + attr + '="' + el.dataset.key + '"]', st);
+    const sync = () => {
+      const after = mode() === 'after';
+      let any = false;
+      fields.forEach(el => {
+        const changed = after && el.value !== defaults[el.dataset.key];
+        part('data-mark', el).hidden = !changed;
+        any = any || changed;
+        if (el.value.trim()) el.removeAttribute('aria-invalid');
+      });
+      reset.hidden = !any;
+    };
+    const render = () => {
+      const after = mode() === 'after';
+      fields.forEach(el => {
+        const blank = el.tagName === 'SELECT' ? $('option[value=""]', el) : null;
+        if (blank) { blank.hidden = after; blank.disabled = after; }
+        el.value = after ? defaults[el.dataset.key] : '';
+        el.required = !after;
+        el.removeAttribute('aria-invalid');
+        part('data-req', el).hidden = after;
+      });
+      exportBtn.className = 'btn ' + (after ? 'btn-primary' : 'btn-secondary');
+      cancel.className = 'btn ' + (after ? 'btn-ghost' : 'btn-secondary');
+      sync();
+    };
+    const fileName = () => {
+      const name = $('#p10-sd-name', st).value.trim(), fmt = $('#p10-sd-format', st).value;
+      return name + '.' + fmt;
+    };
+    const nextName = name => /\d+$/.test(name) ? name.replace(/\d+$/, d => String(Number(d) + 1).padStart(d.length, '0')) : name + '-2';
+    fields.forEach(el => { el.addEventListener('input', sync); el.addEventListener('change', sync); });
+    $$('input[name="p10-sd-mode"]', st).forEach(r => r.addEventListener('change', render));
+    exportBtn.addEventListener('click', () => {
+      const empty = fields.filter(el => !el.value.trim());
+      if (empty.length) {
+        empty.forEach(el => el.setAttribute('aria-invalid', 'true'));
+        toast(st, 'Fill in ' + empty.length + (empty.length === 1 ? ' required field' : ' required fields') + ' first', { tone: 'error' });
+        empty[0].focus();
+        return;
+      }
+      const folder = $('#p10-sd-folder', st).value.trim();
+      if (mode() === 'before') { toast(st, 'Exported ' + fileName() + ' to ' + folder); return; }
+      toast(st, 'Exported ' + fileName() + ' to ' + folder + '. The next export starts from these settings.');
+      fields.forEach(el => { defaults[el.dataset.key] = el.value.trim(); });
+      defaults.name = nextName(defaults.name);
+      render();
+    });
+    cancel.addEventListener('click', () => toast(st, 'Export cancelled'));
+    reset.addEventListener('click', () => { render(); $('#p10-sd-name', st).focus(); });
+    render();
+  });
+
+  demo('pat-presets', st => {
+    const P = {
+      fast: { steps: '12', res: '512', sampler: 'euler' },
+      balanced: { steps: '25', res: '768', sampler: 'dpm2m' },
+      quality: { steps: '40', res: '1024', sampler: 'dpm2m-sde' }
+    };
+    const names = { fast: 'Fast', balanced: 'Balanced', quality: 'Quality' };
+    const ctl = { steps: $('#p10-pr-steps', st), res: $('#p10-pr-res', st), sampler: $('#p10-pr-sampler', st) };
+    const keys = Object.keys(ctl);
+    const custom = $('#p10-pr-custom', st), customLabel = $('label[for="p10-pr-custom"]', st);
+    const cap = $('#p10-pr-cap', st), out = $('#p10-pr-out', st);
+    const radios = $$('input[name="p10-pr"]', st);
+    let base = 'balanced';
+    const vals = () => ({ steps: String(Math.round(Number(ctl.steps.value)) || ''), res: ctl.res.value, sampler: ctl.sampler.value });
+    const setVals = v => keys.forEach(k => { ctl[k].value = v[k]; });
+    const estimate = v => {
+      const s = Math.max(1, Number(v.steps) || 1) * Math.pow(Number(v.res) / 512, 2) * 0.25;
+      return s < 1 ? 'under 1 s' : Math.round(s) + ' s';
+    };
+    const render = () => {
+      const v = vals();
+      const match = Object.keys(P).find(p => keys.every(k => P[p][k] === v[k]));
+      if (match) base = match;
+      const isCustom = !match;
+      custom.hidden = !isCustom;
+      customLabel.hidden = !isCustom;
+      radios.find(r => r.value === (isCustom ? 'custom' : match)).checked = true;
+      const edited = keys.filter(k => P[base][k] !== v[k]);
+      keys.forEach(k => { $('[data-mark="' + k + '"]', st).hidden = !isCustom || !edited.includes(k); });
+      cap.textContent = isCustom ? 'Custom, based on “' + names[base] + '”' : 'What “' + names[base] + '” sets';
+      out.textContent = 'About ' + estimate(v) + ' to export' + (isCustom ? ' · ' + edited.length + ' edited' : '');
+    };
+    radios.forEach(r => r.addEventListener('change', () => {
+      if (!r.checked || r.value === 'custom') return;
+      const wasCustom = !custom.hidden, prev = vals(), prevBase = base;
+      setVals(P[r.value]);
+      base = r.value;
+      render();
+      if (wasCustom) {
+        toast(st, names[r.value] + ' applied. Your edits were replaced.', { action: { label: 'Undo', run: () => { setVals(prev); base = prevBase; render(); } } });
+      }
+    }));
+    keys.forEach(k => {
+      ctl[k].addEventListener('input', render);
+      ctl[k].addEventListener('change', () => {
+        if (k === 'steps') {
+          const n = Math.round(Number(ctl.steps.value));
+          ctl.steps.value = !n || n < 1 ? P[base].steps : String(Math.min(n, 150));
+        }
+        render();
+      });
+    });
+    render();
+  });
+
+
+})();
+</script>

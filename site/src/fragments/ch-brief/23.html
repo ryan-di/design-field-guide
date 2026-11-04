@@ -1,0 +1,199 @@
+<script>
+  (() => {
+    const sec = document.currentScript.closest('section');
+
+    const copyText = (text, pre, out, okMsg, what) => {
+      const fallback = () => {
+        pre.focus({ preventScroll: true });
+        const sel = window.getSelection(), range = document.createRange();
+        range.selectNodeContents(pre);
+        sel.removeAllRanges(); sel.addRange(range);
+        out.textContent = 'Couldn’t copy automatically. The ' + what + ' is selected: press Ctrl/Cmd+C.';
+      };
+      try {
+        if (!navigator.clipboard || !navigator.clipboard.writeText) { fallback(); return; }
+        navigator.clipboard.writeText(text).then(() => { out.textContent = okMsg; }, fallback);
+      } catch (e) { fallback(); }
+    };
+
+    /* ---------- Brief builder ---------- */
+    (() => {
+      const st = sec.querySelector('[data-demo="eff-brief"]');
+      if (!st) return;
+      const F = [['who', 'Who'], ['problem', 'Problem'], ['goal', 'Goal'], ['constraints', 'Constraints'], ['nongoals', 'Non-goals'], ['success', 'Success criteria']];
+      const P = {
+        good: {
+          who: 'People editing workflows in several tabs, often with unsaved changes.',
+          problem: 'When they close a workflow tab with unsaved changes, the changes are gone. Nothing warns them and there’s no way back.',
+          goal: 'Closing a tab never loses work unless the person chooses to discard it.',
+          constraints: 'Reuse the existing dialog and button components. Works by keyboard alone. Closing a saved tab stays one click.',
+          nongoals: 'Autosave. Version history. Changing how tabs look.',
+          success: 'Closing an unsaved tab asks first. Closing a saved tab has no prompt. A Playwright test covers both.'
+        },
+        rough: {
+          who: 'Users',
+          problem: 'Add a confirm dialog when closing a tab.',
+          goal: 'Make closing tabs better and more intuitive.',
+          constraints: 'Should look clean.',
+          nongoals: '',
+          success: ''
+        }
+      };
+      const words = sel => {
+        const el = document.querySelector(sel);
+        if (!el) throw new Error('Brief check: missing ' + sel);
+        return el.dataset.list ? el.dataset.list.split('|') : [...el.querySelectorAll('tbody tr')].flatMap(tr => tr.dataset.words.split(' '));
+      };
+      const VAGUE = words('#good-success-criteria-words');
+      const BROAD = words('#eff-brief-check [data-words="broad"]');
+      const SOL = new RegExp('\\b(' + words('#eff-brief-check [data-words="solution"]').join('|') + ')\\b', 'i');
+      const areas = [...st.querySelectorAll('textarea[data-k]')];
+      const byK = k => areas.find(a => a.dataset.k === k);
+      const list = st.querySelector('#p26-br-list'), sum = st.querySelector('#p26-br-sum');
+      const out = st.querySelector('#p26-br-out'), msg = st.querySelector('#p26-br-msg');
+      const label = k => F.find(f => f[0] === k)[1];
+
+      const lint = () => {
+        const issues = [];
+        const bad = new Set();
+        F.forEach(([k, name]) => {
+          const v = byK(k).value.trim();
+          if (!v) { issues.push(['Missing', name + ' is empty. ' + (k === 'nongoals' ? 'Without it, an agent may widen the scope.' : k === 'success' ? 'Without it, nobody can say when it’s done.' : 'Fill it in.')]); bad.add(k); return; }
+          const words = v.toLowerCase().match(/[a-z’'-]+/g) || [];
+          const hits = [...new Set(words.filter(w => VAGUE.includes(w)))];
+          if (hits.length) { issues.push(['Vague', name + ': ' + hits.map(h => '“' + h + '”').join(', ') + '. Say what you’d see happen.']); bad.add(k); }
+        });
+        const who = byK('who').value.trim().toLowerCase().replace(/[.!]+$/, '');
+        if (who && BROAD.includes(who)) { issues.push(['Too broad', 'Who: name the people and the moment, like “people editing in several tabs”.']); bad.add('who'); }
+        const prob = byK('problem').value.match(SOL);
+        if (prob) { issues.push(['Solution', 'Problem names a solution (“' + prob[0] + '”). Describe what goes wrong instead.']); bad.add('problem'); }
+        areas.forEach(a => a.setAttribute('aria-invalid', bad.has(a.dataset.k) ? 'true' : 'false'));
+        list.innerHTML = '';
+        if (!issues.length) {
+          const li = document.createElement('li'); li.className = 'ok';
+          li.innerHTML = '<b>Clear</b><span></span>';
+          li.querySelector('span').textContent = 'Every part is filled in and specific. Ready to hand off.';
+          list.appendChild(li);
+        }
+        issues.forEach(([t, text]) => {
+          const li = document.createElement('li');
+          const b = document.createElement('b'); b.textContent = t;
+          const s = document.createElement('span'); s.textContent = text;
+          li.append(b, s); list.appendChild(li);
+        });
+        sum.textContent = issues.length ? issues.length + (issues.length === 1 ? ' thing' : ' things') + ' to fix before handing off' : 'Nothing to fix';
+        out.textContent = '# Brief\n\n' + F.map(([k, name]) => '## ' + name + '\n' + (byK(k).value.trim() || '(missing)')).join('\n\n');
+      };
+      const load = key => { F.forEach(([k]) => { byK(k).value = P[key][k]; }); msg.textContent = ''; lint(); };
+      areas.forEach(a => a.addEventListener('input', lint));
+      st.querySelectorAll('input[name="p26-br-start"]').forEach(r => r.addEventListener('change', () => load(r.value)));
+      st.querySelector('#p26-br-copy').addEventListener('click', () => copyText(out.textContent, out, msg, 'Copied the brief.', 'brief'));
+      load('good');
+    })();
+
+    /* ---------- Context pack ---------- */
+    (() => {
+      const st = sec.querySelector('[data-demo="eff-context-pack"]');
+      if (!st) return;
+      const boxes = [...st.querySelectorAll('.p26-pack input[data-k]')];
+      const app = st.querySelector('#p26-cp-app'), file = st.querySelector('#p26-cp-file');
+      const sum = st.querySelector('#p26-cp-sum'), list = st.querySelector('#p26-cp-list');
+      const radios = [...st.querySelectorAll('input[name="p26-cp-mode"]')];
+      const GUESS = {
+        tokens: ['Colors', 'Picked its own colors and a rounded, playful style.'],
+        comp: ['Components', 'Built its own buttons instead of reusing the kit.'],
+        copy: ['Copy', 'Wrote “Warning!!” and an OK button that doesn’t say what it does.'],
+        ex: ['Layout', 'Put the actions on the left, unlike other dialogs in the app.'],
+        conv: ['Code', 'Plain JavaScript with inline styles and no test.'],
+        figma: ['Spacing', 'Guessed the size and spacing, so it looks cramped.']
+      };
+      const esc = s => s.replace(/&/g, '&amp;').replace(/</g, '&lt;');
+      const render = () => {
+        const on = {}; boxes.forEach(b => { on[b.dataset.k] = b.checked; });
+        const n = boxes.filter(b => b.checked).length;
+        radios[0].checked = n === 0; radios[1].checked = n === boxes.length;
+        const cls = ['p26-dlg'];
+        if (!on.tokens) cls.push('no-tokens');
+        if (!on.ex) cls.push('no-ex');
+        if (!on.figma) cls.push('no-figma');
+        const title = on.copy ? 'Close “Portrait v2” without saving?' : 'Warning!!';
+        const body = on.copy ? 'Changes since your last save will be lost.' : 'Are you sure? You have unsaved changes.';
+        let acts = on.copy ? [['Cancel', 'secondary'], ['Close without saving', 'secondary'], ['Save and close', 'primary']] : [['Cancel', 'secondary'], ['OK', 'primary']];
+        if (!on.ex) acts = acts.slice().reverse();
+        const btn = a => on.comp ? '<span class="btn btn-' + a[1] + '">' + esc(a[0]) + '</span>' : '<span class="p26-hand">' + esc(a[0]) + '</span>';
+        app.innerHTML = '<div class="' + cls.join(' ') + '"><h5>' + esc(title) + '</h5><p>' + esc(body) + '</p><div class="p26-acts">' + acts.map(btn).join('') + '</div></div>';
+        const missing = boxes.filter(b => !b.checked).map(b => b.dataset.k);
+        app.setAttribute('aria-label', 'Generated dialog: ' + title + ' ' + body + ' Buttons: ' + acts.map(a => a[0]).join(', ') + '. ' + (missing.length ? 'Off system: ' + missing.map(k => GUESS[k][0].toLowerCase()).join(', ') + '.' : 'Matches the design system.'));
+        file.textContent = on.conv ? 'CloseTabDialog.vue · TypeScript · Tailwind · CloseTabDialog.test.ts' : 'confirm-close.js · inline styles · no test';
+        sum.textContent = n === boxes.length ? 'On system: nothing left to guess' : n === 0 ? 'Off system: the agent guessed all 6' : 'Partly off: the agent guessed ' + missing.length + ' of 6';
+        list.innerHTML = '';
+        missing.forEach(k => {
+          const li = document.createElement('li');
+          const b = document.createElement('b'); b.textContent = GUESS[k][0];
+          const s = document.createElement('span'); s.textContent = GUESS[k][1];
+          li.append(b, s); list.appendChild(li);
+        });
+      };
+      boxes.forEach(b => b.addEventListener('change', render));
+      radios.forEach(r => r.addEventListener('change', () => { boxes.forEach(b => { b.checked = r.value === 'all'; }); render(); }));
+      render();
+    })();
+
+    /* ---------- Definition of done ---------- */
+    (() => {
+      const st = sec.querySelector('[data-demo="eff-definition-of-done"]');
+      if (!st) return;
+      const C = [
+        ['Behavior', 'Closing tabs is safe.', 'Closing a tab with unsaved changes asks first: Save, Don’t save or Cancel.', 'agent', 'Playwright test'],
+        ['Behavior', 'Saved tabs still close fast.', 'Closing a tab with no unsaved changes closes it at once, with no prompt.', 'agent', 'Playwright test'],
+        ['States', 'Handles edge cases.', 'If saving fails, the tab stays open and the error says why.', 'agent', 'Vitest unit test'],
+        ['Accessibility', 'Accessible.', 'The prompt works by keyboard alone, and focus returns to the tab bar after.', 'agent', 'Playwright keyboard test'],
+        ['Tests', 'Tested.', 'A new Playwright spec covers both cases, and the existing tab specs still pass.', 'agent', 'CI run on the PR'],
+        ['Screenshots', 'Looks right.', 'Screenshots of the prompt in light and dark, at desktop and narrow widths, attached to the PR.', 'agent', 'Playwright screenshots'],
+        ['Judgment', 'Copy is good.', 'The wording is calm and plain, and each button says what it does.', 'you', 'Read it in the real app'],
+        ['Judgment', 'Feels right.', 'Closing several tabs in a row doesn’t feel naggy.', 'you', 'Try it yourself']
+      ];
+      const ul = st.querySelector('#p26-dd-list'), sum = st.querySelector('#p26-dd-sum');
+      const done = new Set();
+      let filter = 'all';
+      const make = (i, focus) => {
+        done.add(i); render();
+        if (focus) { const t = ul.querySelector('[data-i="' + i + '"] .p26-dod-text'); if (t) t.focus(); }
+      };
+      const render = () => {
+        ul.innerHTML = '';
+        C.forEach((c, i) => {
+          const isDone = done.has(i);
+          if (filter !== 'all' && (!isDone || c[3] !== filter)) return;
+          const li = document.createElement('li'); li.dataset.i = i;
+          if (!isDone) li.className = 'vague';
+          const cat = document.createElement('span'); cat.className = 'p26-dod-cat'; cat.textContent = c[0];
+          const t = document.createElement('span'); t.className = 'p26-dod-text'; t.tabIndex = -1;
+          t.textContent = isDone ? c[2] : c[1];
+          li.append(cat, t);
+          if (isDone) {
+            const tag = document.createElement('span'); tag.className = 'p26-dod-tag' + (c[3] === 'you' ? ' you' : '');
+            tag.textContent = c[3] === 'you' ? 'You verify' : 'Agent can verify';
+            const how = document.createElement('span'); how.className = 'p26-dod-how';
+            how.textContent = 'How: ' + c[4] + (c[3] === 'you' ? '. This is a judgment call.' : '.');
+            li.append(tag, how);
+          } else {
+            const b = document.createElement('button'); b.type = 'button'; b.className = 'btn btn-secondary p26-sm';
+            b.textContent = 'Make checkable';
+            b.setAttribute('aria-label', 'Make checkable: ' + c[1]);
+            b.addEventListener('click', () => make(i, true));
+            li.append(b);
+          }
+          ul.appendChild(li);
+        });
+        const agent = [...done].filter(i => C[i][3] === 'agent').length, you = done.size - agent;
+        const left = C.length - done.size;
+        sum.textContent = done.size + ' of ' + C.length + ' checkable · Agent can verify ' + agent + ' · You verify ' + you + (left && filter !== 'all' ? ' · ' + left + ' still vague, hidden' : '');
+      };
+      st.querySelector('#p26-dd-all').addEventListener('click', () => { C.forEach((c, i) => done.add(i)); render(); });
+      st.querySelector('#p26-dd-reset').addEventListener('click', () => { done.clear(); render(); });
+      st.querySelectorAll('input[name="p26-dd-filter"]').forEach(r => r.addEventListener('change', () => { filter = r.value; render(); }));
+      render();
+    })();
+  })();
+  </script>

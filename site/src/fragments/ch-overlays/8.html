@@ -1,0 +1,12 @@
+<div class="stage tall" data-demo="popover" style="justify-content:flex-start">
+      <div class="anchor">
+        <button class="btn btn-secondary" type="button" data-pop="d-pop" aria-expanded="false" aria-controls="d-pop"><svg class="icon sm"><use href="#i-sliders"/></svg>Map options</button>
+        <div class="pop surface" id="d-pop" role="dialog" aria-label="Map options" hidden>
+          <h5>Map options</h5>
+          <label class="switch" style="padding:8px 0"><span class="grow">Show traffic</span><input type="checkbox" role="switch" id="d-pop-snap" checked></label>
+          <label class="switch" style="padding:8px 0"><span class="grow">Show transit lines</span><input type="checkbox" role="switch" id="d-pop-map"></label>
+          <label class="field" style="width:100%"><span class="field-label">Map type</span><select class="select" id="d-pop-grid"><option selected>Default</option><option>Satellite</option><option>Terrain</option></select></label>
+        </div>
+      </div>
+      <p class="try" style="margin-top:auto"><b>Try it:</b> open it, change a setting, then click outside or press Esc. The change stays.</p>
+    </div>

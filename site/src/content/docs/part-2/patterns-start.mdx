@@ -1,0 +1,40 @@
+---
+title: "Name the problem before the fix"
+description: "Interface problems repeat across products, and so do their solutions."
+eyebrow: "Before you start"
+part:
+  id: "part-2"
+  label: "Part 2 · Patterns"
+  title: "Patterns"
+  sub: "Named solutions to problems that keep coming back. Each one is built from the components in Part 3."
+sidebar:
+  label: "Reading a pattern"
+---
+
+import Raw from '../../../components/Raw.astro';
+import Learned from '../../../components/Learned.astro';
+import Runtime from '../../../components/Runtime.astro';
+import F0 from '../../../fragments/ch-patterns-start/0.html?raw';
+import F1 from '../../../fragments/ch-patterns-start/1.html?raw';
+
+<Runtime at="start" />
+
+<section class="dfg-chapter" id="ch-patterns-start">
+
+Interface problems repeat across products, and so do their solutions. A pattern is a solution shape that has worked many times before: undo instead of a confirm, a command palette when menus get too deep, a template instead of a blank screen.
+
+Patterns give you a head start and a shared name, but they’re risky when you reach for one before you understand the problem. So read each pattern as a problem, a pattern and its trade-off.
+
+<Raw html={F0} />
+
+### How each entry reads
+
+Each pattern is a short article. It starts with the problem it solves and a demo. Then the main ways to do it. Then the rules: every pattern has a cost, and each rule shows how it backfires and how to soften it, with a demo you can switch between the two. Last, real products that use it.
+
+### The problems in this part
+
+<Raw html={F1} />
+
+</section>
+
+<Runtime chapter="ch-patterns-start" />

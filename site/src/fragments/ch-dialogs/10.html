@@ -1,0 +1,90 @@
+<div class="fm" data-fm>
+  
+  <div class="seg fm-seg" role="radiogroup" aria-label="Form">
+    <input type="radio" name="fm-side-panel" id="fm-side-panel-1" value="docked" checked><label for="fm-side-panel-1">Docked</label>
+    <input type="radio" name="fm-side-panel" id="fm-side-panel-2" value="overlay"><label for="fm-side-panel-2">Overlay</label>
+    <input type="radio" name="fm-side-panel" id="fm-side-panel-3" value="modal"><label for="fm-side-panel-3">Modal</label>
+  </div>
+  <div class="fm-stage" data-fm-stage></div>
+  <p class="fig-cap" data-fm-when aria-live="polite"></p>
+  <script>
+  (() => {
+    const fm = document.currentScript.closest('[data-fm]'), stage = fm.querySelector('[data-fm-stage]'), when = fm.querySelector('[data-fm-when]');
+    const icon = n => '<svg class="icon sm"><use href="#i-' + n + '"/></svg>';
+    const head = (title, label) => '<div class="fmp-hd"><span>' + title + '</span><button type="button" class="icon-btn fmp-x" data-x aria-label="' + label + '">' + icon('x') + '</button></div>';
+    const app = (title, button, row, after) => '<div class="app-frame fm-frame fmp-app"><div class="app-bar"><span>' + title + '</span><button type="button" class="btn btn-secondary cs-sm" data-tog aria-expanded="true">' + button + '</button></div>' +
+      '<div class="fmp-row">' + row + '</div>' + (after || '') + '</div>';
+
+    /* Open and close the panel. A modal panel also shows the dim and makes everything behind it inert. */
+    const wire = (s, modal) => {
+      const t = s.querySelector('[data-tog]'), p = s.querySelector('[data-panel]'), scrim = s.querySelector('[data-scrim]');
+      const behind = [s.querySelector('.app-bar'), s.querySelector('.fmp-row')];
+      const set = (open, focus) => {
+        p.hidden = !open; t.setAttribute('aria-expanded', String(open));
+        if (modal) { scrim.hidden = !open; behind.forEach(el => { el.inert = open; }); }
+        if (focus) (open ? p.querySelector('[data-x]') : t).focus({ preventScroll: true });
+      };
+      t.addEventListener('click', () => set(p.hidden, true));
+      p.querySelector('[data-x]').addEventListener('click', () => set(false, true));
+      if (modal) {
+        scrim.addEventListener('click', () => set(false, true));
+        p.addEventListener('keydown', e => { if (e.key === 'Escape') { e.stopPropagation(); set(false, true); } });
+      }
+      set(true, false);
+      return set;
+    };
+
+    const TR = [['Open road', 'Mara Lee', '3:12'], ['Coastline', 'The Harbors', '4:05'], ['Night drive', 'Neon Fields', '3:47'], ['Rest stop', 'Mara Lee', '2:58'], ['Home again', 'June Park', '3:30']];
+    const queue = i => '<span class="fmp-lab">Now playing</span><div class="fmp-q"><b>' + TR[i][0] + '</b><span>' + TR[i][1] + '</span></div><span class="fmp-lab">Next</span>' +
+      [1, 2].map(k => '<div class="fmp-q">' + TR[(i + k) % TR.length][0] + '</div>').join('');
+    const PL = [['Café Lua', 'Café', 'Open until 18:00', '4.6', 20, 12], ['City Museum', 'Museum', 'Open until 20:00', '4.4', 4, 44], ['River Park', 'Park', 'Open all day', '4.8', 14, 74]];
+    const place = i => '<b>' + PL[i][0] + '</b><span>' + PL[i][1] + ' · ' + PL[i][3] + ' stars</span>' + PL[i][2];
+    const roads = '<i class="fmp-road" style="left:-5%;right:-5%;top:30%;height:12px"></i><i class="fmp-road" style="top:-5%;bottom:-5%;left:40%;width:12px"></i><i class="fmp-road" style="left:-5%;right:-5%;top:62%;height:8px"></i><i class="fmp-road" style="top:-5%;bottom:-5%;left:84%;width:8px"></i>';
+    const F = {
+      docked: {
+        html: app('Road trip', 'Queue',
+          '<div class="fmp-main">' + TR.map((t, i) => '<button type="button" class="fmp-trk" data-i="' + i + '" aria-current="' + (i === 0) + '"><span class="n">' + (i + 1) + '</span><span class="t">' + t[0] + ' · ' + t[1] + '</span><span class="d">' + t[2] + '</span></button>').join('') + '</div>' +
+          '<aside class="fmp-panel fmp-dock" aria-label="Queue" data-panel>' + head('Queue', 'Close queue') + '<div class="fmp-info" data-q>' + queue(0) + '</div></aside>'),
+        use: 'Use it for a panel people keep open for a while, like the play queue in a music app.',
+        more: 'The page gets narrower to make room, so nothing is hidden behind the panel.',
+        wire: s => {
+          wire(s, false);
+          const box = s.querySelector('[data-q]'), trs = Array.from(s.querySelectorAll('.fmp-trk'));
+          trs.forEach(b => b.addEventListener('click', () => { trs.forEach(x => x.setAttribute('aria-current', String(x === b))); box.innerHTML = queue(+b.dataset.i); }));
+        }
+      },
+      overlay: {
+        html: app('Maps', 'Details',
+          '<div class="fmp-map">' + roads + PL.map((p, i) => '<button type="button" class="fmp-pin" data-i="' + i + '" aria-pressed="' + (i === 0) + '" style="left:' + p[4] + '%;top:' + p[5] + '%">' + p[0] + '</button>').join('') + '</div>' +
+          '<aside class="fmp-panel fmp-over" aria-label="Details" data-panel>' + head('Details', 'Close details') + '<div class="fmp-info" data-info>' + place(0) + '</div></aside>'),
+        use: 'Use it for details people open and close often, like a place on a map.',
+        more: 'It covers the edge of the page, but the page stays bright and usable.',
+        wire: s => {
+          const set = wire(s, false);
+          const box = s.querySelector('[data-info]'), pins = Array.from(s.querySelectorAll('.fmp-pin'));
+          pins.forEach(b => b.addEventListener('click', () => { pins.forEach(x => x.setAttribute('aria-pressed', String(x === b))); box.innerHTML = place(+b.dataset.i); set(true, false); }));
+        }
+      },
+      modal: {
+        html: app('Books', 'Cart (2)',
+          '<div class="fmp-main"><div class="fmp-grid">' + [['The Quiet Coast', '$18'], ['Small Kitchens', '$24'], ['Maps of Home', '$16'], ['Long Summer', '$21']].map((p, i) => '<div class="fmp-prod"><span class="thumb ' + ['', 'b', 'c', 'b'][i] + '"></span><b>' + p[0] + '</b><span>' + p[1] + '</span></div>').join('') + '</div><p class="cs-meta" data-out></p></div>',
+          '<div class="fmp-scrim" data-scrim></div><aside class="fmp-panel fmp-modal" role="dialog" aria-modal="true" aria-label="Cart" data-panel>' + head('Cart', 'Close cart') +
+          '<div class="fmp-item"><span class="thumb"></span><span>The Quiet Coast<br>$18</span></div><div class="fmp-item"><span class="thumb b"></span><span>Small Kitchens<br>$24</span></div>' +
+          '<div class="fmp-total"><span>Total</span><span>$42</span></div><button type="button" class="btn btn-primary cs-sm" data-go>Check out</button></aside>'),
+        use: 'Use it when people should finish one task before going back, like checking their cart.',
+        more: 'The page is dimmed and can’t be used until the panel closes.',
+        wire: s => {
+          const set = wire(s, true);
+          s.querySelector('[data-go]').addEventListener('click', () => { set(false, true); s.querySelector('[data-out]').textContent = 'The checkout page opens next.'; });
+        }
+      }
+    };
+    const show = k => {
+      stage.innerHTML = F[k].html; F[k].wire(stage);
+      when.innerHTML = '<b>' + fm.querySelector('.fm-seg input:checked + label').textContent + '.</b> ' + F[k].use + ' ' + F[k].more;
+    };
+    fm.querySelectorAll('.fm-seg input').forEach(i => i.addEventListener('change', () => show(i.value)));
+    show('docked');
+  })();
+  </script>
+</div>

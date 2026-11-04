@@ -1,0 +1,24 @@
+---
+title: "Glossary"
+description: "Terms this book uses in a specific sense, each with the entry that explains it."
+eyebrow: "Reference"
+sidebar:
+  label: "Glossary"
+---
+
+import Raw from '../../../components/Raw.astro';
+import Learned from '../../../components/Learned.astro';
+import Runtime from '../../../components/Runtime.astro';
+import F0 from '../../../fragments/ch-glossary/0.html?raw';
+
+<Runtime at="start" />
+
+<section class="dfg-chapter" id="ch-glossary">
+
+Terms this book uses in a specific sense, each with the entry that explains it.
+
+<Raw html={F0} />
+
+</section>
+
+<Runtime chapter="ch-glossary" />

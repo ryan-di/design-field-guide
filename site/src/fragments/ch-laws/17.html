@@ -1,0 +1,51 @@
+<div class="note comfy cw-wrap"><p>Notice how each one cuts a long list down to a few likely choices before people have to pick.</p>
+  <div class="seg cw-seg" role="radiogroup" aria-label="Example">
+    <input type="radio" name="cw-pat-hicks-law-w" id="cw-pat-hicks-law-w-1" value="slack" checked><label for="cw-pat-hicks-law-w-1">Slack</label>
+    <input type="radio" name="cw-pat-hicks-law-w" id="cw-pat-hicks-law-w-2" value="ps"><label for="cw-pat-hicks-law-w-2">Photoshop</label>
+    <input type="radio" name="cw-pat-hicks-law-w" id="cw-pat-hicks-law-w-3" value="duo"><label for="cw-pat-hicks-law-w-3">Duolingo</label>
+  </div>
+  <div class="cw cw-hick-view" data-cw-view role="img" aria-label=""></div>
+  <p class="cw-cap" data-cw-cap aria-live="polite"></p>
+  
+  <script>
+  (() => {
+    const wrap = document.currentScript.closest('.cw-wrap');
+    const view = wrap.querySelector('[data-cw-view]'), cap = wrap.querySelector('[data-cw-cap]');
+    const ic = id => '<svg class="icon sm" aria-hidden="true"><use href="#i-' + id + '"/></svg>';
+    const L = w => '<i class="cw-line" style="width:' + w + '%"></i>';
+    const g = d => '<svg class="icon" viewBox="0 0 24 24" aria-hidden="true">' + d + '</svg>';
+    const G = {
+      move: g('<path d="M12 3v18M3 12h18M12 3l-3 3M12 3l3 3M12 21l-3-3M12 21l3-3M3 12l3-3M3 12l3 3M21 12l-3-3M21 12l-3 3"/>'),
+      rect: g('<rect x="4" y="6" width="16" height="12" rx="1" stroke-dasharray="3 2.5"/>'),
+      ell: g('<ellipse cx="12" cy="12" rx="8.5" ry="6.5" stroke-dasharray="3 2.5"/>'),
+      row: g('<path d="M3 12h18" stroke-dasharray="3 2.5"/>'),
+      col: g('<path d="M12 3v18" stroke-dasharray="3 2.5"/>'),
+      lasso: g('<path d="M7 17c-3-2-3-7 1-9.5s10-1.5 11 2-3 7-8 6.5"/><path d="M8 16l-1 5"/>'),
+      crop: g('<path d="M7 3v14h14M3 7h14v14"/>'),
+      brush: g('<path d="M19 4l-8 9"/><path d="M10 13c-3 0-4 2-4 4s-1 3-2 3c3 1 8 0 8-4"/>'),
+      text: g('<path d="M5 5h14M12 5v14"/>')
+    };
+    const tool = (k, on) => '<span class="cw-hick-tool' + (on ? ' on' : '') + '">' + G[k] + '</span>';
+    const row = (lead, name, note, on) => '<span class="cw-hick-row' + (on ? ' on' : '') + '">' + lead + '<span>' + name + '</span>' + (note ? '<small>' + note + '</small>' : '') + '</span>';
+    const S = {
+      slack: { html: '<div class="cw-hick-dlg"><div class="cw-hick-q">' + ic('search') + '<span class="cw-hick-caret"></span>Jump to…</div><div class="cw-hick-h">Recent</div>' +
+          row('<b>#</b>', 'design', '', true) + row('<b>#</b>', 'frontend') + row('<span class="cw-hick-av"></span>', 'Ana Ruiz') + row('<b>#</b>', 'releases') + row('<span class="cw-hick-av"></span>', 'Sam Lee') + '</div>',
+        alt: 'A Jump to box with an empty search field. Below it, a short Recent list: design, frontend, Ana Ruiz, releases, Sam Lee. The first is selected.',
+        cap: 'Slack: the quick switcher opens with your recent channels and people, and narrows to a few matches as you type.' },
+      ps: { html: '<div class="cw-hick-app"><div class="cw-hick-tools">' + tool('move') + tool('rect', true) + tool('lasso') + tool('crop') + tool('brush') + tool('text') + '</div><div class="cw-hick-canvas"></div>' +
+          '<div class="cw-hick-fly"><span class="on">' + G.rect + 'Rectangle</span><span>' + G.ell + 'Ellipse</span><span>' + G.row + 'Single row</span><span>' + G.col + 'Single column</span></div></div>',
+        alt: 'An image editor with a short tool column. Holding the selection tool opens a small flyout with its relatives: Rectangle, Ellipse, Single row, Single column.',
+        cap: 'Photoshop: the toolbar shows one tool from each group. Hold a tool to see its relatives, so dozens of tools fit in one short column.' },
+      duo: { html: '<div class="cw-hick-phone"><div class="cw-hick-unit"><b>Unit 1</b>' + L(70) + '</div><div class="cw-hick-path">' +
+          '<span class="cw-hick-step done" style="margin-left:-36px">' + ic('check') + '</span><span class="cw-hick-step done" style="margin-left:-6px">' + ic('check') + '</span>' +
+          '<span style="position:relative;display:flex;align-items:center;justify-content:center;width:100%"><span class="cw-hick-step now" style="margin-left:40px"></span><span class="cw-hick-start">Start</span></span>' +
+          '<span class="cw-hick-step" style="margin-left:6px"></span><span class="cw-hick-step" style="margin-left:-34px"></span></div></div>',
+        alt: 'A phone showing a winding path of lesson circles. Two are done. The next one is larger, ringed, and labeled Start. The rest are grayed out.',
+        cap: 'Duolingo: the home screen is a path with one lesson marked as next. Opening the app leads to one obvious tap, not a menu of lessons.' }
+    };
+    const render = k => { view.innerHTML = S[k].html; view.setAttribute('aria-label', 'Sketch: ' + S[k].alt); cap.textContent = S[k].cap; };
+    wrap.querySelectorAll('input[name="cw-pat-hicks-law-w"]').forEach(r => r.addEventListener('change', () => render(r.value)));
+    render('slack');
+  })();
+  </script>
+</div>

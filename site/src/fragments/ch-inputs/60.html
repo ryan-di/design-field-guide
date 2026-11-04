@@ -1,0 +1,164 @@
+<script>
+(() => {
+  const cs = document.currentScript.closest('.cs');
+  const D = (k, html, wire) => csDemo(cs.querySelector('[data-d="' + k + '"]'), html, wire);
+  const icon = n => '<svg class="icon" style="width:16px;height:16px"><use href="#i-' + n + '"/></svg>';
+  const MON = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+  const MONL = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+  const DAY = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+  const TODAY = new Date(2026, 9, 23);
+  const same = (a, b) => !!a && !!b && a.getFullYear() === b.getFullYear() && a.getMonth() === b.getMonth() && a.getDate() === b.getDate();
+  const fmt = dt => DAY[dt.getDay()] + ', ' + dt.getDate() + ' ' + MON[dt.getMonth()] + ' ' + dt.getFullYear();
+  const plus = (dt, n) => new Date(dt.getFullYear(), dt.getMonth(), dt.getDate() + n);
+  const daysFrom = (a, b) => Math.round((b - a) / 864e5);
+
+  /* Month calendar. st: {y, m, sel, today (mark it), past (allow days before TODAY), onPick, onClick} */
+  const cal = (host, st) => {
+    const draw = focusSel => {
+      const lead = (new Date(st.y, st.m, 1).getDay() + 6) % 7, n = new Date(st.y, st.m + 1, 0).getDate();
+      let h = '<div class="pk-head"><button type="button" class="icon-btn pk-nav" data-nav="-1" aria-label="Previous month">‹</button>' +
+        '<b>' + MONL[st.m] + ' ' + st.y + '</b><button type="button" class="icon-btn pk-nav" data-nav="1" aria-label="Next month">›</button></div>' +
+        '<div class="pk-grid">' + ['Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa', 'Su'].map(x => '<span class="pk-wd" aria-hidden="true">' + x + '</span>').join('') + '<span></span>'.repeat(lead);
+      for (let d = 1; d <= n; d++) {
+        const dt = new Date(st.y, st.m, d), isT = st.today && same(dt, TODAY), off = !st.past && dt < TODAY;
+        h += '<button type="button" class="pk-day' + (isT ? ' today' : '') + '" data-day="' + d + '" aria-label="' + fmt(dt) + (isT ? ', today' : '') + '" aria-pressed="' + same(dt, st.sel) + '"' + (off ? ' disabled' : '') + '>' + d + '</button>';
+      }
+      host.innerHTML = h + '</div>';
+      host.querySelectorAll('[data-nav]').forEach(b => b.addEventListener('click', () => {
+        if (st.onClick) st.onClick();
+        const k = new Date(st.y, st.m + +b.dataset.nav, 1); st.y = k.getFullYear(); st.m = k.getMonth();
+        draw(); host.querySelector('[data-nav="' + b.dataset.nav + '"]').focus();
+      }));
+      host.querySelectorAll('[data-day]').forEach(b => b.addEventListener('click', () => {
+        if (st.onClick) st.onClick();
+        st.sel = new Date(st.y, st.m, +b.dataset.day); st.onPick(st.sel); draw(true);
+      }));
+      if (focusSel) { const s = host.querySelector('[aria-pressed="true"]'); if (s) s.focus(); }
+    };
+    st.draw = draw; draw();
+    return st;
+  };
+
+  /* 1. Typing is faster: date of birth */
+  const parseDob = raw => {
+    const v = raw.trim().replace(/,/g, ' ').replace(/\s+/g, ' ');
+    const mon = s => MON.findIndex(m => s.toLowerCase().startsWith(m.toLowerCase()));
+    const mk = (d, m, y) => { const dt = new Date(y, m, d); return m >= 0 && y > 1900 && y <= 2026 && dt.getMonth() === m ? dt : null; };
+    let r = v.match(/^(\d{4})-(\d{1,2})-(\d{1,2})$/);
+    if (r) return mk(+r[3], +r[2] - 1, +r[1]);
+    r = v.match(/^(\d{1,2}) ([a-z]{3,})\.? (\d{4})$/i); if (r) return mk(+r[1], mon(r[2]), +r[3]);
+    r = v.match(/^([a-z]{3,})\.? (\d{1,2}) (\d{4})$/i); if (r) return mk(+r[2], mon(r[1]), +r[3]);
+    r = v.match(/^(\d{1,2})[\/.](\d{1,2})[\/.](\d{4})$/);
+    if (r) {
+      const a = +r[1], b = +r[2];
+      if (a > 12) return mk(a, b - 1, +r[3]);
+      if (b > 12) return mk(b, a - 1, +r[3]);
+      return a === b ? mk(a, b - 1, +r[3]) : 'two:' + a + ' ' + MON[b - 1] + ' or ' + b + ' ' + MON[a - 1];
+    }
+    return null;
+  };
+  const dobHtml = fixed => '<div class="cs-form pk-form"><span class="pk-h">Your details</span>' +
+    (fixed
+      ? '<label class="cs-f">Date of birth<input class="input" data-in placeholder="e.g. 14 Mar 1988" autocomplete="off"></label><div data-read aria-live="polite"></div>'
+      : '<div class="cs-f"><span>Date of birth</span><span class="pk-val" data-val aria-live="polite">Not set</span></div>') +
+    '<div data-cal></div><p class="cs-meta" data-clicks></p></div>';
+  const dobWire = fixed => d => {
+    const clicks = d.querySelector('[data-clicks]'), inp = d.querySelector('[data-in]'), read = d.querySelector('[data-read]'), val = d.querySelector('[data-val]');
+    let n = 0;
+    const tick = () => { clicks.textContent = 'Clicks so far: ' + n; };
+    const ok = dt => '<p class="pk-read">' + icon('check') + '<span>' + fmt(dt) + '</span></p>';
+    const st = cal(d.querySelector('[data-cal]'), {
+      y: 2026, m: 9, sel: null, past: true,
+      onClick: () => { n++; tick(); },
+      onPick: dt => {
+        if (fixed) { inp.value = dt.getDate() + ' ' + MON[dt.getMonth()] + ' ' + dt.getFullYear(); read.innerHTML = ok(dt); }
+        else val.textContent = fmt(dt);
+      }
+    });
+    tick();
+    if (!fixed) return;
+    inp.addEventListener('input', () => {
+      const r = parseDob(inp.value);
+      if (r instanceof Date) { st.y = r.getFullYear(); st.m = r.getMonth(); st.sel = r; st.draw(); read.innerHTML = ok(r); return; }
+      if (typeof r === 'string') { read.innerHTML = '<p class="pk-read pk-quiet">Could be ' + r.slice(4) + '. Type the month as a word.</p>'; return; }
+      read.innerHTML = inp.value.trim() ? '<p class="pk-read pk-quiet">Type the day, month and year.</p>' : '';
+    });
+  };
+  D('picker-1b', dobHtml(false), dobWire(false));
+  D('picker-1f', dobHtml(true), dobWire(true));
+
+  /* 2. Few values: event color */
+  const COLORS = [['Slate', '--thumb-a'], ['Blue', '--ui-sel'], ['Rust', '--ui-danger'], ['Peach', '--thumb-b'], ['Sand', '--thumb-d'], ['Sage', '--thumb-c'], ['Green', '--ui-ok'], ['Grey', '--ui-muted']];
+  const v = i => 'var(' + COLORS[i][1] + ')';
+  const strip = 'linear-gradient(90deg,' + COLORS.map((c, i) => v(i) + ' ' + (i / 7 * 100).toFixed(2) + '%').join(',') + ')';
+  const event = '<div class="pk-event"><i data-bar style="background:var(--thumb-c)"></i><div><b>Dentist</b><span>Tue 3 Nov · 9:30</span></div></div>';
+  const colHtml = fixed => '<div class="cs-form pk-form"><span class="pk-h">Edit event</span>' + event +
+    (fixed
+      ? '<div class="cs-f"><span>Event color</span><div class="pk-sw" role="radiogroup" aria-label="Event color">' +
+        COLORS.map((c, i) => '<button type="button" role="radio" aria-checked="' + (i === 5) + '" aria-label="' + c[0] + '" data-tip="' + c[0] + '" data-i="' + i + '" style="background:' + v(i) + '"></button>').join('') +
+        '</div><span class="pk-name" data-name>Sage</span></div>'
+      : '<label class="cs-f">Event color<input type="range" class="pk-strip" min="0" max="700" value="145" data-r style="background:' + strip + '"></label>' +
+        '<div class="pk-pick"><span>You picked</span><i data-picked></i></div>') +
+    '<button class="btn btn-primary" type="button" data-save>Save</button><p class="cs-meta" data-out aria-live="polite"></p></div>';
+  D('picker-2b', colHtml(false), d => {
+    const r = d.querySelector('[data-r]'), picked = d.querySelector('[data-picked]'), bar = d.querySelector('[data-bar]'), out = d.querySelector('[data-out]');
+    const mix = () => {
+      const x = +r.value, s = Math.min(6, Math.floor(x / 100)), f = (x - s * 100);
+      picked.style.background = 'color-mix(in srgb, ' + v(s) + ' ' + (100 - f) + '%, ' + v(s + 1) + ')';
+      out.textContent = '';
+    };
+    r.addEventListener('input', mix); mix();
+    d.querySelector('[data-save]').addEventListener('click', () => {
+      /* the calendar quietly keeps the nearest of its 8 colors */
+      bar.style.background = v(Math.round(+r.value / 100));
+      out.textContent = 'Saved.';
+    });
+  });
+  D('picker-2f', colHtml(true), d => {
+    const bar = d.querySelector('[data-bar]'), out = d.querySelector('[data-out]'), name = d.querySelector('[data-name]'), sw = Array.from(d.querySelectorAll('.pk-sw button'));
+    let cur = 5;
+    const pick = (i, focus) => {
+      cur = i; out.textContent = ''; name.textContent = COLORS[i][0];
+      sw.forEach((b, k) => { b.setAttribute('aria-checked', String(k === i)); b.tabIndex = k === i ? 0 : -1; });
+      if (focus) sw[i].focus();
+    };
+    sw.forEach((b, i) => {
+      b.addEventListener('click', () => pick(i));
+      b.addEventListener('keydown', e => {
+        const k = { ArrowRight: 1, ArrowDown: 1, ArrowLeft: -1, ArrowUp: -1 }[e.key];
+        if (k) { e.preventDefault(); pick((i + k + sw.length) % sw.length, true); }
+      });
+    });
+    pick(5);
+    d.querySelector('[data-save]').addEventListener('click', () => { bar.style.background = v(cur); out.textContent = 'Saved.'; });
+  });
+
+  /* 3. Missing context: share link expiry */
+  const PRE = [1, 7, 30];
+  const shareHtml = fixed => '<div class="cs-form pk-form"><span class="pk-h">Share “Trip photos”</span>' +
+    '<div class="cs-f"><span>Link expires</span>' +
+    (fixed ? '<div class="pk-pre" role="group" aria-label="Presets">' + PRE.map(n => '<button type="button" class="btn btn-secondary cs-sm" data-n="' + n + '" aria-pressed="false">In ' + n + (n === 1 ? ' day' : ' days') + '</button>').join('') + '</div>' : '') +
+    '</div><div data-cal></div><p class="pk-read" data-read aria-live="polite"></p></div>';
+  D('picker-3b', shareHtml(false), d => {
+    const read = d.querySelector('[data-read]');
+    read.textContent = 'Expires: not set';
+    cal(d.querySelector('[data-cal]'), { y: 2026, m: 9, sel: null, past: true, onPick: dt => { read.textContent = 'Expires: ' + dt.getDate() + ' ' + MON[dt.getMonth()] + ' ' + dt.getFullYear(); } });
+  });
+  D('picker-3f', shareHtml(true), d => {
+    const read = d.querySelector('[data-read]'), pre = Array.from(d.querySelectorAll('[data-n]'));
+    const say = dt => {
+      const n = daysFrom(TODAY, dt);
+      read.innerHTML = icon('check') + '<span>Expires ' + fmt(dt).replace(/ \d{4}$/, '') + ' (in ' + n + (n === 1 ? ' day' : ' days') + ')</span>';
+      pre.forEach(b => b.setAttribute('aria-pressed', String(+b.dataset.n === n)));
+    };
+    const st = cal(d.querySelector('[data-cal]'), { y: 2026, m: 9, sel: null, today: true, past: false, onPick: say });
+    read.innerHTML = '<span class="pk-quiet">Today is ' + fmt(TODAY).replace(/ \d{4}$/, '') + '. Pick a length or a day.</span>';
+    pre.forEach(b => b.addEventListener('click', () => {
+      const dt = plus(TODAY, +b.dataset.n); st.y = dt.getFullYear(); st.m = dt.getMonth(); st.sel = dt; st.draw(); say(dt);
+    }));
+  });
+
+  csInit(cs);
+})();
+
+  </script>

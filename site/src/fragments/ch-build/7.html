@@ -1,0 +1,26 @@
+<div class="stage tall" data-demo="eff-agent-verification">
+      <div class="p29-av">
+        <div class="surface p29-av-box">
+          <p class="p29-av-h">The change</p>
+          <ul class="p29-av-files">
+            <li>Workflow store: track unsaved changes per tab</li>
+            <li>Tab bar: a dot on tabs with unsaved changes</li>
+            <li>Close dialog: Save, Don’t save, Cancel</li>
+            <li>Shortcut: close tab goes through the dialog</li>
+          </ul>
+        </div>
+        <fieldset class="surface p29-av-box p29-av-checks">
+          <legend class="p29-av-h">Checks the agent runs</legend>
+          <label class="check"><input type="checkbox" value="unit" checked> <span>Unit tests <small>Vitest</small></span></label>
+          <label class="check"><input type="checkbox" value="e2e"> <span>Affected end-to-end specs <small>Playwright</small></span></label>
+          <label class="check"><input type="checkbox" value="shots"> <span>Screenshots before and after <small>Playwright, light and dark, narrow</small></span></label>
+          <label class="check"><input type="checkbox" value="types"> <span>Type check <small>TypeScript</small></span></label>
+        </fieldset>
+      </div>
+      <div class="surface p29-av-bugs">
+        <p class="p29-av-h">Bugs hiding in this change</p>
+        <ul id="p29-av-list"></ul>
+        <p class="p29-av-sum" id="p29-av-sum" role="status"></p>
+      </div>
+      <p class="try"><b>Try it:</b> only unit tests run at first. Tick more checks and watch which bugs get caught before review. Tick all four and see which one still slips through.</p>
+    </div>

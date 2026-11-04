@@ -1,0 +1,73 @@
+<div class="fm" data-fm>
+  <div class="seg fm-seg" role="radiogroup" aria-label="Source">
+    <input type="radio" name="fm-pat-smart-defaults" id="fm-pat-smart-defaults-1" value="common" checked><label for="fm-pat-smart-defaults-1">Most common</label>
+    <input type="radio" name="fm-pat-smart-defaults" id="fm-pat-smart-defaults-2" value="last"><label for="fm-pat-smart-defaults-2">Last used</label>
+    <input type="radio" name="fm-pat-smart-defaults" id="fm-pat-smart-defaults-3" value="context"><label for="fm-pat-smart-defaults-3">From context</label>
+    <input type="radio" name="fm-pat-smart-defaults" id="fm-pat-smart-defaults-4" value="derived"><label for="fm-pat-smart-defaults-4">From another field</label>
+  </div>
+  <div class="fm-stage" data-fm-stage></div>
+  <p class="fig-cap" data-fm-when aria-live="polite"></p>
+  
+  <script>
+  (() => {
+    const fm = document.currentScript.closest('[data-fm]'), stage = fm.querySelector('[data-fm-stage]'), when = fm.querySelector('[data-fm-when]');
+    const PEOPLE = [['A', 'Ana'], ['L', 'Leo'], ['S', 'Sam'], ['M', 'Mum']];
+    let last = 'Leo';
+    const times = [];
+    for (let h = 8; h <= 18; h++) times.push((h < 10 ? '0' : '') + h + ':00');
+    const opts = (sel) => times.map(x => '<option' + (x === sel ? ' selected' : '') + '>' + x + '</option>').join('');
+    const F = {
+      common: {
+        html: '<div class="sdf-card" role="radiogroup" aria-label="Delivery"><b>Delivery</b>' +
+          [['Standard', '3–5 days, free', true], ['Express', 'Next day, €6.99', false], ['Pick up in store', 'Ready tomorrow', false]]
+            .map(o => '<label class="sdf-opt"><input type="radio" name="sdf-ship"' + (o[2] ? ' checked' : '') + '><span>' + o[0] + '<small>' + o[1] + '</small></span></label>').join('') +
+          '<span class="sdf-tag">Standard is picked in 81% of orders.</span></div>',
+        use: 'Use it when one answer fits most people.',
+        why: 'Base it on what people actually pick, not on what you hope they pick.',
+        wire: () => {}
+      },
+      last: {
+        html: '<div class="sdf-card"><b>Share 1 photo</b><div class="sdf-people" role="group" aria-label="Share with" data-pp></div><button class="btn btn-primary cs-sm" type="button" data-share style="align-self:flex-start">Share</button><p class="cs-meta" data-out></p></div>',
+        use: 'Use it when people repeat their own choice.',
+        why: 'Each person gets their own default, so it fits more people than one value can.',
+        wire: s => {
+          const pp = s.querySelector('[data-pp]'), out = s.querySelector('[data-out]');
+          let pick = last;
+          const r = () => {
+            pp.innerHTML = PEOPLE.map(p => '<button class="sdf-p" type="button" aria-pressed="' + (p[1] === pick) + '"><i>' + p[0] + '</i>' + p[1] + '</button>').join('');
+            pp.querySelectorAll('button').forEach((b, i) => b.addEventListener('click', () => { pick = PEOPLE[i][1]; r(); pp.querySelectorAll('button')[i].focus(); }));
+          };
+          r();
+          s.querySelector('[data-share]').addEventListener('click', () => { last = pick; out.textContent = 'Shared with ' + pick + '. Next time, ' + pick + ' is picked first.'; });
+        }
+      },
+      context: {
+        html: '<div class="sdf-card"><b>Find flights</b><label class="field"><span class="field-label">From</span><input class="input" value="Lisbon (LIS)" autocomplete="off"></label>' +
+          '<span class="sdf-src"><svg class="icon sm"><use href="#i-info"/></svg>Based on where you are now</span>' +
+          '<label class="field"><span class="field-label">To</span><input class="input" autocomplete="off"></label></div>',
+        use: 'Use it when the place, time or device already gives the answer.',
+        why: 'Say where the value came from, so a wrong guess is easy to spot and change.',
+        wire: () => {}
+      },
+      derived: {
+        html: '<div class="sdf-card"><b>New event</b><div class="sdf-two"><label class="field"><span class="field-label">Starts</span><select class="select" data-a>' + opts('10:00') + '</select></label>' +
+          '<label class="field"><span class="field-label">Ends</span><select class="select" data-b>' + opts('11:00') + '</select></label></div><p class="cs-meta" data-out>Ends follows Starts, one hour later.</p></div>',
+        use: 'Use it when one value follows from another, like an end time from a start time.',
+        why: 'Once people set it by hand, stop changing it for them.',
+        wire: s => {
+          const a = s.querySelector('[data-a]'), b = s.querySelector('[data-b]'), out = s.querySelector('[data-out]');
+          let manual = false;
+          a.addEventListener('change', () => { if (manual) return; b.selectedIndex = Math.min(a.selectedIndex + 1, times.length - 1); out.textContent = 'Ends moved to ' + b.value + ', one hour after Starts.'; });
+          b.addEventListener('change', () => { manual = true; out.textContent = 'Ends set by hand. Changing Starts won’t move it now.'; });
+        }
+      }
+    };
+    const show = k => {
+      stage.innerHTML = F[k].html; F[k].wire(stage);
+      when.innerHTML = '<b>' + fm.querySelector('.fm-seg input:checked + label').textContent + '.</b> ' + F[k].use + ' ' + F[k].why;
+    };
+    fm.querySelectorAll('.fm-seg input').forEach(i => i.addEventListener('change', () => show(i.value)));
+    show('common');
+  })();
+  </script>
+</div>

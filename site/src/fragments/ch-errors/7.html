@@ -1,0 +1,55 @@
+<div class="note comfy cw-wrap"><p>Notice that choices that can’t work are either never offered or visibly off.</p>
+  <div class="seg cw-seg" role="radiogroup" aria-label="Example">
+    <input type="radio" name="cw-pat-constraints-w" id="cw-pat-constraints-w-1" value="gcal" checked><label for="cw-pat-constraints-w-1">Google Calendar</label>
+    <input type="radio" name="cw-pat-constraints-w" id="cw-pat-constraints-w-2" value="airbnb"><label for="cw-pat-constraints-w-2">Airbnb</label>
+    <input type="radio" name="cw-pat-constraints-w" id="cw-pat-constraints-w-3" value="duo"><label for="cw-pat-constraints-w-3">Duolingo</label>
+    <input type="radio" name="cw-pat-constraints-w" id="cw-pat-constraints-w-4" value="vscode"><label for="cw-pat-constraints-w-4">VS Code</label>
+  </div>
+  <div class="cw" data-cw-view role="img" aria-label=""></div>
+  <p class="cw-cap" data-cw-cap aria-live="polite"></p>
+  
+  <script>
+  (() => {
+    const wrap = document.currentScript.closest('.cw-wrap');
+    const view = wrap.querySelector('[data-cw-view]'), cap = wrap.querySelector('[data-cw-cap]');
+    const ic = id => '<svg class="icon sm"><use href="#i-' + id + '"/></svg>';
+    const booked = [3, 4, 5, 6, 18, 19, 20, 26, 27];
+    const day = d => {
+      if (d < 1 || d > 31) return '<span></span>';
+      if (booked.includes(d) || d < 3) return '<span class="off">' + d + '</span>';
+      if (d === 10) return '<span class="end first"><b>' + d + '</b></span>';
+      if (d === 13) return '<span class="end last"><b>' + d + '</b></span>';
+      if (d > 10 && d < 13) return '<span class="in">' + d + '</span>';
+      return '<span>' + d + '</span>';
+    };
+    const cal = ['S', 'M', 'T', 'W', 'T', 'F', 'S'].map(x => '<small>' + x + '</small>').join('') + Array.from({ length: 35 }, (_, i) => day(i + 1)).join('');
+    const tile = (w, used) => '<span class="cw-constr-tile' + (used ? ' used' : '') + '">' + w + '</span>';
+    const S = {
+      gcal: { html: '<div class="cw-constr-win"><div class="cw-constr-ev"><span class="cw-constr-title">Team sync</span>' +
+          '<div class="cw-constr-when"><span class="cw-constr-chip">Tue, Mar 4</span><span class="cw-constr-chip">10:00am</span>–<span class="cw-constr-chip open">11:00am</span></div>' +
+          '<div class="cw-constr-list surface"><span>10:00am <i>(0 mins)</i></span><span>10:15am <i>(15 mins)</i></span><span>10:30am <i>(30 mins)</i></span><span>10:45am <i>(45 mins)</i></span><span class="on">11:00am <i>(1 hr)</i></span></div></div></div>',
+        alt: 'An event from 10:00am. The end-time list is open: it starts at 10:00am and only goes forward, and each time shows the length, like 11:00am (1 hr).',
+        cap: 'Google Calendar: the end-time list only runs forward from the start time and shows each length, like “(1 hr)”, so an event can’t end before it begins.' },
+      airbnb: { html: '<div class="cw-constr-win"><div class="cw-constr-cal"><b>March</b><div class="cw-constr-grid">' + cal + '</div>' +
+          '<div class="cw-constr-cfoot"><span>3 nights</span><u>Clear dates</u></div></div></div>',
+        alt: 'A month calendar. Booked dates are grayed out and struck through. A stay from the 10th to the 13th is selected between them.',
+        cap: 'Airbnb: dates that are already booked are grayed out and can’t be picked.' },
+      duo: { html: '<div class="cw-constr-phone"><b>Translate this sentence</b><div class="cw-constr-prompt"><i></i><span>Yo bebo agua</span></div>' +
+          '<div class="cw-constr-ans">' + tile('I') + tile('drink') + '</div>' +
+          '<div class="cw-constr-bank">' + tile('I', true) + tile('water') + tile('eat') + tile('drink', true) + tile('the') + tile('milk') + '</div>' +
+          '<div class="cw-constr-pfoot"><u>Use keyboard</u><span class="btn btn-primary">Check</span></div></div>',
+        alt: 'A language exercise. The answer is built by tapping word tiles from a bank below; two tiles, I and drink, are already placed. A Use keyboard link sits next to the Check button.',
+        cap: 'Duolingo: many exercises have you build the answer from word tiles, so every try is a sentence that can be checked, and you can switch to typing when you want it harder.' },
+      vscode: { html: '<div class="cw-constr-win"><div class="cw-constr-sets"><span class="cw-constr-find">' + ic('search') + 'Search settings</span>' +
+          '<div class="cw-constr-set"><b>Editor: <strong>Word Wrap</strong></b><span>How long lines wrap.</span><span class="cw-constr-sel">off <span>▾</span></span></div>' +
+          '<div class="cw-constr-set"><b>Editor: <strong>Font Size</strong></b><span>Font size in pixels.</span><span class="cw-constr-num">14</span></div>' +
+          '<div class="cw-constr-set"><b>Editor: <strong>Format On Save</strong></b><span class="cw-constr-chk"><i>' + ic('check') + '</i>Format a file when it’s saved.</span></div></div></div>',
+        alt: 'A settings page. Word Wrap uses a dropdown, Font Size a number field, and Format On Save a checkbox.',
+        cap: 'VS Code: the Settings editor builds each control from the setting’s definition, so a setting with fixed options gets a dropdown and an on/off one gets a checkbox.' }
+    };
+    const render = k => { view.innerHTML = S[k].html; view.setAttribute('aria-label', 'Sketch: ' + S[k].alt); cap.textContent = S[k].cap; };
+    wrap.querySelectorAll('input[name="cw-pat-constraints-w"]').forEach(r => r.addEventListener('change', () => render(r.value)));
+    render('gcal');
+  })();
+  </script>
+</div>

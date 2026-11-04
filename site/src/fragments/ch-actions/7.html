@@ -1,0 +1,49 @@
+<div class="note comfy cw-wrap"><p>Notice how each screen has one strong action, and how the risky one is set apart and named for what it does.</p>
+  <div class="seg cw-seg" role="radiogroup" aria-label="Example">
+    <input type="radio" name="cw-buttons-w" id="cw-buttons-w-1" value="gmail" checked><label for="cw-buttons-w-1">Gmail</label>
+    <input type="radio" name="cw-buttons-w" id="cw-buttons-w-2" value="airbnb"><label for="cw-buttons-w-2">Airbnb</label>
+    <input type="radio" name="cw-buttons-w" id="cw-buttons-w-3" value="gh"><label for="cw-buttons-w-3">GitHub</label>
+    <input type="radio" name="cw-buttons-w" id="cw-buttons-w-4" value="ios"><label for="cw-buttons-w-4">iOS Photos</label>
+  </div>
+  <div class="cw" data-cw-view role="img" aria-label=""></div>
+  <p class="cw-cap" data-cw-cap aria-live="polite"></p>
+  
+  <script>
+  (() => {
+    const wrap = document.currentScript.closest('.cw-wrap');
+    const view = wrap.querySelector('[data-cw-view]'), cap = wrap.querySelector('[data-cw-cap]');
+    const ic = id => '<svg class="icon sm"><use href="#i-' + id + '"/></svg>';
+    const svg = inner => '<svg class="icon sm" viewBox="0 0 24 24">' + inner + '</svg>';
+    const clip = svg('<path d="M20 11l-8 8a5 5 0 0 1-7-7l8-8a3.5 3.5 0 0 1 5 5l-8 8a2 2 0 0 1-3-3l7-7"/>');
+    const link = svg('<path d="M10 14a4 4 0 0 0 5.7 0l3-3a4 4 0 0 0-5.7-5.7l-1 1M14 10a4 4 0 0 0-5.7 0l-3 3a4 4 0 0 0 5.7 5.7l1-1"/>');
+    const fmt = '<b style="font-size:13px;text-decoration:underline">A</b>';
+    const ln = (lab, w) => '<span class="cw-wbt-ln">' + lab + '<i class="cw-line" style="max-width:' + w + '%"></i></span>';
+    const row = (title, btn, w) => '<div class="cw-wbt-row"><span><b>' + title + '</b><i class="cw-line" style="width:' + w + '%"></i></span>' + btn + '</div>';
+    const S = {
+      gmail: { html: '<div class="cw-wbt-pane"><span class="cw-wbt-top">New message</span>' + ln('To', 60) + ln('Subject', 45)
+          + '<i class="cw-line" style="width:90%"></i><i class="cw-line" style="width:75%"></i><i class="cw-line" style="width:40%"></i>'
+          + '<div class="cw-wbt-bar"><span class="btn btn-primary cw-wbt-sm">Send</span>' + fmt + clip + link + ic('image') + '<span class="grow"></span>' + ic('dots') + ic('trash') + '</div></div>',
+        alt: 'A compose window. In the bottom bar, Send is the only filled button. Formatting and attachment tools are small icons, and a trash icon sits at the far right end.',
+        cap: 'Gmail: in the compose window, Send is the only filled button. Formatting tools are small icons, and discarding the draft is a trash icon at the far end, away from Send.' },
+      airbnb: { html: '<div class="cw-wbt-pane" style="width:min(260px,100%);gap:9px;box-shadow:var(--ui-shadow)"><span class="cw-wbt-price"><b>$120</b> <span>night</span></span>'
+          + '<div class="cw-wbt-grid"><span><small>Check-in</small>11/6/2026</span><span><small>Checkout</small>11/9/2026</span><span class="full"><small>Guests</small>2 guests</span></div>'
+          + '<span class="btn btn-primary cw-wbt-wide">Reserve</span><span class="cw-wbt-note">Not charged yet</span></div>',
+        alt: 'A booking card with the nightly price, check-in, checkout and guests. One wide filled Reserve button sits under them, with a note that nothing is charged yet.',
+        cap: 'Airbnb: the booking card has one wide, filled Reserve button, and a short note under it says nothing is charged yet.' },
+      gh: { html: '<div class="cw-wbt-two"><div class="cw-wbt-pane"><span class="cw-wbt-dz">Danger zone</span><div class="cw-wbt-box">'
+          + row('Archive this repository', '<span class="btn cw-wbt-md danger">Archive</span>', 80)
+          + row('Delete this repository', '<span class="btn cw-wbt-md danger">Delete this repository</span>', 60) + '</div></div>'
+          + '<div class="cw-wbt-pane"><b>Delete ana/portrait-tools</b><span style="color:var(--ui-muted);font-size:12px">To confirm, type the repository name.</span><span class="cw-wbt-in"><i class="cw-wbt-caret"></i></span>'
+          + '<span class="btn btn-danger cw-wbt-md" aria-disabled="true" style="justify-content:center">Delete this repository</span></div></div>',
+        alt: 'A red-bordered Danger zone with Archive and Delete this repository. Beside it, a confirm step asks you to type the repository name, and its Delete this repository button stays dimmed until you do.',
+        cap: 'GitHub: deleting a repository sits in a red-bordered Danger Zone at the bottom of settings. The final button names the action and only works after you type the repository’s name.' },
+      ios: { html: '<div class="cw-wbt-phone"><i class="cw-wbt-dim"></i><div class="cw-wbt-sheet"><span><small>This photo will be deleted.</small><b class="danger">Delete Photo</b></span><span><b class="cancel">Cancel</b></span></div></div>',
+        alt: 'A phone screen with a photo, dimmed. A sheet at the bottom has a red Delete Photo button in one block and Cancel in a separate block below.',
+        cap: 'iOS Photos: deleting a photo opens a sheet with a red Delete Photo button, and Cancel sits apart in its own block.' }
+    };
+    const render = k => { view.innerHTML = S[k].html; view.setAttribute('aria-label', 'Sketch: ' + S[k].alt); cap.textContent = S[k].cap; };
+    wrap.querySelectorAll('input[name="cw-buttons-w"]').forEach(r => r.addEventListener('change', () => render(r.value)));
+    render('gmail');
+  })();
+  </script>
+</div>

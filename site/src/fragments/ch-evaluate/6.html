@@ -1,0 +1,53 @@
+<div class="note comfy cw-wrap"><p>Notice that each one watches what people do, not what they say, and looks for problems that repeat.</p>
+      <div class="seg cw-seg" role="radiogroup" aria-label="Example">
+        <input type="radio" name="cw-eff-quick-sessions-w" id="cw-eff-quick-sessions-w-1" value="sprint" checked><label for="cw-eff-quick-sessions-w-1">GV design sprint</label>
+        <input type="radio" name="cw-eff-quick-sessions-w" id="cw-eff-quick-sessions-w-2" value="usertesting"><label for="cw-eff-quick-sessions-w-2">UserTesting</label>
+        <input type="radio" name="cw-eff-quick-sessions-w" id="cw-eff-quick-sessions-w-3" value="maze"><label for="cw-eff-quick-sessions-w-3">Maze</label>
+        <input type="radio" name="cw-eff-quick-sessions-w" id="cw-eff-quick-sessions-w-4" value="fullstory"><label for="cw-eff-quick-sessions-w-4">FullStory</label>
+      </div>
+      <div class="cw" data-cw-view role="img" aria-label=""></div>
+      <p class="cw-cap" data-cw-cap aria-live="polite"></p>
+      
+      <script>
+      (() => {
+        const wrap = document.currentScript.closest('.cw-wrap');
+        const view = wrap.querySelector('[data-cw-view]'), cap = wrap.querySelector('[data-cw-cap]');
+        const ic = id => '<svg class="icon sm"><use href="#i-' + id + '"/></svg>';
+        const line = w => '<i class="cw-line" style="width:' + w + '%"></i>';
+        const cell = c => '<i class="' + (c === '+' ? 'p' : c === '−' ? 'm' : 'o') + '">' + (c === '·' ? '' : c) + '</i>';
+        const grow = (name, cells) => '<span>' + name + '</span>' + cells.split('').map(cell).join('');
+        const heat = (cls, x, y, s) => '<i class="cw-eqs-heat ' + cls + '" style="left:' + x + '%;top:' + y + 'px;width:' + s + 'px;height:' + s + 'px;margin:-' + (s / 2) + 'px 0 0 -' + (s / 2) + 'px"></i>';
+        const stat = (label, n, of, bad) => '<div class="cw-eqs-stat' + (bad ? ' bad' : '') + '"><div><span>' + label + '</span><b>' + n + ' of ' + of + '</b></div><span class="bar"><span style="width:' + Math.round(n / of * 100) + '%"></span></span></div>';
+        const sess = (cls, at, len) => '<div class="cw-eqs-s"><i class="' + cls + '"></i><span class="tl"><em style="left:' + at + '%"></em></span><small>' + len + '</small></div>';
+        const S = {
+          sprint: { html: '<div class="cw-eqs-card"><b>Interview day: five customers</b><div class="cw-eqs-grid">' +
+              '<span></span><em>P1</em><em>P2</em><em>P3</em><em>P4</em><em>P5</em>' +
+              grow('Home', '+++·+') + grow('Search', '−−+−−') + grow('Checkout', '+·+−+') + '</div>' +
+              '<span class="cw-eqs-pat">' + ic('warn') + 'Search: 4 of 5 got stuck</span></div>',
+            alt: 'A whiteboard grid with one column for each of five customers and one row for each part of the prototype: Home, Search, Checkout. Plus and minus notes fill the cells. The Search row has minus notes for four of the five people, flagged as a pattern.',
+            cap: 'GV’s design sprint: on the last day, five customers each try the prototype in a one-on-one interview while the team watches from another room. Notes go on a grid, one column per person, so problems that repeat stand out.' },
+          usertesting: { html: '<div class="cw-eqs-player"><div class="cw-eqs-task"><b>Task 2 of 4:</b> Find last week’s order</div>' +
+              '<div class="cw-eqs-screen">' + line(40) + line(80) + '<span class="cw-eqs-btnrow"><i></i><i></i></span>' + line(65) + '<svg class="cw-eqs-cursor" viewBox="0 0 13 19" aria-hidden="true"><path d="M1 1v14.5l3.8-3.6 2.6 6 2.3-1-2.6-5.9h5.3z"/></svg><span class="cw-eqs-cam"></span></div>' +
+              '<div class="cw-eqs-tl">' + ic('play') + '<span class="cw-eqs-track"><b></b><i style="left:22%;width:8%"></i><i style="left:58%;width:10%"></i></span><small>3:12</small></div>' +
+              '<div class="cw-eqs-clips"><span><em>0:48</em>“Where are my orders?”</span><span><em>2:10</em>Scrolls past the link twice</span></div></div>',
+            alt: 'A recording of one test session: the task says Find last week’s order. The screen shows the person’s cursor, with their camera in a small circle. The timeline has two clips marked, listed below: 0:48, “Where are my orders?”, and 2:10, scrolls past the link twice.',
+            cap: 'UserTesting: you write the tasks, and people record their screen and voice while they try them on their own. You watch the recordings and clip the moments where they get stuck.' },
+          maze: { html: '<div class="cw-eqs-card"><b>Task: Change your plan</b><div class="cw-eqs-mrow"><div class="cw-eqs-proto">' +
+              '<div class="cw-eqs-nav"><span>Home</span><span>Profile</span><span class="exp">Settings</span></div>' + line(85) + line(60) + line(75) +
+              heat('hot', 50, 18, 54) + heat('ok', 82, 18, 32) + '</div>' +
+              '<div class="cw-eqs-stats">' + stat('Finished', 7, 12) + stat('Left the path', 5, 12, true) +
+              '<div class="cw-eqs-key"><span>Expected</span><span class="hot">Clicked instead</span></div></div></div></div>',
+            alt: 'Results for one prototype task, Change your plan. A heatmap over the screen shows most clicks on Profile, while the expected tap is Settings. Beside it: finished, 7 of 12; left the path, 5 of 12.',
+            cap: 'Maze: you give testers a task on a clickable prototype and mark the path you expect. It shows how many finished, where they left that path, and a heatmap of clicks on each screen.' },
+          fullstory: { html: '<div class="cw-eqs-card"><div class="cw-eqs-search">' + ic('search') + '<span>Rage clicks on “Save”</span><b>23 sessions</b></div>' +
+              '<div class="cw-eqs-sess">' + sess('', 64, '4:20') + sess('b', 30, '2:05') + sess('c', 81, '6:48') + '</div>' +
+              '<div class="cw-eqs-rep"><span class="cw-eqs-burst" style="width:84px;height:44px"></span><span class="cw-eqs-burst" style="width:110px;height:60px;opacity:.5"></span><span class="btn btn-primary">Save</span></div></div>',
+            alt: 'A search for rage clicks on the Save button finds 23 sessions. Three session rows each show a red marker on their timeline. Below, a replay shows rings of rapid clicks around a Save button.',
+            cap: 'FullStory: replays real people’s sessions and flags rage clicks, many quick clicks on one spot. Searching for them across sessions shows which stuck point hits many people, not just one.' }
+        };
+        const render = k => { view.innerHTML = S[k].html; view.setAttribute('aria-label', 'Sketch: ' + S[k].alt); cap.textContent = S[k].cap; };
+        wrap.querySelectorAll('input[name="cw-eff-quick-sessions-w"]').forEach(r => r.addEventListener('change', () => render(r.value)));
+        render('sprint');
+      })();
+      </script>
+    </div>

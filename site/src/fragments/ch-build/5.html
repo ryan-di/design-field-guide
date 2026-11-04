@@ -1,0 +1,170 @@
+<script>
+(() => {
+  const cs = document.currentScript.closest('.cs');
+  const D = (k, html, wire) => csDemo(cs.querySelector('[data-d="' + k + '"]'), html, wire);
+  const st = document.createElement('style');
+  st.textContent = [
+    '#eff-small-steps p.cs-meta{font:500 13.5px/1.45 var(--font-body)}',
+    '#eff-small-steps .ss-col{width:min(380px,100%);display:flex;flex-direction:column;gap:10px;text-align:left}',
+    '#eff-small-steps .ss-acts{display:flex;flex-wrap:wrap;gap:8px}',
+    '#eff-small-steps .ss-prompt{font-size:14px;padding:9px 12px;border-radius:10px;background:var(--ui-sel-soft);color:var(--ui-text)}',
+    '#eff-small-steps .ss-box{padding:12px 14px;display:flex;flex-direction:column;gap:6px;width:100%;font-size:14px}',
+    '#eff-small-steps .ss-k{font:600 11px var(--font-mono);letter-spacing:.06em;text-transform:uppercase;color:var(--ui-muted)}',
+    '#eff-small-steps .ss-steps{margin:0;padding:0;list-style:none;display:flex;flex-direction:column;gap:6px;counter-reset:ss}',
+    '#eff-small-steps .ss-steps li{counter-increment:ss;display:flex;gap:8px;align-items:flex-start;font-size:14px;line-height:1.4}',
+    '#eff-small-steps .ss-steps li::before{content:counter(ss);flex:none;display:inline-grid;place-items:center;width:20px;height:20px;border-radius:50%;background:var(--ui-hover);font:700 11.5px var(--font-mono);margin-top:1px}',
+    '#eff-small-steps .ss-steps li.done::before{content:"✓";background:var(--ui-ok);color:var(--ui-on-primary)}',
+    '#eff-small-steps .ss-steps li.bad::before{content:"!";background:var(--ui-danger);color:var(--ui-on-danger)}',
+    '#eff-small-steps .ss-steps li.redo::before{content:"↺";background:var(--ui-danger);color:var(--ui-on-danger)}',
+    '#eff-small-steps .ss-steps li .grow{flex:1;min-width:0}',
+    '#eff-small-steps .ss-steps small{display:block;font:500 12px var(--font-mono);color:var(--ui-muted)}',
+    '#eff-small-steps .ss-steps small.bad{color:var(--ui-danger)}',
+    '#eff-small-steps .ss-steps small.ok{color:var(--ui-ok)}',
+    '#eff-small-steps .ss-wrong{background:var(--ui-danger-soft);border-radius:4px;padding:0 3px}',
+    '#eff-small-steps .ss-out{font-size:14px;font-weight:600}',
+    '#eff-small-steps .ss-out:empty{display:none}',
+    '#eff-small-steps .ss-out.bad{color:var(--ui-danger)}',
+    '#eff-small-steps .ss-out.ok{color:var(--ui-ok)}',
+    '#eff-small-steps .ss-app .app-body{gap:0;padding:6px 14px;min-height:118px}',
+    '#eff-small-steps .ss-app .cs-row.hl{background:var(--ui-sel-soft);margin:0 -8px;padding-inline:8px;border-radius:6px}',
+    '#eff-small-steps .ss-search{font-size:13px;padding:5px 9px;border:1.5px solid var(--ui-border);border-radius:7px;background:var(--ui-surface);color:var(--ui-text);min-width:0;width:120px}',
+    '#eff-small-steps .ss-q{border-left:3px solid var(--ui-sel);padding:6px 10px;background:var(--ui-sel-soft);border-radius:0 8px 8px 0;font-size:14px}',
+    '#eff-small-steps .ss-q.closed{border-left-color:var(--ui-ok);background:var(--ui-hover)}'
+  ].join('\n');
+  cs.appendChild(st);
+  const btn = (attr, label, cls) => '<button class="btn ' + (cls || 'btn-primary') + ' cs-sm" type="button" ' + attr + '>' + label + '</button>';
+  const prompt = '<p class="ss-prompt"><b>You:</b> Let people pin their favorite templates.</p>';
+
+  /* 1. Plan before code */
+  D('eff-small-steps-1b', '<div class="ss-col">' + prompt + '<div class="ss-acts">' + btn('data-build', 'Build it') + btn('data-review disabled', 'Review', 'btn-secondary') + '</div>' +
+    '<div class="ss-box surface" data-res hidden></div><p class="ss-out bad" data-out role="status"></p></div>', (d, t) => {
+    const res = d.querySelector('[data-res]'), rev = d.querySelector('[data-review]'), out = d.querySelector('[data-out]');
+    d.querySelector('[data-build]').addEventListener('click', e => {
+      e.target.disabled = true; res.hidden = false; res.innerHTML = '<span class="cs-meta">Building…</span>';
+      t.after(() => { res.innerHTML = '<span class="ss-k">Agent</span><span>Done. 14 files changed, 900 lines.</span>'; rev.disabled = false; rev.focus(); }, 700);
+    });
+    rev.addEventListener('click', () => {
+      rev.disabled = true;
+      res.insertAdjacentHTML('beforeend', '<span class="ss-k">Your review</span><span>Pins are saved in this browser only. On another computer, they’re gone.</span>');
+      out.textContent = 'Most of the 900 lines have to change.';
+    });
+  });
+  const PLAN = ['Add a pin button to each template card.', 'Save pins in this browser.', 'Show pinned templates at the top of the list.', 'Unpin from the same button.'];
+  D('eff-small-steps-1f', '<div class="ss-col">' + prompt + '<div class="ss-acts">' + btn('data-plan', 'Ask for a plan') + '</div>' +
+    '<div class="ss-box surface" data-res hidden><span class="ss-k">Plan · no code yet</span><ol class="ss-steps" data-steps></ol><p class="cs-meta" data-hint></p><div class="ss-acts">' + btn('data-ok disabled', 'Approve plan') + '</div></div>' +
+    '<p class="ss-out ok" data-out role="status"></p></div>', d => {
+    const res = d.querySelector('[data-res]'), steps = d.querySelector('[data-steps]'), ok = d.querySelector('[data-ok]'), hint = d.querySelector('[data-hint]'), out = d.querySelector('[data-out]');
+    let fixed = false;
+    const render = () => {
+      steps.innerHTML = PLAN.map((s, i) => i === 1 ? '<li><span class="grow">' + (fixed ? 'Save pins in the account, so they follow people to any computer.' : '<span class="ss-wrong">' + s + '</span>') + '</span>' + (fixed ? '' : btn('data-change', 'Change', 'btn-secondary')) + '</li>' : '<li><span class="grow">' + s + '</span></li>').join('');
+      hint.textContent = fixed ? 'Fixed with one sentence.' : 'Step 2 is wrong: people use more than one computer.';
+      const c = steps.querySelector('[data-change]');
+      if (c) c.addEventListener('click', () => { fixed = true; render(); ok.disabled = false; ok.focus(); });
+    };
+    d.querySelector('[data-plan]').addEventListener('click', e => { e.target.disabled = true; res.hidden = false; render(); steps.querySelector('[data-change]').focus(); });
+    ok.addEventListener('click', () => { ok.disabled = true; out.textContent = 'Plan approved. No code was thrown away.'; });
+  });
+
+  /* 2. Slice so each step works */
+  const SET = [['Dark mode', 'Easier on the eyes at night'], ['Language', 'English'], ['Notifications', 'Email and in the app']];
+  const app = (box, rows, hl, empty) => '<div class="app-frame ss-app" style="width:100%"><div class="app-bar"><span>Settings</span>' + (box !== null ? '<input class="ss-search" value="' + box + '" aria-label="Search settings" readonly>' : '') + '</div><div class="app-body">' +
+    (empty ? '<p class="cs-meta" style="padding:10px 0">' + empty + '</p>' : rows.map(i => '<div class="cs-row' + (i === hl ? ' hl' : '') + '"><span class="grow"><b>' + SET[i][0] + '</b><br><span class="cs-meta">' + SET[i][1] + '</span></span></div>').join('')) + '</div></div>';
+  const sliceDemo = (steps, states) => '<div class="ss-col"><ol class="ss-steps" data-steps>' + steps.map(s => '<li><span class="grow">' + s + '</span></li>').join('') + '</ol>' +
+    '<div class="ss-acts">' + btn('data-next', 'Land next step') + '</div><div data-app>' + states[0][0] + '</div><p class="ss-out" data-out role="status">' + states[0][1] + '</p></div>';
+  const sliceWire = states => d => {
+    let n = 0;
+    const out = d.querySelector('[data-out]'), next = d.querySelector('[data-next]');
+    next.addEventListener('click', () => {
+      if (n >= 4) return;
+      d.querySelectorAll('[data-steps] li')[n].classList.add('done');
+      n++;
+      d.querySelector('[data-app]').innerHTML = states[n][0];
+      out.textContent = states[n][1]; out.className = 'ss-out' + (states[n][2] ? ' ' + states[n][2] : '');
+      next.disabled = n >= 4;
+    });
+  };
+  const plain = app(null, [0, 1, 2]);
+  const LAYER = [[plain, 'Nothing to try yet.'], [plain, 'Step 1 landed. Nothing to try yet.'], [plain, 'Step 2 landed. Nothing to try yet.'], [plain, 'Step 3 landed. Nothing to try yet.'],
+    [app('dark', [], -1, 'No settings found.'), 'Everything arrives at once, and typing “dark” finds nothing. Any of the four steps could be the cause.', 'bad']];
+  D('eff-small-steps-2b', sliceDemo(['Store every setting in a search index.', 'Add a search service on the server.', 'Build the results list.', 'Add the search box to the header.'], LAYER), sliceWire(LAYER));
+  const VERT = [[plain, 'Nothing to try yet.'], [app('dark', [0]), 'Try it: type a setting’s name and the list narrows.', 'ok'], [app('dark', [0], 0), 'Try it: pick a result and the page jumps to it.', 'ok'],
+    [app('night', [0]), 'Try it: words from the description match too.', 'ok'], [app('xyz', [], -1, 'No settings match “xyz”. Try a shorter word.'), 'Try it: a search with no match says so. Each step could be tried on its own.', 'ok']];
+  D('eff-small-steps-2f', sliceDemo(['Search box that matches setting names.', 'Jump to the setting and highlight it.', 'Also match words in descriptions.', 'Say so when nothing matches.'], VERT), sliceWire(VERT));
+
+  /* 3. Give every step a check */
+  const TSTEPS = [['Rename action in the tab store', 'Unit test'], ['Double-click a tab to edit its name', 'End-to-end spec'], ['Enter saves, Escape cancels', 'End-to-end spec'], ['Long names end with “…”', 'Screenshot']];
+  const checkHtml = withChecks => '<div class="ss-col"><div class="ss-box surface"><span class="ss-k">Plan: rename a tab</span><ol class="ss-steps" data-steps>' +
+    TSTEPS.map(s => '<li><span class="grow">' + s[0] + (withChecks ? '<small data-c>Check: ' + s[1] + '</small>' : '<small data-c></small>') + '</span></li>').join('') + '</ol></div>' +
+    '<div class="ss-acts">' + btn('data-run', 'Run next step') + (withChecks ? '' : btn('data-try disabled', 'Try it yourself', 'btn-secondary')) + '</div><p class="ss-out" data-out role="status"></p></div>';
+  D('eff-small-steps-3b', checkHtml(false), (d, t) => {
+    let n = 0;
+    const run = d.querySelector('[data-run]'), tr = d.querySelector('[data-try]'), out = d.querySelector('[data-out]'), li = d.querySelectorAll('[data-steps] li');
+    run.addEventListener('click', () => {
+      if (n >= 4) return;
+      li[n].classList.add('done'); li[n].querySelector('[data-c]').textContent = 'Agent: done.'; n++;
+      if (n >= 4) { run.disabled = true; tr.disabled = false; tr.focus(); }
+    });
+    tr.addEventListener('click', () => {
+      tr.disabled = true;
+      li[1].classList.remove('done'); li[1].classList.add('bad');
+      li[1].querySelector('[data-c]').className = 'bad'; li[1].querySelector('[data-c]').textContent = 'Agent said done. Double-click does nothing on the active tab.';
+      out.className = 'ss-out bad'; out.textContent = 'Steps 3 and 4 were built on a broken step 2.';
+    });
+  });
+  D('eff-small-steps-3f', checkHtml(true), (d, t) => {
+    let n = 0, busy = false;
+    const run = d.querySelector('[data-run]'), out = d.querySelector('[data-out]'), li = d.querySelectorAll('[data-steps] li');
+    const pass = (i, text) => { li[i].classList.remove('bad'); li[i].classList.add('done'); const c = li[i].querySelector('[data-c]'); c.className = 'ok'; c.textContent = text; };
+    run.addEventListener('click', () => {
+      if (n >= 4 || busy) return;
+      const i = n;
+      if (i === 1) {
+        busy = true; run.disabled = true;
+        li[1].classList.add('bad'); const c = li[1].querySelector('[data-c]'); c.className = 'bad'; c.textContent = 'End-to-end spec failed: the active tab ignores double-click.';
+        out.className = 'ss-out'; out.textContent = 'The agent fixes step 2 before going on…';
+        t.after(() => { pass(1, 'End-to-end spec passed after a fix.'); n = 2; busy = false; run.disabled = false; run.focus(); out.textContent = ''; }, 1100);
+        return;
+      }
+      pass(i, TSTEPS[i][1] + ' passed.'); n++;
+      if (n >= 4) { run.disabled = true; out.className = 'ss-out ok'; out.textContent = 'All four checks pass. Step 2 was fixed before step 3 built on it.'; }
+    });
+  });
+
+  /* 4. Finish one step before the next */
+  const PSTEPS = ['Save a color palette.', 'Pick a palette in the editor.', 'Rename and delete palettes.'];
+  const qHtml = '<div class="ss-col"><div class="ss-box surface"><span class="ss-k">Plan: color palettes</span><ol class="ss-steps" data-steps>' +
+    PSTEPS.map((s, i) => '<li' + (i === 0 ? ' class="done"' : '') + '><span class="grow">' + s + '<small data-c>' + (i === 0 ? 'Built. In review.' : '') + '</small></span></li>').join('') + '</ol>' +
+    '<p class="ss-q" data-q><b>Open question on step 1:</b> are palettes for one person, or shared by the team?</p></div>' +
+    '<div class="ss-acts">' + btn('data-ans', 'Answer: shared by the team', 'btn-secondary') + btn('data-start', 'Start step 2') + '</div><p class="cs-meta" data-hint></p><p class="ss-out" data-out role="status"></p></div>';
+  const qWire = gate => d => {
+    let n = 1, answered = false;
+    const start = d.querySelector('[data-start]'), ans = d.querySelector('[data-ans]'), out = d.querySelector('[data-out]'), hint = d.querySelector('[data-hint]'), li = d.querySelectorAll('[data-steps] li');
+    const sync = () => {
+      start.textContent = n < 3 ? 'Start step ' + (n + 1) : 'All steps started';
+      start.disabled = n >= 3 || (gate && !answered);
+      hint.textContent = gate && !answered ? 'Step 2 waits until the question on step 1 is answered.' : '';
+    };
+    start.addEventListener('click', () => {
+      if (n >= 3) return;
+      li[n].classList.add('done'); li[n].querySelector('[data-c]').textContent = answered ? 'Built for the team.' : 'Built for one person.'; n++; sync();
+    });
+    ans.addEventListener('click', () => {
+      answered = true; ans.disabled = true;
+      d.querySelector('[data-q]').classList.add('closed');
+      d.querySelector('[data-q]').innerHTML = '<b>Answered:</b> palettes are shared by the team.';
+      li[0].querySelector('[data-c]').textContent = 'Updated in review: shared by the team.';
+      const built = [];
+      for (let i = 1; i < n; i++) { li[i].classList.remove('done'); li[i].classList.add('redo'); li[i].querySelector('[data-c]').textContent = 'Built for one person. Must be redone.'; built.push(i + 1); }
+      out.className = 'ss-out ' + (built.length ? 'bad' : 'ok');
+      out.textContent = built.length ? 'Step' + (built.length > 1 ? 's ' + built.join(' and ') : ' ' + built[0]) + ' assumed one person and must be redone.' : 'Nothing was built on the wrong guess.';
+      sync();
+      if (!start.disabled) start.focus();
+    });
+    sync();
+  };
+  D('eff-small-steps-4b', qHtml, qWire(false));
+  D('eff-small-steps-4f', qHtml, qWire(true));
+  csInit(cs);
+})();
+
+</script>

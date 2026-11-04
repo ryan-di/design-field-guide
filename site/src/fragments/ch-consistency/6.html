@@ -1,0 +1,35 @@
+<div class="stage tall" data-demo="good-design-tokens">
+      <div class="p20-tk">
+        <div class="p20-tk-side">
+          <div class="surface p20-tk-ctl" role="group" aria-label="Tokens">
+            <div class="p20-tk-row"><label for="p20-tk-radius">Radius</label><input type="range" id="p20-tk-radius" min="0" max="16" step="1" value="8" data-token="radius"><output for="p20-tk-radius" id="p20-tk-radius-out">8px</output></div>
+            <div class="p20-tk-row"><label for="p20-tk-space">Spacing</label><input type="range" id="p20-tk-space" min="2" max="7" step="1" value="4" data-token="space"><output for="p20-tk-space" id="p20-tk-space-out">4px</output></div>
+            <div class="p20-tk-row"><label for="p20-tk-text">Text size</label><input type="range" id="p20-tk-text" min="14" max="18" step="1" value="15" data-token="text"><output for="p20-tk-text" id="p20-tk-text-out">15px</output></div>
+            <div class="p20-tk-accent">
+              <span class="p20-tk-lbl" id="p20-tk-accent-lbl">Accent</span>
+              <div class="seg p20-tk-seg" role="radiogroup" aria-labelledby="p20-tk-accent-lbl">
+                <input type="radio" name="p20-tk-accent" id="p20-tk-blue" value="blue" checked><label for="p20-tk-blue"><span class="p20-dot" data-c="blue"></span>Blue</label>
+                <input type="radio" name="p20-tk-accent" id="p20-tk-ink" value="ink"><label for="p20-tk-ink"><span class="p20-dot" data-c="ink"></span>Ink</label>
+                <input type="radio" name="p20-tk-accent" id="p20-tk-green" value="green"><label for="p20-tk-green"><span class="p20-dot" data-c="green"></span>Green</label>
+              </div>
+            </div>
+            <button class="btn btn-ghost p20-tk-reset" type="button" id="p20-tk-reset">Reset tokens</button>
+          </div>
+          <pre class="p20-code" aria-label="Current tokens"><code id="p20-tk-code"></code></pre>
+        </div>
+        <div class="p20-tk-preview" id="p20-tk-preview" data-accent="blue">
+          <div class="p20-tk-card">
+            <div class="p20-tk-top"><b>Trip to Lisbon</b><span class="p20-tk-badge">New</span></div>
+            <p class="p20-tk-meta">48 photos · 3 people</p>
+            <label class="p20-tk-label" for="p20-tk-name">Album name</label>
+            <input class="p20-tk-input" id="p20-tk-name" value="Lisbon, May 2026" autocomplete="off" spellcheck="false">
+            <div class="p20-tk-actions">
+              <button class="p20-tk-btn" type="button" data-say="Duplicated “Trip to Lisbon”">Duplicate</button>
+              <button class="p20-tk-btn p20-primary" type="button" data-say="Album shared">Share</button>
+            </div>
+          </div>
+          <div class="p20-tk-toast" aria-hidden="true"><span>Album shared</span><b>Undo</b></div>
+        </div>
+      </div>
+      <p class="try"><b>Try it:</b> drag Radius to 0, then to 16. The card, input, buttons, badge and toast all change at once, because none of them holds its own value. Then try a bigger spacing unit or another accent, and watch the token block change with it.</p>
+    </div>

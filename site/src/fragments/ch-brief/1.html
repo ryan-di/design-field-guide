@@ -1,0 +1,27 @@
+<div class="stage tall" data-demo="eff-brief">
+      <div class="seg p26-seg" role="radiogroup" aria-label="Start from">
+        <input type="radio" name="p26-br-start" id="p26-br-good" value="good" checked><label for="p26-br-good">Good draft</label>
+        <input type="radio" name="p26-br-start" id="p26-br-rough" value="rough"><label for="p26-br-rough">Rough ticket</label>
+      </div>
+      <div class="p26-wrap">
+        <div class="p26-bf">
+          <div class="field"><label class="field-label" for="p26-br-who">Who</label><textarea class="input" id="p26-br-who" data-k="who" rows="2" spellcheck="false"></textarea></div>
+          <div class="field"><label class="field-label" for="p26-br-problem">Problem</label><textarea class="input" id="p26-br-problem" data-k="problem" rows="2" spellcheck="false"></textarea></div>
+          <div class="field"><label class="field-label" for="p26-br-goal">Goal</label><textarea class="input" id="p26-br-goal" data-k="goal" rows="2" spellcheck="false"></textarea></div>
+          <div class="field"><label class="field-label" for="p26-br-constraints">Constraints</label><textarea class="input" id="p26-br-constraints" data-k="constraints" rows="2" spellcheck="false"></textarea></div>
+          <div class="field"><label class="field-label" for="p26-br-nongoals">Non-goals</label><textarea class="input" id="p26-br-nongoals" data-k="nongoals" rows="2" spellcheck="false"></textarea></div>
+          <div class="field"><label class="field-label" for="p26-br-success">Success criteria</label><textarea class="input" id="p26-br-success" data-k="success" rows="2" spellcheck="false"></textarea></div>
+        </div>
+        <div class="surface p26-lint" role="group" aria-labelledby="p26-br-lint-h">
+          <p class="p26-lint-h" id="p26-br-lint-h">Brief check</p>
+          <p class="p26-lint-sum" id="p26-br-sum"></p>
+          <ul class="p26-lint-list" id="p26-br-list"></ul>
+        </div>
+        <div class="p26-codebox">
+          <div class="p26-codehead"><span id="p26-br-out-cap">Ready-to-paste brief</span><button class="btn btn-secondary p26-sm" type="button" id="p26-br-copy">Copy</button></div>
+          <pre class="p26-code" id="p26-br-out" tabindex="0" aria-labelledby="p26-br-out-cap"></pre>
+          <p class="p26-msg" id="p26-br-msg" role="status" aria-live="polite"></p>
+        </div>
+      </div>
+      <p class="try"><b>Try it:</b> switch to Rough ticket and read the check. Then fix each flag: describe what goes wrong instead of the dialog, replace “better”, and add non-goals and success criteria. Copy the result when the check is clear.</p>
+    </div>

@@ -1,0 +1,45 @@
+<div class="note comfy cw-wrap"><p>Notice the few gap sizes that repeat, and the edges that line up. Dashed lines mark the shared edges.</p>
+  <div class="seg cw-seg" role="radiogroup" aria-label="Example">
+    <input type="radio" name="cw-good-spacing-rhythm-w" id="cw-good-spacing-rhythm-w-1" value="notion" checked><label for="cw-good-spacing-rhythm-w-1">Notion</label>
+    <input type="radio" name="cw-good-spacing-rhythm-w" id="cw-good-spacing-rhythm-w-2" value="gh"><label for="cw-good-spacing-rhythm-w-2">GitHub</label>
+    <input type="radio" name="cw-good-spacing-rhythm-w" id="cw-good-spacing-rhythm-w-3" value="mail"><label for="cw-good-spacing-rhythm-w-3">iOS Mail</label>
+    <input type="radio" name="cw-good-spacing-rhythm-w" id="cw-good-spacing-rhythm-w-4" value="pin"><label for="cw-good-spacing-rhythm-w-4">Pinterest</label>
+  </div>
+  <div class="cw cw-gsr-view" data-cw-view role="img" aria-label=""></div>
+  <p class="cw-cap" data-cw-cap aria-live="polite"></p>
+  
+  <script>
+  (() => {
+    const wrap = document.currentScript.closest('.cw-wrap');
+    const view = wrap.querySelector('[data-cw-view]'), cap = wrap.querySelector('[data-cw-cap]');
+    const ic = id => '<svg class="icon sm" aria-hidden="true"><use href="#i-' + id + '"/></svg>';
+    const line = w => '<i class="cw-line" style="width:' + w + '%"></i>';
+    const guide = x => '<span class="cw-gsr-guide" style="left:' + x + 'px"></span>';
+    const blk = (inner, cls) => '<div class="cw-gsr-blk' + (cls ? ' ' + cls : '') + '">' + inner + '</div>';
+    const row = (title, meta, box) => '<div class="cw-gsr-row' + (box ? ' box' : '') + '">' + ic('check') + '<span>' + title + '</span><small>' + meta + '</small>' + '' + '</div>';
+    const mail = (unread, from, time, subj, prev) => '<div class="cw-gsr-msg">' + (unread ? '<span class="cw-gsr-unread"></span>' : '') + '<div><span class="top"><b>' + from + '</b><small>' + time + '</small></span><span>' + subj + '</span><span class="prev">' + prev + '</span></div></div>';
+    const col = tiles => '<div class="cw-gsr-col">' + tiles.map(t => '<span class="cw-gsr-tile' + t[1] + '" style="height:' + t[0] + 'px"></span>').join('') + '</div>';
+    const S = {
+      notion: { html: '<div class="cw-gsr-win">' + guide(48) + '<div class="cw-gsr-page"><b>Trip plan</b>' + line(92) + line(70) +
+          blk('<span class="cw-gsr-hdl"><i>+</i><i>⋮⋮</i></span><i class="cw-gsr-box"></i><span>Book the train</span>', 'hov') +
+          blk('<i class="cw-gsr-box on"></i><span>Pack the charger</span>', 'done') + blk('<i class="cw-gsr-dot"></i><span>Day 1: old town</span>') + blk('<i class="cw-gsr-dot"></i><span>Day 2: the coast</span>') + '</div></div>',
+        alt: 'A page with a title, text, to-dos and bullets, all starting on one dashed left edge. On the hovered to-do, a plus and a drag handle sit in the margin to the left of that edge.',
+        cap: 'Notion: every block, from headings to to-dos, starts on the same left edge. The + and the drag handle appear in the margin on hover, so the edge never moves.' },
+      gh: { html: '<div class="cw-gsr-gh"><div class="cw-gsr-scale"><b>Scale</b>' + [4, 8, 16, 24, 32].map(n => '<span><i style="width:' + n + 'px"></i>' + n + '</span>').join('') + '</div>' +
+          '<div class="cw-gsr-list">' + row('Export fails on large files', '#214', true) + row('Add keyboard shortcuts', '#209') + row('Fix dark theme borders', '#198') + '</div><span class="cw-gsr-note"><i></i>Row padding: 8 above and below, 16 at the sides</span></div>',
+        alt: 'A spacing scale of 4, 8, 16, 24 and 32. Below, an issue list where the first row shows its padding: 8 above and below, 16 at the sides. Every row uses the same steps.',
+        cap: 'GitHub: its design system, Primer, takes every gap from a short spacing scale. Lists, cards and dialogs use the same few steps, so pages feel related.' },
+      mail: { html: '<div class="cw-gsr-phone">' + guide(26) + '<div class="cw-gsr-mail"><b>Inbox</b>' +
+          mail(true, 'Ana', '9:41', 'Trip dates', 'Does the second week still work for you?') + mail(false, 'Ben', 'Yesterday', 'Photos', 'Here are the ones from Saturday.') + mail(true, 'Book club', 'Mon', 'Next meeting', 'We’re reading the short one this time.') + '</div></div>',
+        alt: 'An inbox. Sender, subject and preview of every message start on one dashed text edge. Blue unread dots sit in the margin to its left, and the divider lines start at the text edge, not the screen edge.',
+        cap: 'iOS Mail: the unread dot sits in the margin, and each divider line starts where the text starts. Every row shares one text edge.' },
+      pin: { html: '<div class="cw-gsr-pin">' + col([[86, ''], [54, ' b'], [70, ' c']]) + col([[56, ' d'], [92, ' a'], [58, ' b']]) + col([[72, ' c'], [60, ' d'], [76, '']]) + '</div>',
+        alt: 'A grid of pins in three columns. The pins have different heights, but the columns are the same width and every gap, across and down, is the same size.',
+        cap: 'Pinterest: pins have different heights, but every column is the same width and every gap is the same size. The steady gutters keep a busy grid calm.' }
+    };
+    const render = k => { view.innerHTML = S[k].html; view.setAttribute('aria-label', 'Sketch: ' + S[k].alt); cap.textContent = S[k].cap; };
+    wrap.querySelectorAll('input[name="cw-good-spacing-rhythm-w"]').forEach(r => r.addEventListener('change', () => render(r.value)));
+    render('notion');
+  })();
+  </script>
+</div>

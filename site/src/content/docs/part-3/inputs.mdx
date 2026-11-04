@@ -1,0 +1,783 @@
+---
+title: "Inputs"
+description: "Pick an input by the decision: does it apply right away or on Save, how many options are there, and does the exact value matter?"
+eyebrow: "Chapter 20"
+sidebar:
+  label: "Inputs"
+---
+
+import Raw from '../../../components/Raw.astro';
+import Learned from '../../../components/Learned.astro';
+import Runtime from '../../../components/Runtime.astro';
+import F0 from '../../../fragments/ch-inputs/0.html?raw';
+import F1 from '../../../fragments/ch-inputs/1.html?raw';
+import F2 from '../../../fragments/ch-inputs/2.html?raw';
+import F3 from '../../../fragments/ch-inputs/3.html?raw';
+import F4 from '../../../fragments/ch-inputs/4.html?raw';
+import F5 from '../../../fragments/ch-inputs/5.html?raw';
+import F6 from '../../../fragments/ch-inputs/6.html?raw';
+import F7 from '../../../fragments/ch-inputs/7.html?raw';
+import F8 from '../../../fragments/ch-inputs/8.html?raw';
+import F9 from '../../../fragments/ch-inputs/9.html?raw';
+import F10 from '../../../fragments/ch-inputs/10.html?raw';
+import F11 from '../../../fragments/ch-inputs/11.html?raw';
+import F12 from '../../../fragments/ch-inputs/12.html?raw';
+import F13 from '../../../fragments/ch-inputs/13.html?raw';
+import F14 from '../../../fragments/ch-inputs/14.html?raw';
+import F15 from '../../../fragments/ch-inputs/15.html?raw';
+import F16 from '../../../fragments/ch-inputs/16.html?raw';
+import F17 from '../../../fragments/ch-inputs/17.html?raw';
+import F18 from '../../../fragments/ch-inputs/18.html?raw';
+import F19 from '../../../fragments/ch-inputs/19.html?raw';
+import F20 from '../../../fragments/ch-inputs/20.html?raw';
+import F21 from '../../../fragments/ch-inputs/21.html?raw';
+import F22 from '../../../fragments/ch-inputs/22.html?raw';
+import F23 from '../../../fragments/ch-inputs/23.html?raw';
+import F24 from '../../../fragments/ch-inputs/24.html?raw';
+import F25 from '../../../fragments/ch-inputs/25.html?raw';
+import F26 from '../../../fragments/ch-inputs/26.html?raw';
+import F27 from '../../../fragments/ch-inputs/27.html?raw';
+import F28 from '../../../fragments/ch-inputs/28.html?raw';
+import F29 from '../../../fragments/ch-inputs/29.html?raw';
+import F30 from '../../../fragments/ch-inputs/30.html?raw';
+import F31 from '../../../fragments/ch-inputs/31.html?raw';
+import F32 from '../../../fragments/ch-inputs/32.html?raw';
+import F33 from '../../../fragments/ch-inputs/33.html?raw';
+import F34 from '../../../fragments/ch-inputs/34.html?raw';
+import F35 from '../../../fragments/ch-inputs/35.html?raw';
+import F36 from '../../../fragments/ch-inputs/36.html?raw';
+import F37 from '../../../fragments/ch-inputs/37.html?raw';
+import F38 from '../../../fragments/ch-inputs/38.html?raw';
+import F39 from '../../../fragments/ch-inputs/39.html?raw';
+import F40 from '../../../fragments/ch-inputs/40.html?raw';
+import F41 from '../../../fragments/ch-inputs/41.html?raw';
+import F42 from '../../../fragments/ch-inputs/42.html?raw';
+import F43 from '../../../fragments/ch-inputs/43.html?raw';
+import F44 from '../../../fragments/ch-inputs/44.html?raw';
+import F45 from '../../../fragments/ch-inputs/45.html?raw';
+import F46 from '../../../fragments/ch-inputs/46.html?raw';
+import F47 from '../../../fragments/ch-inputs/47.html?raw';
+import F48 from '../../../fragments/ch-inputs/48.html?raw';
+import F49 from '../../../fragments/ch-inputs/49.html?raw';
+import F50 from '../../../fragments/ch-inputs/50.html?raw';
+import F51 from '../../../fragments/ch-inputs/51.html?raw';
+import F52 from '../../../fragments/ch-inputs/52.html?raw';
+import F53 from '../../../fragments/ch-inputs/53.html?raw';
+import F54 from '../../../fragments/ch-inputs/54.html?raw';
+import F55 from '../../../fragments/ch-inputs/55.html?raw';
+import F56 from '../../../fragments/ch-inputs/56.html?raw';
+import F57 from '../../../fragments/ch-inputs/57.html?raw';
+import F58 from '../../../fragments/ch-inputs/58.html?raw';
+import F59 from '../../../fragments/ch-inputs/59.html?raw';
+import F60 from '../../../fragments/ch-inputs/60.html?raw';
+import F61 from '../../../fragments/ch-inputs/61.html?raw';
+
+<Runtime at="start" />
+
+<section class="dfg-chapter" id="ch-inputs">
+
+Pick an input by the decision: does it apply right away or on Save, how many options are there, and does the exact value matter?
+
+<article class="entry essay" id="switch" data-entry data-name="Switch">
+
+<div class="entry-head">
+
+## Switch \{#switch-h\}
+
+<Learned id="switch" />
+
+</div>
+
+A switch turns one setting on or off. The change takes effect the moment it’s flipped, with nothing to save, so people expect to see the result at once.
+
+That is what separates it from a checkbox, which marks a choice in a form and does nothing until people press Save or Submit.
+
+<Raw html={F0} />
+
+### Forms \{#switch-forms\}
+
+Switches come in four common forms. Most sit in a settings list, one per row, and some add a line that explains the setting. One switch can also turn a whole group of settings on or off, and in a toolbar a switch changes how the page is shown.
+
+<Raw html={F1} />
+
+### Rules \{#switch-rules\}
+
+Four rules keep switches useful.
+
+<div class="cs essay-cs">
+
+<section class="rule" id="switch-rule-1">
+
+#### 1. Don’t use it in a form with Save \{#switch-rule-1-h\}
+
+A switch slides to On at once, so the setting looks done. In a form that still needs Save, people leave without pressing it, and the change is lost. Use a [checkbox](#checkbox) there, because it reads as a choice that waits for Save.
+
+<Raw html={F2} />
+
+</section>
+
+<section class="rule" id="switch-rule-2">
+
+#### 2. Name the setting and show its state \{#switch-rule-2-h\}
+
+A label like “Turn off emails” reads as a command, and with the switch off it becomes a double negative. A vague label like “Notifications” doesn’t say which kind. Either way, people have to puzzle out what’s on, and many get it wrong. Name one setting per row, and write “On” or “Off” next to the switch, so the answer doesn’t depend on color.
+
+<Raw html={F3} />
+
+</section>
+
+<section class="rule" id="switch-rule-3">
+
+#### 3. Show what really happened \{#switch-rule-3-h\}
+
+Some changes take time or can fail, like turning on backup while the phone is offline. If the switch says On at once, people trust it and find out when a photo is lost. Show a small busy state while the change runs, and if it fails, flip the switch back and say why.
+
+<Raw html={F4} />
+
+</section>
+
+<section class="rule" id="switch-rule-4">
+
+#### 4. Use it only for on and off \{#switch-rule-4-h\}
+
+A switch has two positions. When a setting has three choices, “Off” could mean either of the others, and one of them can’t be reached at all, which people only find out by flipping it. Use a [segmented control](#segmented) or a [radio group](#radio), so every choice is in view with its name.
+
+<Raw html={F5} />
+
+</section>
+
+<Raw html={F6} />
+
+</div>
+
+### In real products \{#switch-products\}
+
+<Raw html={F7} />
+
+</article>
+
+<article class="entry essay" id="checkbox" data-entry data-name="Checkbox">
+
+<div class="entry-head">
+
+## Checkbox \{#checkbox-h\}
+
+<Learned id="checkbox" />
+
+</div>
+
+A checkbox marks a yes or no choice. In a group, people can check any number of boxes, from none to all, and nothing happens until they press a button such as Save or Place order.
+
+That separates it from a [switch](#switch), which acts the moment it’s flipped, and from radio buttons, which allow only one choice in a group.
+
+<Raw html={F8} />
+
+### Forms \{#checkbox-forms\}
+
+Checkboxes come in four common forms: a single box, a group, a card and a box on each row of a list. They differ in how many choices there are and which button acts on them.
+
+<Raw html={F9} />
+
+### Rules \{#checkbox-rules\}
+
+Four rules keep checkboxes useful.
+
+<div class="cs essay-cs">
+
+<section class="rule" id="checkbox-rule-1">
+
+#### 1. Use radio buttons for one choice \{#checkbox-rule-1-h\}
+
+Square boxes say “pick any”, so when only one option is allowed, checking a second one leaves the first checked too, and people learn the rule only when the next step shows an error. [Radio buttons](#radio) say “pick one”, and choosing one clears the other by itself.
+
+<Raw html={F10} />
+
+</section>
+
+<section class="rule" id="checkbox-rule-2">
+
+#### 2. Use a switch when it applies now \{#checkbox-rule-2-h\}
+
+Checkboxes usually wait for a Save or Done button, so when a change happens at once with no button, people aren’t sure it worked. Use a [switch](#switch) there, with “On” next to it to confirm the change.
+
+<Raw html={F11} />
+
+</section>
+
+<section class="rule" id="checkbox-rule-3">
+
+#### 3. Make checked mean yes \{#checkbox-rule-3-h\}
+
+With a label like “Don’t send me updates”, people have to leave the box empty to say yes, so people who skim see “send me updates”, check it, and get the opposite. Write the label as the thing they can choose, like “Send me updates”, so checking the box gives them what they want.
+
+<Raw html={F12} />
+
+</section>
+
+<section class="rule" id="checkbox-rule-4">
+
+#### 4. Add search and Select all to long lists \{#checkbox-rule-4-h\}
+
+In a long list, people have to scroll and read every name to find the ones they want, which is slow and makes it easy to miss one. A search box cuts the list down, and Select all checks what’s left in one click. When only some are checked, Select all shows a dash.
+
+<Raw html={F13} />
+
+</section>
+
+<Raw html={F14} />
+
+</div>
+
+### In real products \{#checkbox-products\}
+
+<Raw html={F15} />
+
+</article>
+
+<article class="entry essay" id="radio" data-entry data-name="Radio group">
+
+<div class="entry-head">
+
+## Radio group \{#radio-h\}
+
+<Learned id="radio" />
+
+</div>
+
+A radio group is a short list of options where people pick exactly one. Every option is visible, so people can compare them before they choose, and picking one clears the one picked before.
+
+Its round buttons say “pick one”, where [checkboxes](#checkbox) allow any number.
+
+<Raw html={F16} />
+
+### Forms \{#radio-forms\}
+
+Most radio groups are a stacked list. Two or three short options can sit side by side on one line. When each option needs a price or a detail, the options become cards. Picking one option can also open a follow-up field, such as “Tell us more”.
+
+<Raw html={F17} />
+
+### Rules \{#radio-rules\}
+
+Four rules keep radio groups useful.
+
+<div class="cs essay-cs">
+
+<section class="rule" id="radio-rule-1">
+
+#### 1. Keep it to a few options \{#radio-rule-1-h\}
+
+Past about six options, the group becomes a long column: people read down it to find their country, and the Continue button ends up far below. A field that filters as people type, or a [select](#combobox), keeps the form short, and a few typed letters bring up the right answer.
+
+<Raw html={F18} />
+
+</section>
+
+<section class="rule" id="radio-rule-2">
+
+#### 2. Preselect the safe choice \{#radio-rule-2-h\}
+
+With nothing picked, people can’t tell if they have to answer. If they skip it, the app has to choose for them, and it may pick the least safe option, like sharing the file with anyone who has the link. Pick the safest common option up front, so skipping still gives a safe result, and if no option is safe, leave it empty and ask for an answer.
+
+<Raw html={F19} />
+
+</section>
+
+<section class="rule" id="radio-rule-3">
+
+#### 3. Make long options easy to compare \{#radio-rule-3-h\}
+
+When each option is a long sentence, the price, the billing and the rules run together, and people have to read every word to see how two plans differ. Turn each option into a card, with the name and the one fact people compare first, and the details on a short line below.
+
+<Raw html={F20} />
+
+</section>
+
+<section class="rule" id="radio-rule-4">
+
+#### 4. Don’t use it to switch views \{#radio-rule-4-h\}
+
+Radio buttons look like a form setting, so people expect to press Save before anything changes, and a calendar that jumps to Month the moment they click doesn’t match that. Stacked in a column, the buttons also push the calendar down. For a view that changes at once, use a [segmented control](#segmented) in the toolbar, like other calendar apps.
+
+<Raw html={F21} />
+
+</section>
+
+<Raw html={F22} />
+
+</div>
+
+### In real products \{#radio-products\}
+
+<Raw html={F23} />
+
+</article>
+
+<article class="entry essay" id="segmented" data-entry data-name="Segmented control">
+
+<div class="entry-head">
+
+## Segmented control \{#segmented-h\}
+
+<Learned id="segmented" />
+
+</div>
+
+A segmented control is a row of two to five buttons joined into one. Exactly one segment is on, and picking another changes the view or mode right away, with no Save button.
+
+That is what separates it from [tabs](/part-3/containers/#tabs), which move between different content, like Overview and Reviews. A segmented control shows the same content in another way, like a day, a week or a month of the same calendar.
+
+<Raw html={F24} />
+
+### Forms \{#segmented-forms\}
+
+Most segmented controls use short text labels, and well-known views can use icons instead. On a phone, the control often spans the full width under the page title. With exactly two options, it works like a switch that names both sides.
+
+<Raw html={F25} />
+
+### Rules \{#segmented-rules\}
+
+Three rules keep segmented controls useful.
+
+<div class="cs essay-cs">
+
+<section class="rule" id="segmented-rule-1">
+
+#### 1. Keep it to a few short labels \{#segmented-rule-1-h\}
+
+Long labels or more than five options don’t fit on one line, so the control wraps into a block of buttons that is hard to scan and no longer looks like one switch. Use tabs for views like these, because they stay on one line and scroll sideways. For a value rather than a view, use a [select](#combobox).
+
+<Raw html={F26} />
+
+</section>
+
+<section class="rule" id="segmented-rule-2">
+
+#### 2. Use it only for changes that apply at once \{#segmented-rule-2-h\}
+
+People expect a segmented control to take effect the moment they click it, so if the choice waits for a Save button, they leave and the change is lost. When a choice needs saving, use a [radio group](#radio), which reads as part of a form.
+
+<Raw html={F27} />
+
+</section>
+
+<section class="rule" id="segmented-rule-3">
+
+#### 3. Make the selected segment stand out \{#segmented-rule-3-h\}
+
+The selected segment is the only thing that tells people what they’re looking at. With a faint tint, they can’t tell if the chart shows a day, a week or a month, and on a dim screen or in bright light the tint disappears. Give the selected segment a solid fill and bold text, so it reads at a glance.
+
+<Raw html={F28} />
+
+</section>
+
+<Raw html={F29} />
+
+</div>
+
+### In real products \{#segmented-products\}
+
+<Raw html={F30} />
+
+</article>
+
+<article class="entry essay" id="combobox" data-entry data-name="Select & combobox">
+
+<div class="entry-head">
+
+## Select & combobox \{#combobox-h\}
+
+<Learned id="combobox" />
+
+</div>
+
+A select shows the current choice in a closed field, and people open it to see the list and pick one option. A combobox adds a text field, so people can type to narrow a long list down.
+
+Where a [radio group](#radio) shows every option all the time, a select hides them until it’s opened, which saves space but costs a click and makes options hard to compare.
+
+<Raw html={F31} />
+
+### Forms \{#combobox-forms\}
+
+There are four common forms. A plain select opens a short list. A combobox adds typing to filter a long list. A multi-select lets people pick several. An autocomplete suggests answers but also accepts text that isn’t in the list.
+
+<Raw html={F32} />
+
+### Rules \{#combobox-rules\}
+
+Four rules keep selects and comboboxes useful.
+
+<div class="cs essay-cs">
+
+<section class="rule" id="combobox-rule-1">
+
+#### 1. Show short lists in full \{#combobox-rule-1-h\}
+
+With only a few options, a dropdown hides them for no reason, and every change takes two clicks. Show them as a [segmented control](#segmented) or a [radio group](#radio), so they’re all in view and a change takes one click.
+
+<Raw html={F33} />
+
+</section>
+
+<section class="rule" id="combobox-rule-2">
+
+#### 2. Make long lists searchable \{#combobox-rule-2-h\}
+
+In a long list, people scroll through the whole alphabet to find one name, which is slow and makes it easy to scroll past the one they want. Let people type a few letters to filter. Put the items they use most at the top and group the rest, so common picks are one click away.
+
+<Raw html={F34} />
+
+</section>
+
+<section class="rule" id="combobox-rule-3">
+
+#### 3. Show previews when looks matter \{#combobox-rule-3-h\}
+
+Some options differ in how they look, like themes or photo filters. A name like Atlas or Juno says nothing about that, so people open the list again and again to try each one. Use a gallery or a panel that shows a small preview of each option, so people can compare them side by side and pick once.
+
+<Raw html={F35} />
+
+</section>
+
+<section class="rule" id="combobox-rule-4">
+
+#### 4. Let people pick several when they need to \{#combobox-rule-4-h\}
+
+A single-choice list replaces the old pick without saying so: someone adds a second person, the first one drops off, and they find out only when that person never gets the email. When people may pick several, use checkboxes, or a multi-select that keeps every pick in view.
+
+<Raw html={F36} />
+
+</section>
+
+<Raw html={F37} />
+
+</div>
+
+### In real products \{#combobox-products\}
+
+<Raw html={F38} />
+
+</article>
+
+<article class="entry essay" id="slider" data-entry data-name="Slider + number">
+
+<div class="entry-head">
+
+## Slider + number field \{#slider-h\}
+
+<Learned id="slider" />
+
+</div>
+
+A slider sets a value by dragging a handle along a track. The track shows the whole range, so people see where the value sits between the lowest and the highest. Dragging is quick, but it’s hard to land on one exact number.
+
+A number field is the opposite: exact, but it doesn’t show the range, and people can’t try values by feel. Many settings show both, side by side.
+
+<Raw html={F39} />
+
+### Forms \{#slider-forms\}
+
+Sliders differ in what they let people set. A plain slider moves smoothly. Adding a number field makes it exact. A range slider has two handles for a minimum and a maximum. A stepped slider snaps to a few fixed values.
+
+<Raw html={F40} />
+
+### Rules \{#slider-rules\}
+
+Four rules keep sliders useful.
+
+<div class="cs essay-cs">
+
+<section class="rule" id="slider-rule-1">
+
+#### 1. Let people type the exact value \{#slider-rule-1-h\}
+
+When the range has more values than the track has pixels, one pixel covers several values, so landing on exactly 37 takes many tries, and with a finger it’s worse. Put a number field next to the slider, so people can drag to get close and type the exact value.
+
+<Raw html={F41} />
+
+</section>
+
+<section class="rule" id="slider-rule-2">
+
+#### 2. Spread out a huge range \{#slider-rule-2-h\}
+
+On a straight track from $1 to $10,000, all the small amounts share the first few pixels, so setting $50 by dragging is nearly impossible. Use a number field, or a slider where $1 to $10, $10 to $100 and so on each get the same room, with a field beside it for any exact amount.
+
+<Raw html={F42} />
+
+</section>
+
+<section class="rule" id="slider-rule-3">
+
+#### 3. Make the handle easy to grab \{#slider-rule-3-h\}
+
+A tiny handle is hard to hit with a mouse, and a finger covers it completely. If clicking the track does nothing and the keyboard can’t reach it, some people can’t set the value at all. Make the handle and its hit area bigger, let a click on the track move it there, and let arrow keys move it too, with Shift for bigger steps.
+
+<Raw html={F43} />
+
+</section>
+
+<section class="rule" id="slider-rule-4">
+
+#### 4. Show what the value does \{#slider-rule-4-h\}
+
+When only a number changes, people can’t tell if higher is stricter or looser, so they guess or leave it alone. Label both ends with what they mean, and show the effect while people drag, like which emails would go to Spam.
+
+<Raw html={F44} />
+
+</section>
+
+<Raw html={F45} />
+
+</div>
+
+### In real products \{#slider-products\}
+
+<Raw html={F46} />
+
+</article>
+
+<article class="entry essay" id="text-field" data-entry data-name="Text field">
+
+<div class="entry-head">
+
+## Text field \{#text-field-h\}
+
+<Learned id="text-field" />
+
+</div>
+
+A text field is a box where people type their own words: a name, an address, a message, a search. A label above it says what goes in, and hints and errors appear below it.
+
+That is what separates it from a [picker](#picker), which offers only valid values, like the days on a calendar. A text field accepts anything people type, so it has to say what it expects and help when the text doesn’t fit.
+
+<Raw html={F47} />
+
+### Forms \{#text-field-forms\}
+
+Text fields come in four common forms, set by what people type. A single line holds a short value, like a name or an email. A multi-line box holds longer text, like a message. Search and password fields are single lines with a control of their own.
+
+<Raw html={F48} />
+
+### Rules \{#text-field-rules\}
+
+Four rules keep text fields useful.
+
+<div class="cs essay-cs">
+
+<section class="rule" id="text-field-rule-1">
+
+#### 1. Say back what you understood \{#text-field-rule-1-h\}
+
+Some values can be written in more than one way: “12/11” is 11 December in the US and 12 November in most other places. If the field guesses without saying so, people find out at the hotel desk. Use a picker for values like this, or read the typed text back in words and ask when it could mean two things.
+
+<Raw html={F49} />
+
+</section>
+
+<section class="rule" id="text-field-rule-2">
+
+#### 2. Keep the label visible \{#text-field-rule-2-h\}
+
+A placeholder disappears as soon as there’s text in the field, and after that nothing on screen says what the field is for. People can’t check a filled form without clearing it, so a value in the wrong field gets through. Put the label above the field, where it stays while people type.
+
+<Raw html={F50} />
+
+</section>
+
+<section class="rule" id="text-field-rule-3">
+
+#### 3. Show long text in full \{#text-field-rule-3-h\}
+
+In a small fixed box, people only see a slice of what they wrote, so they can’t reread it before they post. If typing also stops at a hidden limit, the end of their text is lost. Use a box that grows as they write, and show a count when there is a limit.
+
+<Raw html={F51} />
+
+</section>
+
+<section class="rule" id="text-field-rule-4">
+
+#### 4. Say how to fix it \{#text-field-rule-4-h\}
+
+“Invalid username” has the same problem as [a bare “Invalid date”](/part-3/feedback/#inline-message): people can’t tell whether it’s the dot, the length or a name someone else has, so they change things at random. Say what’s wrong in plain words and offer a value that works, one click away.
+
+<Raw html={F52} />
+
+</section>
+
+<Raw html={F53} />
+
+</div>
+
+### In real products \{#text-field-products\}
+
+<Raw html={F54} />
+
+</article>
+
+<article class="entry essay" id="picker" data-entry data-name="Structured picker">
+
+<div class="entry-head">
+
+## Structured picker \{#picker-h\}
+
+<Learned id="picker" />
+
+</div>
+
+A structured picker lets people enter a value with a set format by pointing at it: a day on a calendar, a time from a list, a color from a row of swatches. Every value it offers is valid, so people can’t enter a date that doesn’t exist or a color the app can’t use.
+
+Where a [text field](#text-field) takes any text and checks it afterwards, a picker shows the possible values up front, so people choose one instead of remembering the format.
+
+<Raw html={F55} />
+
+### Forms \{#picker-forms\}
+
+Pickers take the shape of the value they hold. A calendar picks one date, and a range calendar picks a start and an end. Times often come as a set of slots. Colors from a short list come as swatches.
+
+<Raw html={F56} />
+
+### Rules \{#picker-rules\}
+
+Three rules keep pickers useful.
+
+<div class="cs essay-cs">
+
+<section class="rule" id="picker-rule-1">
+
+#### 1. Let people type too \{#picker-rule-1-h\}
+
+A calendar is quick for a date next week, but slow for a date people know by heart, like a birthday: March 1988 is hundreds of clicks back. Put a text field next to the picker and accept the common ways of writing the value. The picker follows what people type, so they can still check it or click instead.
+
+<Raw html={F57} />
+
+</section>
+
+<section class="rule" id="picker-rule-2">
+
+#### 2. Show every allowed value \{#picker-rule-2-h\}
+
+Sometimes only a few values are allowed, like the 8 colors a calendar keeps for events. A free color strip suggests that any color will do, so people pick one, save, and get a different one with no reason given. Show the allowed values as swatches, chips or radio buttons, so what people pick is what they get.
+
+<Raw html={F58} />
+
+</section>
+
+<section class="rule" id="picker-rule-3">
+
+#### 3. Put the context in the picker \{#picker-rule-3-h\}
+
+A bare calendar doesn’t say which day is today, so to pick “a week from now”, people have to work out today’s date and count squares. Mark today in the calendar, offer presets for the usual choices, like “In 7 days”, and spell out the result in words, so people can check it before they move on.
+
+<Raw html={F59} />
+
+</section>
+
+<Raw html={F60} />
+
+</div>
+
+### In real products \{#picker-products\}
+
+<Raw html={F61} />
+
+</article>
+
+<aside class="in-short" id="ch-inputs-in-short" aria-labelledby="ch-inputs-in-short-h" data-pagefind-ignore>
+
+## In short \{#ch-inputs-in-short-h\}
+
+<div class="is-grid">
+
+<div>
+
+<a class="is-e" href="#switch">Switch</a>
+
+1. [Don’t use it in a form with Save](#switch-rule-1)
+2. [Name the setting and show its state](#switch-rule-2)
+3. [Show what really happened](#switch-rule-3)
+4. [Use it only for on and off](#switch-rule-4)
+
+</div>
+
+<div>
+
+<a class="is-e" href="#checkbox">Checkbox</a>
+
+1. [Use radio buttons for one choice](#checkbox-rule-1)
+2. [Use a switch when it applies now](#checkbox-rule-2)
+3. [Make checked mean yes](#checkbox-rule-3)
+4. [Add search and Select all to long lists](#checkbox-rule-4)
+
+</div>
+
+<div>
+
+<a class="is-e" href="#radio">Radio group</a>
+
+1. [Keep it to a few options](#radio-rule-1)
+2. [Preselect the safe choice](#radio-rule-2)
+3. [Make long options easy to compare](#radio-rule-3)
+4. [Don’t use it to switch views](#radio-rule-4)
+
+</div>
+
+<div>
+
+<a class="is-e" href="#segmented">Segmented control</a>
+
+1. [Keep it to a few short labels](#segmented-rule-1)
+2. [Use it only for changes that apply at once](#segmented-rule-2)
+3. [Make the selected segment stand out](#segmented-rule-3)
+
+</div>
+
+<div>
+
+<a class="is-e" href="#combobox">Select & combobox</a>
+
+1. [Show short lists in full](#combobox-rule-1)
+2. [Make long lists searchable](#combobox-rule-2)
+3. [Show previews when looks matter](#combobox-rule-3)
+4. [Let people pick several when they need to](#combobox-rule-4)
+
+</div>
+
+<div>
+
+<a class="is-e" href="#slider">Slider + number field</a>
+
+1. [Let people type the exact value](#slider-rule-1)
+2. [Spread out a huge range](#slider-rule-2)
+3. [Make the handle easy to grab](#slider-rule-3)
+4. [Show what the value does](#slider-rule-4)
+
+</div>
+
+<div>
+
+<a class="is-e" href="#text-field">Text field</a>
+
+1. [Say back what you understood](#text-field-rule-1)
+2. [Keep the label visible](#text-field-rule-2)
+3. [Show long text in full](#text-field-rule-3)
+4. [Say how to fix it](#text-field-rule-4)
+
+</div>
+
+<div>
+
+<a class="is-e" href="#picker">Structured picker</a>
+
+1. [Let people type too](#picker-rule-1)
+2. [Show every allowed value](#picker-rule-2)
+3. [Put the context in the picker](#picker-rule-3)
+
+</div>
+
+</div>
+
+</aside>
+
+</section>
+
+<Runtime chapter="ch-inputs" />

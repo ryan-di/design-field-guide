@@ -1,0 +1,111 @@
+<script>
+(() => {
+  const cs = document.currentScript.closest('.cs');
+  const D = (k, html, wire) => csDemo(cs.querySelector('[data-d="' + k + '"]'), html, wire);
+  const icon = n => '<svg class="icon sm"><use href="#i-' + n + '"/></svg>';
+  const ban = (ic, text, extra, cls) => '<div class="banner' + (cls ? ' ' + cls : '') + '" role="status">' + icon(ic) + '<span class="grow">' + text + '</span>' + (extra || '') + '</div>';
+  const net = '<label class="switch bn-net"><span>Online</span><input type="checkbox" role="switch" checked data-net></label>';
+  const shown = d => !d.closest('.cs-case').hidden && !d.closest('.cs-side').hidden;
+
+  /* 1. Promo */
+  const SONGS = [['Morning mix', '24 songs', ''], ['Road trip', '31 songs', ' b'], ['Focus', '18 songs', ' c']];
+  const songRows = SONGS.map(s => '<div class="cs-row"><span class="thumb bn-art' + s[2] + '"></span><span class="grow"><b>' + s[0] + '</b><br><span class="cs-meta">' + s[1] + '</span></span></div>').join('');
+  const promoHtml = fixed => '<div class="app-frame bn-rel" style="width:min(340px,100%)"><div class="app-bar"><span>Music</span>' +
+    (fixed ? '<span class="badge-wrap"><button class="btn btn-ghost cs-sm" type="button" aria-expanded="false" data-new>What’s new</button><span class="badge bn-dot" data-dot></span></span>' : '') +
+    '</div><div data-bans>' + (fixed ? '' : ban('info', 'New: Family plan, 3 months free!')) + '</div><div class="app-body">' + songRows + '</div>' +
+    (fixed ? '<div class="bn-pop" data-bnpop hidden><b>What’s new</b><span>Family plan: up to 6 people, 3 months free.</span></div>' : '') + '</div>' + net;
+  const promoWire = fixed => d => {
+    const bans = d.querySelector('[data-bans]');
+    d.querySelector('[data-net]').addEventListener('change', e => {
+      const off = bans.querySelector('[data-off]');
+      if (e.target.checked) { if (off) off.remove(); return; }
+      if (off) return;
+      bans.insertAdjacentHTML('beforeend', ban('cloud-off', 'You’re offline. Downloaded songs still play.').replace('class="banner"', 'class="banner" data-off'));
+    });
+    if (!fixed) return;
+    const btn = d.querySelector('[data-new]'), pop = d.querySelector('[data-bnpop]'), dot = d.querySelector('[data-dot]');
+    const setOpen = on => { pop.hidden = !on; btn.setAttribute('aria-expanded', String(on)); };
+    btn.addEventListener('click', () => { setOpen(pop.hidden); dot.hidden = true; });
+    d.querySelector('.app-frame').addEventListener('click', e => { if (!pop.hidden && !e.target.closest('[data-bnpop],[data-new]')) setOpen(false); });
+    d.querySelector('[data-net]').addEventListener('change', () => setOpen(false));
+    btn.addEventListener('keydown', e => { if (e.key === 'Escape') setOpen(false); });
+  };
+  D('banner-1b', promoHtml(false), promoWire(false));
+  D('banner-1f', promoHtml(true), promoWire(true));
+
+  /* 2. Never ends */
+  const tipHtml = fixed => '<div class="app-frame" style="width:min(340px,100%)"><div class="app-bar"><span>Trip plan</span><span class="cs-meta" data-day>Day 1</span></div>' +
+    '<div data-tip>' + ban('info', 'Tip: type / to add a table or an image.', fixed ? '<button class="icon-btn bn-x" type="button" aria-label="Close tip" data-x>' + icon('x') + '</button>' : '') + '</div>' +
+    '<div class="app-body"><b>Lisbon, 12–16 Nov</b><div class="line" style="width:86%"></div><div class="line" style="width:70%"></div><div class="line" style="width:78%"></div></div></div>' +
+    '<button class="btn btn-secondary cs-sm" type="button" data-next>Open the next day</button><p class="cs-meta" data-note></p>';
+  const tipWire = fixed => d => {
+    const tip = d.querySelector('[data-tip]'), day = d.querySelector('[data-day]'), note = d.querySelector('[data-note]');
+    let n = 1;
+    d.querySelector('[data-next]').addEventListener('click', () => {
+      n++; day.textContent = 'Day ' + n;
+      note.textContent = tip.children.length ? 'Day ' + n + ', same tip.' : 'Day ' + n + ', no tip.';
+    });
+    if (fixed) d.querySelector('[data-x]').addEventListener('click', () => {
+      tip.innerHTML = ''; note.textContent = 'Tip closed. It won’t come back.';
+      d.querySelector('[data-next]').focus();
+    });
+  };
+  D('banner-2b', tipHtml(false), tipWire(false));
+  D('banner-2f', tipHtml(true), tipWire(true));
+
+  /* 3. Stacked */
+  const NOTES = {
+    off: ['cloud-off', 'You’re offline. Changes will sync later.', 'bn-bad'],
+    ro: ['info', 'Read-only. Ask Sam for edit access.', ''],
+    tip: ['info', 'Tip: press ? to see shortcuts.', '']
+  };
+  const BUDGET = [['Rent', '1,200'], ['Food', '450'], ['Travel', '300'], ['Phone', '40'], ['Total', '1,990']];
+  const sheet = BUDGET.map((r, i) => '<div class="cs-row"' + (i === BUDGET.length - 1 ? ' style="font-weight:700"' : '') + '><span class="grow">' + r[0] + '</span><span>' + r[1] + '</span></div>').join('');
+  const stackHtml = '<div class="app-frame bn-sheet" style="width:min(340px,100%)"><div class="app-bar"><span>Budget 2026</span><span class="cs-meta">Shared by Sam</span></div>' +
+    '<div class="bn-rel" data-bans></div><div class="app-body bn-cells">' + sheet + '</div></div>' + net;
+  const stackWire = fixed => d => {
+    const bans = d.querySelector('[data-bans]');
+    let offline = false, open = false;
+    const render = () => {
+      const keys = (offline ? ['off'] : []).concat(['ro', 'tip']);
+      if (!fixed) { bans.innerHTML = keys.map(k => ban(NOTES[k][0], NOTES[k][1], '', NOTES[k][2])).join(''); return; }
+      const top = NOTES[keys[0]], rest = keys.slice(1);
+      bans.innerHTML = ban(top[0], top[1], '<button class="btn btn-ghost cs-sm bn-more" type="button" aria-expanded="' + open + '" data-more>' + rest.length + ' more</button>', top[2]) +
+        '<div class="bn-pop" data-bnpop' + (open ? '' : ' hidden') + '><b>Notifications</b>' + rest.map(k => '<span class="bn-pop-row">' + icon(NOTES[k][0]) + NOTES[k][1] + '</span>').join('') + '</div>';
+      bans.querySelector('[data-more]').addEventListener('click', () => { open = !open; render(); bans.querySelector('[data-more]').focus(); });
+    };
+    d.querySelector('[data-net]').addEventListener('change', e => { offline = !e.target.checked; render(); });
+    render();
+  };
+  D('banner-3b', stackHtml, stackWire(false));
+  D('banner-3f', stackHtml, stackWire(true));
+
+  /* 4. Jumping */
+  const chatHtml = fixed => '<div class="app-frame bn-chat' + (fixed ? ' bn-over' : '') + '" style="width:min(340px,100%)"><div class="app-bar"><span>Sam</span><span class="cs-meta">Chat</span></div><div class="bn-slot" data-slot></div>' +
+    '<div class="app-body"><div class="bn-msgs" data-msgs><p class="bn-msg">Are we still on for 6?</p></div>' +
+    '<div class="bn-reply"><input class="input" value="Yes, see you there!" aria-label="Message"><button class="btn btn-primary cs-sm" type="button" data-send>Send</button></div></div></div>' +
+    '<p class="cs-meta" data-count>Sent: 0 · Missed: 0</p>';
+  const chatWire = (d, t) => {
+    const slot = d.querySelector('[data-slot]'), msgs = d.querySelector('[data-msgs]'), count = d.querySelector('[data-count]'), input = d.querySelector('input');
+    let sent = 0, missed = 0;
+    const tick = () => { count.textContent = 'Sent: ' + sent + ' · Missed: ' + missed; };
+    d.querySelector('.app-frame').addEventListener('click', e => {
+      if (e.target.closest('[data-send]')) {
+        sent++;
+        const p = document.createElement('p'); p.className = 'bn-msg me'; p.textContent = input.value || 'Yes, see you there!';
+        msgs.appendChild(p);
+      } else if (!e.target.closest('input')) missed++;
+      tick();
+    });
+    t.every(() => {
+      if (!shown(d)) return;
+      slot.innerHTML = slot.children.length ? '' : ban('cloud-off', 'Connection lost. Reconnecting…', '', 'bn-bad');
+    }, 1400);
+  };
+  D('banner-4b', chatHtml(false), chatWire);
+  D('banner-4f', chatHtml(true), chatWire);
+
+  csInit(cs);
+})();
+
+</script>

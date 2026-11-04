@@ -1,0 +1,37 @@
+<div class="stage tall" data-demo="pat-smart-defaults">
+      <div class="seg" role="radiogroup" aria-label="Version">
+        <input type="radio" name="p10-sd-mode" id="p10-sd-before" value="before"><label for="p10-sd-before">Before</label>
+        <input type="radio" name="p10-sd-mode" id="p10-sd-after" value="after" checked><label for="p10-sd-after">After</label>
+      </div>
+      <div class="form-card surface p10-form" role="group" aria-labelledby="p10-sd-title">
+        <h5 id="p10-sd-title">New export</h5>
+        <div class="p10-grid">
+          <div class="field p10-wide">
+            <label class="field-label" for="p10-sd-name">File name <span class="p10-req" data-req="name">Required</span> <span class="p10-mark" data-mark="name" hidden>Changed</span></label>
+            <input class="input" id="p10-sd-name" data-key="name" autocomplete="off" spellcheck="false">
+          </div>
+          <div class="field">
+            <label class="field-label" for="p10-sd-format">Format <span class="p10-req" data-req="format">Required</span> <span class="p10-mark" data-mark="format" hidden>Changed</span></label>
+            <select class="select" id="p10-sd-format" data-key="format"><option value="">Choose…</option><option value="png">PNG</option><option value="jpg">JPEG</option><option value="webp">WebP</option></select>
+          </div>
+          <div class="field">
+            <label class="field-label" for="p10-sd-size">Size <span class="p10-req" data-req="size">Required</span> <span class="p10-mark" data-mark="size" hidden>Changed</span></label>
+            <select class="select" id="p10-sd-size" data-key="size"><option value="">Choose…</option><option value="original">Original</option><option value="double">Double</option><option value="half">Half</option></select>
+          </div>
+          <div class="field p10-wide">
+            <label class="field-label" for="p10-sd-folder">Folder <span class="p10-req" data-req="folder">Required</span> <span class="p10-mark" data-mark="folder" hidden>Changed</span></label>
+            <input class="input" id="p10-sd-folder" data-key="folder" autocomplete="off" spellcheck="false">
+          </div>
+          <div class="field p10-wide">
+            <label class="field-label" for="p10-sd-embed">Keep date and camera details <span class="p10-req" data-req="embed">Required</span> <span class="p10-mark" data-mark="embed" hidden>Changed</span></label>
+            <select class="select" id="p10-sd-embed" data-key="embed"><option value="">Choose…</option><option value="yes">Yes</option><option value="no">No</option></select>
+          </div>
+        </div>
+        <div class="p10-actions">
+          <button class="btn btn-ghost p10-reset" type="button" id="p10-sd-reset" hidden>Reset to defaults</button>
+          <button class="btn btn-ghost" type="button" id="p10-sd-cancel">Cancel</button>
+          <button class="btn btn-primary" type="button" id="p10-sd-export">Export</button>
+        </div>
+      </div>
+      <p class="try"><b>Try it:</b> in Before, press Export with the form still blank. In After, change the format and watch it get marked, then export: the next export starts from what you just used.</p>
+    </div>

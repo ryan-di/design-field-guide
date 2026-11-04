@@ -1,0 +1,77 @@
+<div class="fm" data-fm>
+  
+  <div class="seg fm-seg" role="radiogroup" aria-label="Form">
+    <input type="radio" name="fm-accordion" id="fm-accordion-1" value="many" checked><label for="fm-accordion-1">Several open</label>
+    <input type="radio" name="fm-accordion" id="fm-accordion-2" value="one"><label for="fm-accordion-2">One at a time</label>
+    <input type="radio" name="fm-accordion" id="fm-accordion-3" value="filters"><label for="fm-accordion-3">Filter panel</label>
+  </div>
+  <div class="fm-stage" data-fm-stage></div>
+  <p class="fig-cap" data-fm-when aria-live="polite"></p>
+  <script>
+  (() => {
+    const fm = document.currentScript.closest('[data-fm]'), stage = fm.querySelector('[data-fm-stage]'), when = fm.querySelector('[data-fm-when]');
+    const kv = (k, v) => '<div class="kv">' + k + ' <b>' + v + '</b></div>';
+    const sec = (title, body, open, sum) => '<details' + (open ? ' open' : '') + '><summary>' + (sum !== undefined ? '<span>' + title + '</span><span class="acf-sum" data-sum>' + sum + '</span>' : title) + '</summary><div class="acc-body">' + body + '</div></details>';
+    const frame = (cls, title, bar, body) => '<div class="app-frame ' + cls + '"><div class="app-bar"><span>' + title + '</span>' + (bar || '') + '</div><div class="app-body">' + body + '</div></div>';
+    const F = {
+      many: {
+        use: 'Use it for a list of separate topics, like the questions on a help page.',
+        more: 'People open the ones they need, and each stays open until they close it.',
+        show: () => {
+          stage.innerHTML = frame('fm-frame', 'Help with orders', '', '<div class="acc acf-box">' +
+            sec('Where is my order?', '<p>Open Orders and pick the order. You’ll see where it is and when it should arrive.</p>', true) +
+            sec('How do I return something?', '<p>Start a return from Orders within 30 days. Print the label, or show the code at a drop-off point.</p>') +
+            sec('Can I change the delivery address?', '<p>Yes, until the order ships. After that, change it from the courier’s tracking page.</p>') + '</div>');
+        }
+      },
+      one: {
+        use: 'Use it when people need only one section at a time, as on a phone.',
+        more: 'It keeps the page short, but people can’t read two sections side by side.',
+        show: () => {
+          stage.innerHTML = frame('acf-narrow', 'Rain jacket', '', '<div class="acf-buy"><span>Light, packable, waterproof</span><b>$89</b></div><div class="acc acf-box" data-acc>' +
+            sec('Description', '<p>Fully waterproof, with taped seams. Folds into its own pocket.</p>', true) +
+            sec('Size and fit', kv('Fit', 'Regular') + kv('Model wears', 'M')) +
+            sec('Delivery and returns', kv('Delivery', '2–4 days') + kv('Returns', 'Free, 30 days')) + '</div>');
+          const all = Array.from(stage.querySelectorAll('[data-acc] > details'));
+          all.forEach(d => d.addEventListener('toggle', () => { if (d.open) all.forEach(o => { if (o !== d) o.open = false; }); }));
+        }
+      },
+      filters: {
+        use: 'Use it for groups of filters or settings in a narrow side panel.',
+        more: 'Each header shows the current choice, so people see it without opening the section.',
+        show: () => {
+          const SIZE = { 7: 22, 8: 31, 9: 28, 10: 19 }, COLOR = { Black: .45, White: .3, Blue: .25 }, PRICE = { Any: 1, 'Under $50': .3, 'Under $100': .7 };
+          const box = (name, v) => '<label class="acf-opt"><input type="checkbox" data-' + name + ' value="' + v + '">' + v + '</label>';
+          const radio = v => '<label class="acf-opt"><input type="radio" name="fm-accordion-price" data-price value="' + v + '"' + (v === 'Any' ? ' checked' : '') + '>' + v + '</label>';
+          stage.innerHTML = frame('acf-narrow', 'Filters', '<span class="acf-count" data-count></span>', '<div class="acc acf-box acf-filters">' +
+            sec('Size', '<div class="acf-opts">' + Object.keys(SIZE).map(v => box('size', v)).join('') + '</div>', true, 'Any') +
+            sec('Color', '<div class="acf-opts">' + Object.keys(COLOR).map(v => box('color', v)).join('') + '</div>', false, 'Any') +
+            sec('Price', '<div class="acf-opts">' + Object.keys(PRICE).map(radio).join('') + '</div>', false, 'Any') + '</div>' +
+            '<button class="btn btn-primary" type="button" data-go></button><p class="cs-meta" data-out></p>');
+          const sums = stage.querySelectorAll('[data-sum]'), count = stage.querySelector('[data-count]'), go = stage.querySelector('[data-go]'), out = stage.querySelector('[data-out]');
+          const picked = k => Array.from(stage.querySelectorAll('[data-' + k + ']:checked')).map(i => i.value);
+          const update = () => {
+            const s = picked('size'), c = picked('color'), p = picked('price')[0];
+            const n = Math.round((s.length ? s.reduce((a, v) => a + SIZE[v], 0) : 128) * (c.length ? c.reduce((a, v) => a + COLOR[v], 0) : 1) * PRICE[p]);
+            sums[0].textContent = s.length ? s.join(', ') : 'Any';
+            sums[1].textContent = c.length ? c.join(', ') : 'Any';
+            sums[2].textContent = p;
+            count.textContent = n + ' results';
+            go.textContent = 'Show ' + n + ' results';
+            out.textContent = '';
+          };
+          stage.firstElementChild.addEventListener('change', update);
+          go.addEventListener('click', () => { out.textContent = 'Showing ' + go.textContent.slice(5) + '.'; });
+          update();
+        }
+      }
+    };
+    const show = k => {
+      F[k].show();
+      when.innerHTML = '<b>' + fm.querySelector('.fm-seg input:checked + label').textContent + '.</b> ' + F[k].use + ' ' + F[k].more;
+    };
+    fm.querySelectorAll('.fm-seg input').forEach(i => i.addEventListener('change', () => show(i.value)));
+    show('many');
+  })();
+  </script>
+</div>

@@ -1,0 +1,48 @@
+<div class="note comfy cw-wrap"><p>Notice what stays open: the part people use most is shown, and the rest folds into headers that open in place.</p>
+      <div class="seg cw-seg" role="radiogroup" aria-label="Example">
+        <input type="radio" name="cw-accordion-w" id="cw-accordion-w-1" value="vscode" checked><label for="cw-accordion-w-1">VS Code</label>
+        <input type="radio" name="cw-accordion-w" id="cw-accordion-w-2" value="lightroom"><label for="cw-accordion-w-2">Lightroom</label>
+        <input type="radio" name="cw-accordion-w" id="cw-accordion-w-3" value="gmail"><label for="cw-accordion-w-3">Gmail</label>
+        <input type="radio" name="cw-accordion-w" id="cw-accordion-w-4" value="google"><label for="cw-accordion-w-4">Google Search</label>
+      </div>
+      <div class="cw" data-cw-view role="img" aria-label=""></div>
+      <p class="cw-cap" data-cw-cap aria-live="polite"></p>
+      
+      <script>
+      (() => {
+        const wrap = document.currentScript.closest('.cw-wrap');
+        const view = wrap.querySelector('[data-cw-view]'), cap = wrap.querySelector('[data-cw-cap]');
+        const ic = id => '<svg class="icon sm"><use href="#i-' + id + '"/></svg>';
+        const h = (text, mods) => '<div class="cw-accw-h' + (mods ? ' ' + mods : '') + '">' + text + '</div>';
+        const r = (text, mods, icon) => '<span class="cw-accw-r' + (mods ? ' ' + mods : '') + '">' + (icon ? ic(icon) : '') + text + '</span>';
+        const sl = (label, at) => '<div class="cw-accw-sl"><span>' + label + '</span><span class="cw-accw-tr"><i style="left:' + at + '%"></i></span></div>';
+        const line = w => '<i class="cw-line" style="width:' + w + '%"></i>';
+        const msg = (av, name, text, time, b) => '<div class="cw-accw-msg"><span class="cw-accw-av' + (b ? ' b' : '') + '">' + av + '</span><b>' + name + '</b><span class="sn">' + text + '</span><small>' + time + '</small></div>';
+        const S = {
+          vscode: { html: '<div class="cw-accw-app tall"><div class="cw-accw-t">Explorer</div>' + h('site', 'open mono') +
+              '<div class="cw-accw-b cw-accw-tree">' + r('src', '', 'folder') + r('components', 'i1', 'folder') + r('Button.vue', 'i2 sel') + r('App.vue', 'i1') + r('package.json') + '</div>' +
+              h('Outline', 'mono') + h('Timeline', 'mono') + '</div>',
+            alt: 'A file explorer side bar. The project folder is open and shows its file tree. Below it, Outline and Timeline are collapsed headers.',
+            cap: 'VS Code: the Explorer keeps the file tree open and folds Outline and Timeline into headers at the bottom. They open in place when you need them.' },
+          lightroom: { html: '<div class="cw-accw-app">' + h('Basic', 'end open') + '<div class="cw-accw-b">' + sl('Exposure', 55) + sl('Contrast', 42) + sl('Highlights', 30) + sl('Shadows', 66) + '</div>' +
+              h('Tone Curve', 'end') + h('HSL / Color', 'end') + h('Detail', 'end') + h('Lens Corrections', 'end') + '<div class="cw-accw-hint">Solo mode: opening one panel closes the others.</div></div>',
+            alt: 'An editing panel. Basic is open with sliders for Exposure, Contrast, Highlights and Shadows. Tone Curve, HSL / Color, Detail and Lens Corrections are collapsed headers below.',
+            cap: 'Lightroom Classic: the Develop panel stacks Basic, Tone Curve, Detail and more as sections. Solo mode keeps just one open, so the panel stays short.' },
+          gmail: { html: '<div class="cw-accw-app"><div class="cw-accw-subj">Weekend trip</div>' + msg('A', 'Ana', 'Shall we take the early train?', 'Mon') +
+              '<div class="cw-accw-fold"><span>3</span></div>' + msg('B', 'Ben', 'Booked the tickets, see attached', 'Tue', true) +
+              '<div class="cw-accw-msg"><span class="cw-accw-av">A</span><b>Ana</b><span class="sn">to me</span><small>10:42</small></div><div class="cw-accw-body">' + line(92) + line(80) + line(55) + '</div></div>',
+            alt: 'An email thread. Two earlier messages are one-line headers with a snippet, a circle with 3 stands for three more folded messages, and the newest message is open.',
+            cap: 'Gmail: in a long thread, older messages shrink to one-line headers and the newest stays open. A count stands in for the ones in between, and any of them opens with a click.' },
+          google: { html: '<div class="cw-accw-app"><div class="cw-accw-q">' + ic('search') + 'storing coffee beans</div>' +
+              '<div class="cw-accw-res"><span class="cw-accw-url">beans.example</span><span class="cw-accw-lk">How to store coffee at home</span>' + line(92) + line(70) + '</div>' +
+              '<div class="cw-accw-paa"><b>Related questions</b>' + h('Do beans go stale once opened?', 'end q') + h('Should beans go in the fridge?', 'end q open') +
+              '<div class="cw-accw-b">' + line(95) + line(85) + line(40) + '<span class="cw-accw-url">answer.example</span></div>' + h('How long do ground beans last?', 'end q') + '</div></div>',
+            alt: 'A search results page. Under one result, a Related questions box lists three questions; the middle one is open and shows a short answer.',
+            cap: 'Google Search: “People also ask” lists related questions. Each one opens in place to show a short answer, so the results page stays short.' }
+        };
+        const render = k => { view.innerHTML = S[k].html; view.setAttribute('aria-label', 'Sketch: ' + S[k].alt); cap.textContent = S[k].cap; };
+        wrap.querySelectorAll('input[name="cw-accordion-w"]').forEach(r => r.addEventListener('change', () => render(r.value)));
+        render('vscode');
+      })();
+      </script>
+    </div>

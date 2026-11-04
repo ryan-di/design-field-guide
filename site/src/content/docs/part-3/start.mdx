@@ -1,0 +1,40 @@
+---
+title: "Read every component as a promise"
+description: "Every component makes a promise to the person using it, about three things."
+eyebrow: "Before you start"
+part:
+  id: "part-3"
+  label: "Part 3 · Components"
+  title: "Components"
+  sub: "The building blocks: what each one is for, where it breaks, and what to use instead."
+sidebar:
+  label: "Before you start"
+---
+
+import Raw from '../../../components/Raw.astro';
+import Learned from '../../../components/Learned.astro';
+import Runtime from '../../../components/Runtime.astro';
+import F0 from '../../../fragments/ch-start/0.html?raw';
+import F1 from '../../../fragments/ch-start/1.html?raw';
+
+<Runtime at="start" />
+
+<section class="dfg-chapter" id="ch-start">
+
+Every component makes a promise to the person using it, about three things.
+
+<Raw html={F0} />
+
+### How each entry reads
+
+Each component is a short article. It says what the component is for, with a demo. Then its forms, and the rules: each shows how the component breaks and what to do instead, with a demo you can switch between the two. Last, real products that use it.
+
+### The interruption ladder
+
+For anything the product needs to tell people, use the lowest step that still does the job. Each step up costs more attention, so it has to be worth more. Click a step to jump to it.
+
+<Raw html={F1} />
+
+</section>
+
+<Runtime chapter="ch-start" />

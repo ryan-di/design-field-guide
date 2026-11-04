@@ -1,0 +1,167 @@
+<script>
+(() => {
+  const { $, $$, store, demo, toast } = window.dfg;
+
+  /* js-22-status.js */
+demo('pat-instant-feedback', st => {
+  const SERVER_MS = 1200;
+  const plural = (n, one, many) => n + ' ' + (n === 1 ? one : many);
+  const card = kind => {
+    const el = $('[data-kind="' + kind + '"]', st);
+    return { btn: $('button', el), status: $('[data-status]', el), count: $('[data-count]', el), clicks: 0, sent: 0 };
+  };
+  const tally = c => { c.count.textContent = plural(c.clicks, 'click', 'clicks') + ' · ' + plural(c.sent, 'save', 'saves') + ' sent'; };
+
+  // Silent: nothing changes until the server answers, and every click sends another save.
+  const silent = card('silent');
+  let pending = 0;
+  silent.btn.addEventListener('click', () => {
+    if (pending === 0) { silent.clicks = 0; silent.sent = 0; silent.status.textContent = ''; }
+    silent.clicks++; silent.sent++; pending++;
+    setTimeout(() => {
+      pending--;
+      if (pending > 0) return;
+      silent.status.textContent = silent.sent === 1 ? 'Saved' : 'Saved ' + silent.sent + ' times. Each extra click sent another save.';
+      tally(silent);
+    }, SERVER_MS);
+  });
+
+  // Instant: the button answers on click, ignores repeats while busy, then leaves a lasting "Saved just now".
+  const instant = card('instant');
+  const idle = instant.btn.innerHTML;
+  let busy = false, reset = null;
+  instant.btn.addEventListener('click', () => {
+    if (busy) { instant.clicks++; return; }
+    clearTimeout(reset);
+    busy = true; instant.clicks = 1; instant.sent = 1;
+    instant.btn.classList.remove('is-success');
+    instant.btn.classList.add('busy', 'is-pressed');
+    instant.btn.setAttribute('aria-disabled', 'true');
+    instant.btn.innerHTML = '<span class="spinner" aria-hidden="true"></span>Saving…';
+    instant.status.textContent = 'Saving your document…';
+    setTimeout(() => {
+      busy = false;
+      instant.btn.classList.remove('busy', 'is-pressed');
+      instant.btn.removeAttribute('aria-disabled');
+      instant.btn.classList.add('is-success');
+      instant.btn.innerHTML = '<svg class="icon sm" aria-hidden="true"><use href="#i-check"/></svg>Saved';
+      instant.status.textContent = 'Saved just now';
+      tally(instant);
+      reset = setTimeout(() => { instant.btn.classList.remove('is-success'); instant.btn.innerHTML = idle; }, 1500);
+    }, SERVER_MS);
+  });
+});
+
+demo('pat-optimistic-ui', st => {
+  const SERVER_MS = 900;
+  const fail = $('[data-fail]', st), total = $('[data-total]', st);
+  const mode = () => ($('input[name="p12-opt-mode"]:checked', st) || {}).value || 'wait';
+  const rows = $$('.p12-row', st).map(li => {
+    const btn = $('.p12-fav', li), on = btn.getAttribute('aria-pressed') === 'true';
+    // shown = what the screen says; saved = what the server last confirmed; seq = latest request id
+    return { li, btn, name: $('b', li).textContent, icon: btn.innerHTML, shown: on, saved: on, seq: 0, pending: false };
+  });
+  const render = r => {
+    r.btn.setAttribute('aria-pressed', String(r.shown));
+    if (r.pending) { r.btn.innerHTML = '<span class="spinner" aria-hidden="true"></span>'; r.btn.setAttribute('aria-disabled', 'true'); }
+    else { r.btn.innerHTML = r.icon; r.btn.removeAttribute('aria-disabled'); }
+    const n = rows.filter(x => x.shown).length;
+    total.textContent = n + (n === 1 ? ' favorite' : ' favorites');
+  };
+  const flash = r => {
+    r.li.classList.remove('p12-rolled'); void r.li.offsetWidth; r.li.classList.add('p12-rolled');
+    setTimeout(() => r.li.classList.remove('p12-rolled'), 1600);
+  };
+  const send = (r, target) => {
+    const seq = ++r.seq, ok = !fail.checked;
+    setTimeout(() => {
+      if (ok) r.saved = target;          // the server applied it, even if a newer click came after
+      if (seq !== r.seq) return;         // only the latest request decides what is shown
+      r.pending = false;
+      const rolledBack = !ok && r.shown !== r.saved;
+      r.shown = r.saved;
+      render(r);
+      if (ok) return;
+      if (rolledBack) flash(r);
+      toast(st, 'Couldn’t ' + (target ? 'add “' + r.name + '” to' : 'remove “' + r.name + '” from') + ' favorites. The server didn’t answer.', {
+        tone: 'error', duration: 6000, action: { label: 'Retry', run: () => toggle(r, target) }
+      });
+    }, SERVER_MS);
+  };
+  const toggle = (r, target) => {
+    if (r.pending) return;
+    if (mode() === 'wait') r.pending = true; else r.shown = target;
+    render(r);
+    send(r, target);
+  };
+  rows.forEach(r => r.btn.addEventListener('click', () => toggle(r, !r.shown)));
+});
+
+demo('pat-background-work', st => {
+  const RENDER_MS = 6000, TICK = 100;
+  const startBtn = $('[data-start]', st), addBtn = $('[data-add]', st), qBtn = $('[data-queue]', st);
+  const badge = $('.badge', st), bar = $('.p12-qbar', st), fill = $('.p12-qbar > span', st);
+  const out = $('[data-out]', st), outs = $('[data-outs]', st), thumbs = $('[data-thumbs]', st);
+  const nodes = $('[data-nodes]', st), prompt = $('#p12-bg-prompt', st);
+  const queue = [];
+  let made = 0, done = 0, current = null, timer = null;
+  const pct = () => (current ? Math.min(100, Math.round(current.elapsed / RENDER_MS * 100)) : 0);
+  const sync = () => {
+    const n = queue.length + (current ? 1 : 0);
+    badge.hidden = n === 0; badge.textContent = String(n);
+    qBtn.setAttribute('aria-label', n ? 'Exports, ' + n + ' running' : 'Exports, empty');
+    bar.hidden = !current;
+    fill.style.width = pct() + '%'; bar.setAttribute('aria-valuenow', String(pct()));
+  };
+  const finish = job => {
+    done++;
+    const fig = document.createElement('figure');
+    fig.className = 'p12-out'; fig.tabIndex = -1;
+    fig.innerHTML = '<div class="thumb ' + ['', 'b', 'c'][(job.n - 1) % 3] + '"></div><figcaption><span class="p12-new">New · </span>Export ' + job.n + '<small></small></figcaption>';
+    $('small', fig).textContent = job.prompt;
+    thumbs.prepend(fig);
+    while (thumbs.children.length > 4) thumbs.lastElementChild.remove();
+    outs.hidden = false;
+    toast(st, 'Export ' + job.n + ' finished', { duration: 6000, action: { label: 'View', run: () => {
+      const tag = $('.p12-new', fig); if (tag) tag.remove();
+      fig.classList.add('p12-hl'); fig.focus();
+      setTimeout(() => fig.classList.remove('p12-hl'), 1600);
+    } } });
+  };
+  const next = () => {
+    current = queue.shift() || null;
+    if (!current) { clearInterval(timer); timer = null; }
+    sync();
+  };
+  const tick = () => {
+    if (!current) return;
+    current.elapsed += TICK;
+    if (current.elapsed >= RENDER_MS) { const job = current; current = null; finish(job); next(); return; }
+    sync();
+  };
+  startBtn.addEventListener('click', () => {
+    made++;
+    queue.push({ n: made, prompt: prompt.value.trim() || 'untitled', elapsed: 0 });
+    const ahead = queue.length - 1 + (current ? 1 : 0);
+    out.textContent = 'Export ' + made + (ahead ? ' starts after ' + ahead + (ahead === 1 ? ' other' : ' others') : ' started') + '. Keep working, and you’ll get a note when it’s done.';
+    if (!current) next();
+    if (!timer) timer = setInterval(tick, TICK);
+    sync();
+  });
+  const names = ['Pier', 'Dunes', 'Sunset', 'Old town', 'Market', 'Café'];
+  let k = 0;
+  addBtn.addEventListener('click', () => {
+    const s = document.createElement('span'); s.className = 'node new'; s.textContent = names[k++ % names.length];
+    nodes.appendChild(s);
+    while (nodes.children.length > 5) nodes.firstElementChild.remove();
+  });
+  qBtn.addEventListener('click', () => {
+    if (!current) { toast(st, done ? 'Nothing running. ' + done + (done === 1 ? ' export' : ' exports') + ' finished.' : 'Nothing running'); return; }
+    toast(st, 'Export ' + current.n + ' at ' + pct() + '%' + (queue.length ? ', ' + queue.length + ' waiting' : ''));
+  });
+  sync();
+});
+
+
+})();
+</script>

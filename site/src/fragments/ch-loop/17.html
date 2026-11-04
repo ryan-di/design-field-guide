@@ -1,0 +1,212 @@
+<script>
+  (() => {
+    const section = document.currentScript.closest('section');
+
+    /* ---------- Demo 1: the loop ---------- */
+    const loopStage = section.querySelector('[data-demo="eff-loop"]');
+    if (loopStage) {
+      const STAGES = [
+        { owner: 'you',
+          ex: 'People lose unsaved work when they close a workflow tab. You reproduce it: change a graph, close the tab, and the change is gone.',
+          ex2: 'Round 2 starts from what Learn found, for example: restore works in one window, but what happens with two windows open?' },
+        { owner: 'you',
+          ex: 'Goal: closing a tab never silently drops changes. Out of scope: cloud sync. Good means a Playwright test can close a modified tab and get the work back.' },
+        { owner: 'agents',
+          ex: 'Subagents work in parallel: one reads how tabs close today, others sketch a confirm dialog, autosaved drafts with restore, and reopen-closed-tab as artifacts.' },
+        { owner: 'you',
+          ex: 'You pick drafts with restore, because a dialog interrupts every close. You write the reason in the Linear ticket.' },
+        { owner: 'agents',
+          ex: 'Claude Code works in a git worktree. You read its plan first, then it writes the change and a Playwright test that closes a modified tab and reopens it.' },
+        { owner: 'both',
+          ex: 'Agents run Vitest and Playwright. You try it in the real app: close a tab, reload, close the whole browser. You note any case the test missed.' },
+        { owner: 'you',
+          ex: 'You write one line in the ticket: what worked, and the case that still loses work. That case is the next round’s problem.' }
+      ];
+      const ST = document.querySelectorAll('#eff-loop-stages tbody tr');
+      if (ST.length !== STAGES.length) throw new Error('Loop: the stage table is missing');
+      STAGES.forEach((s, i) => { const c = ST[i].cells; s.name = c[0].textContent; s.input = c[1].textContent; s.output = c[2].textContent; s.ownerText = c[3].textContent; });
+      const list = loopStage.querySelector('#p25-stages');
+      const svg = loopStage.querySelector('#p25-arcs');
+      const roundEl = loopStage.querySelector('#p25-round');
+      const nextBtn = loopStage.querySelector('#p25-next');
+      const dName = loopStage.querySelector('#p25-d-name'), dOwner = loopStage.querySelector('#p25-d-owner');
+      const dIn = loopStage.querySelector('#p25-d-in'), dOut = loopStage.querySelector('#p25-d-out'), dEx = loopStage.querySelector('#p25-d-ex');
+      const W = 340, H = 320, cx = 170, cy = 158, rx = 128, ry = 118, n = STAGES.length;
+      const ang = i => -Math.PI / 2 + i * 2 * Math.PI / n;
+      const pt = a => [cx + rx * Math.cos(a), cy + ry * Math.sin(a)];
+      let current = 0, round = 1;
+
+      const btns = STAGES.map((s, i) => {
+        const li = document.createElement('li');
+        const [x, y] = pt(ang(i));
+        li.style.setProperty('--x', (x / W * 100) + '%');
+        li.style.setProperty('--y', (y / H * 100) + '%');
+        const b = document.createElement('button');
+        b.type = 'button';
+        b.className = 'p25-st';
+        b.setAttribute('aria-pressed', 'false');
+        b.innerHTML = '<span class="p25-n">' + (i + 1) + '</span>' + s.name + '<span class="p25-dot ' + s.owner + '" aria-hidden="true"></span>';
+        b.setAttribute('aria-label', (i + 1) + '. ' + s.name + ', owner: ' + s.ownerText);
+        b.addEventListener('click', () => select(i));
+        b.addEventListener('keydown', e => {
+          if (e.key === 'ArrowRight' || e.key === 'ArrowDown') { e.preventDefault(); step(1, true); }
+          else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') { e.preventDefault(); step(-1, true); }
+        });
+        li.appendChild(b);
+        list.appendChild(li);
+        return b;
+      });
+
+      // Arcs between stages; the Learn → Problem arc is the loop back.
+      const NS = 'http://www.w3.org/2000/svg';
+      const gap = 0.3;
+      for (let i = 0; i < n; i++) {
+        const a1 = ang(i) + gap, a2 = ang(i + 1) - gap;
+        const [x1, y1] = pt(a1), [x2, y2] = pt(a2);
+        const p = document.createElementNS(NS, 'path');
+        p.setAttribute('d', 'M' + x1.toFixed(1) + ' ' + y1.toFixed(1) + ' A' + rx + ' ' + ry + ' 0 0 1 ' + x2.toFixed(1) + ' ' + y2.toFixed(1));
+        const back = i === n - 1;
+        p.setAttribute('class', 'arc' + (back ? ' back' : ''));
+        p.setAttribute('marker-end', back ? 'url(#p25-arrow-back)' : 'url(#p25-arrow)');
+        svg.appendChild(p);
+      }
+
+      function render() {
+        const s = STAGES[current];
+        btns.forEach((b, i) => b.setAttribute('aria-pressed', String(i === current)));
+        dName.textContent = (current + 1) + ' · ' + s.name;
+        dOwner.textContent = s.ownerText;
+        dOwner.className = 'p25-owner ' + s.owner;
+        dIn.textContent = s.input;
+        dOut.textContent = s.output;
+        dEx.textContent = (round > 1 && s.ex2) ? s.ex2 : s.ex;
+        roundEl.textContent = 'Round ' + round;
+        nextBtn.textContent = current === n - 1 ? 'Back to Problem ↺' : 'Next stage';
+      }
+      function select(i) { current = i; render(); }
+      function step(d, focus) {
+        let i = current + d;
+        if (i >= n) { i = 0; round++; }
+        if (i < 0) { i = n - 1; }
+        current = i; render();
+        if (focus) btns[i].focus();
+      }
+      nextBtn.addEventListener('click', () => step(1, false));
+      render();
+    }
+
+    /* ---------- Demo 2: ownership ---------- */
+    const ownStage = section.querySelector('[data-demo="eff-ownership"]');
+    if (ownStage) {
+      const NAMES = ['Problem', 'Brief', 'Explore', 'Decide', 'Build', 'Check', 'Learn'];
+      // you = rough share that is yours (0–100); note = what that looks like.
+      const K = {
+        fix: { cap: 'Small fix: the loop is short. Agents do most of the finding and fixing. You still frame it, approve it and check it once.',
+          rows: [[90], [100], [30], [100], [15], [50], [100]] },
+        feature: { cap: 'New feature: every stage matters. Agents carry exploring and building. Framing, deciding and learning stay yours.',
+          rows: [[90], [75], [20], [100], [20], [50], [90]] },
+        explore: { cap: 'Open exploration: agents make many cheap options. Your part grows at the ends: the question you ask and what you learn.',
+          rows: [[80], [90], [15], [100], [40], [80], [100]] }
+      };
+      const OT = document.querySelector('#eff-ownership-split tbody');
+      if (!OT || OT.rows.length !== 7) throw new Error('Ownership: the split table is missing');
+      ['fix', 'feature', 'explore'].forEach((k, j) => K[k].rows.forEach((r, i) => { r[1] = OT.rows[i].cells[j + 1].textContent; }));
+      const bars = ownStage.querySelector('#p25-bars');
+      const cap = ownStage.querySelector('#p25-own-cap');
+      const cbDecide = ownStage.querySelector('#p25-own-agentsdecide');
+      const cbChecks = ownStage.querySelector('#p25-own-nochecks');
+      const who = y => y >= 85 ? 'All yours' : y >= 65 ? 'Mostly you' : y > 35 ? 'Shared' : 'Mostly agents';
+      const esc = t => String(t).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[c]);
+      const check = '<svg class="icon" aria-hidden="true"><use href="#i-check"/></svg>';
+
+      function render() {
+        const kind = ownStage.querySelector('input[name="p25-own-kind"]:checked').value;
+        const agentsDecide = cbDecide.checked, noChecks = cbChecks.checked;
+        let html = '';
+        K[kind].rows.forEach(([you, note], i) => {
+          let hot = false;
+          if (i === 3 && agentsDecide) { you = 10; note = 'Agents merge the option they built first. Nobody can say why it won.'; hot = true; }
+          html += '<li class="p25-row' + (hot ? ' hot' : '') + '"><b>' + NAMES[i] + '</b>' +
+            '<span class="p25-bar" aria-hidden="true"><span class="you" style="width:' + you + '%"></span><span class="agents" style="width:' + (100 - you) + '%"></span></span>' +
+            '<span class="p25-who">' + who(you) + '</span><span class="p25-note">' + esc(note) + '</span></li>';
+          if (you < 50 && i < NAMES.length - 1 && !noChecks) {
+            html += '<li class="p25-cp">' + check + 'Checkpoint: you review before ' + NAMES[i + 1] + '</li>';
+          }
+        });
+        bars.innerHTML = html;
+        let msg = K[kind].cap, warn = false;
+        if (agentsDecide && noChecks) { msg = 'Both mistakes: agents choose, then build on their own choice, and nobody looks until the PR. Wrong turns surface late and cost a rebuild.'; warn = true; }
+        else if (agentsDecide) { msg = 'Agents decided: the choice has no owner and no written reason. Ask for options and trade-offs instead, and choose yourself.'; warn = true; }
+        else if (noChecks) { msg = 'No checkpoints: each agent step builds on the last one unread. A wrong guess in Explore turns into a whole wrong PR.'; warn = true; }
+        cap.textContent = msg;
+        cap.classList.toggle('warn', warn);
+      }
+      ownStage.querySelectorAll('input[name="p25-own-kind"]').forEach(r => r.addEventListener('change', render));
+      cbDecide.addEventListener('change', render);
+      cbChecks.addEventListener('change', render);
+      render();
+    }
+
+    /* ---------- Switchers ---------- */
+    const wraps = []; // old In Comfy switchers retired
+    const ic = n => '<svg class="icon sm" aria-hidden="true"><use href="#i-' + n + '"/></svg>';
+
+    // Loop switcher
+    (() => {
+      const wrap = wraps[0]; if (!wrap) return;
+      const view = wrap.querySelector('[data-cw-view]'), cap = wrap.querySelector('[data-cw-cap]');
+      const NAMES = ['Problem', 'Brief', 'Explore', 'Decide', 'Build', 'Evaluate', 'Learn'];
+      const chips = (mods, reps = {}) => '<div class="cw-loop-chips">' + NAMES.map((nm, i) =>
+        '<span class="cw-loop-chip' + (mods[i] ? ' ' + mods[i] : '') + '">' + nm + (reps[i] ? '<span class="badge">×' + reps[i] + '</span>' : '') + '</span>' + (i < NAMES.length - 1 ? '<span class="cw-loop-arr">→</span>' : '')
+      ).join('') + '<span class="cw-loop-back">↺</span></div>';
+      const card = (title, body) => '<div class="cw-loop-card"><b>' + title + '</b>' + body + '</div>';
+      const S = {
+        fix: { html: chips(['', 'light', 'light', '', '', '', 'light']) +
+            '<div class="cw-loop-art">' + card('Ticket', '<small>Tooltip is cut off at the screen edge</small>') + card('Pull request', '<small>+3 −1 · 1 file</small><span class="ok">' + ic('check') + ' Test fails before, passes after</span>') + '</div>',
+          alt: 'Loop with Brief, Explore and Learn drawn light. A ticket and a small pull request whose test fails before and passes after.',
+          cap: 'One-line fix: the loop still runs, just fast. Frame it in one line, skip wide exploring, and still look at the fix in the app.' },
+        tab: { html: chips(['big', '', '', 'big', '', '', '']) +
+            '<div class="cw-loop-card" style="max-width:none"><div class="cw-loop-tabs"><span>Workflow 1</span><span class="on">Workflow 2 <i>●</i> ' + ic('x') + '</span></div>' +
+            '<div class="cw-loop-restore">' + ic('info') + 'Workflow 2 had unsaved changes. <u>Restore</u></div></div>',
+          alt: 'Full loop with Problem and Decide emphasized. A tab with an unsaved dot being closed, and a restore bar offering to bring the changes back.',
+          cap: 'Lost work on tab close: the full loop. Three options explored, one decided with a written reason, and a Playwright test that closes a modified tab.' },
+        proto: { html: chips(['', '', 'rep', '', 'light', 'rep', ''], { 2: 3, 5: 3 }) +
+            '<div class="cw-loop-art">' + card('Option A', '<small>Artifact · shared link</small>') + card('Option B', '<small>Artifact · shared link</small>') + card('Option C', '<small>Artifact · shared link</small>') + '</div>',
+          alt: 'Loop where Explore and Evaluate repeat three times and Build is light. Three artifact prototypes, each with a shared link.',
+          cap: 'Exploratory prototype: Explore and Evaluate repeat several times with throwaway artifacts. The real build waits until you know what to build.' },
+        ds: { html: chips(['', '', '', 'big', '', 'big', '']) +
+            '<div class="cw-loop-art">' + card('Token change', '<span class="cw-loop-sw"><i class="a"></i>→<i class="b"></i></span><small>Corner radius, one value</small>') + card('Screenshots', '<small>Button · Input · Node · Dialog · Menu</small><small>Before and after, side by side</small>') + '</div>',
+          alt: 'Loop with Decide and Evaluate emphasized. A token change from a small to a larger corner radius, and before and after screenshots of five components.',
+          cap: 'Design-system change: one decision touches many screens. Evaluate widely with before and after screenshots, and decide with the team.' }
+      };
+      const render = k => { view.innerHTML = S[k].html; view.setAttribute('aria-label', 'Sketch: ' + S[k].alt); cap.textContent = S[k].cap; };
+      wrap.querySelectorAll('input[name="cw-eff-loop-sc"]').forEach(r => r.addEventListener('change', () => render(r.value)));
+      render('fix');
+    })();
+
+    // Ownership switcher
+    (() => {
+      const wrap = wraps[1]; if (!wrap) return;
+      const view = wrap.querySelector('[data-cw-view]'), cap = wrap.querySelector('[data-cw-cap]');
+      const lanes = steps => '<div class="cw-own-lanes"><span class="cw-own-h">You</span><span class="cw-own-h agents">Agents</span>' +
+        steps.map(([who, t, sub], i) => '<span class="cw-own-step ' + who + '" style="grid-row:' + (i + 2) + '">' + t + (sub ? '<small>' + sub + '</small>' : '') + '</span>').join('') + '</div>';
+      const S = {
+        fix: { html: lanes([['you', 'Reproduce the bug'], ['agents', 'Find the cause', 'reads the repo'], ['agents', 'Write the fix and a test'], ['you', 'Approve the fix'], ['both', 'Tests pass; you check the app once']]),
+          alt: 'You reproduce the bug. Agents find the cause and write the fix and a test. You approve. Together: tests pass and you check the app once.',
+          cap: 'One-line fix: hand over most of it. Keep the approval and one real check.' },
+        tab: { html: lanes([['you', 'Frame and brief'], ['agents', 'Three options as artifacts', 'subagents in parallel'], ['you', 'Pick restore, write why'], ['agents', 'Build in a worktree', 'plan reviewed first'], ['both', 'Playwright runs; you close real tabs'], ['you', 'Write what you learned']]),
+          alt: 'You frame and brief. Agents make three options. You pick restore and write why. Agents build in a worktree. Together you evaluate. You write what you learned.',
+          cap: 'Lost work on tab close: agents explore and build, and each of their steps ends at one of your checkpoints.' },
+        proto: { html: lanes([['you', 'Ask the question'], ['agents', 'Many quick prototypes'], ['you', 'Watch people try them'], ['agents', 'Variations on the one that worked'], ['you', 'Write what you now believe']]),
+          alt: 'You ask the question. Agents make many prototypes. You watch people try them. Agents make variations. You write what you now believe.',
+          cap: 'Exploratory prototype: agents make options cheap. Watching people and deciding what it means stay yours.' },
+        ds: { html: lanes([['you', 'Decide the token change'], ['agents', 'Find every use', 'reads the repo'], ['agents', 'Apply the change'], ['agents', 'Screenshot each component', 'Playwright'], ['you', 'Judge the screenshots'], ['both', 'Team review on the PR']]),
+          alt: 'You decide the token change. Agents find every use, apply it and screenshot each component. You judge the screenshots. The team reviews the PR.',
+          cap: 'Design-system change: agents find and update every use. You judge the screenshots, because consistency is a judgment.' }
+      };
+      const render = k => { view.innerHTML = S[k].html; view.setAttribute('aria-label', 'Sketch: ' + S[k].alt); cap.textContent = S[k].cap; };
+      wrap.querySelectorAll('input[name="cw-eff-own-sc"]').forEach(r => r.addEventListener('change', () => render(r.value)));
+      render('fix');
+    })();
+  })();
+  </script>

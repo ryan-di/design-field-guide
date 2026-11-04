@@ -1,0 +1,174 @@
+<script>
+(() => {
+  const cs = document.currentScript.closest('.cs');
+  const D = (k, html, wire) => csDemo(cs.querySelector('[data-d="' + k + '"]'), html, wire);
+  const st = document.createElement('style');
+  st.textContent = [
+    '#eff-quick-sessions .qs-card{width:min(380px,100%);background:var(--ui-surface);border:1px solid var(--ui-border);border-radius:12px;padding:14px;box-shadow:var(--ui-shadow);display:flex;flex-direction:column;gap:10px;text-align:left;font-size:14px;line-height:1.45;color:var(--ui-text)}',
+    '#eff-quick-sessions .qs-lbl{font:600 11.5px var(--font-mono);letter-spacing:.06em;text-transform:uppercase;color:var(--ui-muted)}',
+    '#eff-quick-sessions .qs-q{font-size:15px;font-weight:600}',
+    '#eff-quick-sessions .qs-log{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:5px}',
+    '#eff-quick-sessions .qs-log:empty{display:none}',
+    '#eff-quick-sessions .qs-log li{display:flex;gap:8px;align-items:baseline}',
+    '#eff-quick-sessions .qs-log li > em{font:600 12px var(--font-mono);font-style:normal;color:var(--ui-muted);flex:none;min-width:30px}',
+    '#eff-quick-sessions .qs-log li.you{color:var(--ui-sel);font-weight:600}',
+    '#eff-quick-sessions .qs-sum{border-top:1px solid var(--ui-border);padding-top:8px;font-weight:600}',
+    '#eff-quick-sessions .qs-sum:empty{display:none}',
+    '#eff-quick-sessions .qs-sum.bad{color:var(--ui-danger)}',
+    '#eff-quick-sessions .qs-btns{display:flex;flex-wrap:wrap;gap:8px}',
+    '#eff-quick-sessions .qs-app{width:min(340px,100%)}',
+    '#eff-quick-sessions .qs-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:4px}',
+    '#eff-quick-sessions .qs-grid i{aspect-ratio:1;border-radius:4px;background:var(--ui-skel)}',
+    '#eff-quick-sessions .qs-nav{display:grid;grid-template-columns:repeat(4,1fr);border-top:1px solid var(--ui-border);background:var(--ui-surface)}',
+    '#eff-quick-sessions .qs-nav span{padding:9px 2px;text-align:center;font-size:12.5px;font-weight:600;color:var(--ui-muted);border-radius:6px;margin:3px}',
+    '#eff-quick-sessions .qs-nav span.look{color:var(--ui-sel);background:var(--ui-sel-soft);box-shadow:inset 0 0 0 2px var(--ui-sel)}',
+    '#eff-quick-sessions .qs-obs{min-height:3em;font-size:14px;text-align:left;width:min(340px,100%)}',
+    '#eff-quick-sessions .qs-tally{display:grid;grid-template-columns:minmax(0,1fr) repeat(5,22px) 34px;gap:4px;align-items:center;font-size:13px}',
+    '#eff-quick-sessions .qs-tally em{font:600 11.5px var(--font-mono);font-style:normal;color:var(--ui-muted);text-align:center}',
+    '#eff-quick-sessions .qs-tally i{height:20px;border-radius:4px;background:var(--ui-hover)}',
+    '#eff-quick-sessions .qs-tally i.x{background:var(--ui-danger-soft);box-shadow:inset 0 0 0 1px var(--ui-danger)}',
+    '#eff-quick-sessions .qs-tally b{text-align:right;font:600 12.5px var(--font-mono)}',
+    '#eff-quick-sessions .qs-tally span.hot{color:var(--ui-danger);font-weight:600}',
+    '#eff-quick-sessions .qs-ver{font:600 12.5px var(--font-mono);color:var(--ui-muted)}'
+  ].join('\n');
+  cs.appendChild(st);
+
+  const reveal = (t, list, items, ms, done) => {
+    items.forEach((it, n) => t.after(() => {
+      const li = document.createElement('li');
+      if (it[2]) li.className = it[2];
+      li.innerHTML = '<em>' + it[0] + '</em><span>' + it[1] + '</span>';
+      list.appendChild(li);
+      if (n === items.length - 1 && done) done();
+    }, (n + 1) * ms));
+  };
+
+  /* 1. Ask vs watch: a bill-splitting feature */
+  const askHtml = fixed => '<div class="qs-card">' +
+    '<span class="qs-lbl">' + (fixed ? 'Task' : 'Question') + '</span>' +
+    '<span class="qs-q">' + (fixed ? '“You paid for dinner for four. Get your friends to pay you back.”' : '“Would you use a way to split a bill with friends?”') + '</span>' +
+    '<ul class="qs-log" data-log></ul><p class="qs-sum" data-sum></p>' +
+    '<div class="qs-btns"><button class="btn btn-primary cs-sm" type="button" data-go>' + (fixed ? 'Watch five sessions' : 'Ask all five') + '</button>' +
+    (fixed ? '' : '<button class="btn btn-secondary cs-sm" type="button" data-after disabled>See what happened after release</button>') + '</div></div>';
+  D('eff-quick-sessions-1b', askHtml(false), (d, t) => {
+    const go = d.querySelector('[data-go]'), after = d.querySelector('[data-after]'), sum = d.querySelector('[data-sum]');
+    go.addEventListener('click', () => {
+      go.disabled = true;
+      reveal(t, d.querySelector('[data-log]'), [['P1', '“Yes, for sure.”'], ['P2', '“I’d use it all the time.”'], ['P3', '“Yes, that sounds handy.”'], ['P4', '“Probably, yes.”'], ['P5', '“Yes!”']], 300, () => {
+        sum.textContent = '5 of 5 said yes.'; after.disabled = false;
+      });
+    });
+    after.addEventListener('click', () => {
+      after.disabled = true; sum.classList.add('bad');
+      sum.textContent = 'After release, most people still paid the whole bill and asked friends for money by message. Few found Split.';
+    });
+  });
+  D('eff-quick-sessions-1f', askHtml(true), (d, t) => {
+    const go = d.querySelector('[data-go]'), sum = d.querySelector('[data-sum]');
+    go.addEventListener('click', () => {
+      go.disabled = true;
+      reveal(t, d.querySelector('[data-log]'), [
+        ['P1', 'Paid, then looked for “Request” on the receipt.'],
+        ['P2', 'Found Split under More after a minute.'],
+        ['P3', 'Gave up and sent a message instead.'],
+        ['P4', 'Found Split under More.'],
+        ['P5', 'Looked for “Request” on the receipt.']
+      ], 450, () => { sum.textContent = '2 of 5 found Split. 2 looked for it on the receipt. Now you know where to put it.'; });
+    });
+  });
+
+  /* 2. Task wording: finding holiday photos */
+  const TABS = [['lib', 'Library'], ['mem', 'Memories'], ['alb', 'Albums'], ['search', 'Search']];
+  const taskHtml = fixed => '<div class="qs-card"><span class="qs-lbl">Task</span><span class="qs-q">' +
+    (fixed ? '“Find the photos from your beach trip last summer.”' : '“Use the Memories tab to find your beach trip photos.”') + '</span></div>' +
+    '<div class="app-frame qs-app"><div class="app-bar"><span>Photos</span></div><div class="app-body"><div class="qs-grid">' + '<i></i>'.repeat(12) + '</div></div>' +
+    '<div class="qs-nav" aria-label="Tabs">' + TABS.map(x => '<span data-tab="' + x[0] + '">' + x[1] + '</span>').join('') + '</div></div>' +
+    '<p class="qs-obs" aria-live="polite" data-obs></p>' +
+    '<button class="btn btn-primary cs-sm" type="button" data-go>Give the task</button>';
+  const taskWire = steps => (d, t) => {
+    const go = d.querySelector('[data-go]'), obs = d.querySelector('[data-obs]');
+    go.addEventListener('click', () => {
+      go.disabled = true;
+      steps.forEach((s, n) => t.after(() => {
+        d.querySelectorAll('[data-tab]').forEach(x => x.classList.toggle('look', x.dataset.tab === s[0]));
+        obs.innerHTML = s[1];
+      }, n * 1300 + 200));
+    });
+  };
+  D('eff-quick-sessions-2b', taskHtml(false), taskWire([
+    ['mem', 'Reads “Memories” in the task and taps it right away.'],
+    ['mem', '<b>Found it in 3 seconds.</b> You only learn that people can read the word on the tab.']
+  ]));
+  D('eff-quick-sessions-2f', taskHtml(true), taskWire([
+    ['search', 'Opens Search and types “summer”. Gets photos from three summers, mixed.'],
+    ['alb', 'Opens Albums. No album for the trip.'],
+    ['mem', 'Opens Memories and finds “Summer at the coast”.'],
+    ['mem', '<b>Found it after 40 seconds.</b> Now you know people look in Search first, and that Memories is hard to find.']
+  ]));
+
+  /* 3. Helping vs staying quiet: export a document */
+  const START = [['0:05', 'Opens the document.'], ['0:12', 'Looks along the toolbar.'], ['0:20', 'Opens the File menu, then closes it.']];
+  const sessHtml = '<div class="qs-card"><span class="qs-lbl">Session 2 · “Send this document as a PDF.”</span>' +
+    '<ul class="qs-log" data-log></ul><p class="qs-sum" data-sum></p>' +
+    '<div class="qs-btns"><button class="btn btn-primary cs-sm" type="button" data-go>Play session</button></div></div>';
+  const sessWire = (rest, note) => (d, t) => {
+    const go = d.querySelector('[data-go]');
+    go.addEventListener('click', () => {
+      go.disabled = true;
+      reveal(t, d.querySelector('[data-log]'), START.concat(rest), 650, () => { d.querySelector('[data-sum]').innerHTML = note; });
+    });
+  };
+  D('eff-quick-sessions-3b', sessHtml, sessWire([
+    ['0:24', 'You: “It’s under Share.”', 'you'], ['0:30', 'Opens Share and exports the PDF.']
+  ], 'Your notes: “Finished in 30 seconds. No problems.”'));
+  D('eff-quick-sessions-3f', sessHtml, sessWire([
+    ['0:24', 'You stay quiet.', 'you'], ['0:41', 'Opens File again and hovers over Print.'], ['0:55', 'Finds Export under Share.'],
+    ['After', 'You: “What did you expect?” They say: “Export next to Print.”', 'you']
+  ], 'Your notes: “Stuck for 35 seconds. Expected Export in the File menu.”'));
+
+  /* 4. Changing after each session vs tallying: a new event form */
+  const CHANGES = [
+    ['P1', 'Missed the time zone menu. You moved it next to the time.'],
+    ['P2', 'Didn’t find Repeat. You turned it into a switch.'],
+    ['P3', 'Typed guests into the title. You added a hint.'],
+    ['P4', 'Missed the new Repeat switch. You changed it back.'],
+    ['P5', 'Missed the time zone menu again, in its new place.']
+  ];
+  D('eff-quick-sessions-4b', '<div class="qs-card"><span class="qs-lbl">New event form</span><span class="qs-ver" data-ver>Version 1 · 0 of 5 sessions</span>' +
+    '<ul class="qs-log" data-log></ul><p class="qs-sum bad" data-sum></p>' +
+    '<div class="qs-btns"><button class="btn btn-primary cs-sm" type="button" data-go>Log session 1</button></div></div>', d => {
+    const go = d.querySelector('[data-go]'), log = d.querySelector('[data-log]');
+    let n = 0;
+    go.addEventListener('click', () => {
+      const c = CHANGES[n++];
+      log.insertAdjacentHTML('beforeend', '<li><em>' + c[0] + '</em><span>' + c[1] + '</span></li>');
+      d.querySelector('[data-ver]').textContent = 'Version ' + Math.min(n + 1, 5) + ' · ' + n + ' of 5 sessions';
+      if (n < 5) { go.textContent = 'Log session ' + (n + 1); return; }
+      go.disabled = true; go.textContent = 'All five logged';
+      d.querySelector('[data-sum]').textContent = 'Five sessions on five versions. No problem was seen twice on the same design, and one change undid another.';
+    });
+  });
+  const PROBS = [['Missed the time zone menu', [1, 1, 0, 1, 1]], ['Didn’t find Repeat', [0, 1, 0, 0, 1]], ['Typed guests into the title', [0, 0, 1, 0, 0]]];
+  D('eff-quick-sessions-4f', '<div class="qs-card"><span class="qs-lbl">New event form</span><span class="qs-ver" data-ver>Version 1 · 0 of 5 sessions</span>' +
+    '<div class="qs-tally"><span></span><em>P1</em><em>P2</em><em>P3</em><em>P4</em><em>P5</em><span></span>' +
+    PROBS.map((p, r) => '<span data-r="' + r + '">' + p[0] + '</span>' + p[1].map((x, c) => '<i data-c="' + c + '" data-x="' + x + '"></i>').join('') + '<b data-n="' + r + '">0</b>').join('') +
+    '</div><p class="qs-sum" data-sum></p>' +
+    '<div class="qs-btns"><button class="btn btn-primary cs-sm" type="button" data-go>Log session 1</button></div></div>', d => {
+    const go = d.querySelector('[data-go]');
+    let n = 0;
+    go.addEventListener('click', () => {
+      d.querySelectorAll('[data-c="' + n + '"]').forEach(i => { if (i.dataset.x === '1') i.className = 'x'; });
+      n++;
+      PROBS.forEach((p, r) => { d.querySelector('[data-n="' + r + '"]').textContent = p[1].slice(0, n).reduce((a, b) => a + b, 0); });
+      d.querySelector('[data-ver]').textContent = 'Version 1 · ' + n + ' of 5 sessions';
+      if (n < 5) { go.textContent = 'Log session ' + (n + 1); return; }
+      go.disabled = true; go.textContent = 'All five logged';
+      PROBS.forEach((p, r) => { if (p[1].reduce((a, b) => a + b, 0) > 1) d.querySelector('[data-r="' + r + '"]').className = 'hot'; });
+      d.querySelector('[data-sum]').textContent = 'Fix the time zone menu (4 of 5) and Repeat (2 of 5). Guests in the title was one person.';
+    });
+  });
+
+  csInit(cs);
+})();
+
+</script>

@@ -1,0 +1,50 @@
+<div class="note comfy cw-wrap"><p>Notice where each default comes from: the spot you clicked, the most common choice, where you are, or what you already wrote.</p>
+      <div class="seg cw-seg" role="radiogroup" aria-label="Example">
+        <input type="radio" name="cw-pat-smart-defaults-w" id="cw-pat-smart-defaults-w-1" value="gcal" checked><label for="cw-pat-smart-defaults-w-1">Google Calendar</label>
+        <input type="radio" name="cw-pat-smart-defaults-w" id="cw-pat-smart-defaults-w-2" value="figma"><label for="cw-pat-smart-defaults-w-2">Figma</label>
+        <input type="radio" name="cw-pat-smart-defaults-w" id="cw-pat-smart-defaults-w-3" value="uber"><label for="cw-pat-smart-defaults-w-3">Uber</label>
+        <input type="radio" name="cw-pat-smart-defaults-w" id="cw-pat-smart-defaults-w-4" value="gdocs"><label for="cw-pat-smart-defaults-w-4">Google Docs</label>
+      </div>
+      <div class="cw" data-cw-view role="img" aria-label=""></div>
+      <p class="cw-cap" data-cw-cap aria-live="polite"></p>
+      
+      <script>
+      (() => {
+        const wrap = document.currentScript.closest('.cw-wrap');
+        const view = wrap.querySelector('[data-cw-view]'), cap = wrap.querySelector('[data-cw-cap]');
+        const ic = id => '<svg class="icon sm"><use href="#i-' + id + '"/></svg>';
+        const down = '<svg class="icon sm" viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"/></svg>';
+        const clock = '<svg class="icon sm" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3 2"/></svg>';
+        const doc = '<svg class="icon sm" viewBox="0 0 24 24"><path d="M7 3h7l4 4v14H7z"/><path d="M14 3v4h4"/></svg>';
+        const line = w => '<i class="cw-line" style="width:' + w + '%"></i>';
+        const hours = ['9:00', '10:00', '11:00', '12:00'];
+        const cal = '<div class="cw-sdef-cal"><span class="d"></span><span class="d">Mon</span><span class="d">Tue</span><span class="d">Wed</span>' +
+          hours.map(h => '<span class="h">' + h + '</span><span></span>' + (h === '10:00' ? '<span class="cw-sdef-ev cw-sdef-new"><b>(No title)</b>10–11</span>' : '<span></span>') + '<span></span>').join('') + '</div>';
+        const S = {
+          gcal: { html: '<div class="cw-sdef-win"><div class="cw-sdef-calw">' + cal +
+              '<div class="cw-sdef-pop"><span class="cw-sdef-title">Add title</span><span class="cw-sdef-meta">' + clock + 'Tuesday · 10:00 – 11:00</span><span class="btn btn-primary">Save</span></div></div></div>',
+            alt: 'A week calendar. A new one-hour event sits on Tuesday at 10:00, where the person clicked. Beside it, a small form with an empty title and the time already filled in, and a Save button.',
+            cap: 'Google Calendar: clicking a time slot starts an event right there, with the default length already set. Most events only need a title.' },
+          figma: { html: '<div class="cw-sdef-win cw-sdef-fg"><div class="cw-sdef-canvas"><div class="cw-sdef-frame"><span>Frame 1</span></div></div>' +
+              '<div class="cw-sdef-panel"><div class="cw-sdef-row"><b>Export</b><span class="cw-sdef-ic">' + ic('plus') + '</span></div>' +
+              '<div class="cw-sdef-row"><span class="cw-sdef-dd cw-sdef-new">1x' + down + '</span><span class="cw-sdef-dd cw-sdef-new">PNG' + down + '</span></div>' +
+              '<span class="btn btn-secondary">Export Frame 1</span></div></div>',
+            alt: 'A selected frame on a canvas and the Export section of the side panel. The new export row already says 1x and PNG, with an Export button below.',
+            cap: 'Figma: adding an export starts at PNG at 1x, the choice most people want. Both values sit right there to change.' },
+          uber: { html: '<div class="cw-sdef-phone"><div class="cw-sdef-map"><i class="cw-sdef-you"></i></div>' +
+              '<span class="cw-sdef-inp cw-sdef-new"><i class="cw-sdef-dot"></i>Current location</span>' +
+              '<span class="cw-sdef-inp focus"><i class="cw-sdef-sq"></i>Where to?</span>' +
+              '<span class="cw-sdef-recent">' + clock + 'Office</span><span class="cw-sdef-recent">' + clock + 'Airport</span></div>',
+            alt: 'A phone with a map showing a dot for you. The pickup field is already filled with Current location. The destination field, Where to?, has focus, with two recent places under it.',
+            cap: 'Uber: pickup is already set to where you are, so the first question is only where to.' },
+          gdocs: { html: '<div class="cw-sdef-win"><div class="cw-sdef-docbar">' + ic('book') + '<span class="cw-sdef-name cw-sdef-new">Trip plan for May</span></div>' +
+              '<div class="cw-sdef-page"><span class="cw-sdef-h cw-sdef-new">Trip plan for May</span>' + line(92) + line(84) + line(96) + line(60) + '</div></div>',
+            alt: 'A document whose first line reads Trip plan for May. The file name at the top is the same, Trip plan for May. Both are highlighted.',
+            cap: 'Google Docs: a document you never named takes its first line as its name. Files get a useful name without a question.' }
+        };
+        const render = k => { view.innerHTML = S[k].html; view.setAttribute('aria-label', 'Sketch: ' + S[k].alt); cap.textContent = S[k].cap; };
+        wrap.querySelectorAll('input[name="cw-pat-smart-defaults-w"]').forEach(r => r.addEventListener('change', () => render(r.value)));
+        render('gcal');
+      })();
+      </script>
+    </div>

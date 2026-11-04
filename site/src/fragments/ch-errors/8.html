@@ -1,0 +1,27 @@
+<div class="stage tall" data-demo="pat-forgiving-input">
+      <div class="form-card surface">
+        <div class="field p15-wide">
+          <label class="field-label" for="p15-size">Size</label>
+          <input class="input" id="p15-size" value="1k x 768" autocomplete="off" spellcheck="false" aria-describedby="p15-size-read">
+        </div>
+        <div class="p15-read" id="p15-size-read" aria-live="polite">
+          <div class="kv" data-row><span>Width</span><b data-w></b></div>
+          <div class="kv" data-row><span>Height</span><b data-h></b></div>
+          <p class="p15-how" data-note></p>
+        </div>
+        <div class="row" style="justify-content:flex-start" data-ask hidden>
+          <button class="btn btn-secondary p15-sm" type="button" data-act="square"></button>
+        </div>
+      </div>
+      <div class="state-picker" role="group" aria-label="Example sizes to try">
+        <button type="button" data-ex="1024x768">1024x768</button>
+        <button type="button" data-ex="1024 × 768">1024 × 768</button>
+        <button type="button" data-ex="1024,768">1024,768</button>
+        <button type="button" data-ex="1024 by 768">1024 by 768</button>
+        <button type="button" data-ex="1k x 768">1k x 768</button>
+        <button type="button" data-ex="1000 x 750">1000 x 750</button>
+        <button type="button" data-ex="1024">1024</button>
+        <button type="button" data-ex="large please">large please</button>
+      </div>
+      <p class="try"><b>Try it:</b> press the examples, or type your own: every one that makes sense is read, and the readout says how. Only a single number, the one truly ambiguous case, makes it ask.</p>
+    </div>

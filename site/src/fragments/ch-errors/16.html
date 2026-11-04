@@ -1,0 +1,23 @@
+<div class="stage tall" data-demo="pat-autosave">
+      <div class="app-frame">
+        <div class="app-bar"><span>Notes · Weekend</span><span class="p15-status" role="status" data-status></span></div>
+        <div class="banner p15-banner" data-banner hidden>
+          <svg class="icon"><use href="#i-info"/></svg>
+          <span class="grow" data-banner-text></span>
+          <span class="p15-acts">
+            <button class="btn btn-primary p15-sm" type="button" data-act="restore">Restore</button>
+            <button class="btn btn-ghost p15-sm" type="button" data-act="discard">Discard</button>
+          </span>
+        </div>
+        <div class="app-body">
+          <div class="field p15-wide">
+            <label class="field-label" for="p15-prompt">Note</label>
+            <textarea class="input" id="p15-prompt" rows="3" spellcheck="false">Pick up the photos on Friday. Book a table for six on Saturday.</textarea>
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <button class="btn btn-secondary" type="button" data-act="crash"><svg class="icon sm"><use href="#i-x"/></svg>Simulate a crash</button>
+      </div>
+      <p class="try"><b>Try it:</b> type a few words and pause until it says Saved. Then simulate a crash: the field comes back empty, and the banner offers your draft. You can also reload this page, because the draft lives in this browser.</p>
+    </div>

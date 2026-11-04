@@ -1,0 +1,168 @@
+<script>
+(() => {
+  const cs = document.currentScript.closest('.cs');
+  const D = (k, html, wire) => csDemo(cs.querySelector('[data-d="' + k + '"]'), html, wire);
+  const P = '#eff-explore-wide ';
+  const st = document.createElement('style');
+  st.textContent = [
+    '.ew-wrap{width:min(480px,100%);display:flex;flex-direction:column;gap:10px;text-align:left;color:var(--ui-text)}',
+    '.ew-prob{font-size:13.5px;line-height:1.45;margin:0}',
+    '.ew-prob b{font-weight:600}',
+    '.ew-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(132px,1fr));gap:8px}',
+    '.ew-card{background:var(--ui-surface);border:1px solid var(--ui-border);border-radius:10px;padding:10px;display:flex;flex-direction:column;gap:6px;font-size:13px;line-height:1.4;min-width:0}',
+    '.ew-card b{font-size:13.5px}',
+    '.ew-card.dim{opacity:.45}',
+    '.ew-card.kept{border-color:var(--ui-sel);box-shadow:0 0 0 1px var(--ui-sel)}',
+    '.ew-sk{display:flex;flex-direction:column;gap:4px;padding:8px;border:1.5px dashed var(--ui-border);border-radius:7px}',
+    '.ew-sk i{display:block;height:6px;border-radius:3px;background:var(--ui-skel)}',
+    '.ew-sk span{font:500 11.5px var(--font-mono);color:var(--ui-muted)}',
+    '.ew-bet{font:500 11.5px var(--font-mono);color:var(--ui-sel)}',
+    '.ew-meta{font:500 12px var(--font-mono);color:var(--ui-muted)}',
+    '.ew-brief{font:500 12px/1.45 var(--font-mono);background:var(--ui-hover);border-radius:7px;padding:6px 8px}',
+    '.ew-acts{display:flex;flex-wrap:wrap;gap:8px;align-items:center}',
+    '.ew-out{font-size:13.5px;line-height:1.45;margin:0}',
+    '.ew-out:empty{display:none}',
+    '.ew-agent{display:flex;align-items:center;gap:6px;font:500 12px var(--font-mono);color:var(--ui-muted)}',
+    '.ew-pol{gap:8px;padding:12px;border-color:var(--ui-sel);background:linear-gradient(180deg,var(--ui-sel-soft),var(--ui-surface) 60%)}',
+    '.ew-pol .ew-link{display:flex;gap:6px;align-items:center}',
+    '.ew-pol .ew-field{flex:1;min-width:0;font:500 11.5px var(--font-mono);border:1px solid var(--ui-border);border-radius:6px;padding:5px 6px;background:var(--ui-bg);overflow:hidden;white-space:nowrap;text-overflow:ellipsis}',
+    '.ew-pol .ew-copy{font:600 11.5px var(--font-body);background:var(--ui-primary);color:var(--ui-on-primary);border-radius:6px;padding:5px 8px;white-space:nowrap}',
+    '.ew-pol .ew-ppl{display:flex;gap:4px}',
+    '.ew-pol .ew-ppl i{width:18px;height:18px;border-radius:50%;background:var(--ui-sel);opacity:.7}',
+    '.ew-pol .ew-ppl i:nth-child(2){opacity:.45}',
+    '.ew-pol .ew-ppl i:nth-child(3){opacity:.25}'
+  ].map(r => P + r.replace(/,(?=[^{}]*\{)/g, ',' + P)).join('\n');
+  cs.appendChild(st);
+
+  const btn = (label, attr, kind) => '<button class="btn ' + (kind || 'btn-secondary') + ' cs-sm" type="button" ' + (attr || '') + '>' + label + '</button>';
+  const sk = (label, n) => '<span class="ew-sk" aria-hidden="true">' + (label ? '<span>' + label + '</span>' : '') + '<i style="width:80%"></i>' + (n > 1 ? '<i style="width:55%"></i>' : '') + '</span>';
+  const card = (name, text, extra) => '<div class="ew-card">' + (extra || '') + '<b>' + name + '</b><span>' + text + '</span></div>';
+
+  /* 1. Several at once */
+  const POL = [
+    ['Recent list in the File menu', 'The last ten workflows, under File.'],
+    ['Recent list, with icons', 'The same list, with a small icon per workflow.'],
+    ['Recent list, with dates', 'The same list, with “yesterday” next to each name.'],
+    ['Recent list, sorted by date', 'The same list, newest first.']
+  ];
+  const WIDE = [
+    ['Recent list in the File menu', 'The last ten workflows, under File.', 'list'],
+    ['Search all workflows', 'Type part of a name to find any workflow, open or closed.', 'search'],
+    ['Reopen closed tab', 'Ctrl+Shift+T brings back the last closed tab, again and again.', 'tabs']
+  ];
+  const prob1 = '<p class="ew-prob"><b>Problem:</b> people can’t find a workflow they closed yesterday.</p>';
+  D('eff-explore-wide-1b', '<div class="ew-wrap">' + prob1 + '<div class="ew-grid" data-g></div><div class="ew-acts">' + btn('Polish', 'data-p') + '<span class="ew-meta" role="status" data-m></span></div></div>', d => {
+    let n = 0;
+    const g = d.querySelector('[data-g]'), m = d.querySelector('[data-m]'), p = d.querySelector('[data-p]');
+    const draw = () => { g.innerHTML = card(POL[n][0], POL[n][1], sk('one agent', 2)); m.textContent = n ? 'Round ' + (n + 1) + '. Still one idea.' : 'Round 1.'; };
+    p.addEventListener('click', () => { if (n < POL.length - 1) { n++; draw(); } if (n === POL.length - 1) { p.disabled = true; m.textContent = 'Round ' + (n + 1) + '. Neater, but still the first idea.'; } });
+    draw();
+  });
+  D('eff-explore-wide-1f', '<div class="ew-wrap">' + prob1 + '<div class="ew-grid" data-g></div><div class="ew-acts">' + btn('Ask for three', 'data-a') + '<span class="ew-meta" role="status" data-m></span></div></div>', (d, t) => {
+    const g = d.querySelector('[data-g]'), m = d.querySelector('[data-m]'), a = d.querySelector('[data-a]');
+    a.addEventListener('click', () => {
+      a.disabled = true; m.textContent = 'Three subagents working at the same time…';
+      g.innerHTML = WIDE.map((w, i) => '<div class="ew-card" data-c="' + i + '"><span class="ew-agent">Subagent ' + (i + 1) + ': working…</span></div>').join('');
+      WIDE.forEach((w, i) => t.after(() => {
+        g.querySelector('[data-c="' + i + '"]').outerHTML = card(w[0], w[1], sk('subagent ' + (i + 1), 2));
+        if (i === WIDE.length - 1) m.textContent = 'Three different ideas, in the time of one.';
+      }, 500 + i * 250));
+    });
+  });
+
+  /* 2. Own bet */
+  const SAME = ['Red toast: “Download failed.”', 'Red toast with a warning icon: “Download failed.”', 'Red toast at the top: “Download failed.”'];
+  const BETS = [
+    ['Never interrupt.', 'Dot on Downloads', 'A red dot on the Downloads button. The list shows what failed.'],
+    ['Make it fixable in one step.', 'Retry in place', 'The failed row shows the reason and a Retry button.'],
+    ['Tell them where they’ll look next.', 'Warn where it’s needed', 'The workflow that needs the file says it’s missing and offers Download again.']
+  ];
+  const prob2 = '<p class="ew-prob"><b>Problem:</b> people don’t notice when a download fails.</p>';
+  const betHtml = fixed => '<div class="ew-wrap">' + prob2 + '<div class="ew-grid" data-g>' +
+    [0, 1, 2].map(i => '<div class="ew-card"><span class="ew-agent">Subagent ' + (i + 1) + '</span><span class="ew-brief">' +
+      (fixed ? 'Bet: ' + BETS[i][0] : 'Make failed downloads more visible.') + '</span><span data-r="' + i + '"></span></div>').join('') +
+    '</div><div class="ew-acts">' + btn('Run all three', 'data-run') + '</div><p class="ew-out" role="status" data-out></p></div>';
+  const betWire = fixed => (d, t) => {
+    const run = d.querySelector('[data-run]'), out = d.querySelector('[data-out]');
+    run.addEventListener('click', () => {
+      run.disabled = true;
+      [0, 1, 2].forEach(i => t.after(() => {
+        d.querySelector('[data-r="' + i + '"]').innerHTML = fixed ? '<b>' + BETS[i][1] + '</b><br>' + BETS[i][2] : sk('', 1) + SAME[i];
+        if (i === 2) out.textContent = fixed ? 'Three different ideas. Each one answers its own bet.' : 'Three cards, one idea: a red toast. Only the wording and position changed.';
+      }, 350 + i * 200));
+    });
+  };
+  D('eff-explore-wide-2b', betHtml(false), betWire(false));
+  D('eff-explore-wide-2f', betHtml(true), betWire(true));
+
+  /* 3. Equally rough */
+  const SHARE = [
+    ['Copy link', 'Anyone with the link can open a copy.'],
+    ['Invite by email', 'Teammates get an email and edit the same workflow.'],
+    ['Export a file', 'Download a file and send it any way you like.']
+  ];
+  const polished = '<div class="ew-card ew-pol"><b>Copy link</b><span class="ew-link"><span class="ew-field">share.example/w/8f3k2</span><span class="ew-copy">Copy</span></span><span class="ew-ppl" aria-hidden="true"><i></i><i></i><i></i></span><span>Anyone with the link can open a copy.</span>' + btn('Pick', 'data-pick="0"') + '</div>';
+  const roughCard = i => '<div class="ew-card">' + sk('sketch', 2) + '<b>' + SHARE[i][0] + '</b><span>' + SHARE[i][1] + '</span>' + btn('Pick', 'data-pick="' + i + '"') + '</div>';
+  const prob3 = '<p class="ew-prob"><b>Problem:</b> people want to share a workflow with a teammate.</p>';
+  const roughHtml = fixed => '<div class="ew-wrap">' + prob3 + '<div class="ew-grid">' + (fixed ? roughCard(0) : polished) + roughCard(1) + roughCard(2) + '</div><p class="ew-out" role="status" data-out></p></div>';
+  const roughWire = fixed => d => {
+    const out = d.querySelector('[data-out]');
+    d.querySelectorAll('[data-pick]').forEach(b => b.addEventListener('click', () => {
+      const i = +b.dataset.pick;
+      d.querySelectorAll('.ew-card').forEach((c, k) => c.classList.toggle('kept', k === i));
+      if (fixed) out.textContent = 'You picked ' + SHARE[i][0] + '. All three looked the same, so you picked on the idea.';
+      else out.textContent = i === 0 ? 'You picked the finished one. The other two were never shown at this level, so you can’t tell whether their ideas were better.' : 'You picked a sketch over the finished card. Most people don’t: the polish pulls the eye first.';
+    }));
+  };
+  D('eff-explore-wide-3b', roughHtml(false), roughWire(false));
+  D('eff-explore-wide-3f', roughHtml(true), roughWire(true));
+
+  /* 4. Set the number */
+  const EMPTY = [
+    ['Start from a template', 'A short list of starting points.'],
+    ['Blank with a hint', 'An empty page that says where to begin.'],
+    ['Open a sample', 'A small example, ready to change.'],
+    ['Recent files', 'What you worked on last.'],
+    ['Guided tour', 'Four steps that point at the main parts.'],
+    ['Search box first', 'Type what you want to make.'],
+    ['Import a file', 'A big drop area for a saved file.'],
+    ['Video intro', 'A one-minute video at the top.'],
+    ['Checklist', 'Three things to try first.'],
+    ['Ask a question', 'A prompt that asks what you want to make.']
+  ];
+  const prob4 = '<p class="ew-prob"><b>Problem:</b> people don’t know what to do in a new, empty workflow.</p>';
+  D('eff-explore-wide-4b', '<div class="ew-wrap">' + prob4 + '<div class="ew-grid" data-g></div><div class="ew-acts">' + btn('One more', 'data-more') + '<span class="ew-meta" role="status" data-m></span></div></div>', d => {
+    let n = 3;
+    const g = d.querySelector('[data-g]'), m = d.querySelector('[data-m]'), more = d.querySelector('[data-more]');
+    const draw = () => {
+      g.innerHTML = EMPTY.slice(0, n).map(e => '<div class="ew-card"><b>' + e[0] + '</b></div>').join('');
+      m.textContent = n + ' directions. ' + (n >= 7 ? 'Each new one adds less. None chosen yet.' : 'None chosen yet.');
+    };
+    more.addEventListener('click', () => { if (n < EMPTY.length) n++; if (n === EMPTY.length) more.disabled = true; draw(); });
+    draw();
+  });
+  D('eff-explore-wide-4f', '<div class="ew-wrap">' + prob4 + '<p class="ew-meta">Plan: ask for 4 directions, keep 2.</p><div class="ew-grid">' +
+    EMPTY.slice(0, 4).map((e, i) => '<div class="ew-card" data-c="' + i + '"><b>' + e[0] + '</b><span>' + e[1] + '</span>' + btn('Keep', 'aria-pressed="false" data-k="' + i + '"') + '</div>').join('') +
+    '</div><p class="ew-out" role="status" data-out></p></div>', d => {
+    const out = d.querySelector('[data-out]'), ks = Array.from(d.querySelectorAll('[data-k]'));
+    const kept = () => ks.filter(k => k.getAttribute('aria-pressed') === 'true');
+    const draw = () => {
+      const n = kept().length;
+      ks.forEach(k => {
+        const on = k.getAttribute('aria-pressed') === 'true', c = k.closest('.ew-card');
+        k.textContent = on ? 'Kept' : 'Keep';
+        c.classList.toggle('kept', on); c.classList.toggle('dim', n === 2 && !on);
+      });
+      out.textContent = n === 2 ? 'Two kept. Take these further and drop the other two.' : n === 1 ? 'One kept. Pick one more.' : '';
+    };
+    ks.forEach(k => k.addEventListener('click', () => {
+      const on = k.getAttribute('aria-pressed') === 'true';
+      if (!on && kept().length >= 2) { out.textContent = 'You planned to keep two. Drop one first.'; return; }
+      k.setAttribute('aria-pressed', String(!on)); draw();
+    }));
+  });
+
+  csInit(cs);
+})();
+
+</script>

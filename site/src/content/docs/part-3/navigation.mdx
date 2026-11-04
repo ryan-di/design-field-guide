@@ -1,0 +1,310 @@
+---
+title: "Navigation"
+description: "Navigation shows where you are and where you can go."
+eyebrow: "Chapter 23"
+sidebar:
+  label: "Navigation"
+---
+
+import Raw from '../../../components/Raw.astro';
+import Learned from '../../../components/Learned.astro';
+import Runtime from '../../../components/Runtime.astro';
+import F0 from '../../../fragments/ch-navigation/0.html?raw';
+import F1 from '../../../fragments/ch-navigation/1.html?raw';
+import F2 from '../../../fragments/ch-navigation/2.html?raw';
+import F3 from '../../../fragments/ch-navigation/3.html?raw';
+import F4 from '../../../fragments/ch-navigation/4.html?raw';
+import F5 from '../../../fragments/ch-navigation/5.html?raw';
+import F6 from '../../../fragments/ch-navigation/6.html?raw';
+import F7 from '../../../fragments/ch-navigation/7.html?raw';
+import F8 from '../../../fragments/ch-navigation/8.html?raw';
+import F9 from '../../../fragments/ch-navigation/9.html?raw';
+import F10 from '../../../fragments/ch-navigation/10.html?raw';
+import F11 from '../../../fragments/ch-navigation/11.html?raw';
+import F12 from '../../../fragments/ch-navigation/12.html?raw';
+import F13 from '../../../fragments/ch-navigation/13.html?raw';
+import F14 from '../../../fragments/ch-navigation/14.html?raw';
+import F15 from '../../../fragments/ch-navigation/15.html?raw';
+import F16 from '../../../fragments/ch-navigation/16.html?raw';
+import F17 from '../../../fragments/ch-navigation/17.html?raw';
+import F18 from '../../../fragments/ch-navigation/18.html?raw';
+import F19 from '../../../fragments/ch-navigation/19.html?raw';
+import F20 from '../../../fragments/ch-navigation/20.html?raw';
+import F21 from '../../../fragments/ch-navigation/21.html?raw';
+import F22 from '../../../fragments/ch-navigation/22.html?raw';
+
+<Runtime at="start" />
+
+<section class="dfg-chapter" id="ch-navigation">
+
+Navigation shows where you are and where you can go. It’s for places; actions belong on buttons.
+
+<article class="entry essay" id="side-nav" data-entry data-name="Side navigation">
+
+<div class="entry-head">
+
+## Side navigation \{#side-nav-h\}
+
+<Learned id="side-nav" />
+
+</div>
+
+A side navigation is a list of an app’s main places, down the left edge: Home, Documents, Shared, Settings. People use it to move between those places, and it always marks the one they’re in. It stays in the same spot while the page beside it changes.
+
+Where [tabs](/part-3/containers/#tabs) split one thing into parts, like the details and the reviews of a product, a side navigation moves between separate areas of the app, and it can hold more of them.
+
+<Raw html={F0} />
+
+### Forms \{#side-nav-forms\}
+
+Side navigation comes in four common forms. A full sidebar shows an icon and a label for each place. A nested one lets places open to show their own pages. A rail is a narrow strip of icons with short labels, for pages that need the width. On phones, the list moves into a drawer that opens over the page.
+
+<Raw html={F1} />
+
+### Rules \{#side-nav-rules\}
+
+Four rules keep side navigation useful.
+
+<div class="cs essay-cs">
+
+<section class="rule" id="side-nav-rule-1">
+
+#### 1. Keep it to places \{#side-nav-rule-1-h\}
+
+People read every item in the sidebar as a place to go, so when one of them runs an action instead, like New folder, pressing it takes them away from the page they were on. The new folder then lands somewhere else, and they have to go looking for it. Put actions on buttons in the page, where they act on what people are looking at.
+
+<Raw html={F2} />
+
+</section>
+
+<section class="rule" id="side-nav-rule-2">
+
+#### 2. Group long lists \{#side-nav-rule-2-h\}
+
+When every area sits in one long list, all of them look equally important, so people read the whole list each time, and daily work sits next to setup pages they open once a year. Group items under short headings so people can skip to the right group, fold away the groups people rarely need, and move setup pages into Settings.
+
+<Raw html={F3} />
+
+</section>
+
+<section class="rule" id="side-nav-rule-3">
+
+#### 3. Show labels with icons \{#side-nav-rule-3-h\}
+
+Most icons don’t say what they are, so with icons alone people point at one after another to read the tooltips, and next time they do it again. A short label with each icon lets them find a place at a glance and remember it. If space is tight, let the rail expand to show the labels. Icons alone can work in a tool people use all day, like VS Code, where there are few icons to learn and the open view’s name heads the panel beside them.
+
+<Raw html={F4} />
+
+</section>
+
+<section class="rule" id="side-nav-rule-4">
+
+#### 4. Mark the current place \{#side-nav-rule-4-h\}
+
+If nothing in the sidebar is marked, people have to work out where they are from the page, and when the page title also uses different words from the item, they can’t match the two at all. Highlight the current item and give the page the same name, so people can tell where they are from either side of the screen.
+
+<Raw html={F5} />
+
+</section>
+
+<Raw html={F6} />
+
+</div>
+
+### In real products \{#side-nav-products\}
+
+<Raw html={F7} />
+
+</article>
+
+<article class="entry essay" id="breadcrumbs" data-entry data-name="Breadcrumbs">
+
+<div class="entry-head">
+
+## Breadcrumbs \{#breadcrumbs-h\}
+
+<Learned id="breadcrumbs" />
+
+</div>
+
+Breadcrumbs are a short line of links above a page title, like My drive / Family / Holidays. They show where the page sits in a structure, from the top level down, and let people jump to any level above in one click.
+
+A Back link goes up one level at a time. Breadcrumbs show every level at once, so people can skip several in one go.
+
+<Raw html={F8} />
+
+### Forms \{#breadcrumbs-forms\}
+
+Most breadcrumbs show the full path, with a link for each level. Some add a small menu after each level, so people can move sideways to a neighbor as well as up. On phones, many show only the level above.
+
+<Raw html={F9} />
+
+### Rules \{#breadcrumbs-rules\}
+
+Three rules keep breadcrumbs useful.
+
+<div class="cs essay-cs">
+
+<section class="rule" id="breadcrumbs-rule-1">
+
+#### 1. Skip them in flat structures \{#breadcrumbs-rule-1-h\}
+
+With only one or two levels, the trail mostly repeats the page title: one more line to read that doesn’t take people anywhere new. A clear title says where people are, and a Back link covers the one way up.
+
+<Raw html={F10} />
+
+</section>
+
+<section class="rule" id="breadcrumbs-rule-2">
+
+#### 2. Show location, not history \{#breadcrumbs-rule-2-h\}
+
+A trail made of the pages people visited changes every time and says nothing about where the page belongs, so finding more things like it means starting again from the top. Leave the visited pages to the Back button, and make the trail show where the page sits in the structure, so its category is one click away however people got there.
+
+<Raw html={F11} />
+
+</section>
+
+<section class="rule" id="breadcrumbs-rule-3">
+
+#### 3. Shorten long paths \{#breadcrumbs-rule-3-h\}
+
+A deep path wraps onto a second line and pushes the page down, and people have to read every level to find the one they want. Keep the top level and the current one, and put the middle behind a “…” button, where the middle levels are still one click away.
+
+<Raw html={F12} />
+
+</section>
+
+<Raw html={F13} />
+
+</div>
+
+### In real products \{#breadcrumbs-products\}
+
+<Raw html={F14} />
+
+</article>
+
+<article class="entry essay" id="stepper" data-entry data-name="Stepper">
+
+<div class="entry-head">
+
+## Stepper & wizard \{#stepper-h\}
+
+<Learned id="stepper" />
+
+</div>
+
+A stepper, also called a wizard, splits a long task into a few steps in a fixed order, such as Delivery, Payment and Review. A row at the top names the steps, marks the current one and ticks off the ones that are done, so people answer a little at a time and can always see how much is left.
+
+Where [tabs](/part-3/containers/#tabs) open in any order and are never finished, a stepper has an order, and each step is done before the next one starts.
+
+<Raw html={F15} />
+
+### Forms \{#stepper-forms\}
+
+Steppers come in three common forms. A horizontal stepper names each step in a row across the top. A vertical one stacks the steps and opens the current one in place. On phones, many show only a count and a progress bar.
+
+<Raw html={F16} />
+
+### Rules \{#stepper-rules\}
+
+Four rules keep steppers useful.
+
+<div class="cs essay-cs">
+
+<section class="rule" id="stepper-rule-1">
+
+#### 1. Let people jump back \{#stepper-rule-1-h\}
+
+In a strict stepper, changing one answer means going back through every screen and forward again, which costs so many clicks that people stop checking their answers. Make finished steps clickable, and put an Edit link next to each answer on the review step. If people need to move around freely, use one page with sections instead.
+
+<Raw html={F17} />
+
+</section>
+
+<section class="rule" id="stepper-rule-2">
+
+#### 2. Give regulars a shortcut \{#stepper-rule-2-h\}
+
+A guided path helps the first time, but someone who sends the same invoice every month still has to sit through the welcome screen and every step. Offer [templates](/part-2/blank/#pat-templates) or a one-page form next to the guided path, so newcomers keep the guide and regulars finish in a couple of clicks.
+
+<Raw html={F18} />
+
+</section>
+
+<section class="rule" id="stepper-rule-3">
+
+#### 3. Keep answers on Back \{#stepper-rule-3-h\}
+
+Losing answers on Back is the most common stepper bug. People have to choose everything again, and they may miss that a value was reset, like the number of copies going back to 1, and order the wrong number of prints. Hold on to every answer until people finish or cancel the whole task, so checking a step costs nothing and people check more.
+
+<Raw html={F19} />
+
+</section>
+
+<section class="rule" id="stepper-rule-4">
+
+#### 4. Use as few steps as you can \{#stepper-rule-4-h\}
+
+Past about five steps, people lose count of how much is left, and some give up before they pay. Most of the extra screens only confirm an answer that was already picked. Cut steps, merge them, or fill them with [smart defaults](/part-2/overload/#pat-smart-defaults) that people can change in one place. Three named steps fit on one line, so the end is always in sight.
+
+<Raw html={F20} />
+
+</section>
+
+<Raw html={F21} />
+
+</div>
+
+### In real products \{#stepper-products\}
+
+<Raw html={F22} />
+
+</article>
+
+<aside class="in-short" id="ch-navigation-in-short" aria-labelledby="ch-navigation-in-short-h" data-pagefind-ignore>
+
+## In short \{#ch-navigation-in-short-h\}
+
+<div class="is-grid">
+
+<div>
+
+<a class="is-e" href="#side-nav">Side navigation</a>
+
+1. [Keep it to places](#side-nav-rule-1)
+2. [Group long lists](#side-nav-rule-2)
+3. [Show labels with icons](#side-nav-rule-3)
+4. [Mark the current place](#side-nav-rule-4)
+
+</div>
+
+<div>
+
+<a class="is-e" href="#breadcrumbs">Breadcrumbs</a>
+
+1. [Skip them in flat structures](#breadcrumbs-rule-1)
+2. [Show location, not history](#breadcrumbs-rule-2)
+3. [Shorten long paths](#breadcrumbs-rule-3)
+
+</div>
+
+<div>
+
+<a class="is-e" href="#stepper">Stepper & wizard</a>
+
+1. [Let people jump back](#stepper-rule-1)
+2. [Give regulars a shortcut](#stepper-rule-2)
+3. [Keep answers on Back](#stepper-rule-3)
+4. [Use as few steps as you can](#stepper-rule-4)
+
+</div>
+
+</div>
+
+</aside>
+
+</section>
+
+<Runtime chapter="ch-navigation" />

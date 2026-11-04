@@ -1,0 +1,222 @@
+<script>
+(() => {
+  const { $, $$, store, demo, toast } = window.dfg;
+
+  /* js-46-critique.js */
+  demo('good-critique', st => {
+    const MARK = { dislike: 'run', pop: 'badges', off: 'title' };
+    const modes = $$('input[name="p23-cr-mode"]', st), vagues = $$('input[name="p23-cr-vague"]', st);
+    const paneRw = $('#p23-cr-rw', st), paneOwn = $('#p23-cr-own', st);
+    const rws = $$('.p23-rw', st), parts = $$('[data-part]', st);
+    const picked = list => (list.find(r => r.checked) || list[0]).value;
+    const render = () => {
+      const rw = picked(modes) === 'rewrite', cur = picked(vagues);
+      paneRw.hidden = !rw;
+      paneOwn.hidden = rw;
+      rws.forEach(el => { el.hidden = el.dataset.for !== cur; });
+      parts.forEach(p => p.classList.toggle('p23-hl', rw && p.dataset.part === MARK[cur]));
+    };
+    modes.concat(vagues).forEach(r => r.addEventListener('change', render));
+    render();
+
+    const F = [
+      { id: 'p23-cr-goal', name: 'Goal', empty: 'Add the goal. Without it, nobody can tell whether a point matters.' },
+      { id: 'p23-cr-works', name: 'What works', empty: 'Say what works, so it survives the next version.' },
+      { id: 'p23-cr-not', name: 'What doesn’t serve the goal', empty: 'Name the problem, so the designer can judge any fix, including yours.' },
+      { id: 'p23-cr-sugg', name: 'Suggestion', empty: 'Offer one idea. A question is fine if you’re unsure.' }
+    ];
+    const TASTE = /\b(?:dis)?lik(?:e|es|ed)\b|\blov(?:e|es|ed|ely)\b|\bhat(?:e|es|ed)\b|\bugly\b|\bpretty\b|\bpop(?:s|py)?\b/gi;
+    const form = $('#p23-cr-form', st), out = $('#p23-cr-out', st), text = $('#p23-cr-text', st);
+    const nudges = $('#p23-cr-nudges', st), sum = $('#p23-cr-sum', st);
+    const quoteList = ws => ws.map(w => '“' + w + '”').join(' and ');
+    const addNudge = (f, msg) => {
+      const li = document.createElement('li');
+      const span = document.createElement('span');
+      span.textContent = msg;
+      const b = document.createElement('button');
+      b.type = 'button';
+      b.className = 'btn btn-ghost p23-jump';
+      b.textContent = 'Edit';
+      b.setAttribute('aria-label', 'Edit ' + f.name);
+      b.addEventListener('click', () => $('#' + f.id, st).focus());
+      li.append(span, b);
+      nudges.appendChild(li);
+    };
+    form.addEventListener('submit', e => {
+      e.preventDefault();
+      text.textContent = '';
+      nudges.textContent = '';
+      let count = 0;
+      F.forEach(f => {
+        const v = $('#' + f.id, st).value.trim().replace(/\s+/g, ' ');
+        if (!v) { addNudge(f, f.empty); count++; return; }
+        const p = document.createElement('p');
+        const b = document.createElement('b');
+        b.textContent = f.name + ': ';
+        p.append(b, v);
+        text.appendChild(p);
+        const words = Array.from(new Set((v.match(TASTE) || []).map(w => w.toLowerCase())));
+        if (words.length) {
+          addNudge(f, f.name + ' uses ' + quoteList(words) + '. If that’s taste talking, say what it does for the goal instead.');
+          count++;
+        }
+      });
+      if (!text.childElementCount) {
+        const p = document.createElement('p');
+        p.className = 'p23-none';
+        p.textContent = 'Nothing to assemble yet.';
+        text.appendChild(p);
+      }
+      if (!count) {
+        const li = document.createElement('li');
+        li.className = 'p23-ok';
+        li.textContent = 'Every part is there, and none of it leans on taste words. Ready to share.';
+        nudges.appendChild(li);
+      }
+      out.hidden = false;
+      sum.textContent = count ? 'Assembled, with ' + count + (count === 1 ? ' nudge' : ' nudges') + ' below.' : 'Assembled. Ready to share.';
+    });
+  });
+
+  demo('good-heuristic-review', st => {
+    const P = {
+      status: { h: 1, name: 'Visibility of system status' },
+      jargon: { h: 2, name: 'Match between the system and the real world' },
+      cancel: { h: 3, name: 'User control and freedom' },
+      ok: { h: 4, name: 'Consistency and standards' },
+      filename: { h: 5, name: 'Error prevention' },
+      help: { h: 10, name: 'Help and documentation' }
+    };
+    const FINE = {
+      title: 'The title names the action, so that one’s fine.',
+      images: 'Plain words that say what you’ll get, so that one’s fine.'
+    };
+    const keys = Object.keys(P), total = keys.length, found = new Set();
+    const say = $('#p23-hr-say', st), count = $('#p23-hr-n', st), list = $('#p23-hr-list', st);
+    const reveal = $('#p23-hr-reveal', st), reset = $('#p23-hr-reset', st), sort = $('#p23-hr-sort', st);
+    const spots = $$('[data-spot]', st);
+    const spot = k => $('[data-spot="' + k + '"]', st);
+    const item = k => $('#p23-hr-f-' + k, st);
+    const hit = h => $('[data-ten="' + h + '"] .p23-hit', st);
+    const order = () => {
+      const lis = $$('li', list);
+      lis.sort((a, b) => (sort.checked ? (b.dataset.sev - a.dataset.sev) : 0) || (a.dataset.h - b.dataset.h));
+      lis.forEach(li => list.appendChild(li));
+    };
+    const render = () => {
+      count.textContent = found.size;
+      reveal.hidden = found.size === total;
+      reset.hidden = found.size === 0;
+      order();
+    };
+    const mark = k => {
+      found.add(k);
+      const s = spot(k);
+      s.dataset.state = 'found';
+      s.dataset.h = P[k].h;
+      s.setAttribute('aria-describedby', 'p23-hr-f-' + k);
+      const li = item(k);
+      li.hidden = false;
+      li.classList.add('p23-new');
+      li.addEventListener('animationend', () => li.classList.remove('p23-new'), { once: true });
+      hit(P[k].h).hidden = false;
+    };
+    spots.forEach(s => s.addEventListener('click', () => {
+      const k = s.dataset.spot;
+      if (FINE[k]) {
+        s.dataset.state = 'fine';
+        say.textContent = FINE[k];
+        return;
+      }
+      if (found.has(k)) {
+        say.textContent = 'Already found: ' + P[k].name + '.';
+        item(k).scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+        return;
+      }
+      mark(k);
+      render();
+      say.textContent = found.size === total
+        ? 'All 6 found. Open the list of ten below: which ones does this dialog pass?'
+        : 'Found: ' + P[k].name + '. ' + (total - found.size) + ' to go.';
+    }));
+    reveal.addEventListener('click', () => {
+      keys.forEach(k => { if (!found.has(k)) mark(k); });
+      render();
+      say.textContent = 'All 6 shown. Before you read the severities, rate each one yourself.';
+      reset.focus();
+    });
+    reset.addEventListener('click', () => {
+      found.clear();
+      spots.forEach(s => { delete s.dataset.state; delete s.dataset.h; s.removeAttribute('aria-describedby'); });
+      keys.forEach(k => { item(k).hidden = true; item(k).classList.remove('p23-new'); hit(P[k].h).hidden = true; });
+      sort.checked = false;
+      render();
+      say.textContent = 'Click anything in the dialog that looks wrong.';
+      spots[0].focus();
+    });
+    sort.addEventListener('change', order);
+    render();
+  });
+
+  demo('good-rams-principles', st => {
+    const KEY = 'cfg-p23-rams', MAX = 3;
+    const picks = $$('input[name="p23-rams-pick"]', st);
+    const flips = $$('.p23-flip', st);
+    const week = $('#p23-rams-week', st), clear = $('#p23-rams-clear', st);
+    const valid = picks.map(p => Number(p.value));
+    const saved = store.get(KEY, []);
+    let chosen = (Array.isArray(saved) ? saved : []).map(Number).filter((v, i, a) => valid.includes(v) && a.indexOf(v) === i).slice(0, MAX);
+    const nameOf = v => $('.p23-name', picks.find(p => Number(p.value) === v).closest('.p23-card')).textContent;
+    const render = note => {
+      picks.forEach(p => {
+        p.checked = chosen.includes(Number(p.value));
+        p.closest('.p23-card').classList.toggle('p23-picked', p.checked);
+      });
+      week.textContent = '';
+      if (!chosen.length) week.append('Pick three to keep in mind this week.');
+      else {
+        week.append('This week: ');
+        chosen.forEach((v, i) => {
+          if (i) week.append(i === chosen.length - 1 ? ' and ' : ', ');
+          const b = document.createElement('b');
+          b.textContent = nameOf(v);
+          week.append(b);
+        });
+        week.append('.');
+        if (chosen.length < MAX) week.append(' Pick ' + (MAX - chosen.length) + ' more.');
+      }
+      if (note) week.append(' ' + note);
+      clear.hidden = !chosen.length;
+    };
+    picks.forEach(p => p.addEventListener('change', () => {
+      const v = Number(p.value);
+      if (p.checked) {
+        if (chosen.length >= MAX) { p.checked = false; render('You already have three. Unpick one to swap.'); return; }
+        chosen.push(v);
+      } else {
+        chosen = chosen.filter(c => c !== v);
+      }
+      store.set(KEY, chosen);
+      render();
+    }));
+    clear.addEventListener('click', () => {
+      chosen = [];
+      store.set(KEY, chosen);
+      render();
+      picks[0].focus();
+    });
+    flips.forEach(b => b.addEventListener('click', () => {
+      const open = b.getAttribute('aria-expanded') !== 'true';
+      const card = b.closest('.p23-card');
+      b.setAttribute('aria-expanded', String(open));
+      $('#' + b.getAttribute('aria-controls'), st).hidden = !open;
+      card.classList.toggle('p23-open', open);
+      card.classList.remove('p23-anim');
+      if (open) { void card.offsetWidth; card.classList.add('p23-anim'); }
+    }));
+    render();
+  });
+
+
+})();
+</script>

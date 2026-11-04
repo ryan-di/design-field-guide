@@ -1,0 +1,113 @@
+<div class="fm" data-fm>
+  <div class="seg fm-seg" role="radiogroup" aria-label="Way">
+    <input type="radio" name="fm-pat-command-palette" id="fm-pat-command-palette-1" value="all" checked><label for="fm-pat-command-palette-1">All commands</label>
+    <input type="radio" name="fm-pat-command-palette" id="fm-pat-command-palette-2" value="mixed"><label for="fm-pat-command-palette-2">Commands and pages</label>
+    <input type="radio" name="fm-pat-command-palette" id="fm-pat-command-palette-3" value="sel"><label for="fm-pat-command-palette-3">For the selection</label>
+    <input type="radio" name="fm-pat-command-palette" id="fm-pat-command-palette-4" value="slash"><label for="fm-pat-command-palette-4">Slash in text</label>
+  </div>
+  <div class="fm-stage" data-fm-stage></div>
+  <p class="fig-cap" data-fm-when aria-live="polite"></p>
+  
+  <script>
+  (() => {
+    const fm = document.currentScript.closest('[data-fm]'), stage = fm.querySelector('[data-fm-stage]'), when = fm.querySelector('[data-fm-when]');
+    const icon = n => '<svg class="icon sm" aria-hidden="true"><use href="#i-' + n + '"/></svg>';
+    const KEY = /Mac|iPhone|iPad/i.test(navigator.platform || navigator.userAgent || '') ? '⌘' : 'Ctrl';
+    const kbd = ks => '<span class="cpf-k">' + ks.map(k => '<kbd>' + k + '</kbd>').join('') + '</span>';
+    const frame = (title, body) => '<div class="app-frame cpf-frame"><div class="app-bar"><span>' + title + '</span></div><div class="app-body">' + body + '</div></div>';
+    /* items: [{name, group, ic, right, run}] */
+    const pal = (box, items, title, out) => {
+      box.innerHTML = '<div class="cpf-pal surface">' + (title ? '<span class="cpf-title">' + title + '</span>' : '') +
+        '<div class="cpf-q"><input class="input" type="text" aria-label="Search commands" placeholder="Type a command" autocomplete="off" spellcheck="false"></div><div class="cpf-list" role="list"></div></div>';
+      const input = box.querySelector('input'), list = box.querySelector('.cpf-list');
+      const draw = () => {
+        const q = input.value.trim().toLowerCase();
+        const hits = items.filter(i => !q || i.name.toLowerCase().includes(q));
+        let g = null; list.innerHTML = '';
+        hits.forEach(i => {
+          if (i.group && i.group !== g) { g = i.group; list.insertAdjacentHTML('beforeend', '<div class="cpf-grp">' + g + '</div>'); }
+          const b = document.createElement('button'); b.type = 'button'; b.className = 'cpf-opt';
+          b.innerHTML = '<span class="l">' + (i.ic ? icon(i.ic) : '') + i.name + '</span>' + (i.right || '');
+          b.addEventListener('click', () => { out.textContent = i.run(); });
+          list.appendChild(b);
+        });
+        if (!hits.length) list.innerHTML = '<p class="cpf-grp">Nothing matches “' + input.value.trim().replace(/</g, '&lt;') + '”.</p>';
+      };
+      input.addEventListener('input', draw);
+      input.addEventListener('keydown', e => { if (e.key === 'Enter') { const b = list.querySelector('.cpf-opt'); if (b) b.click(); } });
+      draw();
+    };
+    const F = {
+      all: {
+        html: frame('Mail', '<div data-pal></div><p class="cs-ok" data-out></p>'),
+        use: 'One box for every command in the app, opened with Ctrl+K or ⌘K.',
+        close: 'Use it in apps with many commands spread across menus.',
+        wire: s => pal(s.querySelector('[data-pal]'), [
+          { name: 'Compose message', right: kbd(['C']), run: () => 'A new message would open.' },
+          { name: 'Archive conversation', right: kbd(['E']), run: () => 'Conversation archived.' },
+          { name: 'Mark all as read', right: kbd(['Shift', 'I']), run: () => 'All marked as read.' },
+          { name: 'Turn on vacation reply', run: () => 'Vacation reply settings would open.' },
+          { name: 'Go to Sent', right: kbd(['G', 'T']), run: () => 'Sent would open.' }
+        ], '', s.querySelector('[data-out]'))
+      },
+      mixed: {
+        html: frame('Docs', '<div data-pal></div><p class="cs-ok" data-out></p>'),
+        use: 'The same box also finds pages and files.',
+        close: 'Mark each result as a page or a command, so people know what Enter will do.',
+        wire: s => {
+          const pg = n => ({ name: n, group: 'Pages', ic: 'book', right: '<span class="cpf-tag">Page</span>', run: () => 'Opened “' + n + '”.' });
+          const cm = (n, m) => ({ name: n, group: 'Commands', ic: 'play', right: '<span class="cpf-tag">Command</span>', run: () => m });
+          pal(s.querySelector('[data-pal]'), [pg('Trip notes'), pg('Budget 2026'), pg('Reading list'),
+            cm('New page', 'A new page would open.'), cm('Export to PDF', 'Saved “Trip notes.pdf”.'), cm('Share page', 'Sharing options would open.')], '', s.querySelector('[data-out]'));
+        }
+      },
+      sel: {
+        html: frame('Tasks', '<div class="cpf-task" data-t><i class="cpf-dot"></i><span>Renew passport</span></div><div class="cpf-task on" data-t><i class="cpf-dot"></i><span>Book train tickets</span></div><div class="cpf-task" data-t><i class="cpf-dot"></i><span>Pay rent</span></div><div data-pal></div><p class="cs-ok" data-out></p>'),
+        use: 'Only the commands that fit the selected item.',
+        close: 'Use it in lists, where people pick an item first and then act on it.',
+        wire: s => {
+          const task = s.querySelectorAll('[data-t]')[1];
+          pal(s.querySelector('[data-pal]'), [
+            { name: 'Mark as done', right: kbd(['D']), run: () => { task.classList.add('done'); return 'Marked “Book train tickets” as done.'; } },
+            { name: 'Set due date', right: kbd(['T']), run: () => 'A date picker would open.' },
+            { name: 'Assign to…', right: kbd(['A']), run: () => 'A list of people would open.' },
+            { name: 'Move to project', right: kbd(['M']), run: () => 'A list of projects would open.' }
+          ], 'For “Book train tickets”', s.querySelector('[data-out]'));
+        }
+      },
+      slash: {
+        html: frame('Notes', '<div class="cpf-doc" data-doc><h6>Packing list</h6><span>For the weekend in Porto.</span></div><input class="input" type="text" aria-label="Note line" value="/" autocomplete="off" spellcheck="false" data-line><div class="cpf-pal surface cpf-menu" data-menu><span class="cpf-title">Add a block</span><div class="cpf-list" data-list></div></div><p class="cs-ok" data-out></p>'),
+        use: 'Typing “/” at the start of a line opens a short menu of things to add.',
+        close: 'Use it in editors, where hands stay on the keyboard. It listens only at the start of a line, so “and/or” still types.',
+        wire: s => {
+          const line = s.querySelector('[data-line]'), menu = s.querySelector('[data-menu]'), list = s.querySelector('[data-list]'), doc = s.querySelector('[data-doc]'), out = s.querySelector('[data-out]');
+          const B = [['Heading', 'book', '<h6>Heading</h6>'], ['Checklist', 'check', '<span>☐ Passport</span>'], ['Table', 'layers', '<div class="cpf-tbl">' + '<span></span>'.repeat(6) + '</div>'], ['Image', 'image', '<div class="thumb" style="height:56px;aspect-ratio:auto"></div>']];
+          const draw = () => {
+            const v = line.value;
+            menu.hidden = !v.startsWith('/');
+            const q = v.slice(1).toLowerCase();
+            const hits = B.filter(b => b[0].toLowerCase().includes(q));
+            list.innerHTML = '';
+            hits.forEach(b => {
+              const el = document.createElement('button'); el.type = 'button'; el.className = 'cpf-opt';
+              el.innerHTML = '<span class="l">' + icon(b[1]) + b[0] + '</span>';
+              el.addEventListener('click', () => { doc.insertAdjacentHTML('beforeend', b[2]); line.value = ''; draw(); out.textContent = b[0] + ' added.'; line.focus({ preventScroll: true }); });
+              list.appendChild(el);
+            });
+            if (!hits.length) list.innerHTML = '<p class="cpf-grp">No blocks match.</p>';
+          };
+          line.addEventListener('input', draw);
+          line.addEventListener('keydown', e => { if (e.key === 'Enter' && !menu.hidden) { const b = list.querySelector('.cpf-opt'); if (b) b.click(); } else if (e.key === 'Escape') menu.hidden = true; });
+          draw();
+        }
+      }
+    };
+    const show = k => {
+      stage.innerHTML = F[k].html; F[k].wire(stage);
+      when.innerHTML = '<b>' + fm.querySelector('.fm-seg input:checked + label').textContent + '.</b> ' + F[k].use + ' ' + F[k].close;
+    };
+    fm.querySelectorAll('.fm-seg input').forEach(i => i.addEventListener('change', () => show(i.value)));
+    show('all');
+  })();
+  </script>
+</div>

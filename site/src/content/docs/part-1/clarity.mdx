@@ -1,0 +1,379 @@
+---
+title: "Make the important thing obvious"
+description: "People scan a screen before they read it: in the first moment they see a few shapes, guess what the screen is for, and look for the thing they came to do."
+eyebrow: "Chapter 2"
+sidebar:
+  label: "Make it clear"
+---
+
+import Raw from '../../../components/Raw.astro';
+import Learned from '../../../components/Learned.astro';
+import Runtime from '../../../components/Runtime.astro';
+import F0 from '../../../fragments/ch-clarity/0.html?raw';
+import F1 from '../../../fragments/ch-clarity/1.html?raw';
+import F2 from '../../../fragments/ch-clarity/2.html?raw';
+import F3 from '../../../fragments/ch-clarity/3.html?raw';
+import F4 from '../../../fragments/ch-clarity/4.html?raw';
+import F5 from '../../../fragments/ch-clarity/5.html?raw';
+import F6 from '../../../fragments/ch-clarity/6.html?raw';
+import F7 from '../../../fragments/ch-clarity/7.html?raw';
+import F8 from '../../../fragments/ch-clarity/8.html?raw';
+import F9 from '../../../fragments/ch-clarity/9.html?raw';
+import F10 from '../../../fragments/ch-clarity/10.html?raw';
+import F11 from '../../../fragments/ch-clarity/11.html?raw';
+import F12 from '../../../fragments/ch-clarity/12.html?raw';
+import F13 from '../../../fragments/ch-clarity/13.html?raw';
+import F14 from '../../../fragments/ch-clarity/14.html?raw';
+import F15 from '../../../fragments/ch-clarity/15.html?raw';
+import F16 from '../../../fragments/ch-clarity/16.html?raw';
+import F17 from '../../../fragments/ch-clarity/17.html?raw';
+import F18 from '../../../fragments/ch-clarity/18.html?raw';
+import F19 from '../../../fragments/ch-clarity/19.html?raw';
+import F20 from '../../../fragments/ch-clarity/20.html?raw';
+import F21 from '../../../fragments/ch-clarity/21.html?raw';
+import F22 from '../../../fragments/ch-clarity/22.html?raw';
+import F23 from '../../../fragments/ch-clarity/23.html?raw';
+import F24 from '../../../fragments/ch-clarity/24.html?raw';
+import F25 from '../../../fragments/ch-clarity/25.html?raw';
+import F26 from '../../../fragments/ch-clarity/26.html?raw';
+
+<Runtime at="start" />
+
+<section class="dfg-chapter" id="ch-clarity">
+
+People scan a screen before they read it: in the first moment they see a few shapes, guess what the screen is for, and look for the thing they came to do. Clarity comes from hierarchy, grouping, rhythm and contrast, long before color or style. The four entries below cover what stands out, what belongs together, what lines up, and what can be read at all.
+
+<article class="entry essay" id="good-visual-hierarchy" data-entry data-name="Visual hierarchy">
+
+<div class="entry-head">
+
+## Visual hierarchy \{#good-visual-hierarchy-h\}
+
+<Learned id="good-visual-hierarchy" />
+
+</div>
+
+Visual hierarchy is the order in which people notice things on a screen. Size, weight, color, position and space set that order. In each region, one thing should clearly lead and the rest should step down from it.
+
+When the order is clear, people find what matters in one glance and read the rest only if they need it. Build the same order into the markup, with real headings and lists, so people using a screen reader can move through the page the same way.
+
+<Raw html={F0} />
+
+### Rules \{#good-visual-hierarchy-rules\}
+
+Four rules keep visual hierarchy clear.
+
+<div class="cs essay-cs">
+
+<section class="rule" id="good-visual-hierarchy-rule-1">
+
+#### 1. Let one thing lead \{#good-visual-hierarchy-rule-1-h\}
+
+When everything is bold, big or bright, nothing stands out, and people have to read every line to find the one they need. Pick one focal point per region, usually the outcome or the next step, and make everything else quieter.
+
+<Raw html={F1} />
+
+</section>
+
+<section class="rule" id="good-visual-hierarchy-rule-2">
+
+#### 2. Don’t rely on color alone \{#good-visual-hierarchy-rule-2-h\}
+
+Like any [meaning carried by color alone](#good-contrast), a title set apart only by its color blends into the text around it in grayscale, in bright sun or for people who see color differently. Set the order with size, weight, position and space, and let color add to it.
+
+<Raw html={F2} />
+
+</section>
+
+<section class="rule" id="good-visual-hierarchy-rule-3">
+
+#### 3. Keep to three or four levels \{#good-visual-hierarchy-rule-3-h\}
+
+Eight sizes and four weights, each a little different, don’t read as an order: people can’t tell which level a line is on, so the page looks uneven instead of organized. Three or four levels are enough, for example a title, key facts, body text and small print. Make each step big enough to see at a glance.
+
+<Raw html={F3} />
+
+</section>
+
+<section class="rule" id="good-visual-hierarchy-rule-4">
+
+#### 4. Keep one primary button \{#good-visual-hierarchy-rule-4-h\}
+
+Two filled buttons side by side ask for the same attention, so people stop to work out which one is the next step, and some press the wrong one. Keep one primary action per view and make the others secondary, as in [Button hierarchy](/part-3/actions/#buttons).
+
+<Raw html={F4} />
+
+</section>
+
+<Raw html={F5} />
+
+</div>
+
+### In real products \{#good-visual-hierarchy-products\}
+
+<Raw html={F6} />
+
+</article>
+
+<article class="entry essay" id="good-proximity" data-entry data-name="Proximity">
+
+<div class="entry-head">
+
+## Proximity \{#good-proximity-h\}
+
+<Learned id="good-proximity" />
+
+</div>
+
+Proximity means that things close together look like they belong together. People read the space between items before they read the words, so the gaps on a screen tell them what goes with what.
+
+Space only groups things for people who can see it, so give assistive tech the same groups: a real label for every field, and a named group around each set of fields.
+
+<Raw html={F7} />
+
+### Rules \{#good-proximity-rules\}
+
+Four rules keep spacing honest.
+
+<div class="cs essay-cs">
+
+<section class="rule" id="good-proximity-rule-1">
+
+#### 1. Use more space between groups than inside them \{#good-proximity-rule-1-h\}
+
+When every gap is the same, people can’t tell where one group ends and the next begins, so a caption between two photos could belong to either. Make the space between groups clearly bigger than the space inside them. About twice as much is a good start.
+
+<Raw html={F8} />
+
+</section>
+
+<section class="rule" id="good-proximity-rule-2">
+
+#### 2. Try space before boxes and lines \{#good-proximity-rule-2-h\}
+
+Borders and divider lines around every group give people a lot of lines to read past: the page looks busy, and the lines compete with the content. Group with space first, and add a line or a box only when space alone isn’t enough, like in a long, dense list.
+
+<Raw html={F9} />
+
+</section>
+
+<section class="rule" id="good-proximity-rule-3">
+
+#### 3. Put a control next to what it changes \{#good-proximity-rule-3-h\}
+
+When a setting sits at the top and the button that applies it sits far below, people don’t see that they belong together: they change the setting and nothing happens, or they hunt for the button. Keep a control next to the thing it changes, and its action next to the control.
+
+<Raw html={F10} />
+
+</section>
+
+<section class="rule" id="good-proximity-rule-4">
+
+#### 4. Keep help text tight under its field \{#good-proximity-rule-4-h\}
+
+A message that sits closer to the next field than to its own seems to be about the next field, so people fix the wrong thing or miss the message. Keep help and error text close under their field, with the bigger gap after them, as in [Text field](/part-3/inputs/#text-field).
+
+<Raw html={F11} />
+
+</section>
+
+<Raw html={F12} />
+
+</div>
+
+### In real products \{#good-proximity-products\}
+
+<Raw html={F13} />
+
+</article>
+
+<article class="entry essay" id="good-spacing-rhythm" data-entry data-name="Spacing rhythm">
+
+<div class="entry-head">
+
+## Spacing rhythm \{#good-spacing-rhythm-h\}
+
+<Learned id="good-spacing-rhythm" />
+
+</div>
+
+Spacing rhythm means every gap on a screen comes from a short scale of sizes, such as 4, 8, 16, 24 and 32 pixels, and the edges of things line up. People never measure the gaps, but they notice when gaps vary for no reason: the screen looks untidy, and it takes longer to see what belongs together.
+
+It works together with [Proximity](#good-proximity): Proximity decides which gaps should be small and which large, and rhythm decides which sizes those gaps can be. Set the steps in rem, so the gaps grow when people make their text larger.
+
+<Raw html={F14} />
+
+### Rules \{#good-spacing-rhythm-rules\}
+
+Three rules keep spacing steady.
+
+<div class="cs essay-cs">
+
+<section class="rule" id="good-spacing-rhythm-rule-1">
+
+#### 1. Take every gap from one scale \{#good-spacing-rhythm-rule-1-h\}
+
+When each gap is picked by eye, a screen ends up with many sizes that are almost the same. People can’t tell 11 from 13, so the small differences only look like mistakes. Give the team a short scale and use only its steps, so a review can ask “which step?” instead of “why 13?”.
+
+<Raw html={F15} />
+
+</section>
+
+<section class="rule" id="good-spacing-rhythm-rule-2">
+
+#### 2. Line edges up, or offset them clearly \{#good-spacing-rhythm-rule-2-h\}
+
+Edges that sit a few pixels apart look like an error, so people see a ragged column and trust the screen a little less. Put shared edges on the same line. When something should stand apart, like a note under a price, indent it by a full step or more so it reads as a choice.
+
+<Raw html={F16} />
+
+</section>
+
+<section class="rule" id="good-spacing-rhythm-rule-3">
+
+#### 3. Choose density on purpose \{#good-spacing-rhythm-rule-3-h\}
+
+When each panel gets its own padding, one list is cramped and the next one is roomy, so people have to adjust at every panel and the cramped rows are harder to tap. Pick a density for each kind of screen, such as compact for a busy settings page and roomy for a welcome dialog, and build both from the same steps.
+
+<Raw html={F17} />
+
+</section>
+
+<Raw html={F18} />
+
+</div>
+
+### In real products \{#good-spacing-rhythm-products\}
+
+<Raw html={F19} />
+
+</article>
+
+<article class="entry essay" id="good-contrast" data-entry data-name="Contrast">
+
+<div class="entry-head">
+
+## Contrast, and never color alone \{#good-contrast-h\}
+
+<Learned id="good-contrast" />
+
+</div>
+
+Contrast is how clearly text and controls stand apart from what’s behind them. With too little, people squint, miss things, or can’t read the screen at all in sunlight. WCAG asks for at least 4.5 : 1 for body text, and 3 : 1 for large text and for the edges and icons people need to see.
+
+The second half of the idea is about meaning. Color can make a status quicker to spot, but it can’t be the only clue, because some people can’t tell certain colors apart and some screens show everything in gray. Pair every color with a shape, an icon or a word.
+
+<Raw html={F20} />
+
+### Rules \{#good-contrast-rules\}
+
+Four rules keep text readable and meaning clear.
+
+<div class="cs essay-cs">
+
+<section class="rule" id="good-contrast-rule-1">
+
+#### 1. Give text enough contrast \{#good-contrast-rule-1-h\}
+
+Pale gray text looks calm in a mockup on a good monitor, but on a phone in sunlight, or for someone with weaker eyes, it fades away. Give body text at least 4.5 : 1 against its background, and large text at least 3 : 1. Check the quiet text too: captions, placeholders and hints.
+
+<Raw html={F21} />
+
+</section>
+
+<section class="rule" id="good-contrast-rule-2">
+
+#### 2. Don’t carry meaning with color alone \{#good-contrast-rule-2-h\}
+
+A green or red amount only tells something to people who see the color. For everyone else, money in and money out look the same. Add a sign, an arrow or a word, such as “+” and “Received”, so color still helps people scan and the meaning stays when the color is gone.
+
+<Raw html={F22} />
+
+</section>
+
+<section class="rule" id="good-contrast-rule-3">
+
+#### 3. Pick colors that differ in lightness \{#good-contrast-rule-3-h\}
+
+Many people can’t tell red from green, especially when the two are equally light, so a seat map in those colors becomes one muddy shade. Choose colors that are also clearly lighter and darker than each other, and add a mark and a word to each state.
+
+<Raw html={F23} />
+
+</section>
+
+<section class="rule" id="good-contrast-rule-4">
+
+#### 4. Check both themes \{#good-contrast-rule-4-h\}
+
+A gray that passes on white can fail on dark gray. This happens when colors are picked in the light theme and copied into the dark one, which leaves dim text on a dim background. Measure every text and background pair in each theme, and give the dark theme its own values.
+
+<Raw html={F24} />
+
+</section>
+
+<Raw html={F25} />
+
+</div>
+
+### In real products \{#good-contrast-products\}
+
+<Raw html={F26} />
+
+</article>
+
+<aside class="in-short" id="ch-clarity-in-short" aria-labelledby="ch-clarity-in-short-h" data-pagefind-ignore>
+
+## In short \{#ch-clarity-in-short-h\}
+
+<div class="is-grid">
+
+<div>
+
+<a class="is-e" href="#good-visual-hierarchy">Visual hierarchy</a>
+
+1. [Let one thing lead](#good-visual-hierarchy-rule-1)
+2. [Don’t rely on color alone](#good-visual-hierarchy-rule-2)
+3. [Keep to three or four levels](#good-visual-hierarchy-rule-3)
+4. [Keep one primary button](#good-visual-hierarchy-rule-4)
+
+</div>
+
+<div>
+
+<a class="is-e" href="#good-proximity">Proximity</a>
+
+1. [Use more space between groups than inside them](#good-proximity-rule-1)
+2. [Try space before boxes and lines](#good-proximity-rule-2)
+3. [Put a control next to what it changes](#good-proximity-rule-3)
+4. [Keep help text tight under its field](#good-proximity-rule-4)
+
+</div>
+
+<div>
+
+<a class="is-e" href="#good-spacing-rhythm">Spacing rhythm</a>
+
+1. [Take every gap from one scale](#good-spacing-rhythm-rule-1)
+2. [Line edges up, or offset them clearly](#good-spacing-rhythm-rule-2)
+3. [Choose density on purpose](#good-spacing-rhythm-rule-3)
+
+</div>
+
+<div>
+
+<a class="is-e" href="#good-contrast">Contrast, and never color alone</a>
+
+1. [Give text enough contrast](#good-contrast-rule-1)
+2. [Don’t carry meaning with color alone](#good-contrast-rule-2)
+3. [Pick colors that differ in lightness](#good-contrast-rule-3)
+4. [Check both themes](#good-contrast-rule-4)
+
+</div>
+
+</div>
+
+</aside>
+
+</section>
+
+<Runtime chapter="ch-clarity" />

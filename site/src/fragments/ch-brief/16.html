@@ -1,0 +1,17 @@
+<div class="stage tall" data-demo="eff-definition-of-done">
+      <div class="p26-wrap">
+        <p class="p26-req"><b>Goal:</b> closing a tab never loses work unless the person chooses to.</p>
+        <div class="p26-dod-bar">
+          <button class="btn btn-secondary p26-sm" type="button" id="p26-dd-all">Make all checkable</button>
+          <button class="btn btn-ghost p26-sm" type="button" id="p26-dd-reset">Reset</button>
+          <div class="seg p26-seg p26-seg-sm" role="radiogroup" aria-label="Show">
+            <input type="radio" name="p26-dd-filter" id="p26-dd-f-all" value="all" checked><label for="p26-dd-f-all">All</label>
+            <input type="radio" name="p26-dd-filter" id="p26-dd-f-agent" value="agent"><label for="p26-dd-f-agent">Agent can verify</label>
+            <input type="radio" name="p26-dd-filter" id="p26-dd-f-you" value="you"><label for="p26-dd-f-you">You verify</label>
+          </div>
+        </div>
+        <ul class="p26-dod" id="p26-dd-list" aria-label="Acceptance criteria"></ul>
+        <p class="p26-lint-sum p26-dod-sum" id="p26-dd-sum" role="status"></p>
+      </div>
+      <p class="try"><b>Try it:</b> press Make checkable on a vague line to see the check it becomes and who can verify it. Then filter to You verify: those are the parts you can’t hand off.</p>
+    </div>

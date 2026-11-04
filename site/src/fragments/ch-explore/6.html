@@ -1,0 +1,62 @@
+<div class="note comfy cw-wrap">
+  <div class="seg cw-seg" role="radiogroup" aria-label="Example">
+    <input type="radio" name="cw-eff-explore-wide-w" id="cw-eff-explore-wide-w-1" value="gv" checked><label for="cw-eff-explore-wide-w-1">Google Ventures</label>
+    <input type="radio" name="cw-eff-explore-wide-w" id="cw-eff-explore-wide-w-2" value="lightroom"><label for="cw-eff-explore-wide-w-2">Lightroom Classic</label>
+    <input type="radio" name="cw-eff-explore-wide-w" id="cw-eff-explore-wide-w-3" value="midjourney"><label for="cw-eff-explore-wide-w-3">Midjourney</label>
+    <input type="radio" name="cw-eff-explore-wide-w" id="cw-eff-explore-wide-w-4" value="maps"><label for="cw-eff-explore-wide-w-4">Google Maps</label>
+  </div>
+  <div class="cw" data-cw-view role="img" aria-label=""></div>
+  <p class="cw-cap" data-cw-cap aria-live="polite"></p>
+  
+  <script>
+  (() => {
+    const wrap = document.currentScript.closest('.cw-wrap');
+    const view = wrap.querySelector('[data-cw-view]'), cap = wrap.querySelector('[data-cw-cap]');
+    const ic = id => '<svg class="icon sm" aria-hidden="true"><use href="#i-' + id + '"/></svg>';
+    const L = w => '<i class="cw-line" style="width:' + w + '%"></i>';
+    const bx = h => '<i class="cw-xw-bx" style="height:' + h + 'px"></i>';
+    const panels = [
+      bx(14) + L(80) + L(55),
+      '<i class="cw-xw-o"></i>' + L(90) + L(60),
+      '<span class="cw-xw-two">' + bx(26) + bx(26) + '</span>',
+      L(70) + L(85) + L(50) + L(75),
+      bx(20) + '<i class="cw-xw-pill"></i>',
+      '<span class="cw-xw-two">' + bx(12) + bx(12) + '</span><span class="cw-xw-two">' + bx(12) + bx(12) + '</span>',
+      L(85) + L(60) + '<i class="cw-xw-pill" style="width:80%"></i>',
+      '<span class="cw-xw-two">' + L(100) + L(100) + L(100) + '</span>' + bx(18)
+    ];
+    const shot = (name, cls, on) => '<span class="cw-xw-shot' + (on ? ' on' : '') + '"><i class="cw-xw-photo ' + cls + '"></i><span>' + name + ic('x') + '</span></span>';
+    const row = (lab, on) => '<span><i>' + lab + '</i>' + [1, 2, 3, 4].map(n => '<u' + (n === on ? ' class="on"' : '') + '>' + n + '</u>').join('') + '</span>';
+    const pos = (x, y) => 'left:' + (x / 3).toFixed(1) + '%;top:' + (y / 1.7).toFixed(1) + '%';
+    const t = (x, y, txt, on) => '<span class="cw-xw-t' + (on ? ' on' : '') + '" style="' + pos(x, y) + '">' + txt + '</span>';
+    const S = {
+      gv: { html: '<div class="cw-xw-card"><div class="cw-xw-head"><b>Eight ideas</b><span class="cw-xw-chip on">8 min</span></div>' +
+          '<div class="cw-xw-panels">' + panels.map((p, i) => '<span class="cw-xw-p"><em>' + (i + 1) + '</em>' + p + '</span>').join('') + '</div></div>',
+        alt: 'A sheet folded into eight panels, numbered 1 to 8, each with a different rough wireframe. A chip at the top says 8 min.',
+        cap: 'Google Ventures: in the design sprint’s Crazy 8s step, each person folds a sheet into eight panels and sketches eight ideas in eight minutes. The time limit keeps every idea rough, so people compare ideas, not drawing skill.' },
+      lightroom: { html: '<div class="cw-xw-card"><div class="cw-xw-head"><b>Survey</b><span class="cw-xw-chip">3 selected</span></div>' +
+          '<div class="cw-xw-survey">' + shot('Original', '') + shot('Copy 1', 'bw', true) + shot('Copy 2', 'warm') + '</div></div>',
+        alt: 'Three edits of the same photo side by side: the original, a black and white copy, and a warmer cropped copy. The black and white copy is selected. Each has a small remove button.',
+        cap: 'Lightroom Classic: a virtual copy is a second edit of the same photo, without duplicating the file. Survey view shows the copies side by side, so you remove the weak ones and keep the best.' },
+      midjourney: { html: '<div class="cw-xw-card"><div class="cw-xw-mj"><span class="cw-xw-prompt">' + ic('search') + '<b>a lighthouse at dusk</b></span>' +
+          '<div class="cw-xw-grid"><span class="cw-xw-img a"><em>1</em></span><span class="cw-xw-img b"><em>2</em></span><span class="cw-xw-img c"><em>3</em></span><span class="cw-xw-img d"><em>4</em></span></div>' +
+          '<div class="cw-xw-acts">' + row('Upscale', 2) + row('Vary', 4) + '</div></div></div>',
+        alt: 'A prompt, a lighthouse at dusk, and below it a grid of four different images numbered 1 to 4. Buttons let you upscale or vary any one of them; Upscale 2 and Vary 4 are picked.',
+        cap: 'Midjourney: each prompt returns a grid of four different images at once. You pick the ones worth taking further and ask for variations or a larger version of just those.' },
+      maps: { html: '<div class="cw-xw-card"><div class="cw-xw-map"><svg viewBox="0 0 300 170" preserveAspectRatio="none" aria-hidden="true">' +
+          '<rect class="park" x="150" y="85" width="80" height="38" rx="6"/>' +
+          '<path class="rd" vector-effect="non-scaling-stroke" d="M0 30H300M0 70H300M0 105H300M0 140H300M45 0V170M125 0V170M205 0V170M260 0V170"/>' +
+          '<path class="alt" vector-effect="non-scaling-stroke" d="M45 140V30H260"/><path class="alt" vector-effect="non-scaling-stroke" d="M45 140H260V30"/>' +
+          '<path class="main" vector-effect="non-scaling-stroke" d="M45 140H125V70H260V30"/></svg>' +
+          '<i class="cw-xw-dot" style="' + pos(45, 140) + '"></i><i class="cw-xw-dot end" style="' + pos(260, 30) + '"></i>' +
+          t(125, 100, '18 min', true) + t(45, 82, '24 min') + t(196, 140, '21 min') + '</div>' +
+          '<div class="cw-xw-routes"><span class="on"><b>18 min</b><small>via Hill Rd · fastest</small></span><span><b>21 min</b><small>via River Rd · no tolls</small></span><span><b>24 min</b><small>via Park Ave</small></span></div></div>',
+        alt: 'A street map with three routes from a start point to a destination. The fastest, 18 min, is highlighted; two others, 21 min and 24 min, are grayed out. A list below repeats the three routes.',
+        cap: 'Google Maps: directions show a few different routes at once, each with its time on the map. You see the trade-offs side by side and tap the one you want, instead of taking the first answer.' }
+    };
+    const render = k => { view.innerHTML = S[k].html; view.setAttribute('aria-label', 'Sketch: ' + S[k].alt); cap.textContent = S[k].cap; };
+    wrap.querySelectorAll('input[name="cw-eff-explore-wide-w"]').forEach(r => r.addEventListener('change', () => render(r.value)));
+    render('gv');
+  })();
+  </script>
+</div>

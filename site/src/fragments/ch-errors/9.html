@@ -1,0 +1,102 @@
+<div class="fm" data-fm>
+  <div class="seg fm-seg" role="radiogroup" aria-label="Way to do it">
+    <input type="radio" name="fm-pat-forgiving-input" id="fm-pat-forgiving-input-1" value="formats" checked><label for="fm-pat-forgiving-input-1">Many formats</label>
+    <input type="radio" name="fm-pat-forgiving-input" id="fm-pat-forgiving-input-2" value="clean"><label for="fm-pat-forgiving-input-2">Clean-up</label>
+    <input type="radio" name="fm-pat-forgiving-input" id="fm-pat-forgiving-input-3" value="typo"><label for="fm-pat-forgiving-input-3">Typo fix</label>
+    <input type="radio" name="fm-pat-forgiving-input" id="fm-pat-forgiving-input-4" value="words"><label for="fm-pat-forgiving-input-4">Plain words</label>
+  </div>
+  <div class="fm-stage" data-fm-stage></div>
+  <p class="fig-cap" data-fm-when aria-live="polite"></p>
+  
+  <script>
+  (() => {
+    const fm = document.currentScript.closest('[data-fm]'), stage = fm.querySelector('[data-fm-stage]'), when = fm.querySelector('[data-fm-when]');
+    const frame = (title, label, ex) => '<div class="app-frame fm-frame"><div class="app-bar"><span>' + title + '</span></div><div class="app-body"><label class="cs-f">' + label +
+      '<input class="input" autocomplete="off" spellcheck="false" data-in></label><p class="fmf-read" data-read aria-live="polite"></p><div class="fmf-ex" role="group" aria-label="Examples to try">' +
+      ex.map(x => '<button type="button">' + x + '</button>').join('') + '</div></div></div>';
+    const DOMAINS = ['gmail.com', 'yahoo.com', 'outlook.com', 'hotmail.com', 'icloud.com'];
+    const dist = (a, b) => { const m = Array.from({ length: a.length + 1 }, (_, i) => [i]); for (let j = 1; j <= b.length; j++) m[0][j] = j; for (let i = 1; i <= a.length; i++) for (let j = 1; j <= b.length; j++) m[i][j] = Math.min(m[i - 1][j] + 1, m[i][j - 1] + 1, m[i - 1][j - 1] + (a[i - 1] === b[j - 1] ? 0 : 1)); return m[a.length][b.length]; };
+    const DAYS = ['sun', 'mon', 'tue', 'wed', 'thu', 'fri', 'sat'];
+    const NOW = new Date(2026, 9, 24, 10, 0);
+    const fmtDate = d => d.toLocaleDateString('en-GB', { weekday: 'short', day: 'numeric', month: 'short' }) + ', ' + ((d.getHours() + 11) % 12 + 1) + ':' + String(d.getMinutes()).padStart(2, '0') + (d.getHours() < 12 ? ' am' : ' pm');
+    const F = {
+      formats: {
+        html: frame('Budget · Food', 'Monthly limit', ['1200', '1,200', '$1,200.00', '1.2k', '1 200']),
+        use: 'Use it for values people write in different ways, like amounts.',
+        more: 'Every way that makes sense gives the same result.',
+        read: raw => {
+          const s = raw.trim().toLowerCase().replace(/^\$/, '').replace(/[\s,]/g, '');
+          const m = s.match(/^(\d*\.?\d+)(k)?$/);
+          if (!m) return [true, 'Couldn’t read an amount. Try 1200 or $1,200.'];
+          const v = parseFloat(m[1]) * (m[2] ? 1000 : 1);
+          return [false, 'Read as $' + v.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + ' a month.'];
+        }
+      },
+      clean: {
+        html: frame('Delivery · Contact', 'Phone number', ['(555) 010-2030', '555.010.2030', '+1 555 010 2030', '5550102030']),
+        use: 'Use it for values full of spaces, dashes and brackets, like phone numbers.',
+        more: 'Accept them all, keep only the digits, and show one tidy version.',
+        read: raw => {
+          let d = raw.replace(/\D/g, '');
+          if (d.length === 11 && d[0] === '1') d = d.slice(1);
+          if (d.length !== 10) return [true, 'A phone number here has 10 digits. This one has ' + d.length + '.'];
+          return [false, 'Read as +1 ' + d.slice(0, 3) + ' ' + d.slice(3, 6) + ' ' + d.slice(6) + '.'];
+        }
+      },
+      typo: {
+        html: frame('Newsletter · Sign up', 'Email', ['ana@gmial.com', 'ana@yaho.com', 'ana@outlook.con', 'ana@gmail.com']),
+        use: 'Use it when a small slip is likely and costly, like a mistyped email domain.',
+        more: 'Suggest the fix with a one-click answer, but don’t change it for people.',
+        read: raw => {
+          const m = raw.trim().toLowerCase().match(/^([^@\s]+)@([^@\s]+\.[a-z]{2,})$/);
+          if (!m) return [true, 'That doesn’t look like an email address yet.'];
+          if (DOMAINS.includes(m[2])) return [false, 'Looks right.'];
+          const best = DOMAINS.map(x => [x, dist(x, m[2])]).sort((a, b) => a[1] - b[1])[0];
+          if (best[1] > 2) return [false, 'Looks right.'];
+          return [false, 'Did you mean ' + m[1] + '@' + best[0] + '?', m[1] + '@' + best[0]];
+        }
+      },
+      words: {
+        html: frame('Reminders · Today is Sat 24 Oct', 'Remind me', ['tomorrow 9am', 'next fri 6pm', 'in 2 hours', 'sat noon']),
+        use: 'Use it for dates and times, where people think in words.',
+        more: 'Show the exact date it read, so people can check it.',
+        read: raw => {
+          let s = raw.trim().toLowerCase(), d = new Date(NOW), m;
+          if ((m = s.match(/^in (\d+) (hours?|days?|minutes?)$/))) { const n = Number(m[1]); d = new Date(NOW.getTime() + n * ({ h: 3600, d: 86400, m: 60 })[m[2][0]] * 1000); return [false, 'Read as ' + fmtDate(d) + '.']; }
+          let t = null;
+          s = s.replace(/\b(at )?(noon|midnight|\d{1,2}(:\d{2})?\s*(am|pm)?)$/, x => { t = x.replace(/^at /, ''); return ''; }).trim();
+          if (s === 'today' || s === '') { /* today */ }
+          else if (s === 'tomorrow') d.setDate(d.getDate() + 1);
+          else if ((m = s.match(/^(next )?(sun|mon|tue|wed|thu|fri|sat)[a-z]*$/))) { let add = (DAYS.indexOf(m[2]) - d.getDay() + 7) % 7 || 7; d.setDate(d.getDate() + add); }
+          else return [true, 'Couldn’t read a date. Try “tomorrow 9am”.'];
+          if (!t) d.setHours(9, 0);
+          else if (t === 'noon') d.setHours(12, 0);
+          else if (t === 'midnight') d.setHours(0, 0);
+          else { const k = t.match(/^(\d{1,2})(?::(\d{2}))?\s*(am|pm)?$/); let h = Number(k[1]) % 24; if (k[3]) h = h % 12 + (k[3] === 'pm' ? 12 : 0); d.setHours(h, Number(k[2] || 0)); }
+          return [false, 'Read as ' + fmtDate(d) + '.'];
+        }
+      }
+    };
+    const show = k => {
+      stage.innerHTML = F[k].html;
+      const inp = stage.querySelector('[data-in]'), out = stage.querySelector('[data-read]');
+      const render = () => {
+        if (!inp.value.trim()) { out.innerHTML = ''; return; }
+        const [bad, text, fix] = F[k].read(inp.value);
+        out.className = 'fmf-read' + (bad ? ' bad' : '');
+        out.textContent = text;
+        if (fix) {
+          const b = document.createElement('button'); b.type = 'button'; b.className = 'btn btn-secondary'; b.textContent = 'Use ' + fix;
+          b.addEventListener('click', () => { inp.value = fix; render(); inp.focus(); });
+          out.appendChild(b);
+        }
+      };
+      inp.addEventListener('input', render);
+      stage.querySelectorAll('.fmf-ex button').forEach(b => b.addEventListener('click', () => { inp.value = b.textContent; render(); }));
+      when.innerHTML = '<b>' + fm.querySelector('.fm-seg input:checked + label').textContent + '.</b> ' + F[k].use + ' ' + F[k].more;
+    };
+    fm.querySelectorAll('.fm-seg input').forEach(i => i.addEventListener('change', () => show(i.value)));
+    show('formats');
+  })();
+  </script>
+</div>

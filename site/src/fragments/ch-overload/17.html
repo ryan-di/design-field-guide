@@ -1,0 +1,77 @@
+<div class="fm" data-fm>
+  <div class="seg fm-seg" role="radiogroup" aria-label="Form">
+    <input type="radio" name="fm-pat-presets" id="fm-pat-presets-1" value="picker" checked><label for="fm-pat-presets-1">Picker</label>
+    <input type="radio" name="fm-pat-presets" id="fm-pat-presets-2" value="gallery"><label for="fm-pat-presets-2">Gallery</label>
+    <input type="radio" name="fm-pat-presets" id="fm-pat-presets-3" value="start"><label for="fm-pat-presets-3">Starting point</label>
+    <input type="radio" name="fm-pat-presets" id="fm-pat-presets-4" value="linked"><label for="fm-pat-presets-4">Linked style</label>
+  </div>
+  <div class="fm-stage" data-fm-stage></div>
+  <p class="fig-cap" data-fm-when aria-live="polite"></p>
+  
+  <script>
+  (() => {
+    const fm = document.currentScript.closest('[data-fm]'), stage = fm.querySelector('[data-fm-stage]'), when = fm.querySelector('[data-fm-when]');
+    const radios = (wrap, onPick) => {
+      const bs = [...wrap.querySelectorAll('[role="radio"]')];
+      const pick = i => { bs.forEach((b, k) => { b.setAttribute('aria-checked', String(k === i)); b.tabIndex = k === i ? 0 : -1; }); onPick(i); };
+      bs.forEach((b, i) => {
+        b.addEventListener('click', () => pick(i));
+        b.addEventListener('keydown', e => { const d = { ArrowRight: 1, ArrowDown: 1, ArrowLeft: -1, ArrowUp: -1 }[e.key]; if (!d) return; e.preventDefault(); const n = (i + d + bs.length) % bs.length; pick(n); bs[n].focus(); });
+      });
+      return pick;
+    };
+    const EQ = { Flat: [50, 50, 50, 50, 50], 'Bass boost': [90, 75, 50, 45, 45], Vocal: [35, 45, 80, 70, 45], Podcast: [30, 55, 85, 55, 30] };
+    const BANDS = ['60', '250', '1k', '4k', '12k'];
+    const F = {
+      picker: {
+        html: '<div class="prf-card"><b>Equalizer</b><div class="prf-chips" role="radiogroup" aria-label="Preset" data-r>' + Object.keys(EQ).map(k => '<button type="button" role="radio">' + k + '</button>').join('') + '</div>' +
+          '<div class="prf-eq" data-eq>' + BANDS.map(b => '<span><i></i>' + b + '</span>').join('') + '</div><span class="cs-meta" data-out></span></div>',
+        use: 'Use it when there are three to five outcomes people can name.',
+        how: 'The values each one sets stay in view.',
+        wire: s => {
+          const keys = Object.keys(EQ), bars = s.querySelectorAll('[data-eq] i'), out = s.querySelector('[data-out]');
+          radios(s.querySelector('[data-r]'), i => { EQ[keys[i]].forEach((v, k) => { bars[k].style.height = v + '%'; }); out.textContent = keys[i] + ' sets all five bands at once.'; })(0);
+        }
+      },
+      gallery: {
+        html: '<div class="prf-card"><b>Edit photo</b><i class="thumb prf-big" data-big></i><div class="prf-strip" role="radiogroup" aria-label="Filter" data-r>' +
+          [['Normal', ''], ['Warm', 'warm'], ['Fade', 'fade'], ['Mono', 'mono']].map(f => '<button class="prf-f" type="button" role="radio" data-c="' + f[1] + '"><i class="' + f[1] + '"></i>' + f[0] + '</button>').join('') + '</div></div>',
+        use: 'Use it when the result is easier to see than to describe.',
+        how: 'Each preset shows a small preview of what it will do to this photo.',
+        wire: s => {
+          const big = s.querySelector('[data-big]'), bs = s.querySelectorAll('.prf-f');
+          radios(s.querySelector('[data-r]'), i => { big.className = 'thumb prf-big ' + bs[i].dataset.c; })(0);
+        }
+      },
+      start: {
+        html: '<div class="prf-card"><b>New document</b><div class="prf-chips" role="radiogroup" aria-label="Page size" data-r><button type="button" role="radio">A4</button><button type="button" role="radio">Letter</button><button type="button" role="radio">Slides 16:9</button></div>' +
+          '<div class="prf-two"><label class="field"><span class="field-label">Width</span><input class="input" data-w autocomplete="off"></label><label class="field"><span class="field-label">Height</span><input class="input" data-h autocomplete="off"></label></div><span class="cs-meta" data-out></span></div>',
+        use: 'Use it when people pick once and then make it their own.',
+        how: 'The preset fills in the fields, and later edits don’t need to match it.',
+        wire: s => {
+          const P = [['210 mm', '297 mm'], ['216 mm', '279 mm'], ['254 mm', '143 mm']], w = s.querySelector('[data-w]'), h = s.querySelector('[data-h]'), out = s.querySelector('[data-out]');
+          radios(s.querySelector('[data-r]'), i => { w.value = P[i][0]; h.value = P[i][1]; out.textContent = 'Filled in. Change either value if you need to.'; })(0);
+          [w, h].forEach(x => x.addEventListener('input', () => { out.textContent = 'Edited. That’s fine: it was only a starting point.'; }));
+        }
+      },
+      linked: {
+        html: '<div class="prf-card"><b>Trip notes</b><div class="prf-doc"><span class="prf-h" data-h>Day 1: Lisbon</span><i class="line" style="width:90%"></i><i class="line" style="width:70%"></i><span class="prf-h" data-h>Day 2: Sintra</span><i class="line" style="width:84%"></i><span class="prf-h" data-h>Day 3: Porto</span><i class="line" style="width:76%"></i></div>' +
+          '<div class="prf-acts"><button class="btn btn-secondary cs-sm" type="button" data-one>Restyle the first heading</button><button class="btn btn-secondary cs-sm" type="button" data-all disabled>Update Heading to match</button></div><span class="cs-meta" data-out></span></div>',
+        use: 'Use it when the same look appears in many places.',
+        how: 'Changing the style once updates every heading that uses it.',
+        wire: s => {
+          const hs = s.querySelectorAll('[data-h]'), all = s.querySelector('[data-all]'), out = s.querySelector('[data-out]');
+          s.querySelector('[data-one]').addEventListener('click', () => { hs[0].classList.add('new'); all.disabled = false; out.textContent = 'Only the first heading changed.'; });
+          all.addEventListener('click', () => { hs.forEach(h => h.classList.add('new')); out.textContent = 'Every Heading now matches.'; });
+        }
+      }
+    };
+    const show = k => {
+      stage.innerHTML = F[k].html; F[k].wire(stage);
+      when.innerHTML = '<b>' + fm.querySelector('.fm-seg input:checked + label').textContent + '.</b> ' + F[k].use + ' ' + F[k].how;
+    };
+    fm.querySelectorAll('.fm-seg input').forEach(i => i.addEventListener('change', () => show(i.value)));
+    show('picker');
+  })();
+  </script>
+</div>

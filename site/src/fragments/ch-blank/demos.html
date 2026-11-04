@@ -1,0 +1,134 @@
+<script>
+(() => {
+  const { $, $$, store, demo, toast } = window.dfg;
+
+  /* js-24-blank.js */
+  demo('pat-templates', st => {
+    const title = $('[data-title]', st), start = $('[data-start]', st), graph = $('[data-graph]', st);
+    const run = $('[data-act="run"]', st), over = $('[data-act="over"]', st), out = $('[data-out]', st);
+    const tpls = {
+      t2i: { name: 'Birthday video', nodes: ['Title', 'Photos', 'Music', 'End card'], edit: ['Title', 'Photos'], hint: 'Change the title, add your photos and press Play.' },
+      i2i: { name: 'Travel recap', nodes: ['Map', 'Photos', 'Music', 'End card'], edit: ['Map', 'Photos'], hint: 'Pick your route, add your photos and press Play.' },
+      up: { name: 'Product demo', nodes: ['Title', 'Screen recording', 'Captions', 'Logo'], edit: ['Screen recording'], hint: 'Add your screen recording and press Play.' }
+    };
+    const open = key => {
+      const t = tpls[key] || null;
+      graph.innerHTML = '';
+      if (t) {
+        const ol = document.createElement('ol');
+        ol.className = 'p14-chain'; ol.setAttribute('aria-label', 'Parts, in order');
+        t.nodes.forEach(n => {
+          const li = document.createElement('li');
+          const chip = document.createElement('span'); chip.className = 'node'; chip.textContent = n;
+          if (t.edit.includes(n)) { chip.classList.add('p14-edit'); const s = document.createElement('small'); s.textContent = 'edit me'; chip.appendChild(s); }
+          li.appendChild(chip); ol.appendChild(li);
+        });
+        graph.appendChild(ol);
+      }
+      const tip = document.createElement('p'); tip.className = 'p14-tip';
+      tip.innerHTML = '<svg class="icon sm" aria-hidden="true"><use href="#i-info"/></svg>';
+      const span = document.createElement('span');
+      span.textContent = t ? t.hint : 'Empty timeline. Add your first clip from the media library.';
+      tip.appendChild(span); graph.appendChild(tip);
+      title.textContent = t ? t.name : 'Untitled video';
+      start.hidden = true; graph.hidden = false; over.hidden = false; run.hidden = !t;
+      out.textContent = t ? 'Started from “' + t.name + '”. Parts marked “edit me” are yours to change.' : 'Started blank. Good for people who already know what to build.';
+      (t ? run : over).focus({ preventScroll: true });
+    };
+    $$('[data-tpl]', st).forEach(b => b.addEventListener('click', () => open(b.dataset.tpl)));
+    $('[data-act="blank"]', st).addEventListener('click', () => open(null));
+    run.addEventListener('click', () => toast(st, 'Playing a preview of your video.'));
+    over.addEventListener('click', () => {
+      graph.hidden = true; graph.innerHTML = ''; start.hidden = false; over.hidden = true; run.hidden = true;
+      title.textContent = 'Untitled video'; out.textContent = '';
+      $('[data-tpl]', st).focus({ preventScroll: true });
+    });
+  });
+
+  demo('pat-contextual-hints', st => {
+    const KEY = 'cfg-p14-hint-seen';
+    const bar = $('[data-bar]', st), canvas = $('[data-canvas]', st), surface = $('.p14-surface', st), layer = $('.p14-layer', st);
+    const tour = $('[data-tour]', st), stepEl = $('[data-step]', tour), ttlEl = $('[data-ttl]', tour), bodyEl = $('[data-body]', tour);
+    const next = $('[data-act="next"]', tour), skip = $('[data-act="skip"]', tour);
+    const reset = $('[data-act="reset"]', st), restart = $('[data-act="restart"]', st), out = $('[data-out]', st);
+    const steps = [
+      ['Welcome to boards', 'This is where you collect ideas, notes and photos.'],
+      ['The board', 'Everything lives here. Drag to move around, scroll to zoom.'],
+      ['Adding notes', 'Double-click the board to add a note.'],
+      ['Sharing', 'Press Share to invite people to the board.'],
+      ['Photos', 'Drop photos anywhere on the board to add them.']
+    ];
+    let mode = 'tour', step = 0, touring = true, timer = null;
+    const say = t => { out.textContent = t; };
+    const seen = () => store.get(KEY, false) === true;
+    const clearHint = () => { clearTimeout(timer); layer.innerHTML = ''; };
+    const render = () => {
+      const blocked = mode === 'tour' && touring;
+      tour.hidden = !blocked;
+      [bar, canvas].forEach(el => { if (blocked) el.setAttribute('inert', ''); else el.removeAttribute('inert'); });
+      reset.hidden = mode !== 'hint'; restart.hidden = mode !== 'tour';
+      if (mode !== 'hint') clearHint();
+      if (blocked) {
+        stepEl.textContent = 'Step ' + (step + 1) + ' of ' + steps.length;
+        ttlEl.textContent = steps[step][0]; bodyEl.textContent = steps[step][1];
+        next.textContent = step === steps.length - 1 ? 'Done' : 'Next';
+      }
+    };
+    const dismiss = msg => { store.set(KEY, true); clearHint(); say(msg); surface.focus({ preventScroll: true }); };
+    const showHint = (x, y) => {
+      clearHint();
+      const w = canvas.clientWidth, h = canvas.clientHeight;
+      const ping = document.createElement('span'); ping.className = 'p14-ping'; ping.setAttribute('aria-hidden', 'true');
+      ping.style.left = x + 'px'; ping.style.top = y + 'px';
+      const card = document.createElement('div'); card.className = 'p14-hint surface';
+      const p = document.createElement('p'); p.textContent = 'Double-click the board to add a note.';
+      const ok = document.createElement('button'); ok.type = 'button'; ok.className = 'btn btn-secondary p14-sm'; ok.textContent = 'Got it';
+      ok.addEventListener('click', () => dismiss('Hint dismissed and remembered. Click the board again: it stays away.'));
+      card.append(p, ok); layer.append(ping, card);
+      const cw = card.offsetWidth, ch = card.offsetHeight, gap = 16;
+      let left, top;
+      if (x + gap + cw <= w - 8) left = x + gap;
+      else if (x - gap - cw >= 8) left = x - gap - cw;
+      if (left !== undefined) top = Math.min(Math.max(8, y - ch / 2), h - ch - 8);
+      else {
+        left = Math.min(Math.max(8, x - cw / 2), w - cw - 8);
+        top = y + gap + ch <= h - 8 ? y + gap : Math.max(8, y - gap - ch);
+      }
+      card.style.left = left + 'px'; card.style.top = top + 'px';
+      say('One hint, beside the spot you clicked.');
+    };
+    const go = i => { step = i; render(); };
+    const finish = msg => { touring = false; render(); surface.focus({ preventScroll: true }); say(msg); };
+    next.addEventListener('click', () => { if (step < steps.length - 1) go(step + 1); else finish('Tour finished. Without scrolling back: how do you add a note?'); });
+    skip.addEventListener('click', () => finish('Tour skipped. So how would you find out how to add a note now?'));
+    tour.addEventListener('click', e => { if (e.target === tour) say('The tour is in the way. Finish or skip it to use the board.'); });
+    restart.addEventListener('click', () => { touring = true; go(0); next.focus({ preventScroll: true }); say('Tour restarted.'); });
+    reset.addEventListener('click', () => { store.set(KEY, false); clearHint(); say('Hint reset. Click the empty board once to see it again.'); });
+    $('[data-act="run"]', bar).addEventListener('click', () => toast(st, 'Nothing to share yet. Add a note first.'));
+    surface.addEventListener('click', e => {
+      if (mode !== 'hint' || layer.childElementCount) return;
+      if (seen()) { say('Hint already seen, so nothing shows. Use Reset hint to see it again.'); return; }
+      const r = canvas.getBoundingClientRect();
+      const x = e.detail ? e.clientX - r.left : r.width / 2;
+      const y = e.detail ? e.clientY - r.top : r.height / 2;
+      clearTimeout(timer);
+      timer = setTimeout(() => showHint(x, y), e.detail ? 350 : 0);
+    });
+    surface.addEventListener('dblclick', () => {
+      clearTimeout(timer);
+      toast(st, 'A new note would open here');
+      if (mode === 'hint' && !seen()) { store.set(KEY, true); clearHint(); say('You used the gesture, so the hint counts as learned and won’t show.'); }
+    });
+    canvas.addEventListener('keydown', e => { if (e.key === 'Escape' && layer.childElementCount) dismiss('Hint dismissed with Escape and remembered.'); });
+    $$('input[name="p14-mode"]', st).forEach(r => r.addEventListener('change', () => {
+      mode = r.value; render();
+      if (mode === 'hint') say(seen() ? 'Hint already seen. Use Reset hint to see it again.' : 'Nothing shows yet. Click the empty board once.');
+      else say(touring ? 'The tour blocks everything until you finish or skip it.' : 'Tour finished. Restart it to see it again.');
+    }));
+    render();
+    say('The tour blocks everything until you finish or skip it.');
+  });
+
+
+})();
+</script>

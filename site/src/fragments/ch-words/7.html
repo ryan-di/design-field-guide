@@ -1,0 +1,34 @@
+<div class="stage tall" data-demo="good-error-copy">
+      <div class="p21-eb">
+        <div class="surface p21-eb-form" role="group" aria-labelledby="p21-e-title">
+          <h5 id="p21-e-title">Write the message</h5>
+          <div class="field"><label class="field-label" for="p21-e-what">What happened</label><input class="input" id="p21-e-what" data-part="what" autocomplete="off"></div>
+          <div class="field"><label class="field-label" for="p21-e-why">Why, if known</label><input class="input" id="p21-e-why" data-part="why" autocomplete="off"></div>
+          <div class="field"><label class="field-label" for="p21-e-next">What to do next</label><input class="input" id="p21-e-next" data-part="next" autocomplete="off"></div>
+          <div class="p21-two">
+            <div class="field"><label class="field-label" for="p21-e-btn">Button label</label><input class="input" id="p21-e-btn" data-part="btn" autocomplete="off"></div>
+            <div class="field"><label class="field-label" for="p21-e-code">Code <span class="p21-opt-tag">optional</span></label><input class="input" id="p21-e-code" data-part="code" autocomplete="off" spellcheck="false"></div>
+          </div>
+        </div>
+        <div class="p21-eb-out">
+          <p class="p21-cap" id="p21-e-pcap">Preview</p>
+          <div class="surface p21-msg" role="group" aria-labelledby="p21-e-pcap">
+            <svg class="icon" aria-hidden="true"><use href="#i-warn"/></svg>
+            <div class="p21-msg-body">
+              <p class="p21-msg-title" data-out="what"></p>
+              <p data-out="why"></p>
+              <p data-out="next"></p>
+              <div class="p21-msg-actions"><button class="btn btn-primary" type="button" id="p21-e-action"></button></div>
+              <p class="p21-msg-code" data-out="code"></p>
+            </div>
+          </div>
+          <p class="p21-cap" id="p21-e-ccap">Checks <span id="p21-e-count"></span></p>
+          <ul class="p21-checks" id="p21-e-checks" aria-labelledby="p21-e-ccap"></ul>
+        </div>
+      </div>
+      <div class="row">
+        <button class="btn btn-secondary" type="button" id="p21-e-bad">Load bad example</button>
+        <button class="btn btn-secondary" type="button" id="p21-e-good">Load good example</button>
+      </div>
+      <p class="try"><b>Try it:</b> the bad example is loaded. Rewrite it until every check passes, then press the button in the preview. Load the good example to compare. Wavy underlines mark the words the checker flags.</p>
+    </div>

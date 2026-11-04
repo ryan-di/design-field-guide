@@ -1,0 +1,100 @@
+<script>
+(() => {
+  const cs = document.currentScript.closest('.cs');
+  // The shared case helpers (csDemo, csInit) load further down the book, so wait for them.
+  const start = () => {
+  // Each demo renders into its own root, so listeners go away on Reset.
+  const D = (k, html, wire) => csDemo(cs.querySelector('[data-d="' + k + '"]'), '<div class="ft-root">' + html + '</div>', (d, t) => wire(d.firstElementChild, t));
+  const st = document.createElement('style');
+  st.textContent = `
+#pat-fitts-law .ft-root{display:flex;flex-direction:column;align-items:center;gap:12px;width:100%;min-width:0}
+#pat-fitts-law .ft-frame{width:min(340px,100%)}
+#pat-fitts-law .ft-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+#pat-fitts-law .ft-ph{position:relative;aspect-ratio:1;border-radius:8px;cursor:pointer;display:flex;align-items:flex-end;padding:5px;font:600 11px var(--font-body);color:#fff;text-shadow:0 1px 2px rgba(0,0,0,.6)}
+#pat-fitts-law .ft-ph.blur::after{content:"";position:absolute;inset:0;border-radius:8px;backdrop-filter:blur(3px);-webkit-backdrop-filter:blur(3px)}
+#pat-fitts-law .ft-ph span{position:relative;z-index:1}
+#pat-fitts-law .ft-x{all:unset;position:absolute;z-index:2;display:grid;place-items:center;cursor:pointer;color:#fff}
+#pat-fitts-law .ft-x i{display:grid;place-items:center;width:12px;height:12px;border-radius:50%;background:rgba(0,0,0,.7);font:700 9px/1 var(--font-body);font-style:normal}
+#pat-fitts-law .ft-x.small{top:3px;right:3px;width:12px;height:12px}
+#pat-fitts-law .ft-x.big{top:-6px;right:-6px;width:32px;height:32px;border-radius:50%}
+#pat-fitts-law .ft-x.big:hover{background:color-mix(in srgb,#000 22%,transparent)}
+#pat-fitts-law .ft-x:focus-visible{outline:2px solid var(--ui-sel);outline-offset:1px}
+#pat-fitts-law .ft-form{width:min(420px,100%)}
+#pat-fitts-law .ft-form .app-bar .btn{padding:4px 12px;font-size:13.5px}
+#pat-fitts-law .ft-f{display:flex;flex-direction:column;gap:4px;font:600 13px var(--font-body)}
+#pat-fitts-law .ft-f .input{padding:7px 10px;font-weight:400;font-size:14px}
+#pat-fitts-law .ft-mail{font-size:14px;line-height:1.45;display:flex;flex-direction:column;gap:6px}
+#pat-fitts-law .ft-tiny{display:flex;gap:2px}
+#pat-fitts-law .ft-tiny button{all:unset;cursor:pointer;padding:2px 6px;border:1px solid var(--ui-border);border-radius:5px;font:600 12px var(--font-body);color:var(--ui-text)}
+#pat-fitts-law .ft-tiny button:hover{background:var(--ui-hover)}
+#pat-fitts-law .ft-tiny button:focus-visible{outline:2px solid var(--ui-sel)}
+#pat-fitts-law .ft-gone{padding:24px 10px;text-align:center;color:var(--ui-muted);font-size:14px}
+#pat-fitts-law .ft-bar .icon-btn{width:34px;height:34px}
+#pat-fitts-law .ft-reply{width:100%;justify-content:center}
+`;
+  cs.appendChild(st);
+
+  /* 1. Hit area */
+  const PH = [['Beach', '#4f8fb0,#e2c48a', 0], ['Blurry 1', '#7a8f6a,#c9b48a', 1], ['Dog', '#b0794f,#e8d2a8', 0], ['Blurry 2', '#5d6f9a,#b9a6d6', 1], ['Market', '#b04f6a,#f0b38a', 0], ['Blurry 3', '#4f9a8a,#c6e0a8', 1]];
+  const phHtml = big => '<div class="app-frame ft-frame"><div class="app-bar"><span>New album</span><span class="cs-meta" data-n>6 photos</span></div><div class="app-body"><div class="ft-grid">' +
+    PH.map(p => '<div class="ft-ph' + (p[2] ? ' blur' : '') + '" style="background:linear-gradient(140deg,' + p[1] + ')" data-ph><span>' + p[0] + '</span><button class="ft-x ' + (big ? 'big' : 'small') + '" type="button" aria-label="Remove ' + p[0] + '" data-x><i aria-hidden="true">✕</i></button></div>').join('') +
+    '</div></div></div><p class="cs-meta" data-out>Missed: 0</p>';
+  const phWire = (d) => {
+    let miss = 0, removed = 0;
+    const out = d.querySelector('[data-out]'), n = d.querySelector('[data-n]');
+    d.querySelector('.ft-grid').addEventListener('click', e => {
+      const x = e.target.closest('[data-x]');
+      if (x) { const ph = x.closest('[data-ph]'), next = ph.nextElementSibling || ph.previousElementSibling; ph.remove(); removed++; n.textContent = (6 - removed) + ' photos'; if (next) next.querySelector('[data-x]').focus(); }
+      else if (e.target.closest('[data-ph]')) miss++;
+      out.textContent = 'Missed: ' + miss + (miss ? ' (each miss opens the photo instead)' : '');
+    });
+  };
+  D('pat-fitts-law-1b', phHtml(false), phWire);
+  D('pat-fitts-law-1f', phHtml(true), phWire);
+
+  /* 2. Distance to Save */
+  const field = (l, v, last) => '<label class="ft-f">' + l + '<input class="input" value="' + v + '"' + (last ? ' data-last' : '') + '></label>';
+  const formHtml = near => '<div class="app-frame ft-form"><div class="app-bar"><span>Delivery address</span>' + (near ? '' : '<button class="btn btn-primary" type="button" data-save>Save</button>') + '</div><div class="app-body">' +
+    field('Name', 'Ana Ruiz') + field('Street', '12 Rua Augusta') + field('City', 'Lisbon') + field('Postcode', '', true) +
+    (near ? '<button class="btn btn-primary" type="button" data-save style="align-self:flex-start">Save</button>' : '') + '</div></div><p class="cs-meta" data-out></p>';
+  const formWire = d => {
+    const out = d.querySelector('[data-out]');
+    let track = false, dist = 0, lx = null, ly = null;
+    d.querySelector('[data-last]').addEventListener('focus', () => { track = true; dist = 0; lx = null; });
+    d.addEventListener('pointermove', e => { if (!track) return; if (lx !== null) dist += Math.hypot(e.clientX - lx, e.clientY - ly); lx = e.clientX; ly = e.clientY; });
+    d.querySelector('[data-save]').addEventListener('click', e => {
+      const pc = d.querySelector('[data-last]').value.trim();
+      const msg = pc ? 'Saved.' : 'Saved without a postcode.';
+      out.textContent = track && e.detail ? msg + ' The pointer moved ' + Math.round(dist) + ' px from the postcode to Save.' : msg;
+      track = false;
+    });
+  };
+  D('pat-fitts-law-2b', formHtml(false), formWire);
+  D('pat-fitts-law-2f', formHtml(true), formWire);
+
+  /* 3. Risky next to common */
+  const MAIL = '<p><b>Leo</b> <span class="cs-meta">10:42</span></p><p>Are you free on Saturday? We could try the new bakery.</p>';
+  const mailHtml = fixed => '<div class="app-frame ft-frame"><div class="app-bar ft-bar"><span>Inbox</span>' +
+    (fixed ? '<button class="icon-btn" type="button" aria-label="Delete" data-del><svg class="icon sm"><use href="#i-trash"/></svg></button>' : '<span class="ft-tiny"><button type="button" data-reply>Reply</button><button type="button" data-del>Delete</button></span>') +
+    '</div><div class="app-body" data-body><div class="ft-mail">' + MAIL + '</div>' + (fixed ? '<button class="btn btn-primary ft-reply" type="button" data-reply>Reply</button>' : '') + '</div></div><p class="cs-meta" data-out></p>';
+  const mailWire = fixed => (d, t) => {
+    const body = d.querySelector('[data-body]'), out = d.querySelector('[data-out]'), keep = body.innerHTML;
+    let replies = 0;
+    d.querySelector('.ft-frame').addEventListener('click', e => {
+      if (e.target.closest('[data-reply]') && body.querySelector('.ft-mail')) { replies++; out.textContent = 'Reply started (' + replies + ').'; }
+      if (!e.target.closest('[data-del]') || !body.querySelector('.ft-mail')) return;
+      body.innerHTML = '<p class="ft-gone">Email deleted.</p>';
+      if (!fixed) { out.textContent = 'Deleted for good. There’s no undo.'; return; }
+      out.textContent = '';
+      csToast(d, t, 'Email deleted', { ms: 6000, action: { label: 'Undo', run: () => { body.innerHTML = keep; out.textContent = 'Email restored.'; body.querySelector('[data-reply]').focus(); } } });
+    });
+  };
+  D('pat-fitts-law-3b', mailHtml(false), mailWire(false));
+  D('pat-fitts-law-3f', mailHtml(true), mailWire(true));
+
+  csInit(cs);
+  };
+  if (window.csDemo) start(); else document.addEventListener('DOMContentLoaded', start);
+})();
+
+</script>

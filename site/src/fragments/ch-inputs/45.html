@@ -1,0 +1,126 @@
+<script>
+(() => {
+  const cs = document.currentScript.closest('.cs');
+  const D = (k, html, wire) => csDemo(cs.querySelector('[data-d="' + k + '"]'), html, wire);
+  const icon = n => '<svg class="icon sm"><use href="#i-' + n + '"/></svg>';
+  const ok = text => '<span class="sl-ok">' + icon('check') + text + '</span>';
+  const money = v => '$' + v.toLocaleString('en-US');
+
+  /* 1. Exact value */
+  const seatsHtml = fixed => '<div class="cs-form sl-card"><b class="sl-h">Team plan</b><div class="sl-lab"><span>Seats</span><span class="cs-meta">Need: 37</span></div>' +
+    '<div class="sl-row"><input type="range" min="1" max="300" value="120" aria-label="Seats" data-r>' +
+    (fixed ? '<input class="input sl-num" type="number" min="1" max="300" value="120" aria-label="Seats, exact number" data-n>' : '<output class="sl-out" data-o>120</output>') + '</div>' +
+    '<p class="cs-meta" data-price></p><p class="sl-msg" data-msg></p></div>';
+  const seatsWire = fixed => d => {
+    const r = d.querySelector('[data-r]'), price = d.querySelector('[data-price]'), msg = d.querySelector('[data-msg]');
+    let tries = 0;
+    const upd = v => { price.textContent = '$8 per seat · ' + money(v * 8) + ' a month'; };
+    if (fixed) {
+      const n = d.querySelector('[data-n]');
+      const check = (v, how) => { upd(v); msg.innerHTML = v === 37 ? ok('37 seats, ' + how + '.') : ''; };
+      r.addEventListener('input', () => { n.value = r.value; check(+r.value, 'set by dragging'); });
+      n.addEventListener('input', () => { const v = Math.round(+n.value); if (n.value !== '' && v >= 1 && v <= 300) { r.value = v; check(v, 'typed'); } else msg.innerHTML = ''; });
+    } else {
+      const o = d.querySelector('[data-o]');
+      r.addEventListener('input', () => { o.textContent = r.value; upd(+r.value); });
+      r.addEventListener('change', () => {
+        tries++;
+        msg.innerHTML = +r.value === 37 ? ok('37 seats, after ' + tries + (tries === 1 ? ' try.' : ' tries.')) : 'Landed on ' + r.value + '. Try ' + tries + '.';
+      });
+    }
+    upd(120);
+  };
+  D('slider-1b', seatsHtml(false), seatsWire(false));
+  D('slider-1f', seatsHtml(true), seatsWire(true));
+
+  /* 2. Huge range */
+  const NICE = [];
+  [1, 10, 100, 1000].forEach(s => { for (let k = 1; k < 10; k++) NICE.push(k * s); });
+  NICE.push(10000);
+  const near = v => { let b = 0; NICE.forEach((x, i) => { if (Math.abs(Math.log(x) - Math.log(v)) < Math.abs(Math.log(NICE[b]) - Math.log(v))) b = i; }); return b; };
+  const budgetHtml = fixed => '<div class="cs-form sl-card"><b class="sl-h">Spending alert</b><div class="sl-lab"><span>Alert me when I spend more than</span><span class="cs-meta">Need: $50</span></div>' +
+    (fixed
+      ? '<div class="sl-row top"><div class="sl-col"><input type="range" min="0" max="' + (NICE.length - 1) + '" value="' + NICE.indexOf(1000) + '" aria-label="Alert amount" aria-valuetext="$1,000" data-r>' +
+        '<div class="sl-ticks" aria-hidden="true">' + ['$1', '$10', '$100', '$1k', '$10k'].map((x, i) => '<span style="left:calc(8px + (100% - 16px) * ' + i / 4 + ')">' + x + '</span>').join('') + '</div></div>' +
+        '<label class="sl-cur"><span aria-hidden="true">$</span><input class="input sl-num" type="number" min="1" max="10000" value="1000" aria-label="Alert amount in dollars" data-n></label></div>'
+      : '<div class="sl-row"><input type="range" min="1" max="10000" value="1000" aria-label="Alert amount" data-r><output class="sl-out wide" data-o>$1,000</output></div><p class="cs-meta" data-px></p>') +
+    '<p class="sl-msg" data-msg></p></div>';
+  const budgetWire = fixed => d => {
+    const r = d.querySelector('[data-r]'), msg = d.querySelector('[data-msg]');
+    if (fixed) {
+      const n = d.querySelector('[data-n]');
+      const check = (v, how) => { r.setAttribute('aria-valuetext', money(v)); msg.innerHTML = v === 50 ? ok('Alert at $50, ' + how + '.') : ''; };
+      r.addEventListener('input', () => { const v = NICE[+r.value]; n.value = v; check(v, 'set by dragging'); });
+      n.addEventListener('input', () => { const v = Math.round(+n.value); if (n.value !== '' && v >= 1 && v <= 10000) { r.value = near(v); check(v, 'typed'); } else msg.innerHTML = ''; });
+      return;
+    }
+    const o = d.querySelector('[data-o]'), px = d.querySelector('[data-px]');
+    let tries = 0;
+    const per = () => { if (r.clientWidth) px.textContent = '1 pixel ≈ ' + money(Math.round(9999 / r.clientWidth)); };
+    if ('ResizeObserver' in window) new ResizeObserver(per).observe(r);
+    r.addEventListener('input', () => { o.textContent = money(+r.value); per(); });
+    r.addEventListener('change', () => {
+      tries++;
+      msg.innerHTML = +r.value === 50 ? ok('$50, after ' + tries + (tries === 1 ? ' try.' : ' tries.')) : 'Landed on ' + money(+r.value) + '. Try ' + tries + '.';
+    });
+  };
+  D('slider-2b', budgetHtml(false), budgetWire(false));
+  D('slider-2f', budgetHtml(true), budgetWire(true));
+
+  /* 3. Tiny thumb */
+  const volHtml = fixed => '<div class="cs-form sl-card"><div class="sl-song"><div class="thumb sl-art"></div><div><b>Morning Light</b><span class="cs-meta">Lena Ortiz</span></div></div>' +
+    '<div class="sl-vol"><span class="sl-vl">Volume</span>' +
+    (fixed
+      ? '<div class="sl-track big" role="slider" tabindex="0" aria-label="Volume" aria-valuemin="0" aria-valuemax="100" aria-valuenow="45" aria-valuetext="45%" data-t><span class="sl-rail"><i data-fill></i></span><b data-thumb></b></div>'
+      : '<div class="sl-track tiny" data-t><span class="sl-rail"><i data-fill></i></span><b data-thumb></b></div>') +
+    '<span class="sl-v" data-v>45%</span></div><p class="cs-meta">Need: about 80%</p><p class="sl-msg" data-msg></p></div>';
+  const volWire = fixed => d => {
+    const t = d.querySelector('[data-t]'), fill = d.querySelector('[data-fill]'), th = d.querySelector('[data-thumb]'), out = d.querySelector('[data-v]'), msg = d.querySelector('[data-msg]');
+    let v = 45, drag = false;
+    const set = x => {
+      v = Math.max(0, Math.min(100, Math.round(x)));
+      fill.style.width = v + '%'; th.style.left = v + '%'; out.textContent = v + '%';
+      if (fixed) { t.setAttribute('aria-valuenow', v); t.setAttribute('aria-valuetext', v + '%'); }
+      msg.innerHTML = v >= 78 && v <= 82 ? ok('Volume ' + v + '%.') : '';
+    };
+    const at = e => { const b = t.querySelector('.sl-rail').getBoundingClientRect(); return (e.clientX - b.left) / b.width * 100; };
+    const grab = fixed ? t : th;
+    grab.addEventListener('pointerdown', e => { e.preventDefault(); drag = true; grab.setPointerCapture(e.pointerId); if (fixed) { t.focus({ preventScroll: true }); set(at(e)); } });
+    grab.addEventListener('pointermove', e => { if (drag) set(at(e)); });
+    grab.addEventListener('pointerup', () => { drag = false; });
+    grab.addEventListener('pointercancel', () => { drag = false; });
+    if (fixed) t.addEventListener('keydown', e => {
+      const s = e.shiftKey ? 20 : 5;
+      const n = { ArrowRight: v + s, ArrowUp: v + s, ArrowLeft: v - s, ArrowDown: v - s, PageUp: v + 20, PageDown: v - 20, Home: 0, End: 100 }[e.key];
+      if (n === undefined) return;
+      e.preventDefault(); set(n);
+    });
+    set(45);
+  };
+  D('slider-3b', volHtml(false), volWire(false));
+  D('slider-3f', volHtml(true), volWire(true));
+
+  /* 4. Unclear effect */
+  const MAILS = [['Mom', 'Dinner on Sunday?', 1], ['Shop', 'Your order has shipped', 3], ['Deals', '10 offers this week', 5], ['Bank', 'Confirm your password now', 7], ['Prize', 'You won a $500 gift card!!!', 9]];
+  const spamHtml = fixed => '<div class="cs-form sl-card wide"><b class="sl-h">Spam filter</b>' +
+    '<div class="sl-row"><input type="range" min="1" max="10" value="6" aria-label="Spam filter" data-r><output class="sl-out" data-o>6</output></div>' +
+    (fixed ? '<div class="sl-ends" aria-hidden="true"><span>← Let more through</span><span>Catch more →</span></div><div class="sl-mails" data-list aria-live="polite"></div>' : '') + '</div>';
+  const spamWire = fixed => d => {
+    const r = d.querySelector('[data-r]'), o = d.querySelector('[data-o]'), list = d.querySelector('[data-list]');
+    const upd = () => {
+      const s = +r.value; o.textContent = s;
+      if (!fixed) return;
+      const spam = MAILS.filter(m => m[2] > 10 - s).length;
+      r.setAttribute('aria-valuetext', s + ': ' + spam + ' of 5 emails go to Spam');
+      list.innerHTML = MAILS.map(m => { const sp = m[2] > 10 - s; return '<div class="cs-row' + (sp ? ' sp' : '') + '"><span class="grow"><b>' + m[0] + '</b> · ' + m[1] + '</span><span class="sl-tag' + (sp ? ' sp' : '') + '">' + (sp ? 'Spam' : 'Inbox') + '</span></div>'; }).join('');
+    };
+    r.addEventListener('input', upd);
+    upd();
+  };
+  D('slider-4b', spamHtml(false), spamWire(false));
+  D('slider-4f', spamHtml(true), spamWire(true));
+
+  csInit(cs);
+})();
+
+  </script>

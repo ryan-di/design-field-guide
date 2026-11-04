@@ -1,0 +1,41 @@
+<div class="fm" data-fm>
+  <div class="seg fm-seg" role="radiogroup" aria-label="Way">
+    <input type="radio" name="fm-pat-information-scent" id="fm-pat-information-scent-1" value="thing" checked><label for="fm-pat-information-scent-1">Name the thing</label>
+    <input type="radio" name="fm-pat-information-scent" id="fm-pat-information-scent-2" value="task"><label for="fm-pat-information-scent-2">Name the task</label>
+    <input type="radio" name="fm-pat-information-scent" id="fm-pat-information-scent-3" value="desc"><label for="fm-pat-information-scent-3">Add a description</label>
+    <input type="radio" name="fm-pat-information-scent" id="fm-pat-information-scent-4" value="inside"><label for="fm-pat-information-scent-4">Show what’s inside</label>
+  </div>
+  <div class="fm-stage" data-fm-stage></div>
+  <p class="fig-cap" data-fm-when aria-live="polite"></p>
+  
+  <script>
+  (() => {
+    const fm = document.currentScript.closest('[data-fm]'), stage = fm.querySelector('[data-fm-stage]'), when = fm.querySelector('[data-fm-when]');
+    const L = {
+      thing: [['Account'], ['Notifications', '', 1], ['Privacy'], ['Payments']],
+      task: [['Change your password'], ['Choose which emails you get', '', 1], ['Download your data'], ['Close your account']],
+      desc: [['Account', 'Name, email and password'], ['Notifications', 'Emails, push alerts and sounds', 1], ['Privacy', 'Who can see your profile and posts'], ['Payments', 'Cards, invoices and refunds']],
+      inside: [['Account', 'Profile · Password · Sign-in'], ['Notifications', 'Order updates · Sales and offers · Security alerts', 1], ['Privacy', 'Profile · Posts · Blocked people'], ['Payments', 'Cards · Invoices · Refunds']]
+    };
+    const T = {
+      thing: ['One plain noun per item.', 'Use it when the items are clearly different, so one word is enough.'],
+      task: ['A short phrase that starts with a verb and matches what people came to do.', 'Use it for help pages and settings people visit once in a while.'],
+      desc: ['A plain name with one line about what’s inside.', 'Use it when the names alone sound alike.'],
+      inside: ['The name, followed by the first few items inside it.', 'Use it in menus and site maps, so people see the next level before they click.']
+    };
+    const show = k => {
+      stage.innerHTML = '<div class="app-frame isf-frame"><div class="app-bar"><span>Settings</span></div><div class="app-body"><p class="isf-task"><b>Task:</b> stop the emails about sales.</p><div class="isf-list">' +
+        L[k].map((r, i) => '<button type="button" class="isf-it" data-i="' + i + '"><b>' + r[0] + '</b>' + (r[1] ? '<small>' + r[1] + '</small>' : '') + '</button>').join('') + '</div><p class="isf-say" role="status" data-msg></p></div></div>';
+      const say = stage.querySelector('[data-msg]');
+      stage.querySelectorAll('[data-i]').forEach(b => b.addEventListener('click', () => {
+        const r = L[k][+b.dataset.i];
+        b.classList.toggle('yes', !!r[2]);
+        say.textContent = r[2] ? 'Yes. The setting for sales emails is in here.' : 'Not in “' + r[0] + '”.';
+      }));
+      when.innerHTML = '<b>' + fm.querySelector('.fm-seg input:checked + label').textContent + '.</b> ' + T[k][0] + ' ' + T[k][1];
+    };
+    fm.querySelectorAll('.fm-seg input').forEach(i => i.addEventListener('change', () => show(i.value)));
+    show('thing');
+  })();
+  </script>
+</div>

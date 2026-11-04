@@ -1,0 +1,442 @@
+<script>
+(() => {
+  const { $, $$, store, demo, toast } = window.dfg;
+  /* ---------- Demos ---------- */
+  demo('inline', st => {
+    const input = $('#d-steps'), msg = $('#d-steps-msg'), text = $('span', msg);
+    const errorFor = raw => {
+      const v = Number(raw);
+      if (raw === '') return 'Enter the number of guests.';
+      if (!Number.isInteger(v)) return 'Use a whole number, like 4.';
+      if (v < 1 || v > 12) return 'Must be between 1 and 12.';
+      return '';
+    };
+    input.addEventListener('blur', () => {
+      const err = errorFor(input.value.trim());
+      input.setAttribute('aria-invalid', err ? 'true' : 'false');
+      msg.hidden = !err; if (err) text.textContent = err;
+    });
+    input.addEventListener('input', () => {
+      if (input.getAttribute('aria-invalid') === 'true' && !errorFor(input.value.trim())) { input.setAttribute('aria-invalid', 'false'); msg.hidden = true; }
+    });
+  });
+
+  demo('toast', st => {
+    const nodes = $('[data-nodes]', st);
+    $('[data-act="save"]', st).addEventListener('click', () => toast(st, 'Playlist saved'));
+    $('[data-act="delete"]', st).addEventListener('click', () => {
+      const last = nodes.lastElementChild;
+      if (!last) { toast(st, 'No songs left. Press Undo on a toast to bring one back.'); return; }
+      const name = last.textContent; last.remove();
+      toast(st, '“' + name + '” removed', { action: { label: 'Undo', run: () => { nodes.appendChild(last); } } });
+    });
+    $('[data-act="error"]', st).addEventListener('click', () => toast(st, 'Download failed: not enough space on this phone', { tone: 'error', duration: 3500 }));
+  });
+
+  demo('banner', st => {
+    const sw = $('#d-online'), banner = $('#d-banner');
+    sw.addEventListener('change', () => { banner.hidden = sw.checked; if (sw.checked) toast(st, 'Back online. Changes synced.'); });
+  });
+
+  demo('badge', st => {
+    let n = 3;
+    const badge = $('.badge', st), btn = $('#d-queue');
+    const render = () => {
+      badge.hidden = n <= 0;
+      badge.textContent = n > 99 ? '99+' : String(n);
+      btn.setAttribute('aria-label', n > 0 ? 'Cart, ' + n + (n === 1 ? ' item' : ' items') : 'Cart, empty');
+    };
+    $('[data-act="add"]', st).addEventListener('click', () => { n += 1; render(); });
+    $('[data-act="add50"]', st).addEventListener('click', () => { n += 120; render(); });
+    $('[data-act="finish"]', st).addEventListener('click', () => { n = Math.max(0, n - 1); render(); });
+    $('[data-act="clear"]', st).addEventListener('click', () => { n = 0; render(); toast(st, 'Cart emptied'); });
+    btn.addEventListener('click', () => toast(st, n > 0 ? n + (n === 1 ? ' item' : ' items') + ' in your cart' : 'Your cart is empty'));
+    render();
+  });
+
+  demo('spinner', st => {
+    const out = $('.result', st);
+    const buttons = $$('button[data-ms]', st);
+    buttons.forEach(b => b.addEventListener('click', () => {
+      const ms = Number(b.dataset.ms), label = b.innerHTML;
+      buttons.forEach(x => { x.disabled = true; });
+      b.classList.add('busy');
+      st.setAttribute('aria-busy', 'true');
+      out.textContent = 'Loading…';
+      const show = setTimeout(() => { b.innerHTML = '<span class="spinner" aria-hidden="true"></span>Loading comments…'; }, 400);
+      setTimeout(() => {
+        clearTimeout(show);
+        b.innerHTML = label; b.classList.remove('busy');
+        buttons.forEach(x => { x.disabled = false; });
+        st.removeAttribute('aria-busy');
+        out.textContent = 'Loaded 11 comments in ' + (ms / 1000).toFixed(ms < 1000 ? 2 : 1) + ' s' + (ms < 400 ? ', no spinner needed' : '');
+      }, ms);
+    }));
+  });
+
+  demo('progress', st => {
+    const btn = $('[data-act="run"]', st), bar = $('.bar', st), fill = $('.bar > span', st);
+    const stage = $('[data-stage]', st), count = $('[data-count]', st);
+    const runLabel = btn.innerHTML;
+    let timer = null;
+    const stop = msg => { clearInterval(timer); timer = null; bar.classList.remove('indeterminate'); btn.innerHTML = runLabel; btn.className = 'btn btn-primary'; stage.textContent = msg; };
+    btn.addEventListener('click', () => {
+      if (timer) { stop('Canceled at ' + bar.getAttribute('aria-valuenow') + ' of 30 seconds'); toast(st, 'Conversion canceled'); return; }
+      const t0 = Date.now(); let step = 0, ticks = 0, phase = 'load';
+      fill.style.width = ''; bar.setAttribute('aria-valuenow', '0');
+      btn.textContent = 'Cancel'; btn.className = 'btn btn-secondary';
+      bar.classList.add('indeterminate'); stage.textContent = 'Reading video…'; count.textContent = '0 of 30 seconds';
+      timer = setInterval(() => {
+        ticks++;
+        if (phase === 'load') { if (ticks >= 10) { phase = 'sample'; bar.classList.remove('indeterminate'); fill.style.width = '0%'; stage.textContent = 'Converting'; } return; }
+        if (phase === 'sample') {
+          step++; fill.style.width = (step / 30) * 100 + '%'; bar.setAttribute('aria-valuenow', String(step)); count.textContent = step + ' of 30 seconds';
+          if (step >= 30) { phase = 'save'; ticks = 0; stage.textContent = 'Saving video…'; }
+          return;
+        }
+        if (phase === 'save' && ticks >= 5) { stop('Done in ' + ((Date.now() - t0) / 1000).toFixed(1) + ' s'); toast(st, 'Video saved to Downloads'); }
+      }, 140);
+    });
+  });
+
+  demo('skeleton', st => {
+    const box = $('[data-cards]', st);
+    const data = [['Lemon pasta', '20 min · Easy', ''], ['Tomato soup', '35 min · Easy', 'b'], ['Banana bread', '1 hr · Medium', 'c']];
+    let pending = null;
+    const real = () => {
+      box.innerHTML = ''; box.removeAttribute('aria-busy');
+      data.forEach(([title, desc, cls]) => {
+        const el = document.createElement('div'); el.className = 'tcard surface';
+        el.innerHTML = '<div class="thumb ' + cls + '"></div><h5></h5><p></p>';
+        $('h5', el).textContent = title; $('p', el).textContent = desc; box.appendChild(el);
+      });
+    };
+    const skel = () => {
+      clearTimeout(pending);
+      box.innerHTML = ''; box.setAttribute('aria-busy', 'true');
+      for (let i = 0; i < 3; i++) {
+        const el = document.createElement('div'); el.className = 'tcard surface'; el.setAttribute('aria-hidden', 'true');
+        el.innerHTML = '<div class="thumb skel"></div><div class="skel t"></div><div class="skel t2"></div>';
+        box.appendChild(el);
+      }
+    };
+    const fail = () => {
+      box.innerHTML = ''; box.removeAttribute('aria-busy');
+      const el = document.createElement('div'); el.className = 'empty surface'; el.style.gridColumn = '1 / -1'; el.style.width = '100%';
+      el.innerHTML = '<svg class="icon"><use href="#i-warn"/></svg><h5>Couldn’t load recipes</h5><p>The server didn’t respond. Nothing you did caused this.</p><button class="btn btn-secondary" type="button">Try again</button>';
+      $('button', el).addEventListener('click', () => { skel(); pending = setTimeout(real, 1400); });
+      box.appendChild(el);
+    };
+    real();
+    $('[data-act="reload"]', st).addEventListener('click', () => { skel(); pending = setTimeout(real, 1600); });
+    $('[data-act="fail"]', st).addEventListener('click', () => { skel(); pending = setTimeout(fail, 1600); });
+  });
+
+  demo('tooltip', st => { $$('.icon-btn', st).forEach(b => b.addEventListener('click', () => toast(st, b.getAttribute('aria-label')))); });
+  demo('iconbtn', st => { $$('.icon-btn, .btn', st).forEach(b => b.addEventListener('click', () => toast(st, (b.getAttribute('aria-label') || b.textContent.trim()) + ': clicked'))); });
+
+  demo('dialog', st => {
+    const dlg = $('#d-dialog'), opener = $('[data-act="open"]', st);
+    opener.addEventListener('click', () => { dlg.returnValue = ''; if (typeof dlg.showModal === 'function') dlg.showModal(); else dlg.setAttribute('open', ''); });
+    dlg.addEventListener('close', () => { if (dlg.returnValue === 'delete') toast(st, '3 notes deleted'); opener.focus(); });
+    $('[data-act="archive"]', st).addEventListener('click', () => toast(st, '3 notes archived', { action: { label: 'Undo', run: () => toast(st, 'Restored 3 notes') } }));
+  });
+
+  demo('drawer', st => {
+    const btn = $('[data-act="toggle"]', st), drawer = $('#d-drawer'), canvas = $('[data-canvas]', st), search = $('#d-drawer-search');
+    const set = open => {
+      drawer.classList.toggle('open', open);
+      btn.setAttribute('aria-expanded', String(open));
+      if (open) { drawer.removeAttribute('inert'); setTimeout(() => search.focus({ preventScroll: true }), 60); }
+      else drawer.setAttribute('inert', '');
+    };
+    btn.addEventListener('click', () => set(!drawer.classList.contains('open')));
+    $$('.item', drawer).forEach(it => it.addEventListener('click', () => {
+      const n = document.createElement('span'); n.className = 'node new'; n.textContent = it.textContent;
+      canvas.appendChild(n);
+      if (canvas.children.length > 9) canvas.firstElementChild.remove();
+    }));
+    search.addEventListener('input', () => {
+      const q = search.value.trim().toLowerCase();
+      $$('.item', drawer).forEach(it => { it.hidden = !!q && !it.textContent.toLowerCase().includes(q); });
+    });
+    drawer.addEventListener('keydown', e => { if (e.key === 'Escape') { set(false); btn.focus(); } });
+  });
+
+  demo('switch', st => {
+    const g = $('#d-sw-grid'), m = $('#d-sw-map'), prev = $('[data-preview]', st), mini = $('.minimap', prev);
+    const sync = () => {
+      prev.classList.toggle('grid', g.checked); mini.hidden = !m.checked;
+      $('[data-for="d-sw-grid"]', st).textContent = g.checked ? 'On' : 'Off';
+      $('[data-for="d-sw-map"]', st).textContent = m.checked ? 'On' : 'Off';
+    };
+    g.addEventListener('change', sync); m.addEventListener('change', sync); sync();
+  });
+
+  demo('checkbox', st => {
+    const all = $('#d-cb-all'), opts = $$('[data-opt]', st), sum = $('[data-summary]', st);
+    const sync = () => {
+      const on = opts.filter(o => o.checked);
+      all.checked = on.length === opts.length;
+      all.indeterminate = on.length > 0 && on.length < opts.length;
+      sum.textContent = on.length ? 'Export will include your profile, plus: ' + on.map(o => o.parentElement.textContent.trim().toLowerCase()).join(', ') + '.' : 'Export will include your profile only.';
+    };
+    all.addEventListener('change', () => { opts.forEach(o => { o.checked = all.checked; }); sync(); });
+    opts.forEach(o => o.addEventListener('change', sync));
+    sync();
+  });
+
+  demo('segmented', st => {
+    const out = $('[data-out]', st);
+    const label = { songs: '312 songs', albums: '28 albums', artists: '19 artists' };
+    $$('input[name="d-seg"]', st).forEach(r => r.addEventListener('change', () => { out.textContent = 'Showing ' + label[r.value]; }));
+  });
+
+  demo('combobox', st => {
+    const input = $('#d-combo'), list = $('#d-combo-list'), out = $('[data-out]', st);
+    const models = [
+      { name: 'report-q3.pdf', group: 'Recent', size: '2.4 MB' },
+      { name: 'passport-scan.jpg', group: 'Recent', size: '3.1 MB' },
+      { name: 'budget-2026.xlsx', group: 'Documents', size: '96 KB' },
+      { name: 'cover-letter.docx', group: 'Documents', size: '48 KB' },
+      { name: 'lease-agreement.pdf', group: 'Documents', size: '1.2 MB' },
+      { name: 'report-2025.pdf', group: 'Documents', size: '4.8 MB' },
+      { name: 'tax-return.pdf', group: 'Documents', size: '860 KB' },
+      { name: 'airport-selfie.jpg', group: 'Photos', size: '4.2 MB' },
+      { name: 'beach-sunset.jpg', group: 'Photos', size: '5.6 MB' },
+      { name: 'family-dinner.jpg', group: 'Photos', size: '3.9 MB' },
+      { name: 'boarding-pass.pdf', group: 'Downloads', size: '210 KB' }
+    ];
+    let active = -1, shown = [];
+    const render = () => {
+      const q = input.value.trim().toLowerCase();
+      shown = models.filter(m => !q || m.name.includes(q));
+      if (active >= shown.length) active = shown.length - 1;
+      list.innerHTML = '';
+      if (!shown.length) { const li = document.createElement('li'); li.className = 'none'; li.textContent = 'No files match “' + input.value.trim() + '”'; list.appendChild(li); }
+      let group = null;
+      shown.forEach((m, i) => {
+        if (m.group !== group) { const g = document.createElement('li'); g.className = 'group'; g.setAttribute('role', 'presentation'); g.textContent = m.group; list.appendChild(g); group = m.group; }
+        const li = document.createElement('li');
+        li.id = 'd-opt-' + i; li.setAttribute('role', 'option'); li.setAttribute('aria-selected', String(i === active));
+        const a = document.createElement('span'); a.textContent = m.name;
+        const b = document.createElement('small'); b.textContent = m.size;
+        li.append(a, b);
+        li.addEventListener('mousedown', e => { e.preventDefault(); choose(i); });
+        list.appendChild(li);
+      });
+      if (active >= 0) input.setAttribute('aria-activedescendant', 'd-opt-' + active); else input.removeAttribute('aria-activedescendant');
+      const el = document.getElementById('d-opt-' + active);
+      if (el) { const top = el.offsetTop, bottom = top + el.offsetHeight; if (top < list.scrollTop) list.scrollTop = top - 6; else if (bottom > list.scrollTop + list.clientHeight) list.scrollTop = bottom - list.clientHeight + 6; }
+    };
+    const open = () => { list.hidden = false; input.setAttribute('aria-expanded', 'true'); render(); };
+    const close = () => { list.hidden = true; input.setAttribute('aria-expanded', 'false'); active = -1; input.removeAttribute('aria-activedescendant'); };
+    const choose = i => { const m = shown[i]; if (!m) return; input.value = m.name; out.textContent = 'Selected: ' + m.name + ' (' + m.size + ')'; close(); };
+    input.addEventListener('focus', open);
+    input.addEventListener('input', () => { active = 0; open(); });
+    input.addEventListener('keydown', e => {
+      if (e.key === 'ArrowDown') { e.preventDefault(); if (list.hidden) open(); active = Math.min(shown.length - 1, active + 1); render(); }
+      else if (e.key === 'ArrowUp') { e.preventDefault(); active = Math.max(0, active - 1); render(); }
+      else if (e.key === 'Enter') { if (!list.hidden && active >= 0) { e.preventDefault(); choose(active); } }
+      else if (e.key === 'Escape') { close(); }
+    });
+    input.addEventListener('blur', () => setTimeout(close, 120));
+  });
+
+  demo('slider', st => {
+    [['d-cfg-r', 'd-cfg-n'], ['d-steps-r', 'd-steps-n']].forEach(([r, n]) => {
+      const R = document.getElementById(r), N = document.getElementById(n);
+      R.addEventListener('input', () => { N.value = R.value; });
+      N.addEventListener('input', () => { if (N.value !== '' && !isNaN(Number(N.value))) R.value = N.value; });
+      N.addEventListener('blur', () => {
+        let v = Number(N.value);
+        if (N.value === '' || isNaN(v)) v = Number(R.value);
+        v = Math.min(Number(N.max), Math.max(Number(N.min), v));
+        N.value = String(v); R.value = String(v);
+      });
+    });
+  });
+
+  demo('textfield', st => {
+    const input = $('#d-name'), msg = $('#d-name-msg'), span = $('span', msg);
+    const taken = ['paris trip', 'beach day', 'family 2024'];
+    const errorFor = v => {
+      if (!v) return 'Enter a name for the album.';
+      if (taken.includes(v.toLowerCase())) {
+        const m = v.match(/^(.*?)(\d+)$/);
+        return 'Name already in use. Try “' + (m ? m[1] + (Number(m[2]) + 1) : v + ' 2') + '”.';
+      }
+      return '';
+    };
+    input.addEventListener('blur', () => {
+      const err = errorFor(input.value.trim());
+      input.setAttribute('aria-invalid', err ? 'true' : 'false'); msg.hidden = !err; if (err) span.textContent = err;
+    });
+    input.addEventListener('input', () => {
+      if (input.getAttribute('aria-invalid') === 'true' && !errorFor(input.value.trim())) { input.setAttribute('aria-invalid', 'false'); msg.hidden = true; }
+    });
+  });
+
+  demo('picker', st => {
+    const color = $('#d-color'), hex = $('#d-hex'), sw = $('.swatches', st), date = $('#d-date');
+    const palette = ['#2F5DA8', '#B4401C', '#2E7D4F', '#7A4FB0', '#C99A2E', '#1B1D24'];
+    const set = v => {
+      color.value = v.toLowerCase(); hex.value = v.toUpperCase(); hex.removeAttribute('aria-invalid');
+      $$('button', sw).forEach(b => b.setAttribute('aria-pressed', String(b.dataset.c.toLowerCase() === v.toLowerCase())));
+    };
+    palette.forEach(c => {
+      const b = document.createElement('button'); b.type = 'button'; b.dataset.c = c; b.style.background = c; b.setAttribute('aria-label', 'Color ' + c);
+      b.addEventListener('click', () => set(c)); sw.appendChild(b);
+    });
+    color.addEventListener('input', () => set(color.value));
+    hex.addEventListener('input', () => { let v = hex.value.trim(); if (v && v[0] !== '#') v = '#' + v; if (/^#[0-9a-f]{6}$/i.test(v)) set(v); });
+    hex.addEventListener('blur', () => { if (!/^#?[0-9a-f]{6}$/i.test(hex.value.trim())) hex.setAttribute('aria-invalid', 'true'); });
+    const d = new Date(Date.now() + 7 * 864e5);
+    date.value = d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
+    set('#2F5DA8');
+  });
+
+  demo('buttons', st => {
+    const out = $('[data-out]', st);
+    $$('[data-say]', st).forEach(b => b.addEventListener('click', () => { out.textContent = b.dataset.say; }));
+    $('[data-act="explain"]', st).addEventListener('click', () => toast(st, 'Add a song to this playlist first', { action: { label: 'Find songs', run: () => toast(st, 'Opened “Search songs”') } }));
+  });
+
+  demo('linkbtn', st => {
+    const out = $('[data-out]', st); let n = 0;
+    $('[data-act="run"]', st).addEventListener('click', () => { n++; out.textContent = n + (n === 1 ? ' bag' : ' bags') + ' added'; });
+  });
+
+  demo('tabs', st => {
+    const tabs = $$('[role="tab"]', st);
+    const select = t => {
+      tabs.forEach(x => {
+        const on = x === t;
+        x.setAttribute('aria-selected', String(on)); x.tabIndex = on ? 0 : -1;
+        document.getElementById(x.getAttribute('aria-controls')).hidden = !on;
+      });
+      t.focus();
+    };
+    tabs.forEach((t, i) => {
+      t.addEventListener('click', () => select(t));
+      t.addEventListener('keydown', e => {
+        const k = { ArrowRight: (i + 1) % tabs.length, ArrowLeft: (i - 1 + tabs.length) % tabs.length, Home: 0, End: tabs.length - 1 }[e.key];
+        if (k !== undefined) { e.preventDefault(); select(tabs[k]); }
+      });
+    });
+  });
+
+  demo('cards', st => {
+    $$('a.cover', st).forEach(a => a.addEventListener('click', e => { e.preventDefault(); toast(st, 'Opening “' + a.dataset.open + '”'); }));
+  });
+
+  demo('sidenav', st => {
+    const out = $('[data-out]', st);
+    $$('.snav a', st).forEach(a => a.addEventListener('click', e => {
+      e.preventDefault();
+      $$('.snav a', st).forEach(x => x.removeAttribute('aria-current'));
+      a.setAttribute('aria-current', 'page'); out.textContent = a.dataset.title;
+    }));
+  });
+
+  demo('breadcrumbs', st => {
+    const leaf = name => ({ name, children: [] });
+    const tree = { name: 'Recipes', children: [
+      { name: 'Baking', children: [leaf('Sourdough'), leaf('Banana bread'), { name: 'Cakes', children: [leaf('Lemon drizzle')] }] },
+      { name: 'Dinners', children: [leaf('Quick pasta')] }
+    ] };
+    let path = [tree, tree.children[0], tree.children[0].children[0]];
+    const trail = $('[data-trail]', st), title = $('[data-out]', st), kids = $('[data-children]', st);
+    const render = () => {
+      trail.innerHTML = '';
+      path.forEach((node, i) => {
+        const li = document.createElement('li');
+        if (i === path.length - 1) { const s = document.createElement('span'); s.setAttribute('aria-current', 'page'); s.textContent = node.name; li.appendChild(s); }
+        else { const a = document.createElement('a'); a.href = '#breadcrumbs'; a.textContent = node.name; a.addEventListener('click', e => { e.preventDefault(); path = path.slice(0, i + 1); render(); }); li.appendChild(a); }
+        trail.appendChild(li);
+      });
+      const cur = path[path.length - 1];
+      title.textContent = cur.name; kids.innerHTML = '';
+      if (cur.children.length) {
+        cur.children.forEach(c => {
+          const b = document.createElement('button'); b.type = 'button'; b.className = 'btn btn-secondary';
+          b.innerHTML = '<svg class="icon sm"><use href="#i-' + (c.children.length ? 'folder' : 'book') + '"/></svg>';
+          b.append(c.name); b.addEventListener('click', () => { path = path.concat(c); render(); }); kids.appendChild(b);
+        });
+      } else {
+        const p = document.createElement('p'); p.className = 'field-help'; p.textContent = 'This is a recipe. Use the breadcrumb to jump back up.'; kids.appendChild(p);
+      }
+    };
+    render();
+  });
+
+  demo('stepper', st => {
+    let i = 0;
+    const steps = $$('[data-steps] li', st), panels = $$('[data-panel]', st);
+    const back = $('[data-act="back"]', st), next = $('[data-act="next"]', st), sum = $('[data-summary]', st);
+    const render = () => {
+      steps.forEach((s, k) => {
+        s.classList.toggle('done', k < i);
+        if (k === i) s.setAttribute('aria-current', 'step'); else s.removeAttribute('aria-current');
+        $('.n', s).innerHTML = k < i ? '<svg class="icon" style="width:14px;height:14px"><use href="#i-check"/></svg>' : String(k + 1);
+      });
+      panels.forEach((p, k) => { p.hidden = k !== i; });
+      back.disabled = i === 0;
+      next.textContent = i === steps.length - 1 ? 'Send' : 'Next';
+      if (i === steps.length - 1) sum.textContent = 'Ready to send “' + $('#d-wiz-prompt').value.trim() + '” with the ' + $('#d-wiz-model').value + ' design.';
+    };
+    back.addEventListener('click', () => { if (i > 0) { i--; render(); } });
+    next.addEventListener('click', () => { if (i < steps.length - 1) { i++; render(); } else toast(st, 'Card sent'); });
+    render();
+  });
+
+  demo('states', st => {
+    const btn = $('#d-state-btn'), label = $('span', btn), icon = $('svg', btn), cap = $('[data-cap]', st);
+    const info = {
+      default: ['Play', 'Default: the resting look every other state is measured against.'],
+      hover: ['Play', 'Hover: a small shift that says “clickable”. Touch screens never see it.'],
+      focus: ['Play', 'Focus: the ring keyboard users follow. Never remove it without a replacement.'],
+      pressed: ['Play', 'Pressed: instant proof that the click registered.'],
+      disabled: ['Play', 'Disabled: it can’t be used, and it can’t say why. Prefer explaining.'],
+      loading: ['Loading…', 'Loading: the action started. Block double clicks and keep the width steady.'],
+      error: ['Couldn’t play', 'Error: say what failed in words, then offer the next step.'],
+      success: ['Playing', 'Success: confirm briefly, then return to default.']
+    };
+    const set = s => {
+      btn.className = 'btn btn-primary' + (['hover', 'focus', 'pressed', 'error', 'success'].includes(s) ? ' is-' + s : '');
+      btn.disabled = s === 'disabled';
+      const sp = $('.spinner', btn); if (sp) sp.remove();
+      if (s === 'loading') { icon.setAttribute('hidden', ''); const n = document.createElement('span'); n.className = 'spinner'; n.setAttribute('aria-hidden', 'true'); btn.insertBefore(n, label); }
+      else icon.removeAttribute('hidden');
+      label.textContent = info[s][0]; cap.textContent = info[s][1];
+      $$('[data-state]', st).forEach(b => b.setAttribute('aria-pressed', String(b.dataset.state === s)));
+    };
+    $$('[data-state]', st).forEach(b => b.addEventListener('click', () => set(b.dataset.state)));
+    set('default');
+  });
+
+  demo('empty', st => {
+    const body = $('[data-body]', st);
+    const views = {
+      blank: '<div class="app-body"><p style="font-size:14px;color:var(--ui-muted)">No items.</p></div>',
+      helpful: '<div class="empty" style="margin:0 auto"><svg class="icon"><use href="#i-folder"/></svg><h5>No saved places yet</h5><p>Places you save will appear here. Find one on the map, or add one by its address.</p><div class="row"><button class="btn btn-primary" type="button" data-say="Opening the map">Explore the map</button><button class="btn btn-ghost" type="button" data-say="New place by address">Add an address</button></div></div>',
+      search: '<div class="empty" style="margin:0 auto"><svg class="icon"><use href="#i-search"/></svg><h5>No places match “bakrey”</h5><p>Check the spelling, or clear the search to see all 12 saved places.</p><div class="row"><button class="btn btn-secondary" type="button" data-say="Search cleared">Clear search</button></div></div>'
+    };
+    const render = v => { body.innerHTML = views[v]; };
+    $$('input[name="d-empty"]', st).forEach(r => r.addEventListener('change', () => render(r.value)));
+    render('helpful');
+  });
+
+  demo('error', st => {
+    const body = $('[data-body]', st);
+    const views = {
+      vague: '<div class="empty" style="margin:0 auto"><h5>Error 500</h5><p>Something went wrong.</p><div class="row"><button class="btn btn-secondary" type="button" data-say="…and now what?">OK</button></div></div>',
+      helpful: '<div class="empty" style="margin:0 auto"><svg class="icon" style="color:var(--ui-danger)"><use href="#i-warn"/></svg><h5>Couldn’t read your music folder</h5><p>The folder “Music/Albums” isn’t reachable. If it’s on an external drive, check that the drive is connected.</p><div class="row"><button class="btn btn-primary" type="button" data-say="Trying again…">Try again</button><button class="btn btn-ghost" type="button" data-say="Choose a folder">Choose another folder</button></div><p style="font:500 12px var(--font-mono);color:var(--ui-muted)">Code: E_MUSIC_UNREADABLE</p></div>'
+    };
+    const render = v => { body.innerHTML = views[v]; };
+    $$('input[name="d-err"]', st).forEach(r => r.addEventListener('change', () => render(r.value)));
+    render('helpful');
+  });
+
+})();
+</script>

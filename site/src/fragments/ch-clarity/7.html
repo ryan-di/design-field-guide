@@ -1,0 +1,19 @@
+<div class="stage tall" data-demo="good-proximity">
+      <div class="row p19-top">
+        <div class="surface p19-prox" id="p19-px-form" role="group" aria-labelledby="p19-px-title">
+          <h5 id="p19-px-title">Export settings</h5>
+          <div class="p19-px-group"><label class="field-label" for="p19-px-name">File name</label><input class="input" id="p19-px-name" value="beach-0016" autocomplete="off" spellcheck="false"></div>
+          <div class="p19-px-group"><label class="field-label" for="p19-px-folder">Folder</label><input class="input" id="p19-px-folder" value="Photos/Summer 2026" autocomplete="off" spellcheck="false"></div>
+          <div class="p19-px-group"><label class="field-label" for="p19-px-format">Format</label><select class="select" id="p19-px-format"><option>PNG</option><option>WebP</option><option>JPEG</option></select></div>
+          <div class="p19-px-group"><label class="field-label" for="p19-px-quality">Quality</label><input class="input" id="p19-px-quality" type="number" min="1" max="100" value="90"></div>
+        </div>
+        <div class="surface p19-ctl" role="group" aria-labelledby="p19-px-cap">
+          <p class="p19-ctl-cap" id="p19-px-cap">Spacing</p>
+          <div class="p19-range"><label for="p19-px-in">Space inside a group</label><output id="p19-px-in-out" for="p19-px-in">14 px</output><input type="range" id="p19-px-in" min="2" max="32" step="1" value="14"></div>
+          <div class="p19-range"><label for="p19-px-out">Space between groups</label><output id="p19-px-out-out" for="p19-px-out">14 px</output><input type="range" id="p19-px-out" min="2" max="48" step="1" value="14"></div>
+          <p class="p19-ratio" id="p19-px-ratio">Between ÷ inside: 1.0×</p>
+        </div>
+      </div>
+      <p class="p19-hint" id="p19-px-hint" aria-live="polite" data-tone="bad"><svg class="icon sm" aria-hidden="true"><use href="#i-warn"/></svg><span></span></p>
+      <p class="try"><b>Try it:</b> each label and its field form a group. Both gaps start at 14 px, so every label floats halfway between two fields. Drag “Space between groups” up until the hint shows a check. Then make the space inside bigger than the space between, and watch each label seem to name the field above it.</p>
+    </div>

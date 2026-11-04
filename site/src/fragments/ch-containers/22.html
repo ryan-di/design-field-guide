@@ -1,0 +1,141 @@
+<script>
+(() => {
+  const cs = document.currentScript.closest('.cs');
+  const D = (k, html, wire) => csDemo(cs.querySelector('[data-d="' + k + '"]'), html, wire);
+  const icon = n => '<svg class="icon sm"><use href="#i-' + n + '"/></svg>';
+  const heart = '<svg class="icon sm cd-hrt" viewBox="0 0 24 24"><path d="M12 20s-7.5-4.6-7.5-10.2A4.3 4.3 0 0 1 12 7.3a4.3 4.3 0 0 1 7.5 2.5C19.5 15.4 12 20 12 20z"/></svg>';
+  const frame = (title, body, bar) => '<div class="app-frame cd-fr"><div class="app-bar"><span>' + title + '</span>' + (bar || '') + '</div><div class="app-body">' + body + '</div></div>';
+  const q = s => '“' + s + '”';
+
+  /* 1. Many actions */
+  const DOCS = [['Q3 budget', 'Edited 2 days ago', ''], ['Trip plan', 'Edited Monday', ' b']];
+  const docsWire = fixed => (d, t) => {
+    const grid = d.querySelector('[data-grid]'), out = d.querySelector('[data-out]');
+    let docs = DOCS.slice();
+    const say = s => { out.textContent = s; };
+    const act = (name, a) => {
+      if (a === 'Open') say('Opened ' + q(name) + '.');
+      if (a === 'Share') say('Share link copied for ' + q(name) + '.');
+      if (a === 'Rename') say('Renaming ' + q(name) + '…');
+      if (a === 'Download') say('Downloading ' + q(name) + '…');
+      if (a === 'Delete') {
+        const prev = docs; docs = docs.filter(x => x[0] !== name); draw(); say('');
+        csToast(d, t, q(name) + ' deleted', { ms: 5000, replace: true, action: { label: 'Undo', run: () => { docs = prev; draw(); } } });
+      }
+    };
+    const draw = () => {
+      grid.innerHTML = docs.map(([name, sub, th]) => fixed
+        ? '<div class="tpl surface cd-doc"><a class="cover" href="#card" aria-label="Open ' + name + '" data-open></a><div class="thumb' + th + '"></div><h5>' + name + '</h5><p>' + sub + '</p>' +
+          '<button class="icon-btn more" type="button" aria-label="More actions for ' + name + '" aria-haspopup="menu" aria-expanded="false" data-more>' + icon('dots') + '</button>' +
+          '<div class="menu surface cd-menu" role="menu" aria-label="' + name + '" hidden>' + ['Share', 'Rename', 'Download'].map(a => '<button type="button" role="menuitem" tabindex="-1">' + a + '</button>').join('') +
+          '<hr><button type="button" role="menuitem" tabindex="-1" class="danger">Delete</button></div></div>'
+        : '<div class="surface cd-doc cd-flat"><div class="thumb' + th + '"></div><h5>' + name + '</h5><p>' + sub + '</p><div class="cd-acts">' +
+          '<button class="btn btn-primary cs-sm" type="button">Open</button>' + ['Share', 'Rename', 'Download'].map(a => '<button class="btn btn-secondary cs-sm" type="button">' + a + '</button>').join('') +
+          '<button class="btn btn-danger cs-sm" type="button">Delete</button></div></div>').join('');
+      grid.querySelectorAll('.cd-doc').forEach((card, i) => {
+        const name = docs[i][0];
+        if (!fixed) { card.querySelectorAll('.btn').forEach(b => b.addEventListener('click', () => act(name, b.textContent))); return; }
+        const more = card.querySelector('[data-more]'), menu = card.querySelector('[role="menu"]'), items = Array.from(menu.querySelectorAll('[role="menuitem"]'));
+        const close = refocus => { menu.hidden = true; more.setAttribute('aria-expanded', 'false'); card.classList.remove('cd-open'); if (refocus) more.focus(); };
+        const open = () => { grid.querySelectorAll('[data-more][aria-expanded="true"]').forEach(b => b.click()); menu.hidden = false; more.setAttribute('aria-expanded', 'true'); card.classList.add('cd-open'); items[0].focus(); };
+        card.querySelector('[data-open]').addEventListener('click', e => { e.preventDefault(); act(name, 'Open'); });
+        more.addEventListener('click', () => { if (menu.hidden) open(); else close(); });
+        items.forEach((it, k) => {
+          it.addEventListener('click', () => { close(it.textContent !== 'Delete'); act(name, it.textContent); });
+          it.addEventListener('keydown', e => {
+            const n = { ArrowDown: k + 1, ArrowUp: k - 1, Home: 0, End: items.length - 1 }[e.key];
+            if (n !== undefined) { e.preventDefault(); items[(n + items.length) % items.length].focus(); }
+            if (e.key === 'Escape') { e.preventDefault(); close(true); }
+            if (e.key === 'Tab') close(false);
+          });
+        });
+      });
+    };
+    d.addEventListener('pointerdown', e => {
+      grid.querySelectorAll('.cd-doc.cd-open').forEach(c => { if (!c.querySelector('[role="menu"]').contains(e.target) && !c.querySelector('[data-more]').contains(e.target)) c.querySelector('[data-more]').click(); });
+    });
+    draw();
+  };
+  const docsHtml = '<div class="cd-grid" data-grid></div><p class="cd-out" data-out aria-live="polite"></p>';
+  D('card-1b', docsHtml, docsWire(false));
+  D('card-1f', docsHtml, docsWire(true));
+
+  /* 2. No order */
+  const ALB = [['Birthday', '2026-10-18', 48, ''], ['Concert', '2026-10-04', 22, ' c'], ['Wedding', '2026-09-20', 310, ' b'], ['Beach', '2026-08-15', 96, ''], ['Paris', '2026-07-02', 140, ' c'],
+    ['Picnic', '2026-06-14', 18, ' b'], ['Garden', '2026-05-10', 35, ' c'], ['Hiking', '2026-04-12', 64, ''], ['Ski trip', '2026-02-21', 120, ' b']];
+  const MIXED = [7, 2, 6, 4, 0, 3, 8, 1, 5].map(i => ALB[i]);
+  const day = iso => new Date(iso + 'T12:00:00').toLocaleString('en', { month: 'short', day: 'numeric' });
+  const tile = (a, dated) => '<button class="cd-alb" type="button" data-name="' + a[0] + '"><span class="thumb' + a[3] + '"></span><b>' + a[0] + '</b>' + (dated ? '<small>' + day(a[1]) + '</small>' : '') + '</button>';
+  D('card-2b', frame('Albums', '<div class="cd-albs" data-grid>' + MIXED.map(a => tile(a, false)).join('') + '</div><p class="cd-out" data-out aria-live="polite"></p>'), d => {
+    const out = d.querySelector('[data-out]');
+    d.querySelectorAll('.cd-alb').forEach(b => b.addEventListener('click', () => { const a = ALB.find(x => x[0] === b.dataset.name); out.textContent = 'Opened ' + a[0] + ', from ' + day(a[1]) + '.'; }));
+  });
+  D('card-2f', frame('Albums', '<div class="cd-tools"><label class="cd-sort">Sort<select class="select" data-sort><option value="new">Newest first</option><option value="old">Oldest first</option><option value="az">Name A–Z</option></select></label>' +
+    '<div class="cd-seg" role="group" aria-label="View"><button type="button" aria-pressed="true" data-v="grid">Grid</button><button type="button" aria-pressed="false" data-v="list">List</button></div></div>' +
+    '<div data-grid></div><p class="cd-out" data-out aria-live="polite"></p>'), d => {
+    const grid = d.querySelector('[data-grid]'), out = d.querySelector('[data-out]'), sort = d.querySelector('[data-sort]'), vb = d.querySelectorAll('[data-v]');
+    let view = 'grid';
+    const draw = () => {
+      const s = ALB.slice().sort({ new: (a, b) => b[1].localeCompare(a[1]), old: (a, b) => a[1].localeCompare(b[1]), az: (a, b) => a[0].localeCompare(b[0]) }[sort.value]);
+      grid.className = view === 'grid' ? 'cd-albs' : 'cd-list';
+      grid.innerHTML = view === 'grid' ? s.map(a => tile(a, true)).join('')
+        : '<table class="cd-tbl"><thead><tr><th scope="col">Album</th><th scope="col">Date</th><th scope="col">Photos</th></tr></thead><tbody>' +
+          s.map(a => '<tr><td><button class="cd-lnk" type="button" data-name="' + a[0] + '">' + a[0] + '</button></td><td>' + day(a[1]) + '</td><td>' + a[2] + '</td></tr>').join('') + '</tbody></table>';
+      grid.querySelectorAll('[data-name]').forEach(b => b.addEventListener('click', () => { out.textContent = 'Opened ' + b.dataset.name + '.'; }));
+    };
+    sort.addEventListener('change', draw);
+    vb.forEach(b => b.addEventListener('click', () => { view = b.dataset.v; vb.forEach(x => x.setAttribute('aria-pressed', String(x === b))); draw(); }));
+    draw();
+  });
+
+  /* 3. Nested clicks */
+  const PAGES = {
+    shoe: saved => '<b class="cd-pt">Trail running shoe</b><span class="thumb c cd-big"></span><div class="kv">Price <b>$89</b></div>' + (saved ? '<p class="cd-saved">' + heart + 'Saved</p>' : ''),
+    shop: () => '<b class="cd-pt">Peak Outdoors</b><span class="cd-sub">Shop · 48 products</span><div class="line" style="width:80%"></div><div class="line" style="width:60%"></div>',
+    reviews: () => '<b class="cd-pt">Reviews · Trail running shoe</b><span class="cd-sub">★ 4.6 from 212 reviews</span><div class="line" style="width:85%"></div><div class="line" style="width:70%"></div>'
+  };
+  const shoeWire = fixed => d => {
+    const body = d.querySelector('[data-body]'), bar = d.querySelector('[data-title]');
+    let saved = false;
+    const go = (p, kb) => {
+      bar.textContent = { shoe: 'Trail running shoe', shop: 'Peak Outdoors', reviews: 'Reviews' }[p];
+      body.innerHTML = '<button class="btn btn-ghost cs-sm cd-back" type="button" data-back>← Back to results</button>' + PAGES[p](saved);
+      const b = body.querySelector('[data-back]'); b.addEventListener('click', e => results(e.detail === 0)); if (kb) b.focus();
+    };
+    const results = kb => {
+      bar.textContent = 'Search: running shoes';
+      const h = '<button class="icon-btn cd-heart' + (fixed ? ' more' : '') + '" type="button" aria-label="Save" aria-pressed="' + saved + '" data-heart>' + heart + '</button>';
+      body.innerHTML = fixed
+        ? '<div class="tpl surface cd-prod"><a class="cover" href="#card" aria-label="Trail running shoe, $89" data-go="shoe"></a><span class="thumb c cd-ph"></span><b>Trail running shoe</b><span class="cd-sub">by Peak Outdoors</span><span class="cd-sub">★ 4.6 · 212 reviews</span><b>$89</b>' + h + '</div>'
+        : '<div class="surface cd-prod cd-click" data-card><span class="thumb c cd-ph"></span>' + h + '<a class="cd-a" href="#card" data-go="shoe">Trail running shoe</a>' +
+          '<span class="cd-sub">by <a class="cd-a" href="#card" data-go="shop">Peak Outdoors</a></span><span class="cd-sub">★ 4.6 · <a class="cd-a" href="#card" data-go="reviews">212 reviews</a></span><b>$89</b></div>';
+      body.querySelectorAll('a[data-go]').forEach(a => a.addEventListener('click', e => { e.preventDefault(); go(a.dataset.go, e.detail === 0); }));
+      const hb = body.querySelector('[data-heart]');
+      hb.addEventListener('click', e => {
+        saved = !saved; hb.setAttribute('aria-pressed', String(saved));
+        if (fixed) e.stopPropagation();
+      });
+      const card = body.querySelector('[data-card]');
+      /* Broken: the card's own click handler also runs for clicks that bubble up from ♡. Links win because they navigate themselves. */
+      if (card) card.addEventListener('click', e => { if (!e.target.closest('a')) go('shoe', e.detail === 0); });
+      if (kb) (body.querySelector('a, button')).focus();
+    };
+    results();
+  };
+  const shoeHtml = '<div class="app-frame cd-fr"><div class="app-bar"><span data-title></span></div><div class="app-body cd-res" data-body></div></div>';
+  D('card-3b', shoeHtml, shoeWire(false));
+  D('card-3f', shoeHtml, shoeWire(true));
+
+  /* 4. Cards everywhere */
+  const PREFS = [['Theme', ['Light', 'Dark', 'System']], ['Text size', ['Small', 'Medium', 'Large']], ['Language', ['English', 'Español', 'Français']],
+    ['Time zone', ['UTC+1', 'UTC', 'UTC−5']], ['Week starts', ['Monday', 'Sunday']], ['Date format', ['23/10/26', '10/23/26']]];
+  const sel = (o, k) => '<select class="select cd-sel" aria-label="' + k + '">' + o.map((x, i) => '<option' + (k === 'Text size' && i === 1 ? ' selected' : '') + '>' + x + '</option>').join('') + '</select>';
+  const prow = ([k, o]) => '<div class="cd-prow"><span>' + k + '</span>' + sel(o, k) + '</div>';
+  const prefWire = d => { const ok = d.querySelector('[data-ok]'); d.querySelectorAll('select').forEach(s => s.addEventListener('change', () => { ok.textContent = s.getAttribute('aria-label') + ': ' + s.value + '. Saved.'; })); };
+  D('card-4b', frame('Preferences', '<div class="cd-boxes">' + PREFS.map(([k, o]) => '<div class="surface cd-box"><b>' + k + '</b>' + sel(o, k) + '</div>').join('') + '</div><p class="cs-ok" data-ok></p>'), prefWire);
+  D('card-4f', frame('Preferences', '<h4 class="cd-h">Appearance</h4>' + PREFS.slice(0, 2).map(prow).join('') + '<h4 class="cd-h">Region</h4>' + PREFS.slice(2).map(prow).join('') + '<p class="cs-ok" data-ok></p>'), prefWire);
+
+  csInit(cs);
+})();
+
+  </script>

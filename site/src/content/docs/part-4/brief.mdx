@@ -1,0 +1,312 @@
+---
+title: "Write the brief agents build from"
+description: "An agent builds what you write down, not what you meant."
+eyebrow: "Chapter 26"
+sidebar:
+  label: "The brief"
+---
+
+import Raw from '../../../components/Raw.astro';
+import Learned from '../../../components/Learned.astro';
+import Runtime from '../../../components/Runtime.astro';
+import F0 from '../../../fragments/ch-brief/0.html?raw';
+import F1 from '../../../fragments/ch-brief/1.html?raw';
+import F2 from '../../../fragments/ch-brief/2.html?raw';
+import F3 from '../../../fragments/ch-brief/3.html?raw';
+import F4 from '../../../fragments/ch-brief/4.html?raw';
+import F5 from '../../../fragments/ch-brief/5.html?raw';
+import F6 from '../../../fragments/ch-brief/6.html?raw';
+import F7 from '../../../fragments/ch-brief/7.html?raw';
+import F8 from '../../../fragments/ch-brief/8.html?raw';
+import F9 from '../../../fragments/ch-brief/9.html?raw';
+import F10 from '../../../fragments/ch-brief/10.html?raw';
+import F11 from '../../../fragments/ch-brief/11.html?raw';
+import F12 from '../../../fragments/ch-brief/12.html?raw';
+import F13 from '../../../fragments/ch-brief/13.html?raw';
+import F14 from '../../../fragments/ch-brief/14.html?raw';
+import F15 from '../../../fragments/ch-brief/15.html?raw';
+import F16 from '../../../fragments/ch-brief/16.html?raw';
+import F17 from '../../../fragments/ch-brief/17.html?raw';
+import F18 from '../../../fragments/ch-brief/18.html?raw';
+import F19 from '../../../fragments/ch-brief/19.html?raw';
+import F20 from '../../../fragments/ch-brief/20.html?raw';
+import F21 from '../../../fragments/ch-brief/21.html?raw';
+import F22 from '../../../fragments/ch-brief/22.html?raw';
+import F23 from '../../../fragments/ch-brief/23.html?raw';
+
+<Runtime at="start" />
+
+<Raw html={F0} />
+
+<section class="dfg-chapter" id="ch-brief">
+
+An agent builds what you write down, not what you meant. A good brief names the problem, the context to use and how you’ll check the result.
+
+<article class="entry essay" id="eff-brief" data-entry data-name="Problem brief">
+
+<div class="entry-head">
+
+## Write the problem brief \{#eff-brief-h\}
+
+<Learned id="eff-brief" />
+
+</div>
+
+A problem brief is a short note written before anyone builds. It says who has the problem, what should change, what’s off limits and how you’ll know it worked, so an agent can explore answers without guessing what you meant.
+
+Where a ticket often names a fix, a brief names the problem, so better fixes can still turn up. Its neighbors do other jobs: a [context pack](#eff-context-pack) holds the materials the agent works with, and a [definition of done](#eff-definition-of-done) lists the checks the change must pass. Keep a brief to one page. A longer one likely covers more than one problem, so split it. Say where each part came from, and [leave what you don’t know empty](/part-1/problem/#good-problem-framing-rule-5).
+
+<Raw html={F1} />
+
+The brief check in the demo flags four things. Passing it doesn’t make a brief clear, but each flag is worth fixing.
+
+<Raw html={F2} />
+
+### Rules \{#eff-brief-rules\}
+
+Four rules keep a brief useful.
+
+<div class="cs essay-cs">
+
+<section class="rule" id="eff-brief-rule-1">
+
+#### 1. Describe the problem, not the fix \{#eff-brief-rule-1-h\}
+
+An agent builds the fix a brief names, and nothing else, so a simpler answer never comes up. [Frame the problem](/part-1/problem/#good-problem-framing) instead: state the problem and the goal, and list any fix you have in mind as one option.
+
+<Raw html={F3} />
+
+</section>
+
+<section class="rule" id="eff-brief-rule-2">
+
+#### 2. Say what’s out of scope \{#eff-brief-rule-2-h\}
+
+An agent that sees nearby problems tends to fix them too. The change grows, you review work you didn’t ask for, and some of it may undo choices made on purpose. List the non-goals, such as the page layout or the button wording, so the change stays the size you meant.
+
+<Raw html={F4} />
+
+</section>
+
+<section class="rule" id="eff-brief-rule-3">
+
+#### 3. Say how you’ll know it worked \{#eff-brief-rule-3-h\}
+
+Without [success criteria](/part-1/problem/#good-success-criteria), “done” means whatever the agent or the reviewer feels, so the review turns into opinions and gaps slip through. Write criteria you can check in the app, such as a time, a step count or a key that must work, and turn them into the definition of done.
+
+<Raw html={F5} />
+
+</section>
+
+<section class="rule" id="eff-brief-rule-4">
+
+#### 4. Replace vague words with what you’d see \{#eff-brief-rule-4-h\}
+
+Words like “better”, “cleaner” and “intuitive” mean something different to every reader, so each agent fills them in its own way, and none of the results is wrong by the brief. Replace each vague word with something you could watch happen, such as “people pay in three steps or fewer”.
+
+<Raw html={F6} />
+
+</section>
+
+<Raw html={F7} />
+
+</div>
+
+### In real products \{#eff-brief-products\}
+
+<Raw html={F8} />
+
+</article>
+
+<article class="entry essay" id="eff-context-pack" data-entry data-name="Context pack">
+
+<div class="entry-head">
+
+## Pack the context \{#eff-context-pack-h\}
+
+<Learned id="eff-context-pack" />
+
+</div>
+
+A context pack is what a new teammate would need on their first day: design tokens, components to reuse, copy rules, examples of good screens, repo conventions and the design frames. An agent that doesn’t get these makes up its own, and the result may work but doesn’t look or read like the rest of the product.
+
+Where the [problem brief](#eff-brief) says what to solve, the context pack says how things are done here. Include the accessibility rules too: focus order, labels, and which color tokens pass contrast. An agent may skip rules that aren’t in the pack, and the gap only shows up in review.
+
+<Raw html={F9} />
+
+### Rules \{#eff-context-pack-rules\}
+
+Four rules keep a context pack useful.
+
+<div class="cs essay-cs">
+
+<section class="rule" id="eff-context-pack-rule-1">
+
+#### 1. Point to the design system by path \{#eff-context-pack-rule-1-h\}
+
+An agent doesn’t know your design system unless you show it where it lives, so it writes a new button with its own color, shape and focus style. Each one is small, but they add up to a product that looks patched together. Give the path to the token file and the components to reuse, and name the ones it must not rebuild.
+
+<Raw html={F10} />
+
+</section>
+
+<section class="rule" id="eff-context-pack-rule-2">
+
+#### 2. Pick what this task touches \{#eff-context-pack-rule-2-h\}
+
+Pasting the whole repo or every design page seems thorough, but the agent then has to guess which parts matter, and it may copy an old screen instead of the current one. The brief itself can get lost in the pile. Pick what this task touches: one or two similar screens, the frames for this flow, the rules that apply.
+
+<Raw html={F11} />
+
+</section>
+
+<section class="rule" id="eff-context-pack-rule-3">
+
+#### 3. Show the look, don’t only describe it \{#eff-context-pack-rule-3-h\}
+
+Words leave room for guessing: “a small image on the left” can mean many sizes and positions, and the agent picks one. Link the design frame instead, or attach a screenshot of a similar screen. Claude Code can read Figma frames through the Figma MCP connector (MCP is a standard way to plug tools into an agent).
+
+<Raw html={F12} />
+
+</section>
+
+<section class="rule" id="eff-context-pack-rule-4">
+
+#### 4. Keep the stable parts in one file \{#eff-context-pack-rule-4-h\}
+
+Tokens, copy rules and conventions rarely change between tasks. Pasting them into every request takes time, and sooner or later one part gets left out, so that task breaks a rule the others followed. Keep the stable parts in a file the agent reads every session, such as CLAUDE.md, the project notes file Claude Code loads on its own. Add only the task-specific parts to each brief.
+
+<Raw html={F13} />
+
+</section>
+
+<Raw html={F14} />
+
+</div>
+
+### In real products \{#eff-context-pack-products\}
+
+<Raw html={F15} />
+
+</article>
+
+<article class="entry essay" id="eff-definition-of-done" data-entry data-name="Definition of done">
+
+<div class="entry-head">
+
+## Define done so both of you can check it \{#eff-definition-of-done-h\}
+
+<Learned id="eff-definition-of-done" />
+
+</div>
+
+A definition of done is the list of checks a change must pass before you call it finished. Write each one as something you could see or run, such as a behavior, a state or a test that passes, and mark who checks it. An agent can prove many of them with a test run or a screenshot, but some need your judgment, such as whether the wording reads well.
+
+Where [Define “good” before building](/part-1/problem/#good-success-criteria) decides what a good result is, this entry turns it into checks for one change, so you and the agent agree on when it’s finished.
+
+<Raw html={F16} />
+
+### Rules \{#eff-definition-of-done-rules\}
+
+Four rules keep a definition of done useful.
+
+<div class="cs essay-cs">
+
+<section class="rule" id="eff-definition-of-done-rule-1">
+
+#### 1. Ask for proof, not a report \{#eff-definition-of-done-rule-1-h\}
+
+An agent says a change is done when it believes it is, and that message doesn’t tell you whether any check passed. If you approve on its word, the bugs reach people first. Ask for the test run and the screenshots in the pull request, and look at them before you approve.
+
+<Raw html={F17} />
+
+</section>
+
+<section class="rule" id="eff-definition-of-done-rule-2">
+
+#### 2. Name what you’d see \{#eff-definition-of-done-rule-2-h\}
+
+“It feels intuitive” can’t pass or fail, so it gets marked done without a check. Write what you’d see instead, as in [the problem brief](#eff-brief), such as which result shows first. Keep the calls that need judgment, labeled as yours, and look yourself: a screenshot proves a state exists, not that it reads well.
+
+<Raw html={F18} />
+
+</section>
+
+<section class="rule" id="eff-definition-of-done-rule-3">
+
+#### 3. Cover the other states \{#eff-definition-of-done-rule-3-h\}
+
+Criteria often describe only the path where everything works, so nobody checks what happens when a save fails or several tabs are unsaved, which is where people lose work. List the other states too: several unsaved tabs, a failed save, keyboard only, a narrow window.
+
+<Raw html={F19} />
+
+</section>
+
+<section class="rule" id="eff-definition-of-done-rule-4">
+
+#### 4. Put the tests in the brief \{#eff-definition-of-done-rule-4-h\}
+
+Tests planned for later rarely get written, so the next change can break this one without anyone noticing, and people find out first. Name the tests in the brief, such as a Playwright spec (a test that clicks through the app in a real browser) for the new behavior, so they ship in the same pull request.
+
+<Raw html={F20} />
+
+</section>
+
+<Raw html={F21} />
+
+</div>
+
+### In real products \{#eff-definition-of-done-products\}
+
+<Raw html={F22} />
+
+</article>
+
+<Raw html={F23} />
+
+<aside class="in-short" id="ch-brief-in-short" aria-labelledby="ch-brief-in-short-h" data-pagefind-ignore>
+
+## In short \{#ch-brief-in-short-h\}
+
+<div class="is-grid">
+
+<div>
+
+<a class="is-e" href="#eff-brief">Write the problem brief</a>
+
+1. [Describe the problem, not the fix](#eff-brief-rule-1)
+2. [Say what’s out of scope](#eff-brief-rule-2)
+3. [Say how you’ll know it worked](#eff-brief-rule-3)
+4. [Replace vague words with what you’d see](#eff-brief-rule-4)
+
+</div>
+
+<div>
+
+<a class="is-e" href="#eff-context-pack">Pack the context</a>
+
+1. [Point to the design system by path](#eff-context-pack-rule-1)
+2. [Pick what this task touches](#eff-context-pack-rule-2)
+3. [Show the look, don’t only describe it](#eff-context-pack-rule-3)
+4. [Keep the stable parts in one file](#eff-context-pack-rule-4)
+
+</div>
+
+<div>
+
+<a class="is-e" href="#eff-definition-of-done">Define done so both of you can check it</a>
+
+1. [Ask for proof, not a report](#eff-definition-of-done-rule-1)
+2. [Name what you’d see](#eff-definition-of-done-rule-2)
+3. [Cover the other states](#eff-definition-of-done-rule-3)
+4. [Put the tests in the brief](#eff-definition-of-done-rule-4)
+
+</div>
+
+</div>
+
+</aside>
+
+</section>
+
+<Runtime chapter="ch-brief" />

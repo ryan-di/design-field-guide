@@ -1,0 +1,117 @@
+<div class="fm" data-fm>
+  
+  <div class="seg fm-seg" role="radiogroup" aria-label="Form">
+    <input type="radio" name="fm-tabs" id="fm-tabs-1" value="line" checked><label for="fm-tabs-1">Line tabs</label>
+    <input type="radio" name="fm-tabs" id="fm-tabs-2" value="bar"><label for="fm-tabs-2">Tab bar</label>
+    <input type="radio" name="fm-tabs" id="fm-tabs-3" value="doc"><label for="fm-tabs-3">Document tabs</label>
+  </div>
+  <div class="fm-stage" data-fm-stage></div>
+  <p class="fig-cap" data-fm-when aria-live="polite"></p>
+  <script>
+  (() => {
+    const fm = document.currentScript.closest('[data-fm]'), stage = fm.querySelector('[data-fm-stage]'), when = fm.querySelector('[data-fm-when]');
+    const icon = n => '<svg class="icon"><use href="#i-' + n + '"/></svg>';
+    const kv = (k, v) => '<div class="kv">' + k + ' <b>' + v + '</b></div>';
+    const r = t => '<div class="r"><span class="sq"></span>' + t + '</div>';
+    const lines = '<div class="line" style="width:78%"></div><div class="line" style="width:90%"></div><div class="line" style="width:58%"></div>';
+    /* Shared tab behavior: click to select; arrow keys, Home and End move between tabs; only the selected tab is in the Tab order. */
+    const tablist = (list, onSel) => {
+      const tabs = () => Array.from(list.querySelectorAll('[role="tab"]'));
+      const sel = (i, focus) => {
+        tabs().forEach((t, k) => { t.setAttribute('aria-selected', String(k === i)); t.tabIndex = k === i ? 0 : -1; });
+        onSel(i);
+        if (focus) tabs()[i].focus();
+      };
+      list.addEventListener('click', e => { const t = e.target.closest('[role="tab"]'); if (t) sel(tabs().indexOf(t)); });
+      list.addEventListener('keydown', e => {
+        const ts = tabs(), i = ts.indexOf(document.activeElement);
+        if (i < 0) return;
+        const n = { ArrowRight: i + 1, ArrowLeft: i - 1, Home: 0, End: ts.length - 1 }[e.key];
+        if (n === undefined) return;
+        e.preventDefault(); sel((n + ts.length) % ts.length, true);
+      });
+      return sel;
+    };
+    const F = {
+      line: {
+        use: 'Use them when one section of a page has a few parts people read one at a time.',
+        more: 'The line under the selected tab ties it to the panel below.',
+        show: () => {
+          const T = [
+            ['Overview', '<p>A quiet hotel by the beach, ten minutes’ walk from the old town.</p>' + kv('Check-in', 'From 3 pm') + kv('Breakfast', '7–10 am')],
+            ['Rooms', kv('Double room', '$120') + kv('Sea view room', '$160') + kv('Family room', '$190')],
+            ['Reviews', kv('Guest rating', '4.6 of 5') + '<p>“Lovely staff and a great breakfast.”</p><span class="cs-meta">312 reviews</span>']
+          ];
+          stage.innerHTML = '<div class="app-frame fm-frame tbf-line"><div class="app-bar"><span>Seaview Hotel</span></div><div class="app-body">' +
+            '<div class="tablist" role="tablist" aria-label="Hotel">' + T.map(t => '<button class="tab" type="button" role="tab">' + t[0] + '</button>').join('') + '</div>' +
+            '<div class="tabpanel" role="tabpanel" data-panel></div></div></div>';
+          const panel = stage.querySelector('[data-panel]');
+          tablist(stage.querySelector('[role="tablist"]'), i => { panel.innerHTML = T[i][1]; panel.setAttribute('aria-label', T[i][0]); })(0);
+        }
+      },
+      bar: {
+        use: 'Use it for the three to five main sections of a phone app.',
+        more: 'Each tab keeps its place, so switching back returns people to where they left off.',
+        show: () => {
+          const T = [['Home', 'home'], ['Search', 'search'], ['Library', 'layers']];
+          stage.innerHTML = '<div class="app-frame tbf-phone"><div class="app-bar"><span data-title></span></div><div class="tbf-body">' +
+            '<div class="tabpanel" role="tabpanel" aria-label="Home" data-pane><b>Good evening</b>' + r('Morning run mix') + r('Focus') + r('Road trip') + r('Sunday jazz') + '</div>' +
+            '<div class="tabpanel" role="tabpanel" aria-label="Search" data-pane><input class="input" type="search" placeholder="Songs, artists, podcasts" aria-label="Search" data-q><div class="tabpanel" data-res></div></div>' +
+            '<div class="tabpanel" role="tabpanel" aria-label="Library" data-pane>' + r('Liked songs') + r('Saved albums') + r('Podcasts') + '</div>' +
+            '</div><div class="tbf-bar" role="tablist" aria-label="Sections">' + T.map(t => '<button class="tbf-t" type="button" role="tab">' + icon(t[1]) + '<span>' + t[0] + '</span></button>').join('') + '</div></div>';
+          const panes = Array.from(stage.querySelectorAll('[data-pane]')), title = stage.querySelector('[data-title]'), q = stage.querySelector('[data-q]'), res = stage.querySelector('[data-res]');
+          const results = () => {
+            const v = q.value.trim();
+            res.innerHTML = v ? '<span class="cs-meta">Results for “' + v.replace(/[<&]/g, '') + '”</span>' + r(v.replace(/[<&]/g, '') + ' radio') + r('This is ' + v.replace(/[<&]/g, '')) : '<span class="cs-meta">Recent</span>' + r('Jazz for cooking');
+          };
+          q.addEventListener('input', results); results();
+          /* Panes stay in the page and are only hidden, so a search or a scroll position survives a switch. */
+          tablist(stage.querySelector('[role="tablist"]'), i => { panes.forEach((p, k) => { p.hidden = k !== i; }); title.textContent = T[i][0]; })(0);
+        }
+      },
+      doc: {
+        use: 'Use them when people open their own items side by side, like web pages.',
+        more: 'People add and close them, and the tabs shrink to fit as more open.',
+        show: () => {
+          const MAX = 6;
+          let open = [['Flights to Rome', 'flights.example.com/rome'], ['Hotels in Rome', 'hotels.example.com/rome']], cur = 0;
+          stage.innerHTML = '<div class="app-frame fm-frame tbf-doc"><div class="tbf-strip"><div class="tbf-tl" role="tablist" aria-label="Open pages" data-tl></div>' +
+            '<button class="icon-btn tbf-add" type="button" aria-label="New tab" data-add>' + icon('plus') + '</button></div>' +
+            '<div class="app-body" role="tabpanel" data-panel></div></div>';
+          const tl = stage.querySelector('[data-tl]'), panel = stage.querySelector('[data-panel]'), add = stage.querySelector('[data-add]');
+          const draw = focus => {
+            tl.innerHTML = open.map((t, i) => '<div class="tbf-dt' + (i === cur ? ' on' : '') + '"><button class="tbf-dtb" type="button" role="tab" title="' + t[0] + '">' + t[0] + '</button>' +
+              '<button class="tbf-x" type="button" aria-label="Close ' + t[0] + '" tabindex="' + (i === cur ? 0 : -1) + '" data-x="' + i + '">×</button></div>').join('');
+            add.disabled = open.length >= MAX;
+            tl.style.flexBasis = open.length * 183 + 'px'; /* room for every tab at full width; the row shrinks them when space runs out */
+            sel(cur, focus);
+          };
+          const sel = tablist(tl, i => {
+            cur = i;
+            tl.querySelectorAll('.tbf-dt').forEach((d, k) => { d.classList.toggle('on', k === i); d.querySelector('.tbf-x').tabIndex = k === i ? 0 : -1; });
+            const t = open[i];
+            panel.setAttribute('aria-label', t[0]);
+            panel.innerHTML = '<b>' + t[0] + '</b>' + (t[1] ? '<span class="cs-meta">' + t[1] + '</span>' : '<span class="cs-meta">Search or type an address</span>') + lines;
+          });
+          const close = (i, kb) => {
+            open.splice(i, 1);
+            if (!open.length) open.push(['New tab', '']);
+            cur = Math.min(i === cur ? i : (i < cur ? cur - 1 : cur), open.length - 1);
+            draw(kb);
+          };
+          tl.addEventListener('click', e => { const x = e.target.closest('[data-x]'); if (x) close(+x.dataset.x, e.detail === 0); });
+          tl.addEventListener('keydown', e => { if (e.key === 'Delete' && e.target.matches('[role="tab"]')) { e.preventDefault(); close(Array.from(tl.querySelectorAll('[role="tab"]')).indexOf(e.target), true); } });
+          add.addEventListener('click', e => { if (open.length >= MAX) return; open.push(['New tab', '']); cur = open.length - 1; draw(e.detail === 0); });
+          draw();
+        }
+      }
+    };
+    const show = k => {
+      F[k].show();
+      when.innerHTML = '<b>' + fm.querySelector('.fm-seg input:checked + label').textContent + '.</b> ' + F[k].use + ' ' + F[k].more;
+    };
+    fm.querySelectorAll('.fm-seg input').forEach(i => i.addEventListener('change', () => show(i.value)));
+    show('line');
+  })();
+  </script>
+</div>

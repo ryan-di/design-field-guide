@@ -1,0 +1,52 @@
+<div class="note comfy cw-wrap"><p>Notice what each palette teaches on the side: a shortcut, the current selection, or where the command lives in the menus.</p>
+  <div class="seg cw-seg" role="radiogroup" aria-label="Example">
+    <input type="radio" name="cw-pat-command-palette-w" id="cw-pat-command-palette-w-1" value="vscode" checked><label for="cw-pat-command-palette-w-1">VS Code</label>
+    <input type="radio" name="cw-pat-command-palette-w" id="cw-pat-command-palette-w-2" value="linear"><label for="cw-pat-command-palette-w-2">Linear</label>
+    <input type="radio" name="cw-pat-command-palette-w" id="cw-pat-command-palette-w-3" value="notion"><label for="cw-pat-command-palette-w-3">Notion</label>
+    <input type="radio" name="cw-pat-command-palette-w" id="cw-pat-command-palette-w-4" value="mac"><label for="cw-pat-command-palette-w-4">macOS</label>
+  </div>
+  <div class="cw" data-cw-view role="img" aria-label=""></div>
+  <p class="cw-cap" data-cw-cap aria-live="polite"></p>
+  
+  <script>
+  (() => {
+    const wrap = document.currentScript.closest('.cw-wrap');
+    const view = wrap.querySelector('[data-cw-view]'), cap = wrap.querySelector('[data-cw-cap]');
+    const ic = id => '<svg class="icon sm"><use href="#i-' + id + '"/></svg>';
+    const line = w => '<i class="cw-line"' + (w ? ' style="width:' + w + '"' : '') + '></i>';
+    const keys = (...k) => '<span class="cw-cmdpal-k">' + k.map(x => '<kbd>' + x + '</kbd>').join('') + '</span>';
+    const it = (name, k, on) => '<div class="cw-cmdpal-it' + (on ? ' on' : '') + '"><span>' + name + '</span>' + (k || '') + '</div>';
+    const code = '<div class="cw-cmdpal-code">' + [70, 52, 84, 46, 76, 60, 38, 66].map(w => line(w + '%')).join('') + '</div>';
+    const issue = (id, w, sel) => '<div class="cw-cmdpal-issue' + (sel ? ' sel' : '') + '"><span class="cw-cmdpal-st"></span><span class="cw-cmdpal-id">' + id + '</span>' + line(w) + '</div>';
+    const blk = (glyph, name, on) => '<div class="cw-cmdpal-blk' + (on ? ' on' : '') + '"><span class="cw-cmdpal-ico">' + glyph + '</span>' + name + '</div>';
+    const mi = (name, on, arrow) => '<span class="cw-cmdpal-mi' + (on ? ' on' : '') + '">' + name + (arrow ? '<b class="cw-cmdpal-arrow">←</b>' : '') + '</span>';
+    const S = {
+      vscode: { html: '<div class="cw-cmdpal-win"><div class="cw-cmdpal-top"><i></i><i></i><i></i></div>' + code +
+          '<div class="cw-cmdpal-pal surface"><div class="cw-cmdpal-q"><b>&gt;</b><span class="cw-cmdpal-caret"></span></div>' +
+          '<span class="cw-cmdpal-grp">Recently used</span>' + it('Format Document', keys('Shift', 'Alt', 'F'), true) + it('Toggle Word Wrap', keys('Alt', 'Z')) +
+          '<span class="cw-cmdpal-grp">Other commands</span>' + it('Go to Line', keys('Ctrl', 'G')) + '</div></div>',
+        alt: 'A code editor with a command palette open at the top. Recently used commands come first, and each row shows its keyboard shortcut on the right.',
+        cap: 'VS Code: the Command Palette lists commands with their keyboard shortcuts beside them and puts recently used ones first, so using it slowly teaches the shortcuts.' },
+      linear: { html: '<div class="cw-cmdpal-win"><div class="cw-cmdpal-top"><i></i><i></i><i></i></div><div class="cw-cmdpal-list">' +
+          issue('ENG-12', '62%', false) + issue('ENG-14', '48%', true) + issue('ENG-15', '70%', false) + '</div>' +
+          '<div class="cw-cmdpal-pal surface"><div class="cw-cmdpal-q">Type a command<span class="cw-cmdpal-caret"></span></div>' +
+          it('Change status', keys('S'), true) + it('Assign to', keys('A')) + it('Change priority', keys('P')) + '</div></div>',
+        alt: 'An issue list with one issue selected. The command menu above it offers Change status, Assign to and Change priority, each with a one-key shortcut.',
+        cap: 'Linear: with an issue selected, ⌘K offers actions for that issue, like changing its status or assignee, each with the one-key shortcut that does the same.' },
+      notion: { html: '<div class="cw-cmdpal-doc"><h6>Trip notes</h6>' + line('88%') + line('72%') +
+          '<div class="cw-cmdpal-slash">/hea<span class="cw-cmdpal-caret"></span></div>' +
+          '<div class="cw-cmdpal-menu surface"><span class="cw-cmdpal-grp">Basic blocks</span>' + blk('H1', 'Heading 1', true) + blk('H2', 'Heading 2') + blk('H3', 'Heading 3') + '</div></div>',
+        alt: 'A document. On a new line someone has typed slash h e a, and a menu below lists Heading 1, Heading 2 and Heading 3.',
+        cap: 'Notion: typing “/” in a page opens a menu of blocks you filter by name, so adding a heading or a table never leaves the keyboard. It’s a palette pointed at the things you can add.' },
+      mac: { html: '<div class="cw-cmdpal-win"><div class="cw-cmdpal-bar"><span>File</span><span>Edit</span><span class="open">View</span><span>Window</span><span class="open">Help</span></div>' +
+          '<div class="cw-cmdpal-mrow"><div class="cw-cmdpal-menu surface">' + mi('Show Sidebar') + mi('Zoom In', true, true) + mi('Zoom Out') + mi('Full Screen') + '</div>' +
+          '<div class="cw-cmdpal-menu surface"><span class="cw-cmdpal-find">' + ic('search') + 'zoom</span><span class="cw-cmdpal-grp">Menu items</span>' + mi('Zoom In', true) + mi('Zoom Out') + '</div></div></div>',
+        alt: 'A menu bar with View and Help open. In the Help menu, a search for zoom lists Zoom In under Menu items. Pointing at it opens the View menu, where an arrow marks Zoom In.',
+        cap: 'macOS: the search field in an app’s Help menu finds menu commands by name, and pointing at a result opens the real menu with an arrow on the command, so you learn where it lives.' }
+    };
+    const render = k => { view.innerHTML = S[k].html; view.setAttribute('aria-label', 'Sketch: ' + S[k].alt); cap.textContent = S[k].cap; };
+    wrap.querySelectorAll('input[name="cw-pat-command-palette-w"]').forEach(r => r.addEventListener('change', () => render(r.value)));
+    render('vscode');
+  })();
+  </script>
+</div>

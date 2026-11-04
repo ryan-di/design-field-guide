@@ -1,0 +1,95 @@
+<div class="fm" data-fm>
+  <div class="seg fm-seg" role="radiogroup" aria-label="Form">
+    <input type="radio" name="fm-inline-message" id="fm-inline-message-1" value="hint" checked><label for="fm-inline-message-1">Hint</label>
+    <input type="radio" name="fm-inline-message" id="fm-inline-message-2" value="error"><label for="fm-inline-message-2">Error</label>
+    <input type="radio" name="fm-inline-message" id="fm-inline-message-3" value="warn"><label for="fm-inline-message-3">Warning</label>
+    <input type="radio" name="fm-inline-message" id="fm-inline-message-4" value="ok"><label for="fm-inline-message-4">Success</label>
+  </div>
+  <div class="fm-stage" data-fm-stage></div>
+  <p class="fig-cap" data-fm-when aria-live="polite"></p>
+  
+  <script>
+  (() => {
+    const fm = document.currentScript.closest('[data-fm]'), stage = fm.querySelector('[data-fm-stage]'), when = fm.querySelector('[data-fm-when]');
+    const icon = n => '<svg class="icon"><use href="#i-' + n + '"/></svg>';
+    const frame = (title, body) => '<div class="app-frame fm-frame"><div class="app-bar"><span>' + title + '</span></div><div class="app-body">' + body + '</div></div>';
+    const field = (label, input, msg) => '<div class="field fi-field"><label class="fi-l"><span class="field-label">' + label + '</span>' + input + '</label><p class="field-msg fi-msg" data-msg aria-live="polite">' + (msg || '') + '</p></div>';
+    const acts = btn => '<div class="fi-acts"><button class="btn btn-primary cs-sm" type="button" data-go>' + btn + '</button><span class="cs-meta" data-out></span></div>';
+    const link = (s, msg) => { const inp = s.querySelector('input'); if ('ariaDescribedByElements' in inp) inp.ariaDescribedByElements = [msg]; return inp; };
+    const say = (m, cls, html) => { m.className = 'field-msg fi-msg' + (cls ? ' ' + cls : ''); m.innerHTML = html; };
+    const F = {
+      hint: {
+        html: frame('Account', field('New password', '<input class="input" type="password" autocomplete="new-password">') + acts('Save')),
+        use: 'Use it to say what a field needs before people type.',
+        more: 'It stays in view while they type, unlike placeholder text that disappears.',
+        wire: s => {
+          const m = s.querySelector('[data-msg]'), inp = link(s, m), out = s.querySelector('[data-out]');
+          say(m, 'fi-help', 'Use 8 or more characters. A short sentence is easy to remember.');
+          s.querySelector('[data-go]').addEventListener('click', () => { out.textContent = inp.value.length >= 8 ? 'Password saved.' : 'Not saved yet. It needs 8 or more characters.'; });
+        }
+      },
+      error: {
+        html: frame('Checkout', field('Email for your receipt', '<input class="input" type="email" value="anna.lee@gmail" autocomplete="off" spellcheck="false" aria-invalid="true">') + acts('Continue')),
+        use: 'Use it when a value can’t be accepted and people must change it to go on.',
+        more: 'Say how to fix it, and clear it the moment the value is right.',
+        wire: s => {
+          const m = s.querySelector('[data-msg]'), inp = link(s, m), out = s.querySelector('[data-out]');
+          const valid = () => /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(inp.value.trim());
+          const set = bad => { inp.setAttribute('aria-invalid', bad); say(m, '', bad ? icon('warn') + '<span>Enter a full email address, like name@example.com.</span>' : ''); };
+          set(true);
+          inp.addEventListener('input', () => { out.textContent = ''; if (inp.getAttribute('aria-invalid') === 'true' && valid()) set(false); });
+          inp.addEventListener('blur', () => set(!valid()));
+          s.querySelector('[data-go]').addEventListener('click', () => { if (!valid()) { set(true); inp.focus(); out.textContent = ''; } else out.textContent = 'Receipt will go to ' + inp.value.trim() + '.'; });
+        }
+      },
+      warn: {
+        html: frame('Send money', '<p class="fi-to">To <b>Sam Rivera</b>, account ending 4821</p>' + field('Amount', '<span class="fi-amt"><span>$</span><input class="input" inputmode="decimal" value="2500" autocomplete="off"></span>') + acts('Continue')),
+        use: 'Use it when a value is allowed but may be a mistake.',
+        more: 'It doesn’t block the form, so people can check and still go on.',
+        wire: s => {
+          const m = s.querySelector('[data-msg]'), inp = link(s, m), out = s.querySelector('[data-out]');
+          const amt = () => parseFloat(inp.value.replace(/[^0-9.]/g, '')) || 0;
+          const check = () => say(m, 'fi-warn', amt() > 1000 ? icon('warn') + '<span>That’s more than you usually send. Check the amount before you go on.</span>' : '');
+          check();
+          inp.addEventListener('input', () => { out.textContent = ''; check(); });
+          s.querySelector('[data-go]').addEventListener('click', () => { out.textContent = amt() ? 'Ready to send $' + amt().toLocaleString('en-US') + '.' : ''; if (!amt()) inp.focus(); });
+        }
+      },
+      ok: {
+        html: frame('Create account', field('Username', '<input class="input" value="anna.lee" autocomplete="off" spellcheck="false">') + acts('Continue')),
+        use: 'Use it only when people wait to learn whether a value works, like a free username.',
+        more: 'Most fields don’t need one.',
+        wire: s => {
+          const m = s.querySelector('[data-msg]'), inp = link(s, m), out = s.querySelector('[data-out]');
+          const taken = ['anna', 'admin', 'alex', 'sam', 'test'];
+          let tok = 0, last = null;
+          const done = v => taken.includes(v.toLowerCase())
+            ? (inp.setAttribute('aria-invalid', 'true'), say(m, '', icon('warn') + '<span>That name is taken. Try adding a dot or a number.</span>'))
+            : (inp.setAttribute('aria-invalid', 'false'), say(m, 'fi-ok', icon('check') + '<span>That name is free.</span>'));
+          const check = () => {
+            const v = inp.value.trim();
+            if (v === last) return; last = v;
+            const t = ++tok, g = gen;
+            if (!v) { say(m, '', ''); inp.removeAttribute('aria-invalid'); return; }
+            say(m, 'fi-wait', '<span class="spinner" aria-hidden="true"></span><span>Checking…</span>');
+            setTimeout(() => { if (g !== gen || t !== tok) return; done(v); }, 700);
+          };
+          done(inp.value); last = inp.value.trim();
+          inp.addEventListener('input', () => { tok++; last = null; out.textContent = ''; say(m, '', ''); inp.removeAttribute('aria-invalid'); });
+          inp.addEventListener('blur', check);
+          inp.addEventListener('keydown', e => { if (e.key === 'Enter') check(); });
+          s.querySelector('[data-go]').addEventListener('click', () => { check(); out.textContent = ''; });
+        }
+      }
+    };
+    let gen = 0;
+    const show = k => {
+      gen++;
+      stage.innerHTML = F[k].html; F[k].wire(stage);
+      when.innerHTML = '<b>' + fm.querySelector('.fm-seg input:checked + label').textContent + '.</b> ' + F[k].use + ' ' + F[k].more;
+    };
+    fm.querySelectorAll('.fm-seg input').forEach(i => i.addEventListener('change', () => show(i.value)));
+    show('hint');
+  })();
+  </script>
+</div>

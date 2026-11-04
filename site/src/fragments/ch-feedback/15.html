@@ -1,0 +1,125 @@
+<script>
+(() => {
+  const cs = document.currentScript.closest('.cs');
+  const D = (k, html, wire) => csDemo(cs.querySelector('[data-d="' + k + '"]'), html, wire);
+  const icon = n => '<svg class="icon sm"><use href="#i-' + n + '"/></svg>';
+  const frame = (title, body, foot, extra) => '<div class="app-frame" style="width:min(340px,100%);position:relative">' + (extra || '') +
+    '<div class="app-bar"><span>' + title + '</span></div><div class="app-body" data-body>' + body + '</div>' +
+    (foot ? '<div style="padding:0 16px 16px;display:flex;gap:8px;flex-wrap:wrap">' + foot + '</div>' : '') + '</div>';
+
+  /* 1. Errors people must read */
+  const upHtml = frame('Upload photos', '<div data-list><div class="cs-row"><span class="grow">beach.jpg</span><span class="cs-ok">Uploaded</span></div></div>',
+    '<button class="btn btn-primary" type="button" data-up>Upload photo.heic</button>');
+  D('t1b', upHtml, (d, t) => {
+    d.querySelector('[data-up]').addEventListener('click', () => t.after(() => csToast(d, t, 'Upload failed: photo.heic is too large', { tone: 'error', ms: 3000 }), 500));
+  });
+  D('t1f', upHtml, (d, t) => {
+    const list = d.querySelector('[data-list]');
+    d.querySelector('[data-up]').addEventListener('click', () => t.after(() => {
+      if (list.querySelector('[data-heic]')) return;
+      const row = document.createElement('div'); row.setAttribute('data-heic', '');
+      row.innerHTML = '<div class="cs-row" style="border-bottom:0"><span class="grow">photo.heic</span><span style="color:var(--ui-danger);font-weight:600">Not uploaded</span></div>' +
+        '<p class="field-msg" style="margin-bottom:6px">' + icon('warn') + '<span>Too large (34 MB). The limit is 20 MB.</span></p>' +
+        '<div style="display:flex;gap:6px;flex-wrap:wrap;padding-bottom:8px"><button class="btn btn-secondary cs-sm" type="button" data-zip>Compress and upload</button><button class="btn btn-ghost cs-sm" type="button" data-rm>Remove</button></div>';
+      list.appendChild(row);
+      row.querySelector('[data-zip]').addEventListener('click', () => { row.innerHTML = '<div class="cs-row"><span class="grow">photo.heic</span><span class="cs-meta">Compressing…</span></div>'; t.after(() => { row.innerHTML = '<div class="cs-row"><span class="grow">photo.heic</span><span class="cs-ok">Uploaded</span></div>'; }, 900); });
+      row.querySelector('[data-rm]').addEventListener('click', () => row.remove());
+    }, 500));
+  });
+
+  /* 2. Needs an action */
+  const updHtml = frame('Notes', '<div class="line" style="width:82%"></div><div class="line" style="width:64%"></div><div class="line" style="width:74%"></div><p class="cs-meta" data-note></p>',
+    '<button class="btn btn-secondary" type="button" data-go>Check for updates</button>', '<div data-ban></div>');
+  D('t2b', updHtml, (d, t) => {
+    const note = d.querySelector('[data-note]');
+    d.querySelector('[data-go]').addEventListener('click', () => t.after(() => csToast(d, t, 'Update ready', { ms: 4000, action: { label: 'Restart', run: () => { note.textContent = 'Restarting…'; } } }), 400));
+  });
+  D('t2f', updHtml, (d, t) => {
+    const ban = d.querySelector('[data-ban]'), note = d.querySelector('[data-note]');
+    d.querySelector('[data-go]').addEventListener('click', () => t.after(() => {
+      ban.innerHTML = '<div class="banner">' + icon('info') + '<span class="grow">Update ready. Restart to finish installing.</span></div><div style="display:flex;gap:6px;padding:8px 14px;border-bottom:1px solid var(--ui-border)"><button class="btn btn-primary cs-sm" type="button" data-rs>Restart</button><button class="btn btn-ghost cs-sm" type="button" data-later>Later</button></div>';
+      ban.querySelector('[data-rs]').addEventListener('click', () => { ban.innerHTML = ''; note.textContent = 'Restarting…'; });
+      ban.querySelector('[data-later]').addEventListener('click', () => { ban.innerHTML = ''; note.textContent = 'We’ll remind you tomorrow.'; });
+    }, 400));
+  });
+
+  /* 3. Several at once */
+  const thumbs = '<div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px"><div class="thumb"></div><div class="thumb b"></div><div class="thumb c"></div></div>';
+  const upsHtml = frame('Photos', thumbs, '<button class="btn btn-primary" type="button" data-go>Upload 3 photos</button>');
+  D('t3b', upsHtml, (d, t) => {
+    d.querySelector('[data-go]').addEventListener('click', () => [201, 202, 203].forEach((n, i) => t.after(() => csToast(d, t, 'IMG_' + n + '.jpg uploaded', { ms: 4000 }), 300 + i * 350)));
+  });
+  D('t3f', upsHtml, (d, t) => {
+    d.querySelector('[data-go]').addEventListener('click', () => {
+      const el = csToast(d, t, 'Uploading 1 of 3…', { ms: 0, replace: true });
+      [2, 3].forEach((n, i) => t.after(() => { el.firstChild.textContent = 'Uploading ' + n + ' of 3…'; }, 350 * (i + 1)));
+      t.after(() => { el.firstChild.textContent = '3 photos uploaded'; t.after(el.hide, 3500); }, 1100);
+    });
+  });
+
+  /* 4. Not looking */
+  const awayHtml = '<div class="app-frame" style="width:min(340px,100%)"><div class="app-bar" style="justify-content:flex-start;gap:4px">' +
+    '<button class="cs-tab on" type="button" data-tab="files">Files<span class="badge" hidden>1</span></button><button class="cs-tab" type="button" data-tab="msgs">Messages</button></div>' +
+    '<div class="app-body" data-files><button class="btn btn-primary" type="button" data-exp style="align-self:flex-start">Export report</button><p class="cs-meta" data-st></p><div data-dl></div></div>' +
+    '<div class="app-body" data-msgs hidden><div class="cs-row"><span class="grow">Lena: lunch on Friday?</span></div><div class="cs-row"><span class="grow">Sam: sent the invoice</span></div><div class="cs-row"><span class="grow">Maya: photos from the trip</span></div></div></div>';
+  const awayWire = fixed => (d, t) => {
+    const tabs = d.querySelectorAll('.cs-tab'), files = d.querySelector('[data-files]'), msgs = d.querySelector('[data-msgs]'), badge = d.querySelector('.badge'), st = d.querySelector('[data-st]'), dl = d.querySelector('[data-dl]');
+    let onFiles = true;
+    const go = which => {
+      onFiles = which === 'files'; files.hidden = !onFiles; msgs.hidden = onFiles;
+      tabs.forEach(b => b.classList.toggle('on', b.dataset.tab === which));
+      if (onFiles) badge.hidden = true;
+    };
+    tabs.forEach(b => b.addEventListener('click', () => go(b.dataset.tab)));
+    d.querySelector('[data-exp]').addEventListener('click', e => {
+      e.target.disabled = true; st.textContent = 'Exporting… (4 s)';
+      t.after(() => {
+        st.textContent = '';
+        if (onFiles) csToast(d, t, 'report.pdf is ready', { ms: 3000 });
+        if (fixed) {
+          dl.innerHTML = '<div class="cs-row"><span class="grow">' + icon('folder') + ' report.pdf</span><span class="cs-ok">Ready</span></div>';
+          if (!onFiles) badge.hidden = false;
+        }
+      }, 4000);
+    });
+  };
+  D('t4b', awayHtml, awayWire(false));
+  D('t4f', awayHtml, awayWire(true));
+
+  /* 5. Confirm vs Undo */
+  const MAILS = ['Lena · Lunch on Friday?', 'Sam · Invoice for October', 'Maya · Photos from the trip', 'Ops · Weekly report'];
+  const mailHtml = frame('Inbox', '<div data-list></div><p class="cs-meta" data-count></p>');
+  const mailWire = fixed => (d, t) => {
+    const list = d.querySelector('[data-list]'), count = d.querySelector('[data-count]'), box = d.querySelector('.app-frame');
+    let clicks = 0;
+    const tick = () => { count.textContent = 'Clicks so far: ' + clicks; };
+    const rowFor = text => {
+      const r = document.createElement('div'); r.className = 'cs-row';
+      r.innerHTML = '<span class="grow"></span><button class="icon-btn" type="button" style="width:32px;height:32px">' + icon('trash') + '</button>';
+      r.firstChild.textContent = text; r.lastChild.setAttribute('aria-label', 'Delete ' + text);
+      r.lastChild.addEventListener('click', () => { clicks++; tick(); del(r, text); });
+      return r;
+    };
+    const del = (r, text) => {
+      if (fixed) {
+        const idx = Array.from(list.children).indexOf(r); r.remove();
+        csToast(d, t, 'Email deleted', { ms: 5000, replace: true, action: { label: 'Undo', run: () => { clicks++; tick(); list.insertBefore(rowFor(text), list.children[idx] || null); } } });
+        return;
+      }
+      const m = document.createElement('div'); m.className = 'cs-modal';
+      m.innerHTML = '<div class="cs-dlg" role="dialog" aria-label="Delete email"><b>Delete this email?</b><p></p><div class="acts"><button class="btn btn-secondary cs-sm" type="button" data-c>Cancel</button><button class="btn btn-danger cs-sm" type="button" data-ok>Delete</button></div></div>';
+      m.querySelector('p').textContent = text;
+      box.appendChild(m); m.querySelector('[data-ok]').focus();
+      m.querySelector('[data-c]').addEventListener('click', () => { clicks++; tick(); m.remove(); });
+      m.querySelector('[data-ok]').addEventListener('click', () => { clicks++; tick(); m.remove(); r.remove(); });
+    };
+    MAILS.forEach(x => list.appendChild(rowFor(x)));
+    tick();
+  };
+  D('t5b', mailHtml, mailWire(false));
+  D('t5f', mailHtml, mailWire(true));
+
+  csInit(cs);
+})();
+
+  </script>

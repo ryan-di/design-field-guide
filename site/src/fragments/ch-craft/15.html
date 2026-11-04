@@ -1,0 +1,103 @@
+<div class="fm" data-fm>
+  <div class="seg fm-seg" role="radiogroup" aria-label="Way to move">
+    <input type="radio" name="fm-good-keyboard-focus" id="fm-good-keyboard-focus-1" value="tab" checked><label for="fm-good-keyboard-focus-1">Tab</label>
+    <input type="radio" name="fm-good-keyboard-focus" id="fm-good-keyboard-focus-2" value="arrows"><label for="fm-good-keyboard-focus-2">Arrow keys</label>
+    <input type="radio" name="fm-good-keyboard-focus" id="fm-good-keyboard-focus-3" value="skip"><label for="fm-good-keyboard-focus-3">Skip link</label>
+    <input type="radio" name="fm-good-keyboard-focus" id="fm-good-keyboard-focus-4" value="keys"><label for="fm-good-keyboard-focus-4">Shortcuts</label>
+  </div>
+  <div class="fm-stage" data-fm-stage></div>
+  <p class="fig-cap" data-fm-when aria-live="polite"></p>
+  
+  <script>
+  (() => {
+    const fm = document.currentScript.closest('[data-fm]'), stage = fm.querySelector('[data-fm-stage]'), when = fm.querySelector('[data-fm-when]');
+    const out = '<p class="cs-meta" data-out>Focus: not in the demo yet</p>';
+    const name = el => el.getAttribute('data-n') || el.getAttribute('aria-label') || el.textContent.trim();
+    const track = s => {
+      const o = s.querySelector('[data-out]');
+      s.addEventListener('focusin', e => { o.textContent = 'Focus: ' + name(e.target); });
+      s.addEventListener('focusout', e => { if (!e.relatedTarget || !s.contains(e.relatedTarget)) o.textContent = 'Focus: left the demo'; });
+    };
+    const F = {
+      tab: {
+        html: '<div class="fk-col"><div class="fk-form"><label class="fk-l">Name<input class="input" value="Alex Kim" data-n="Name"></label>' +
+          '<label class="fk-l">Email<input class="input" type="email" value="alex@example.com" data-n="Email"></label>' +
+          '<label class="check"><input type="checkbox" data-n="Send me the newsletter"><span>Send me the newsletter</span></label>' +
+          '<button class="btn btn-primary cs-sm" type="button" style="align-self:flex-start">Sign up</button></div>' + out + '</div>',
+        use: 'Tab moves to the next field, button or link in reading order, and Shift+Tab goes back.',
+        how: 'click Name, then press Tab.',
+        wire: track
+      },
+      arrows: {
+        html: '<div class="fk-col"><div class="fk-form" style="padding:8px 8px 4px"><div class="fk-tabs" role="tablist" aria-label="Calendar view">' +
+          ['Day', 'Week', 'Month', 'Year'].map((t, i) => '<button class="fk-tab" type="button" role="tab" aria-selected="' + (i === 1) + '" tabindex="' + (i === 1 ? 0 : -1) + '" data-n="' + t + ' tab">' + t + '</button>').join('') +
+          '</div><div class="fk-panel" role="tabpanel" tabindex="0" data-n="Calendar" data-panel></div>' +
+          '<button class="btn btn-secondary cs-sm" type="button" style="align-self:flex-start;margin:0 4px 8px">New event</button></div>' + out + '</div>',
+        use: 'A group of options, such as tabs, a radio set or a menu, is one Tab stop, and arrow keys move inside it. People don’t have to tab through every option to get past the group.',
+        how: 'click Week, press the arrow keys, then press Tab.',
+        wire: s => {
+          track(s);
+          const tabs = [...s.querySelectorAll('.fk-tab')], panel = s.querySelector('[data-panel]');
+          const TEXT = { Day: 'Today: dentist at 9:30, lunch with Sam at 13:00.', Week: 'This week: 6 events. Busiest day is Thursday.', Month: 'November: 21 events, 2 trips.', Year: '2026: 140 events so far.' };
+          const pick = (i, focus) => {
+            tabs.forEach((t, k) => { t.setAttribute('aria-selected', String(k === i)); t.tabIndex = k === i ? 0 : -1; });
+            panel.textContent = TEXT[tabs[i].textContent];
+            if (focus) tabs[i].focus();
+          };
+          tabs.forEach((t, i) => {
+            t.addEventListener('click', () => pick(i));
+            t.addEventListener('keydown', e => {
+              const n = { ArrowRight: i + 1, ArrowLeft: i - 1, Home: 0, End: tabs.length - 1 }[e.key];
+              if (n === undefined) return;
+              e.preventDefault(); pick((n + tabs.length) % tabs.length, true);
+            });
+          });
+          pick(1);
+        }
+      },
+      skip: {
+        html: '<div class="fk-col"><button class="btn btn-secondary cs-sm" type="button" style="align-self:flex-start" data-load>Load the page</button><div class="fk-page"><a class="fk-skip" href="#" data-skip data-n="Skip to main content">Skip to main content</a>' +
+          '<div class="fk-nav">' + ['Home', 'New in', 'Women', 'Men', 'Sale', 'Help', 'Account', 'Bag'].map(t => '<a href="#" data-n="' + t + ' link">' + t + '</a>').join('') + '</div>' +
+          '<div class="fk-main"><h6 tabindex="-1" data-main data-n="Main content: Winter coats">Winter coats</h6><div class="line" style="width:90%"></div><div class="line" style="width:70%"></div>' +
+          '<button class="btn btn-secondary cs-sm" type="button" style="align-self:flex-start">Sort by price</button></div></div>' + out + '</div>',
+        use: 'The first Tab on the page shows a “Skip to main content” link. Enter jumps past the header, so people don’t tab through the same eight links on every page.',
+        how: 'press Load the page, then press Tab and Enter.',
+        wire: s => {
+          track(s);
+          s.querySelectorAll('a').forEach(a => a.addEventListener('click', e => e.preventDefault()));
+          s.querySelector('[data-skip]').addEventListener('click', () => s.querySelector('[data-main]').focus());
+          s.querySelector('[data-load]').addEventListener('click', () => { s.querySelector('[data-out]').textContent = 'Page loaded. Press Tab.'; });
+        }
+      },
+      keys: {
+        html: '<div class="fk-col"><div class="fk-list" tabindex="0" aria-label="Inbox. Use j and k to move, e to archive, ? for help." data-n="Inbox list" data-list></div>' +
+          '<div class="fk-help" data-help hidden><b>Shortcuts</b><br><kbd>j</kbd> next · <kbd>k</kbd> previous · <kbd>e</kbd> archive · <kbd>?</kbd> this list</div>' +
+          '<div class="fk-keys"><span><kbd>j</kbd> <kbd>k</kbd> move</span><span><kbd>e</kbd> archive</span><span><kbd>?</kbd> all shortcuts</span></div><p class="cs-meta" data-out>Click the inbox to start.</p></div>',
+        use: 'Single keys run frequent actions. They add to Tab and never replace it, and a ? key lists them so people can learn them.',
+        how: 'click the inbox, then press j, k and e.',
+        wire: s => {
+          const MAIL = [['Sam', 'Dinner on Friday?'], ['Bank', 'Your statement is ready'], ['Mia', 'Photos from the trip'], ['Shop', 'Your order has shipped'], ['Leo', 'Notes from the meeting']];
+          let list = MAIL.slice(), cur = 0;
+          const box = s.querySelector('[data-list]'), o = s.querySelector('[data-out]'), help = s.querySelector('[data-help]');
+          const draw = () => { box.innerHTML = list.length ? list.map((m, i) => '<div class="fk-mail' + (i === cur ? ' on' : '') + '"><b>' + m[0] + '</b><span>' + m[1] + '</span></div>').join('') : '<div class="fk-mail"><span>Inbox empty.</span></div>'; };
+          box.addEventListener('keydown', e => {
+            if (e.key === 'j' || e.key === 'k') { cur = Math.max(0, Math.min(list.length - 1, cur + (e.key === 'j' ? 1 : -1))); o.textContent = list.length ? 'Current: ' + list[cur][1] : 'Inbox empty.'; }
+            else if (e.key === 'e' && list.length) { o.textContent = 'Archived: ' + list[cur][1]; list.splice(cur, 1); cur = Math.min(cur, list.length - 1); }
+            else if (e.key === '?') { help.hidden = !help.hidden; }
+            else return;
+            e.preventDefault(); draw();
+          });
+          box.addEventListener('focus', () => { if (o.textContent.startsWith('Click')) o.textContent = 'Current: ' + list[cur][1]; });
+          draw();
+        }
+      }
+    };
+    const show = k => {
+      stage.innerHTML = F[k].html; F[k].wire(stage);
+      when.innerHTML = '<b>' + fm.querySelector('.fm-seg input:checked + label').textContent + '.</b> ' + F[k].use + ' <b>Try:</b> ' + F[k].how;
+    };
+    fm.querySelectorAll('.fm-seg input').forEach(i => i.addEventListener('change', () => show(i.value)));
+    show('tab');
+  })();
+  </script>
+</div>

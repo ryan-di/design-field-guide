@@ -1,0 +1,78 @@
+<script>
+(() => {
+  const cs = document.currentScript.closest('.cs');
+  const D = (k, html, wire) => csDemo(cs.querySelector('[data-d="' + k + '"]'), html, wire);
+  const P = '#eff-brief ';
+  const st = document.createElement('style');
+  st.textContent = [
+    '.bf-card{width:min(400px,100%);display:flex;flex-direction:column;gap:10px;text-align:left;background:var(--ui-surface);border:1px solid var(--ui-border);border-radius:12px;padding:14px;box-shadow:var(--ui-shadow);color:var(--ui-text);font-size:14px;line-height:1.45}',
+    '.bf-k{font:600 11px var(--font-mono);letter-spacing:.08em;text-transform:uppercase;color:var(--ui-muted)}',
+    '.bf-doc{display:flex;flex-direction:column;gap:4px;border:1px solid var(--ui-border);border-radius:9px;padding:9px 11px;background:var(--ui-bg)}',
+    '.bf-doc b{font-weight:600}',
+    '.bf-doc .new{background:var(--ui-sel-soft);border-radius:5px;padding:0 4px;margin:0 -4px}',
+    '.bf-vague{text-decoration:underline wavy var(--ui-danger);text-underline-offset:3px}',
+    '.bf-acts{display:flex;gap:8px;flex-wrap:wrap;align-items:center}',
+    '.bf-ag{display:flex;flex-direction:column;gap:5px;border-left:3px solid var(--ui-sel);padding:2px 0 2px 10px}',
+    '.bf-ag:empty,.bf-res:empty{display:none}',
+    '.bf-res{display:flex;flex-direction:column;gap:4px}',
+    '.bf-bad{color:var(--ui-danger)}',
+    '.bf-good{color:var(--ui-ok)}',
+    '.bf-li{display:flex;gap:8px;align-items:baseline}','.bf-li > span{min-width:0}',
+    '.bf-li i{font:600 12.5px var(--font-mono);font-style:normal;width:14px;flex:none;text-align:center}',
+    '.bf-li.extra i{color:var(--ui-danger)}',
+    '.bf-li.ok i{color:var(--ui-ok)}',
+    '.bf-li.no i{color:var(--ui-danger)}',
+    '.bf-li em{font-style:normal;color:var(--ui-muted);font:500 12.5px var(--font-mono);margin-left:auto;white-space:nowrap;padding-left:8px;flex:none}'
+  ].map(r => r.replace(/^[^{]+/, s => s.split(',').map(x => P + x.trim()).join(','))).join('\n');
+  cs.appendChild(st);
+
+  const card = (title, brief, btn) => '<div class="bf-card"><span class="bf-k">' + title + '</span><div class="bf-doc">' + brief + '</div>' +
+    '<div class="bf-acts" data-acts><button class="btn btn-primary cs-sm" type="button" data-go>' + btn + '</button></div>' +
+    '<div class="bf-ag" data-ag aria-live="polite"></div><div class="bf-res" data-res aria-live="polite"></div></div>';
+  const li = (cls, mark, text, note) => '<span class="bf-li ' + cls + '"><i>' + mark + '</i><span>' + text + '</span>' + (note ? '<em>' + note + '</em>' : '') + '</span>';
+  const send = (agent, result) => (d, t) => {
+    const ag = d.querySelector('[data-ag]'), res = d.querySelector('[data-res]');
+    d.querySelector('[data-go]').addEventListener('click', e => {
+      e.target.disabled = true; ag.innerHTML = '<span class="cs-meta">Agent is working…</span>';
+      t.after(() => { ag.innerHTML = agent; res.innerHTML = result; }, 600);
+    });
+  };
+
+  /* 1. Solution-shaped */
+  D('eff-brief-1b', card('Brief', '<span>Add a search bar to Settings.</span>', 'Send to agent'),
+    send('<span class="bf-k">Agent</span><span>Built a search bar at the top of Settings.</span>',
+      '<span class="bf-bad">It works. Nobody asked whether a search bar was the best way to solve the problem.</span>'));
+  D('eff-brief-1f', card('Brief', '<span><b>Problem:</b> people can’t find how to turn off email alerts.</span><span><b>Goal:</b> they can turn them off in under 30 seconds.</span><span><b>One option:</b> a search bar in Settings.</span>', 'Send to agent'),
+    send('<span class="bf-k">Agent</span><span>Three options:</span>' + li('', '1', 'A search bar in Settings') + li('', '2', 'A “Turn off these emails” link in every email') + li('', '3', 'One page for all alerts'),
+      '<span class="bf-good">Option 2 takes one click from where people already are. It came up because the brief named the problem.</span>'));
+
+  /* 2. No non-goals */
+  const loginBrief = '<span><b>Problem:</b> the login error says “Error 401”, and people don’t know what to do.</span><span><b>Goal:</b> the error says what went wrong and what to try next.</span>';
+  D('eff-brief-2b', card('Brief', loginBrief, 'Send to agent'),
+    send('<span class="bf-k">Agent’s PR</span>' + li('ok', '✓', 'New error message') + li('extra', '+', 'Redesigned the login page layout') + li('extra', '+', 'Renamed “Sign in” to “Log in”') + li('extra', '+', 'Added a “Remember me” option'),
+      '<span class="bf-bad">Three changes you didn’t ask for. Each one needs a review, and the rename breaks the help pages.</span>'));
+  D('eff-brief-2f', card('Brief', loginBrief + '<span class="new"><b>Non-goals:</b> the page layout, button wording, new options.</span>', 'Send to agent'),
+    send('<span class="bf-k">Agent’s PR</span>' + li('ok', '✓', 'New error message: “That password doesn’t match. Try again, or reset it.”'),
+      '<span class="bf-good">One change, quick to review.</span>'));
+
+  /* 3. No success criteria */
+  const langBrief = '<span><b>Problem:</b> people who share a computer can’t change the app’s language.</span><span><b>Goal:</b> anyone can switch the language from Settings.</span>';
+  D('eff-brief-3b', card('Brief', langBrief, 'Is it done?'),
+    send('<span class="bf-k">Agent</span><span>Done ✓ Added a language menu to Settings.</span>',
+      '<span class="bf-k">Review</span><span>“Looks fine to me.” “Shouldn’t it be faster to find?”</span><span class="bf-bad">The brief doesn’t say what done means, so the review is a matter of opinion.</span>'));
+  D('eff-brief-3f', card('Brief', langBrief + '<span class="new"><b>Success:</b> a new user changes the language in under a minute. The choice stays after a restart. It works with the keyboard only.</span>', 'Check against the brief'),
+    send('<span class="bf-k">Checked in the app</span>' + li('ok', '✓', 'Changed in under a minute', '40 s') + li('ok', '✓', 'Stays after a restart') + li('no', '✗', 'Works with the keyboard only', 'Enter fails'),
+      '<span class="bf-good">2 of 3 met. Not done yet, and everyone can see what’s left.</span>'));
+
+  /* 4. Vague words */
+  D('eff-brief-4b', card('Brief', '<span>Make checkout <span class="bf-vague">cleaner</span> and more <span class="bf-vague">intuitive</span>.</span>', 'Ask 3 agents'),
+    send('<span class="bf-k">Results</span>' + li('', '1', 'Removed the coupon field') + li('', '2', 'New colors and bigger buttons') + li('', '3', 'Moved the total to the top'),
+      '<span class="bf-bad">Three agents, three ideas of “cleaner”. The brief can’t tell you which one is right.</span>'));
+  D('eff-brief-4f', card('Brief', '<span>People pay in three steps or fewer. They see the total before they enter card details.</span>', 'Ask 3 agents'),
+    send('<span class="bf-k">Results</span>' + li('ok', '1', 'Address and delivery on one step', '3 steps') + li('ok', '2', 'Total shown in a summary at the top', '3 steps') + li('ok', '3', 'Total on the first step and by Pay', '3 steps'),
+      '<span class="bf-good">Different designs, and each one can be checked against the same two facts.</span>'));
+
+  csInit(cs);
+})();
+
+</script>

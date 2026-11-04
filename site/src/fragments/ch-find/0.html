@@ -1,0 +1,26 @@
+<div class="stage tall" data-demo="pat-command-palette">
+      <div class="app-frame p13-app">
+        <div class="app-bar p13-bar">
+          <span>Trip notes</span>
+          <button class="btn btn-secondary" type="button" data-open aria-haspopup="dialog" aria-expanded="false" aria-controls="p13-palette" aria-keyshortcuts="Control+K Meta+K">Open command palette <span class="p13-kbd" aria-hidden="true"><kbd data-mod>Ctrl</kbd><kbd>K</kbd></span></button>
+        </div>
+        <div class="p13-canvas" tabindex="-1">
+          <div class="p13-nodes" data-nodes><span class="node">Heading</span><span class="node">Paragraph</span></div>
+          <div class="p13-minimap" hidden></div>
+          <div class="surface p13-palette" id="p13-palette" role="dialog" aria-label="Command palette" hidden>
+            <div class="p13-qwrap"><svg class="icon"><use href="#i-search"/></svg><input class="input" id="p13-cmd-q" role="combobox" aria-expanded="true" aria-controls="p13-cmd-list" aria-autocomplete="list" aria-label="Search commands" autocomplete="off" spellcheck="false" placeholder="Type a command"></div>
+            <ul class="p13-list" id="p13-cmd-list" role="listbox" aria-label="Commands"></ul>
+            <div class="p13-foot"><span>↑↓ move · Enter run · Esc close</span><span data-count></span></div>
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <span class="p13-label" id="p13-match-label">Matching</span>
+        <div class="seg" role="radiogroup" aria-labelledby="p13-match-label">
+          <input type="radio" name="p13-match" id="p13-match-exact" value="exact"><label for="p13-match-exact">Exact</label>
+          <input type="radio" name="p13-match" id="p13-match-fuzzy" value="fuzzy" checked><label for="p13-match-fuzzy">Fuzzy + synonyms</label>
+        </div>
+      </div>
+      <p class="p13-sr" aria-live="polite" data-live></p>
+      <p class="try"><b>Try it:</b> open the palette, or click the page and press Ctrl+K or ⌘K. Type “send”, “zoom” or “xpdf”, then pick with the arrow keys and Enter. Now switch matching to Exact and type “send” again.</p>
+    </div>

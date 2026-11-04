@@ -1,0 +1,129 @@
+<script>
+(() => {
+  const cs = document.currentScript.closest('.cs');
+  const D = (k, html, wire) => csDemo(cs.querySelector('[data-d="' + k + '"]'), html, wire);
+  const icon = n => '<svg class="icon"><use href="#i-' + n + '"/></svg>';
+  const sk = (cls, style) => '<span class="skel' + (cls ? ' ' + cls : '') + '"' + (style ? ' style="' + style + '"' : '') + ' aria-hidden="true"></span>';
+  const frame = (title, bar, body) => '<div class="app-frame" style="width:min(340px,100%)"><div class="app-bar"><span>' + title + '</span>' + (bar || '') + '</div><div class="app-body">' + body + '</div></div>';
+  const reload = '<button class="btn btn-secondary cs-sm" type="button" data-go>Reload</button>';
+  // Run fn once the element is actually on screen (case shown, mode picked, scrolled into view).
+  const onSeen = (el, fn) => {
+    if (!('IntersectionObserver' in window)) { fn(); return; }
+    const o = new IntersectionObserver(es => { if (es.some(e => e.isIntersecting)) { o.disconnect(); if (el.isConnected) fn(); } });
+    o.observe(el);
+  };
+
+  /* 1. Wrong shape */
+  const PH = ['', ' b', ' c', ' b', '', ' c'];
+  const photos = '<div class="sk-grid">' + PH.map(c => '<span class="thumb' + c + '"></span>').join('') + '</div>';
+  const albumHtml = frame('Lisbon trip', reload,
+    '<div data-area aria-live="polite">' + photos + '</div><button class="btn btn-primary" type="button" data-share style="align-self:flex-start">Share album</button>') +
+    '<p class="cs-meta" data-m></p>';
+  const albumWire = fixed => (d, t) => {
+    const area = d.querySelector('[data-area]'), share = d.querySelector('[data-share]'), m = d.querySelector('[data-m]');
+    const loading = fixed ? '<div class="sk-grid">' + PH.map(() => sk()).join('') + '</div>' : '<div class="sk-lines">' + sk('t') + sk('t') + sk('t2') + '</div>';
+    d.querySelector('[data-go]').addEventListener('click', () => {
+      t.clear();
+      area.innerHTML = loading; area.setAttribute('aria-busy', 'true'); m.textContent = 'Loading photos…';
+      const y0 = share.offsetTop;
+      t.after(() => {
+        area.innerHTML = photos; area.removeAttribute('aria-busy');
+        const dy = share.offsetTop - y0;
+        m.textContent = dy ? 'Share album jumped ' + Math.abs(dy) + ' px when the photos arrived.' : 'Photos arrived. Share album didn’t move.';
+      }, 1600);
+    });
+    share.addEventListener('click', () => { m.textContent = 'Share options opened.'; });
+  };
+  D('skeleton-1b', albumHtml, albumWire(false));
+  D('skeleton-1f', albumHtml, albumWire(true));
+
+  /* 2. Too fast */
+  const LISTS = {
+    playlists: [['Focus', '32 songs', ''], ['Chill', '48 songs', ' b'], ['Workout', '25 songs', ' c']],
+    albums: [['Blue Hour', 'Mara Lin · 2024', ' c'], ['Night Drive', 'The Coasts · 2023', ''], ['Sunday Morning', 'Ana Ruiz · 2025', ' b']]
+  };
+  const rows = k => LISTS[k].map(([n, s, c]) => '<div class="sk-item"><span class="thumb' + c + '"></span><span class="sk-name">' + n + '</span><span class="cs-meta">' + s + '</span></div>').join('');
+  const skRows = LISTS.playlists.map(() => '<div class="sk-item">' + sk() + sk('t') + sk('t2') + '</div>').join('');
+  const fastHtml = '<div class="app-frame" style="width:min(340px,100%)"><div class="app-bar" style="justify-content:flex-start;gap:4px">' +
+    '<button class="cs-tab on" type="button" aria-pressed="true" data-k="playlists">Playlists</button><button class="cs-tab" type="button" aria-pressed="false" data-k="albums">Albums</button></div>' +
+    '<div class="app-body" style="gap:2px" data-area aria-live="polite">' + rows('playlists') + '</div></div><p class="cs-meta" data-m></p>';
+  const fastWire = fixed => (d, t) => {
+    const area = d.querySelector('[data-area]'), m = d.querySelector('[data-m]'), tabs = d.querySelectorAll('.cs-tab');
+    let req = 0;
+    tabs.forEach(b => b.addEventListener('click', () => {
+      tabs.forEach(x => { const on = x === b; x.classList.toggle('on', on); x.setAttribute('aria-pressed', String(on)); });
+      const id = ++req; let done = false;
+      m.textContent = '';
+      if (!fixed) area.innerHTML = skRows;
+      else t.after(() => { if (id === req && !done) area.innerHTML = skRows; }, 400); // only if loading is slow
+      t.after(() => {
+        if (id !== req) return;
+        done = true; area.innerHTML = rows(b.dataset.k);
+        m.textContent = fixed ? 'Loaded in 0.15 s, so it rendered directly.' : 'Loaded in 0.15 s. The placeholders flashed for 0.15 s.';
+      }, 150);
+    }));
+  };
+  D('skeleton-2b', fastHtml, fastWire(false));
+  D('skeleton-2f', fastHtml, fastWire(true));
+
+  /* 3. Load fails */
+  const MAIL = [['Lena', 'Lunch on Friday?', ''], ['Sam', 'Invoice for October', ' b'], ['Maya', 'Photos from the trip', ' c']];
+  const mails = MAIL.map(([w, s, c]) => '<div class="sk-mail"><span class="sk-av' + c + '"></span><b>' + w + '</b><span class="cs-meta">' + s + '</span></div>').join('');
+  const skMail = MAIL.map(() => '<div class="sk-mail">' + sk() + sk('t') + sk('t2') + '</div>').join('');
+  const inboxHtml = frame('Inbox', '', '<div class="sk-col" data-area aria-live="polite"></div>') + '<p class="cs-meta" data-m></p>';
+  const inboxWire = fixed => (d, t) => {
+    const area = d.querySelector('[data-area]'), m = d.querySelector('[data-m]');
+    const load = fail => {
+      t.clear(); m.textContent = '';
+      area.innerHTML = '<div>' + skMail + '</div>'; area.setAttribute('aria-busy', 'true');
+      t.after(() => {
+        if (!fail) { area.removeAttribute('aria-busy'); area.innerHTML = '<div>' + mails + '</div>'; m.textContent = 'Inbox loaded.'; return; }
+        if (!fixed) {
+          let s = 0;
+          m.textContent = 'Behind the scenes: loading just failed.';
+          t.every(() => { s++; m.textContent = 'Behind the scenes: loading failed ' + s + ' s ago.'; }, 1000);
+          return;
+        }
+        area.removeAttribute('aria-busy');
+        area.innerHTML = '<div class="sk-err" role="alert">' + icon('cloud-off') + '<div><b>Couldn’t load your inbox.</b><p>Check your connection, then try again.</p></div></div>' +
+          '<button class="btn btn-secondary cs-sm" type="button" data-retry style="align-self:flex-start">Retry</button>';
+        area.querySelector('[data-retry]').addEventListener('click', () => load(false));
+      }, 2000);
+    };
+    onSeen(area, () => load(true));
+  };
+  D('skeleton-3b', inboxHtml, inboxWire(false));
+  D('skeleton-3f', inboxHtml, inboxWire(true));
+
+  /* 4. Too busy */
+  const TX = [['Grocer', '−$42.10', '40%'], ['Salary', '+$3,200.00', '55%'], ['Coffee Lab', '−$4.50', '35%']];
+  const head = '<div class="sk-head"><b>Everyday account</b><span class="sk-chip">Last 7 days ▾</span></div>';
+  const bal = '<div class="sk-balw"><span class="cs-meta">Balance</span><div class="sk-bal">$2,480.16</div></div>';
+  const txs = '<div>' + TX.map(([n, a]) => '<div class="cs-row sk-tx"><span class="grow">' + n + '</span><span>' + a + '</span></div>').join('') + '</div>';
+  const txSk = cls => '<div data-tx>' + TX.map(r => '<div class="cs-row sk-tx">' + sk(cls, 'width:' + r[2]) + sk(cls, 'width:22%') + '</div>').join('') + '</div>';
+  const bankHtml = frame('Accounts', reload, '<div class="sk-col" data-area aria-live="polite"></div>');
+  const bankWire = fixed => (d, t) => {
+    const area = d.querySelector('[data-area]');
+    const load = () => {
+      t.clear(); area.setAttribute('aria-busy', 'true');
+      if (!fixed) {
+        const L = 'sk-loud';
+        area.innerHTML = '<div class="sk-head">' + sk(L, 'width:45%;height:14px') + sk(L, 'width:96px;height:26px;border-radius:999px') + '</div>' +
+          '<div class="sk-balw">' + sk(L, 'width:30%;height:16px') + sk(L, 'height:31px;width:60%') + '</div>' + txSk(L);
+        t.after(() => { area.innerHTML = head + bal + txs; area.removeAttribute('aria-busy'); }, 2600);
+        return;
+      }
+      area.innerHTML = head + '<div class="sk-balw" data-bal><span class="cs-meta">Balance</span>' + sk('sk-calm', 'height:31px;width:60%') + '</div>' + txSk('sk-calm');
+      t.after(() => { const b = area.querySelector('[data-bal]'); if (b) b.outerHTML = bal; }, 700);
+      t.after(() => { const x = area.querySelector('[data-tx]'); if (x) x.outerHTML = txs; area.removeAttribute('aria-busy'); }, 2600);
+    };
+    d.querySelector('[data-go]').addEventListener('click', load);
+    onSeen(area, load);
+  };
+  D('skeleton-4b', bankHtml, bankWire(false));
+  D('skeleton-4f', bankHtml, bankWire(true));
+
+  csInit(cs);
+})();
+
+  </script>

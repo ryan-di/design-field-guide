@@ -1,0 +1,47 @@
+<div class="note comfy cw-wrap"><p>Notice how each one marks the current place and makes room for more items.</p>
+      <div class="seg cw-seg" role="radiogroup" aria-label="Example">
+        <input type="radio" name="cw-side-nav-w" id="cw-side-nav-w-1" value="gmail" checked><label for="cw-side-nav-w-1">Gmail</label>
+        <input type="radio" name="cw-side-nav-w" id="cw-side-nav-w-2" value="slack"><label for="cw-side-nav-w-2">Slack</label>
+        <input type="radio" name="cw-side-nav-w" id="cw-side-nav-w-3" value="vscode"><label for="cw-side-nav-w-3">VS Code</label>
+        <input type="radio" name="cw-side-nav-w" id="cw-side-nav-w-4" value="youtube"><label for="cw-side-nav-w-4">YouTube</label>
+      </div>
+      <div class="cw" data-cw-view role="img" aria-label=""></div>
+      <p class="cw-cap" data-cw-cap aria-live="polite"></p>
+      
+      <script>
+      (() => {
+        const wrap = document.currentScript.closest('.cw-wrap');
+        const view = wrap.querySelector('[data-cw-view]'), cap = wrap.querySelector('[data-cw-cap]');
+        const ic = id => '<svg class="icon sm"><use href="#i-' + id + '"/></svg>';
+        const line = w => '<i class="cw-line" style="width:' + w + '%"></i>';
+        const it = (text, mods, extra) => '<span class="cw-snw-i' + (mods ? ' ' + mods : '') + '"><span>' + text + '</span>' + (extra || '') + '</span>';
+        const mail = (name, un) => '<div class="cw-snw-mail' + (un ? ' un' : '') + '"><b>' + name + '</b>' + line(100) + '</div>';
+        const post = (b, w1, w2) => '<div class="cw-snw-post"><span class="cw-snw-av' + (b ? ' b' : '') + '"></span><div>' + line(w1) + line(w2) + '</div></div>';
+        const S = {
+          gmail: { html: '<div class="cw-snw-app"><div class="cw-snw-nav"><span class="cw-snw-cta">' + ic('plus') + 'Compose</span>' +
+              it('Inbox', 'on', '<small>12</small>') + it('Starred') + it('Sent') + it('Drafts', '', '<small>2</small>') + it('More', 'mute more') + '</div>' +
+              '<div class="cw-snw-main">' + mail('Ana', true) + mail('Ben', true) + mail('Kim') + mail('Lee') + mail('Sam') + '</div></div>',
+            alt: 'A mail app. In the side list, Inbox has a filled background, bold text and a count of 12. Starred, Sent and Drafts follow, then a More item. A Compose button sits above the list.',
+            cap: 'Gmail: the open folder gets a filled background and bold text, unread counts sit beside each name, and rarely used labels wait under More. Compose is a button above the list, not a place in it.' },
+          slack: { html: '<div class="cw-snw-app"><div class="cw-snw-nav w"><b class="cw-snw-ws">Acme</b><span class="cw-snw-sec open">Channels</span>' +
+              it('# general') + it('# design', 'un') + it('# launch', 'on') + '<span class="cw-snw-sec open">Direct messages</span>' + it('Ana', 'un') + it('Ben') + '<span class="cw-snw-sec">Projects</span></div>' +
+              '<div class="cw-snw-main"><span class="cw-snw-h"># launch</span>' + post(false, 90, 60) + post(true, 75, 40) + post(false, 85, 55) + '</div></div>',
+            alt: 'A chat app. The side list has sections: Channels and Direct messages are open, Projects is collapsed. The open channel, launch, is highlighted; unread items design and Ana are bold.',
+            cap: 'Slack: channels sit in sections you can name and collapse. Unread channels turn bold and the open one is highlighted, so a long list stays easy to scan.' },
+          vscode: { html: '<div class="cw-snw-app"><div class="cw-snw-act"><span class="on">' + ic('folder') + '</span><span>' + ic('search') + '</span><span>' + ic('layers') + '<em class="cw-snw-bdg">3</em></span><span>' + ic('cube') + '</span></div>' +
+              '<div class="cw-snw-side"><span class="cw-snw-k">Explorer</span>' + '<span class="cw-snw-i">' + ic('folder') + '<span>src</span></span>' + it('App.vue', 'on') + it('main.js') + it('README.md') + '</div>' +
+              '<div class="cw-snw-main"><span class="cw-snw-tab">App.vue</span>' + line(70) + line(85) + line(50) + line(65) + '</div></div>',
+            alt: 'A code editor. A narrow bar of icons on the left: the folder icon is active, marked with a line on its edge, and another icon has a badge of 3. Next to it the side bar is titled Explorer.',
+            cap: 'VS Code: the activity bar is icons only, but the active view is marked on its edge and its name heads the side bar. Badges add counts, like changed files.' },
+          youtube: { html: '<div class="cw-snw-app vert"><div class="cw-snw-top"><span class="cw-snw-burger"></span><span class="cw-snw-search">' + ic('search') + 'Search</span></div>' +
+              '<div class="cw-snw-body"><div class="cw-snw-mini"><span class="on">' + ic('home') + '<small>Home</small></span><span>' + ic('play') + '<small>Shorts</small></span><span>' + ic('layers') + '<small>Library</small></span><span>' + ic('folder') + '<small>You</small></span></div>' +
+              '<div class="cw-snw-main"><div class="cw-snw-grid"><span class="thumb"></span><span class="thumb b"></span><span class="thumb c"></span><span class="thumb"></span></div></div></div></div>',
+            alt: 'A video site on a narrow window. The side menu is a slim rail, but each icon still has a short label under it: Home, highlighted, then Shorts, Library and You.',
+            cap: 'YouTube: on narrower windows the side menu shrinks to a rail but keeps a short label under each icon, so places stay findable without hovering.' }
+        };
+        const render = k => { view.innerHTML = S[k].html; view.setAttribute('aria-label', 'Sketch: ' + S[k].alt); cap.textContent = S[k].cap; };
+        wrap.querySelectorAll('input[name="cw-side-nav-w"]').forEach(r => r.addEventListener('change', () => render(r.value)));
+        render('gmail');
+      })();
+      </script>
+    </div>

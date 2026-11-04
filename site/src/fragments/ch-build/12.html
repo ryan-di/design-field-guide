@@ -1,0 +1,171 @@
+<script>
+(() => {
+  const cs = document.currentScript.closest('.cs');
+  const D = (k, html, wire) => csDemo(cs.querySelector('[data-d="' + k + '"]'), html, wire);
+  const st = document.createElement('style');
+  st.textContent = [
+    '#eff-agent-verification p.cs-meta{font:500 13.5px/1.45 var(--font-body)}',
+    '#eff-agent-verification .av-col{width:min(380px,100%);display:flex;flex-direction:column;gap:10px;text-align:left}',
+    '#eff-agent-verification .av-acts{display:flex;flex-wrap:wrap;gap:8px}',
+    '#eff-agent-verification .av-msg{font-size:14px;line-height:1.45;padding:9px 12px;border-radius:10px;background:var(--ui-hover);color:var(--ui-text)}',
+    '#eff-agent-verification .av-msg.me{background:var(--ui-sel-soft)}',
+    '#eff-agent-verification .av-term{margin:0;font:500 12.5px/1.55 var(--font-mono);padding:10px 12px;border-radius:9px;background:var(--ui-surface);border:1px solid var(--ui-border);color:var(--ui-text);white-space:pre-wrap;overflow-wrap:anywhere}',
+    '#eff-agent-verification .av-term mark{background:var(--ui-danger-soft);color:var(--ui-danger);font-weight:700}',
+    '#eff-agent-verification .av-term .ok{color:var(--ui-ok)}',
+    '#eff-agent-verification .av-out{font-size:14px;font-weight:600}',
+    '#eff-agent-verification .av-out:empty{display:none}',
+    '#eff-agent-verification .av-out.bad{color:var(--ui-danger)}',
+    '#eff-agent-verification .av-out.ok{color:var(--ui-ok)}',
+    '#eff-agent-verification .av-checks{padding:8px 12px;display:flex;flex-direction:column;width:100%}',
+    '#eff-agent-verification .av-checks .cs-row{font-size:13.5px}',
+    '#eff-agent-verification .av-checks .cs-row .grow{white-space:normal}',
+    '#eff-agent-verification .av-y{color:var(--ui-ok);font-weight:700}',
+    '#eff-agent-verification .av-n{color:var(--ui-danger);font-weight:700}',
+    '#eff-agent-verification .av-tb{display:flex;gap:6px;padding:8px 10px;border:1px solid var(--ui-border);border-radius:9px;background:var(--ui-surface)}',
+    '#eff-agent-verification .av-tb span{font:600 12.5px var(--font-body);padding:4px 9px;border-radius:6px;background:var(--ui-hover)}',
+    '#eff-agent-verification .av-tb span.grow{flex:1;background:none}',
+    '#eff-agent-verification .av-seg{display:flex;flex-wrap:wrap;gap:6px}',
+    '#eff-agent-verification .av-seg button[aria-pressed="true"]{background:var(--ui-primary);color:var(--ui-on-primary)}',
+    '#eff-agent-verification .av-cap{font:600 11px var(--font-mono);letter-spacing:.06em;text-transform:uppercase;color:var(--ui-muted)}',
+    '#eff-agent-verification .av-shot{--ui-bg:#FBFBFC;--ui-surface:#FFFFFF;--ui-border:#D5D6DC;--ui-text:#1B1D24;--ui-muted:#5E616B;--ui-primary:#1B1D24;--ui-on-primary:#F6F3EC;' +
+      'background:var(--ui-bg);color:var(--ui-text);border:1px solid var(--ui-border);border-radius:10px;padding:14px;overflow:hidden;width:100%;box-shadow:var(--ui-shadow)}',
+    '#eff-agent-verification .av-shot.dark{--ui-bg:#1E2026;--ui-surface:#24262D;--ui-border:#3B3E48;--ui-text:#ECE7DC;--ui-muted:#A9A49A;--ui-primary:#ECE7DC;--ui-on-primary:#1B1D24}',
+    '#eff-agent-verification .av-shot.narrow{width:190px;align-self:center}',
+    '#eff-agent-verification .av-card{display:flex;align-items:center;gap:10px;padding:10px;border:1px solid var(--ui-border);border-radius:9px;background:var(--ui-surface);white-space:nowrap}',
+    '#eff-agent-verification .av-card .thumb{width:40px;flex:none}',
+    '#eff-agent-verification .av-card .nm{display:flex;flex-direction:column;gap:2px;font-size:13.5px}',
+    '#eff-agent-verification .av-card .nm small{font-size:12px;color:var(--ui-muted)}',
+    '#eff-agent-verification .av-card .nm em{font-style:normal;font-size:11.5px;font-weight:700;color:#2A2C33}',
+    '#eff-agent-verification .av-card .btn{flex:none;font-size:13px;padding:5px 12px;border-radius:7px;cursor:default;margin-left:auto}',
+    '#eff-agent-verification .av-gal{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;padding:10px;min-height:92px}',
+    '#eff-agent-verification .av-ph{display:flex;flex-direction:column;gap:4px;align-items:stretch}',
+    '#eff-agent-verification .av-ph .thumb{width:100%}',
+    '#eff-agent-verification .av-ph button{font-size:12px;padding:3px 6px;justify-content:center}'
+  ].join('\n');
+  cs.appendChild(st);
+  const btn = (attr, label, cls) => '<button class="btn ' + (cls || 'btn-primary') + ' cs-sm" type="button" ' + attr + '>' + label + '</button>';
+  const row = (text, ok) => '<div class="cs-row"><span class="grow">' + text + '</span><span class="' + (ok ? 'av-y' : 'av-n') + '">' + (ok ? '✓' : '✗') + '</span></div>';
+
+  /* 1. Ask what ran */
+  const done = '<p class="av-msg"><b>Agent:</b> Done. Export as PNG works. All tests pass ✓</p>';
+  D('eff-agent-verification-1b', '<div class="av-col">' + done + '<div class="av-acts">' + btn('data-ok', 'Approve') + '</div><p class="av-out bad" data-out role="status"></p></div>', d => {
+    d.querySelector('[data-ok]').addEventListener('click', e => {
+      e.target.disabled = true;
+      d.querySelector('[data-out]').textContent = 'Approved. A week later, export breaks. The test file for it had no tests in it.';
+    });
+  });
+  const term = n => '<pre class="av-term">$ vitest run src/export\n ✓ export.test.ts ' + (n ? '<span class="ok">(' + n + ' tests)</span>' : '<mark>(0 tests)</mark>') + '\n Test Files  1 passed\n Tests       ' + (n ? '<span class="ok">' + n + ' passed</span>' : '<mark>0 passed</mark>') + '</pre>';
+  D('eff-agent-verification-1f', '<div class="av-col">' + done + '<div class="av-acts">' + btn('data-show', 'Show the test output', 'btn-secondary') + '</div><div data-term></div>' +
+    '<div class="av-acts" data-more hidden>' + btn('data-ask', 'Ask for real tests', 'btn-secondary') + btn('data-ok disabled', 'Approve') + '</div><p class="av-out" data-out role="status"></p></div>', (d, t) => {
+    const tm = d.querySelector('[data-term]'), out = d.querySelector('[data-out]'), ok = d.querySelector('[data-ok]'), ask = d.querySelector('[data-ask]');
+    d.querySelector('[data-show]').addEventListener('click', e => {
+      e.target.disabled = true; tm.innerHTML = term(0); d.querySelector('[data-more]').hidden = false;
+      out.className = 'av-out bad'; out.textContent = 'Green, on zero tests. Nothing about export was checked.'; ask.focus();
+    });
+    ask.addEventListener('click', () => {
+      ask.disabled = true; out.className = 'av-out'; out.textContent = 'The agent adds tests…';
+      t.after(() => { tm.innerHTML = term(3); out.className = 'av-out ok'; out.textContent = 'Three tests: image size, see-through background, file name.'; ok.disabled = false; ok.focus(); }, 800);
+    });
+    ok.addEventListener('click', () => { ok.disabled = true; out.textContent = 'Approved, with tests you’ve seen run.'; });
+  });
+
+  /* 2. End-to-end specs for visible changes */
+  const tb = share => '<div class="av-tb" aria-label="Toolbar"><span>Undo</span><span>Redo</span><span class="grow"></span>' + (share ? '<span>Share</span>' : '') + '<span>•••</span></div>';
+  const intro2 = '<p class="av-msg"><b>Agent:</b> Tidied the toolbar code. Unit tests pass.</p>';
+  D('eff-agent-verification-2b', '<div class="av-col">' + intro2 + '<div class="av-checks surface">' + row('Unit tests: 48 passed', 1) + '</div>' +
+    '<div class="av-acts">' + btn('data-ok', 'Approve') + '</div><p class="av-out bad" data-out role="status"></p></div>', d => {
+    d.querySelector('[data-ok]').addEventListener('click', e => {
+      e.target.disabled = true;
+      d.querySelector('[data-out]').textContent = 'Approved. After release, Share has moved into the ••• menu, and people can’t find it.';
+    });
+  });
+  D('eff-agent-verification-2f', '<div class="av-col">' + intro2 + '<div class="av-checks surface" data-checks></div>' +
+    '<div class="av-seg" role="group" aria-label="Screenshot">' + btn('aria-pressed="true" data-v="before"', 'Before', 'btn-secondary') + btn('aria-pressed="false" data-v="after"', 'After', 'btn-secondary') + '</div>' +
+    '<div data-shot></div><div class="av-acts">' + btn('data-fix', 'Fix and rerun') + '</div><p class="av-out" data-out role="status"></p></div>', (d, t) => {
+    let fixed = false, view = 'before';
+    const out = d.querySelector('[data-out]');
+    const render = () => {
+      d.querySelector('[data-checks]').innerHTML = row('Unit tests: 48 passed', 1) + row(fixed ? 'share.spec.ts: passed' : 'share.spec.ts: failed, can’t find the Share button', fixed);
+      d.querySelector('[data-shot]').innerHTML = '<span class="av-cap">' + (view === 'before' ? 'Before' : 'After') + '</span>' + tb(view === 'before' || fixed);
+      d.querySelectorAll('[data-v]').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.v === view)));
+    };
+    d.querySelectorAll('[data-v]').forEach(b => b.addEventListener('click', () => {
+      view = b.dataset.v; render();
+      if (!fixed && view === 'after') { out.className = 'av-out bad'; out.textContent = 'Share is missing from the toolbar. The spec caught it too.'; }
+    }));
+    d.querySelector('[data-fix]').addEventListener('click', e => {
+      e.target.disabled = true; out.className = 'av-out'; out.textContent = 'Rerunning…';
+      t.after(() => { fixed = true; view = 'after'; render(); out.className = 'av-out ok'; out.textContent = 'Share is back in the toolbar, and the spec passes.'; }, 800);
+    });
+    render();
+  });
+
+  /* 3. Screenshots in each theme, width and state */
+  const card = name => '<div class="av-card"><span class="thumb"></span><span class="nm"><b>' + name + '</b><small>24 photos</small><em>Unsaved</em></span><span class="btn btn-primary">Open</span></div>';
+  const SHORT = 'Holiday photos', LONG = 'Holiday photos from the long weekend in the mountains';
+  const SHOTS = {
+    lw: ['Light · wide', '', SHORT, 'Fine.', 0],
+    dw: ['Dark · wide', ' dark', SHORT, 'Problem: the “Unsaved” label disappears. Its color is fixed, not a theme color.', 1],
+    ln: ['Light · narrow', ' narrow', SHORT, 'Problem: the Open button is cut off.', 1],
+    long: ['Long name', '', LONG, 'Problem: a long name pushes the Open button out of the card.', 1]
+  };
+  const shot = k => '<span class="av-cap">' + SHOTS[k][0] + '</span><div class="av-shot' + SHOTS[k][1] + '">' + card(SHOTS[k][2]) + '</div>';
+  D('eff-agent-verification-3b', '<div class="av-col"><p class="av-msg"><b>Agent:</b> Added an “Unsaved” label to album cards. Screenshot attached.</p>' + shot('lw') +
+    '<div class="av-acts">' + btn('data-ok', 'Approve') + '</div><p class="av-out bad" data-out role="status"></p></div>', d => {
+    d.querySelector('[data-ok]').addEventListener('click', e => {
+      e.target.disabled = true;
+      d.querySelector('[data-out]').textContent = 'Approved. After release: the label is invisible in dark mode, Open is cut off on narrow windows, and long names break the card.';
+    });
+  });
+  D('eff-agent-verification-3f', '<div class="av-col"><p class="av-msg"><b>Agent:</b> Added an “Unsaved” label to album cards. Four screenshots attached.</p>' +
+    '<div class="av-seg" role="group" aria-label="Screenshot">' + Object.keys(SHOTS).map(k => btn('aria-pressed="false" data-s="' + k + '"', SHOTS[k][0], 'btn-secondary')).join('') + '</div>' +
+    '<div data-shot style="display:flex;flex-direction:column;gap:6px"></div><p class="av-out" data-v role="status"></p><p class="cs-meta" data-count></p></div>', d => {
+    const seen = new Set(), v = d.querySelector('[data-v]');
+    const show = k => {
+      seen.add(k);
+      d.querySelector('[data-shot]').innerHTML = shot(k);
+      d.querySelectorAll('[data-s]').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.s === k)));
+      v.className = 'av-out ' + (SHOTS[k][4] ? 'bad' : 'ok'); v.textContent = SHOTS[k][3];
+      const n = Object.keys(SHOTS).filter(x => SHOTS[x][4] && seen.has(x)).length;
+      d.querySelector('[data-count]').textContent = 'Problems found: ' + n + ' of 3';
+    };
+    d.querySelectorAll('[data-s]').forEach(b => b.addEventListener('click', () => show(b.dataset.s)));
+    show('lw');
+  });
+
+  /* 4. Try it yourself */
+  const CHECKS = row('Unit tests: 12 passed', 1) + row('delete.spec.ts: passed', 1) + row('Screenshots: light and dark', 1) + row('Type check: clean', 1);
+  const intro4 = '<p class="av-msg"><b>Agent:</b> Added Undo for deleting photos. All checks pass.</p>';
+  D('eff-agent-verification-4b', '<div class="av-col">' + intro4 + '<div class="av-checks surface">' + CHECKS + '</div><div class="av-acts">' + btn('data-ok', 'Approve') + '</div><p class="av-out bad" data-out role="status"></p></div>', d => {
+    d.querySelector('[data-ok]').addEventListener('click', e => {
+      e.target.disabled = true;
+      d.querySelector('[data-out]').textContent = 'Approved. A week later: “I deleted two photos and Undo only brought one back.”';
+    });
+  });
+  const PH = [['Beach', ''], ['Market', ' b'], ['Hills', ' c'], ['Harbor', '']];
+  D('eff-agent-verification-4f', '<div class="av-col">' + intro4 + '<div class="av-checks surface">' + CHECKS + '</div>' +
+    '<div class="app-frame" style="width:100%"><div class="app-bar"><span>Photos</span>' + btn('data-undo', 'Undo', 'btn-secondary') + '</div><div class="av-gal" data-gal></div></div>' +
+    '<p class="av-out" data-out role="status"></p></div>', d => {
+    let items = PH.slice(), last = null, lost = 0;
+    const gal = d.querySelector('[data-gal]'), out = d.querySelector('[data-out]');
+    const render = () => {
+      gal.innerHTML = items.map(p => '<div class="av-ph"><span class="thumb' + p[1] + '"></span><button class="btn btn-secondary" type="button" aria-label="Delete ' + p[0] + '" data-del="' + p[0] + '">Delete</button></div>').join('');
+      gal.querySelectorAll('[data-del]').forEach(b => b.addEventListener('click', () => {
+        const i = items.findIndex(p => p[0] === b.dataset.del);
+        if (last) lost++;
+        last = [i, items[i]]; items.splice(i, 1); render();
+        out.className = 'av-out'; out.textContent = b.dataset.del + ' deleted.';
+        d.querySelector('[data-undo]').focus();
+      }));
+    };
+    d.querySelector('[data-undo]').addEventListener('click', () => {
+      if (last) { items.splice(last[0], 0, last[1]); out.className = 'av-out'; out.textContent = last[1][0] + ' is back.'; last = null; render(); return; }
+      if (lost) { out.className = 'av-out bad'; out.textContent = 'Found it: the second Undo does nothing, and the first photo is gone. No test deleted two photos in a row.'; }
+      else { out.className = 'av-out'; out.textContent = 'Nothing to undo.'; }
+    });
+    render();
+  });
+  csInit(cs);
+})();
+
+</script>

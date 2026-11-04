@@ -1,0 +1,138 @@
+<script>
+(() => {
+  const cs = document.currentScript.closest('.cs');
+  /* This entry sits before the shared case helpers in the book, so start once they exist. */
+  const go = () => {
+  const D = (k, html, wire) => csDemo(cs.querySelector('[data-d="' + k + '"]'), html, wire);
+  const P = '#pat-constraints ';
+  const css = document.createElement('style');
+  css.textContent = [
+    P + '.pc-form h5{margin:0;font:700 14.5px var(--font-body)}',
+    P + '.pc-form .field-help{font-weight:400;line-height:1.4}',
+    P + '.pc-form .field-msg{font-weight:400}',
+    P + '.pc-form .btn{align-self:flex-start}',
+    P + '.pc-opts{display:flex;flex-direction:column;gap:2px;border:0;margin:0;padding:0}',
+    P + '.pc-opt{display:flex;gap:10px;align-items:flex-start;padding:8px 0;border-bottom:1px solid var(--ui-border);font-size:14px;cursor:pointer}',
+    P + '.pc-opt:last-child{border-bottom:0}',
+    P + '.pc-opt input{margin-top:2px;accent-color:var(--ui-sel);flex:none}',
+    P + '.pc-opt span{display:flex;flex-direction:column;gap:2px}',
+    P + '.pc-opt small{font-size:12.5px;color:var(--ui-muted);line-height:1.35}',
+    P + '.pc-opt.off{color:var(--ui-muted);cursor:default}',
+    P + '.pc-opt.off input,' + P + '.pc-opt.off > span > :first-child{opacity:.55}',
+    P + '.pc-opt a{color:var(--ui-sel);font-weight:600}',
+    P + '.pc-src{font:500 12px var(--font-mono);color:var(--ui-muted);display:flex;gap:6px;flex-wrap:wrap;justify-content:center}',
+    P + '.pc-src span{border:1px solid var(--ui-border);border-radius:6px;padding:2px 7px;background:var(--ui-surface)}',
+    P + '.pc-src span.bad{border-color:var(--ui-danger);color:var(--ui-danger)}'
+  ].join('\n');
+  cs.appendChild(css);
+
+  const icon = n => '<svg class="icon"><use href="#i-' + n + '"/></svg>';
+  const msg = () => '<p class="field-msg" data-msg hidden>' + icon('warn') + '<span></span></p>';
+  const setMsg = (d, t) => { const m = d.querySelector('[data-msg]'); m.hidden = !t; m.querySelector('span').textContent = t || ''; };
+  const say = (d, t) => { d.querySelector('[data-out]').textContent = t; };
+
+  /* 1. No escape hatch (made-to-measure blinds) */
+  const WIDTHS = [60, 90, 120, 180];
+  const blindHtml = fixed => '<div class="cs-form pc-form"><h5>Roller blind, linen</h5>' +
+    '<label class="cs-f">Width<select class="select" data-w>' + WIDTHS.map(w => '<option value="' + w + '"' + (w === 120 ? ' selected' : '') + '>' + w + ' cm</option>').join('') +
+    (fixed ? '<option value="custom">Custom…</option>' : '') + '</select></label>' +
+    (fixed ? '<label class="cs-f" data-cbox hidden>Custom width in cm<input class="input" inputmode="decimal" autocomplete="off" data-c><span class="field-help" data-help>Any width from 40 to 300 cm. We cut to the nearest centimeter.</span></label>' + msg() : '') +
+    '<button class="btn btn-primary cs-sm" type="button" data-add>Add to basket</button></div><p class="cs-meta" data-out>Your window: 105 cm wide.</p>';
+  const blindWire = fixed => d => {
+    const sel = d.querySelector('[data-w]');
+    let custom = null;
+    d.querySelector('[data-add]').addEventListener('click', () => {
+      if (sel.value !== 'custom') { say(d, 'Added a ' + sel.value + ' cm blind. Your window is 105 cm.' + (fixed ? '' : ' There’s no 105 cm option.')); return; }
+      if (custom === null) { setMsg(d, 'Enter a width in cm, like 105.'); d.querySelector('[data-c]').focus(); return; }
+      say(d, 'Added a ' + custom + ' cm blind.');
+    });
+    if (!fixed) return;
+    const box = d.querySelector('[data-cbox]'), c = d.querySelector('[data-c]'), help = d.querySelector('[data-help]'), HELP = help.textContent;
+    sel.addEventListener('change', () => { box.hidden = sel.value !== 'custom'; if (!box.hidden) c.focus(); });
+    c.addEventListener('change', () => {
+      const raw = c.value.trim().replace(',', '.'), v = Number(raw);
+      if (!raw || !isFinite(v)) { custom = null; setMsg(d, 'Enter a width in cm, like 105.'); c.setAttribute('aria-invalid', 'true'); return; }
+      setMsg(d, ''); c.setAttribute('aria-invalid', 'false');
+      const n = Math.min(300, Math.max(40, Math.round(v)));
+      if (v > 300) help.textContent = 'Changed ' + raw + ' to 300 cm, the widest we make.';
+      else if (v < 40) help.textContent = 'Changed ' + raw + ' to 40 cm, the narrowest we make.';
+      else if (n !== v) help.textContent = 'Rounded ' + raw + ' to ' + n + ' cm. We cut to the nearest centimeter.';
+      else help.textContent = HELP;
+      c.value = String(n); custom = n;
+    });
+  };
+  D('pat-constraints-1b', blindHtml(false), blindWire(false));
+  D('pat-constraints-1f', blindHtml(true), blindWire(true));
+
+  /* 2. Disabled without a reason (music app settings) */
+  const qualHtml = fixed => {
+    const nm = 'pc-q-' + (fixed ? 'f' : 'b');
+    const opt = (v, t, sub, off) => '<label class="pc-opt' + (off ? ' off' : '') + '" data-v="' + v + '"><input type="radio" name="' + nm + '" value="' + v + '"' + (v === 'high' ? ' checked' : '') + (off ? ' disabled' : '') + '><span>' + t + (sub ? '<small>' + sub + '</small>' : '') + '</span></label>';
+    return '<div class="app-frame" style="width:min(320px,100%)"><div class="app-bar"><span>Settings · Downloads</span></div><div class="app-body"><fieldset class="pc-opts"><legend class="field-label" style="margin-bottom:4px">Download quality</legend>' +
+      opt('normal', 'Normal', fixed ? 'About 3 MB per song.' : '') + opt('high', 'High', fixed ? 'About 7 MB per song.' : '') +
+      opt('lossless', 'Lossless', fixed ? 'Needs the Premium plan. <a href="#" data-plans>See plans</a>' : '', true) +
+      (fixed ? '' : opt('atmos', 'Dolby Atmos', '', true)) + '</fieldset></div></div><p class="cs-meta" data-out></p>';
+  };
+  const qualWire = fixed => d => {
+    d.querySelector('.pc-opts').addEventListener('click', e => {
+      if (e.target.closest('[data-plans]')) { e.preventDefault(); say(d, 'The plans page would open here.'); return; }
+      const o = e.target.closest('.pc-opt');
+      if (!o) return;
+      if (o.classList.contains('off')) { say(d, fixed ? 'Lossless is off until you have Premium.' : 'Nothing happened. Is it broken, or does it need something?'); return; }
+      say(d, o.querySelector('span span').textContent + ' selected.');
+    });
+  };
+  D('pat-constraints-2b', qualHtml(false), qualWire(false));
+  D('pat-constraints-2f', qualHtml(true), qualWire(true));
+
+  /* 3. The rule only shows up as an error (username) */
+  const RULE = 'Lowercase letters, numbers and dots. 3 to 20 characters.';
+  const userHtml = fixed => '<div class="cs-form pc-form"><h5>Your profile</h5><label class="cs-f">Username<input class="input" autocomplete="off" spellcheck="false" data-u>' +
+    (fixed ? '<span class="field-help">' + RULE + '</span>' : '') + '</label>' + msg() +
+    '<button class="btn btn-primary cs-sm" type="button" data-save>Save</button></div><p class="cs-meta" data-out></p>';
+  const userWire = d => {
+    const u = d.querySelector('[data-u]');
+    let tries = 0;
+    d.querySelector('[data-save]').addEventListener('click', () => {
+      const v = u.value.trim();
+      tries++;
+      if (!/^[a-z0-9.]{3,20}$/.test(v)) {
+        setMsg(d, 'Usernames can use only lowercase letters, numbers and dots, and must be 3 to 20 characters.');
+        u.setAttribute('aria-invalid', 'true'); u.focus(); say(d, 'Tries: ' + tries); return;
+      }
+      setMsg(d, ''); u.setAttribute('aria-invalid', 'false');
+      say(d, 'Saved as ' + v + '. Tries: ' + tries);
+    });
+  };
+  D('pat-constraints-3b', userHtml(false), userWire);
+  D('pat-constraints-3f', userHtml(true), userWire);
+
+  /* 4. Three places, three rules (hotel booking) */
+  const nightsHtml = fixed => {
+    const list = fixed ? 28 : 30, help = fixed ? 28 : 31;
+    return '<div class="cs-form pc-form"><h5>Hotel Lisboa · from 12 Nov</h5><label class="cs-f">Nights<select class="select" data-n>' +
+      Array.from({ length: list }, (_, i) => '<option' + (i === 2 ? ' selected' : '') + '>' + (i + 1) + '</option>').join('') + '</select>' +
+      '<span class="field-help">Stays of up to ' + help + ' nights.</span></label>' + msg() +
+      '<button class="btn btn-primary cs-sm" type="button" data-book>Book</button></div>' +
+      (fixed ? '<p class="pc-src"><span>One rule, up to 28 nights, for the list, the help text and the check</span></p>'
+        : '<p class="pc-src"><span>List: 30</span><span>Help text: 31</span><span class="bad">Check: 28</span></p>') +
+      '<p class="cs-meta" data-out></p>';
+  };
+  const nightsWire = d => {
+    const n = d.querySelector('[data-n]');
+    n.addEventListener('change', () => setMsg(d, ''));
+    d.querySelector('[data-book]').addEventListener('click', () => {
+      const v = Number(n.value);
+      if (v > 28) { setMsg(d, 'Booking failed: stays are limited to 28 nights.'); say(d, ''); return; }
+      setMsg(d, ''); say(d, 'Booked ' + v + (v === 1 ? ' night' : ' nights') + ' from 12 Nov.');
+    });
+  };
+  D('pat-constraints-4b', nightsHtml(false), nightsWire);
+  D('pat-constraints-4f', nightsHtml(true), nightsWire);
+
+  csInit(cs);
+  };
+  if (window.csDemo) go(); else document.addEventListener('DOMContentLoaded', go);
+})();
+
+</script>

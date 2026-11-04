@@ -1,0 +1,199 @@
+<script>
+(() => {
+  const cs = document.currentScript.closest('.cs');
+  /* This entry sits before the shared case helpers in the book, so start once they exist. */
+  const go = () => {
+  const D = (k, html, wire) => csDemo(cs.querySelector('[data-d="' + k + '"]'), html, wire);
+  const P = '#pat-autosave ';
+  const css = document.createElement('style');
+  css.textContent = [
+    P + '.pa-fr{width:min(340px,100%)}',
+    P + '.pa-fr .app-body{padding:12px;gap:8px}',
+    P + '.pa-st{display:inline-flex;align-items:center;gap:6px;font:500 12.5px var(--font-body);color:var(--ui-muted);white-space:nowrap}',
+    P + '.pa-st .icon{width:15px;height:15px;color:var(--ui-ok)}',
+    P + '.pa-st .spinner{width:12px;height:12px;border-width:2px}',
+    P + '.pa-st.off .icon{color:var(--ui-muted)}',
+    P + '.pa-fr textarea{resize:none;font-size:14px;line-height:1.45}',
+    P + '.pa-net{padding:0;font-size:14px}',
+    P + '.pa-acts{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;align-items:center}',
+    P + '.pa-doc p{font-size:13.5px;line-height:1.45;margin:0}',
+    P + '.pa-doc{display:flex;flex-direction:column;gap:7px}',
+    P + '.pa-hist{display:flex;flex-direction:column;gap:2px;border:1px solid var(--ui-border);border-radius:9px;padding:6px 10px;background:var(--ui-surface)}',
+    P + '.pa-hist .cs-row{font-size:13px;padding:5px 0}',
+    P + '.pa-hist .btn{padding:3px 9px;font-size:12.5px}',
+    P + '.pa-tabs{display:flex;flex-direction:column;gap:8px;width:min(340px,100%)}',
+    P + '.pa-tab{border:1px solid var(--ui-border);border-radius:10px;background:var(--ui-surface);overflow:hidden;text-align:left}',
+    P + '.pa-tab > b{display:block;font:600 12px var(--font-mono);color:var(--ui-muted);padding:5px 10px;border-bottom:1px solid var(--ui-border);background:var(--ui-bg)}',
+    P + '.pa-tab .pa-in{display:flex;flex-direction:column;gap:7px;padding:8px 10px}',
+    P + '.pa-items{font-size:13.5px}',
+    P + '.pa-add{display:flex;gap:6px}',
+    P + '.pa-add .input{padding:6px 9px;font-size:13.5px}',
+    P + '.pa-tab .banner{font-size:13px;padding:7px 10px;flex-wrap:wrap;align-items:center;gap:6px}',
+    P + '.pa-tab .banner .btn{padding:3px 9px;font-size:12.5px}',
+    P + '.pa-fr .banner{font-size:13px;padding:8px 12px;flex-wrap:wrap;align-items:center;gap:6px}',
+    P + '.pa-fr .banner .btn{padding:4px 9px;font-size:12.5px}',
+    P + '.pa-tab .banner .grow,' + P + '.pa-fr .banner .grow{flex:1 1 calc(100% - 34px)}'
+  ].join('\n');
+  cs.appendChild(css);
+
+  const icon = n => '<svg class="icon"><use href="#i-' + n + '"/></svg>';
+  const say = (d, t) => { d.querySelector('[data-out]').textContent = t; };
+  const status = (el, s) => {
+    el.className = 'pa-st' + (s === 'offline' ? ' off' : '');
+    el.innerHTML = s === 'saving' ? '<span class="spinner" aria-hidden="true"></span>Saving…' : s === 'saved' ? icon('check') + 'Saved' :
+      s === 'offline' ? icon('cloud-off') + 'Offline · kept on this device' : '';
+  };
+
+  /* 1. No save status (packing list, offline) */
+  const START = 'Passport\nPhone charger\nSunscreen';
+  const packHtml = '<div class="app-frame pa-fr"><div class="app-bar"><span>Packing list</span><span class="pa-st" role="status" data-st></span></div>' +
+    '<div class="app-body"><textarea class="input" rows="5" aria-label="Packing list" spellcheck="false" data-ta>' + START + '</textarea></div></div>' +
+    '<div class="pa-acts"><label class="switch pa-net"><span>Wi-Fi</span><input type="checkbox" role="switch" checked data-net></label><button class="btn btn-secondary cs-sm" type="button" data-reopen>Close and reopen</button></div><p class="cs-meta" data-out></p>';
+  const packWire = fixed => (d, t) => {
+    const ta = d.querySelector('[data-ta]'), st = d.querySelector('[data-st]'), net = d.querySelector('[data-net]');
+    let server = START, local = START, tok = 0;
+    const show = s => { if (fixed) status(st, s); };
+    const push = () => {
+      const my = ++tok; show('saving');
+      t.after(() => { if (my !== tok) return; if (net.checked) { server = local; show('saved'); } else show('offline'); }, 700);
+    };
+    ta.addEventListener('input', () => {
+      say(d, '');
+      if (fixed) { local = ta.value; if (net.checked) push(); else show('offline'); return; }
+      if (net.checked) { const v = ta.value, my = ++tok; t.after(() => { if (my === tok && net.checked) server = v; }, 700); }
+    });
+    net.addEventListener('change', () => {
+      if (!fixed) return;
+      if (net.checked && local !== server) push();
+      else if (!net.checked) show('offline');
+    });
+    d.querySelector('[data-reopen]').addEventListener('click', () => {
+      tok++;
+      ta.value = fixed ? local : server;
+      if (fixed) { if (!net.checked) show('offline'); else if (local !== server) push(); else show('saved'); say(d, 'Reopened. Everything you typed is here.'); }
+      else say(d, 'Reopened.');
+    });
+    show('saved');
+  };
+  D('pat-autosave-1b', packHtml, packWire(false));
+  D('pat-autosave-1f', packHtml, packWire(true));
+
+  /* 2. No way back after a saved mistake (speech) */
+  const PARAS = ['Thank you all for coming. I’ve known Sam for twenty years.', 'We met on the first day of school, when Sam lent me a pencil and never asked for it back.', 'Jo, thank you for making my oldest friend so happy.'];
+  const speechHtml = fixed => '<div class="app-frame pa-fr"><div class="app-bar"><span>Wedding speech</span><span style="display:flex;gap:6px;align-items:center"><span class="pa-st" role="status" data-st></span>' +
+    (fixed ? '<button class="btn btn-ghost cs-sm" type="button" aria-expanded="false" data-hist>History</button>' : '') + '</span></div>' +
+    '<div class="app-body"><div class="pa-doc" data-doc></div><div data-list></div></div></div>' +
+    '<button class="btn btn-secondary cs-sm" type="button" data-del>Delete paragraph</button><p class="cs-meta" data-out></p>';
+  const speechWire = fixed => (d, t) => {
+    const doc = d.querySelector('[data-doc]'), st = d.querySelector('[data-st]'), list = d.querySelector('[data-list]'), hist = d.querySelector('[data-hist]');
+    let paras = PARAS.slice(), tok = 0, clock = 2;
+    const versions = [{ at: '10:0' + clock, paras: paras.slice() }];
+    const draw = () => { doc.innerHTML = paras.map(p => '<p>' + p + '</p>').join(''); };
+    const drawList = () => {
+      if (!fixed || hist.getAttribute('aria-expanded') !== 'true') { list.innerHTML = ''; return; }
+      list.innerHTML = '<div class="pa-hist"><b style="font-size:13px">Versions</b>' + versions.slice().reverse().map((v, i) =>
+        '<div class="cs-row"><span class="grow">' + v.at + ' · ' + v.paras.length + ' paragraphs' + (i === 0 ? ' (now)' : '') + '</span>' +
+        (i === 0 ? '' : '<button class="btn btn-secondary" type="button" data-v="' + (versions.length - 1 - i) + '">Restore</button>') + '</div>').join('') + '</div>';
+    };
+    const save = () => {
+      const my = ++tok; status(st, 'saving');
+      t.after(() => { if (my !== tok) return; status(st, 'saved'); clock++; versions.push({ at: '10:' + String(clock).padStart(2, '0'), paras: paras.slice() }); drawList(); }, 800);
+    };
+    d.querySelector('[data-del]').addEventListener('click', () => {
+      if (paras.length < 2) { say(d, 'Only one paragraph left.'); return; }
+      paras.splice(1, 1); draw(); save(); say(d, 'Oops. The paragraph about the pencil is gone.');
+    });
+    if (fixed) {
+      hist.addEventListener('click', () => { hist.setAttribute('aria-expanded', String(hist.getAttribute('aria-expanded') !== 'true')); drawList(); });
+      list.addEventListener('click', e => {
+        const b = e.target.closest('[data-v]'); if (!b) return;
+        paras = versions[Number(b.dataset.v)].paras.slice(); draw(); save();
+        say(d, 'Restored the version from ' + versions[Number(b.dataset.v)].at + '.');
+      });
+    }
+    draw(); status(st, 'saved');
+  };
+  D('pat-autosave-2b', speechHtml(false), speechWire(false));
+  D('pat-autosave-2f', speechHtml(true), speechWire(true));
+
+  /* 3. Two tabs overwrite each other (shopping list) */
+  const tabsHtml = '<div class="pa-tabs">' + [['Tab 1', 'Apples'], ['Tab 2', 'Coffee']].map((x, i) =>
+    '<div class="pa-tab" data-tab="' + i + '"><b>' + x[0] + ' · Shopping list</b><div data-ban></div><div class="pa-in"><span class="pa-items" data-items></span>' +
+    '<div class="pa-add"><input class="input" value="' + x[1] + '" aria-label="New item in ' + x[0] + '" data-new><button class="btn btn-secondary cs-sm" type="button" data-add>Add</button></div></div></div>').join('') +
+    '</div><p class="cs-meta" data-out></p>';
+  const tabsWire = fixed => d => {
+    const server = { v: 1, items: ['Milk', 'Eggs', 'Bread'] }, copies = [];
+    const tabs = [0, 1].map(i => ({ el: d.querySelector('[data-tab="' + i + '"]'), v: 1, items: server.items.slice() }));
+    const draw = tb => { tb.el.querySelector('[data-items]').textContent = tb.items.join(', '); };
+    const report = () => say(d, 'Saved list: ' + server.items.join(', ') + (copies.length ? '. Copy: ' + copies[copies.length - 1].join(', ') : '') + '.');
+    const save = tb => { server.items = tb.items.slice(); server.v++; tb.v = server.v; report(); };
+    tabs.forEach(tb => {
+      const inp = tb.el.querySelector('[data-new]'), ban = tb.el.querySelector('[data-ban]');
+      let pending = null;
+      tb.el.querySelector('[data-add]').addEventListener('click', () => {
+        const v = inp.value.trim(); if (!v) return;
+        tb.items.push(v); inp.value = ''; draw(tb);
+        if (!fixed || tb.v === server.v) { save(tb); return; }
+        pending = v;
+        ban.innerHTML = '<div class="banner" role="status">' + icon('info') + '<span class="grow">This list changed in another tab.</span><button class="btn btn-secondary" type="button" data-reload>Reload</button><button class="btn btn-ghost" type="button" data-copy>Keep mine as a copy</button></div>';
+        ban.querySelector('[data-reload]').focus();
+        say(d, 'Nothing saved yet. Tab 2 asks first.');
+      });
+      ban.addEventListener('click', e => {
+        if (e.target.closest('[data-reload]')) {
+          tb.items = server.items.slice(); tb.v = server.v; draw(tb); ban.innerHTML = '';
+          inp.value = pending || ''; inp.focus();
+          say(d, 'Reloaded with the other tab’s changes. “' + pending + '” is back in the box, ready to add.');
+        } else if (e.target.closest('[data-copy]')) {
+          copies.push(tb.items.slice()); ban.innerHTML = ''; tb.items = server.items.slice(); tb.v = server.v; draw(tb); report();
+        }
+      });
+      draw(tb);
+    });
+    report();
+  };
+  D('pat-autosave-3b', tabsHtml, tabsWire(false));
+  D('pat-autosave-3f', tabsHtml, tabsWire(true));
+
+  /* 4. Recovery prompt every time (email reply) */
+  const SAVED = 'Friday works for me. See you at 1.';
+  const mailHtml = '<div class="app-frame pa-fr"><div class="app-bar"><span>Re: Lunch on Friday?</span><span class="cs-meta">Draft</span></div><div data-ban></div>' +
+    '<div class="app-body"><textarea class="input" rows="3" aria-label="Reply" data-ta>' + SAVED + '</textarea></div></div>' +
+    '<div class="pa-acts"><button class="btn btn-secondary cs-sm" type="button" data-reopen>Close and reopen</button><button class="btn btn-secondary cs-sm" type="button" data-crash>Crash</button></div><p class="cs-meta" data-out></p>';
+  const mailWire = fixed => (d, t) => {
+    const ta = d.querySelector('[data-ta]'), ban = d.querySelector('[data-ban]');
+    let saved = SAVED, draft = SAVED, shown = 0;
+    ta.addEventListener('input', () => { draft = ta.value; });
+    const offer = () => {
+      shown++;
+      ban.innerHTML = '<div class="banner" role="status">' + icon('info') + '<span class="grow">Restore your unsaved draft?</span><button class="btn btn-primary" type="button" data-restore>Restore</button><button class="btn btn-ghost" type="button" data-discard>Discard</button></div>';
+      say(d, 'Recovery prompt shown ' + shown + (shown === 1 ? ' time.' : ' times.'));
+    };
+    const reopen = crashed => {
+      ban.innerHTML = '';
+      if (!crashed) saved = draft;
+      ta.value = saved;
+      if (!fixed || draft !== saved) offer();
+      else say(d, crashed ? 'Reopened after the crash. Nothing was lost, so no prompt.' : 'Reopened. Your reply was saved, so there’s nothing to recover.');
+    };
+    d.querySelector('[data-reopen]').addEventListener('click', () => reopen(false));
+    d.querySelector('[data-crash]').addEventListener('click', () => reopen(true));
+    ban.addEventListener('click', e => {
+      if (e.target.closest('[data-restore]')) { ta.value = draft; saved = draft; ban.innerHTML = ''; ta.focus(); say(d, 'Draft restored.'); }
+      else if (e.target.closest('[data-discard]')) {
+        const old = draft;
+        draft = saved; ban.innerHTML = ''; ta.focus();
+        if (fixed) csToast(d, t, 'Draft discarded', { action: { label: 'Undo', run: () => { draft = old; saved = old; ta.value = old; say(d, 'Draft back.'); } } });
+        else say(d, 'Draft discarded.');
+      }
+    });
+  };
+  D('pat-autosave-4b', mailHtml, mailWire(false));
+  D('pat-autosave-4f', mailHtml, mailWire(true));
+
+  csInit(cs);
+  };
+  if (window.csDemo) go(); else document.addEventListener('DOMContentLoaded', go);
+})();
+
+</script>

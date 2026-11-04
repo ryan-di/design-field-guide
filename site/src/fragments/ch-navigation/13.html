@@ -1,0 +1,134 @@
+<script>
+(() => {
+  const cs = document.currentScript.closest('.cs');
+  const D = (k, html, wire) => csDemo(cs.querySelector('[data-d="' + k + '"]'), html, wire);
+  const icon = n => '<svg class="icon sm"><use href="#i-' + n + '"/></svg>';
+  const lines = '<div class="line" style="width:90%"></div><div class="line" style="width:70%"></div>';
+  const title = text => '<h5 class="bc-title" tabindex="-1">' + text + '</h5>';
+  // items: [{k, n}], the last one is the current page
+  const trail = (items, cls) => '<nav class="bc-trail' + (cls ? ' ' + cls : '') + '" aria-label="Breadcrumb"><ol>' + items.map((it, i) => '<li>' +
+    (i === items.length - 1 ? '<span class="bc-cur" aria-current="page">' + it.n + '</span>' : '<button type="button" class="bc-link" data-go="' + it.k + '">' + it.n + '</button>') + '</li>').join('') + '</ol></nav>';
+  const frame = (top, cls) => '<div class="bc-app">' + (top ? '<div class="bc-top">' + top + '</div>' : '') + '<div class="bc-body' + (cls ? ' ' + cls : '') + '" data-body></div></div>';
+  // Re-render helper: wires every [data-go] in the body and moves focus to the new title when the person navigated.
+  const pager = (d, render) => {
+    const body = d.querySelector('[data-body]');
+    const go = (k, focus) => {
+      body.innerHTML = render(k);
+      body.querySelectorAll('[data-go]').forEach(b => b.addEventListener('click', () => go(b.dataset.go, true)));
+      if (focus) { const h = body.querySelector('.bc-title'); if (h) h.focus({ preventScroll: true }); }
+    };
+    return go;
+  };
+
+  /* 1. Flat structure */
+  const TRIPS = { lisbon: ['Lisbon', '12–15 Nov · Hotel Aurora · 2 guests', ''], kyoto: ['Kyoto', '3–10 Feb · Gion House · 1 guest', ' b'] };
+  const flatHtml = frame('<button type="button" class="bc-logo" data-logo>' + icon('home') + 'Stays</button>');
+  const flatWire = fixed => d => {
+    const go = pager(d, k => {
+      if (k === 'home') return title('Where to next?') + '<div class="bc-search">' + icon('search') + '<span>Search stays</span></div>' +
+        '<button type="button" class="btn btn-secondary cs-sm" data-go="trips" style="align-self:flex-start">My trips</button>';
+      if (k === 'trips') return (fixed ? '' : trail([{ k: 'home', n: 'Home' }, { n: 'My trips' }])) + title('My trips') +
+        '<div>' + Object.keys(TRIPS).map(t => '<button type="button" class="bc-row" data-go="' + t + '"><span class="thumb' + TRIPS[t][2] + '"></span><span class="bc-two"><b>' + TRIPS[t][0] + '</b><span class="cs-meta">' + TRIPS[t][1] + '</span></span></button>').join('') + '</div>';
+      const t = TRIPS[k];
+      return (fixed ? '<button type="button" class="bc-back" data-go="trips">← My trips</button>' : trail([{ k: 'home', n: 'Home' }, { k: 'trips', n: 'My trips' }, { n: t[0] }])) +
+        title(t[0]) + '<p class="cs-meta">' + t[1] + '</p>' + lines;
+    });
+    d.querySelector('[data-logo]').addEventListener('click', () => go('home', true));
+    go('trips');
+  };
+  D('breadcrumbs-1b', flatHtml, flatWire(false));
+  D('breadcrumbs-1f', flatHtml, flatWire(true));
+
+  /* 2. History instead of location */
+  const PR = { trail3: ['Trail runner 3', '$120', 'running', ''], road2: ['Road racer 2', '$140', 'running', ' b'], gtx: ['Trail runner 3 GTX', '$150', 'running', ' c'],
+    walker: ['City walker', '$90', 'walking', ' b'], hiker: ['Day hiker', '$110', 'walking', ' c'], sandal: ['River sandal', '$55', 'sandals', ''],
+    jacket: ['Rain jacket', '$80', null, ' c'], socks: ['Wool socks, 3 pairs', '$24', null, ' b'], mug: ['Camp mug', '$18', null, ''] };
+  const CATS = { running: ['Running', ['trail3', 'road2', 'gtx']], walking: ['Walking', ['walker', 'hiker']], sandals: ['Sandals', ['sandal']] };
+  const SEEN = { search: ['Search', 'Results for “gifts”', ['mug', 'socks', 'trail3']], sale: ['Sale', 'Sale', ['jacket', 'socks', 'trail3']], wishlist: ['Wishlist', 'Wishlist', ['jacket', 'trail3', 'mug']] };
+  const crumbName = k => k === 'shoes' ? 'Shoes' : k.startsWith('p:') ? PR[k.slice(2)][0] : k.startsWith('c:') ? CATS[k.slice(2)][0] : SEEN[k][0];
+  const where = k => k === 'shoes' ? ['shoes'] : k.startsWith('c:') ? ['shoes', k] : PR[k.slice(2)][2] ? ['shoes', 'c:' + PR[k.slice(2)][2], k] : [k];
+  const prodRow = p => '<button type="button" class="bc-row" data-go="p:' + p + '"><span class="grow">' + PR[p][0] + '</span><span class="cs-meta">' + PR[p][1] + '</span></button>';
+  const histHtml = frame('<span>Outdoor shop</span>');
+  const histWire = fixed => d => {
+    let hist = ['search', 'sale', 'wishlist', 'p:trail3'];
+    const go = pager(d, k => {
+      if (!fixed) { const i = hist.indexOf(k); hist = i >= 0 ? hist.slice(0, i + 1) : hist.concat(k).slice(-6); }
+      const items = (fixed ? where(k) : hist).map(x => ({ k: x, n: crumbName(x) }));
+      let page;
+      if (k.startsWith('p:')) { const p = PR[k.slice(2)]; page = '<div class="bc-prod"><span class="thumb' + p[3] + '"></span><div>' + title(p[0]) + '<span class="bc-price">' + p[1] + '</span><span class="cs-meta">In stock</span></div></div>'; }
+      else if (k === 'shoes') page = title('Shoes') + '<div>' + Object.keys(CATS).map(c => '<button type="button" class="bc-row" data-go="c:' + c + '"><span class="grow">' + CATS[c][0] + '</span><span class="cs-meta">' + CATS[c][1].length + ' styles</span></button>').join('') + '</div>';
+      else if (k.startsWith('c:')) page = title(CATS[k.slice(2)][0] + ' shoes') + '<div>' + CATS[k.slice(2)][1].map(prodRow).join('') + '</div>';
+      else page = title(SEEN[k][1]) + '<div>' + SEEN[k][2].map(prodRow).join('') + '</div>';
+      const found = k === 'c:running' ? '<p class="cs-ok" role="status">Found more running shoes.</p>' : '';
+      return '<p class="bc-task">Task: find <b>more running shoes</b></p>' + trail(items, 'gt') + page + found;
+    });
+    go('p:trail3');
+  };
+  D('breadcrumbs-2b', histHtml, histWire(false));
+  D('breadcrumbs-2f', histHtml, histWire(true));
+
+  /* 3. Very deep path */
+  const F = (name, kids, files) => ({ name, kids: kids || [], files: files || [] });
+  const TREE = F('Files', [
+    F('Work', [
+      F('Clients', [
+        F('Northwind Traders', [
+          F('2025', null, ['Contract.pdf']),
+          F('2026', [
+            F('Contracts', null, ['Renewal.pdf']),
+            F('Invoices', [F('January', null, ['Invoice 0108.pdf']), F('February', null, ['Invoice 0211.pdf']), F('March', null, ['Invoice 0312.pdf', 'Invoice 0318.pdf', 'Receipts.zip'])])
+          ])
+        ]),
+        F('Bluebird Cafe', null, ['Menu design.pdf'])
+      ]),
+      F('Reports', null, ['Q1 report.pdf'])
+    ]),
+    F('Personal', null, ['Passport scan.pdf']),
+    F('Photos', null, ['Beach.jpg'])
+  ]);
+  const START = ['Work', 'Clients', 'Northwind Traders', '2026', 'Invoices', 'March'];
+  const deepHtml = frame('');
+  const deepWire = fixed => d => {
+    const body = d.querySelector('[data-body]');
+    let path = [TREE];
+    START.forEach(n => path.push(path[path.length - 1].kids.find(k => k.name === n)));
+    const draw = focusSel => {
+      const cur = path[path.length - 1];
+      let items = path.map((f, i) => ({ k: String(i), n: f.name }));
+      let hidden = [];
+      if (fixed && path.length > 3) { hidden = items.slice(1, -1); items = [items[0], { more: true }, items[items.length - 1]]; }
+      const crumbs = '<nav class="bc-trail" aria-label="Breadcrumb"><ol>' + items.map((it, i) => '<li>' + (it.more
+        ? '<button type="button" class="bc-more" aria-expanded="false" aria-haspopup="true" aria-label="Show ' + hidden.length + ' more folders">…</button><div class="bc-menu" role="menu" hidden>' +
+          hidden.map(h => '<button type="button" role="menuitem" data-up="' + h.k + '">' + icon('folder') + h.n + '</button>').join('') + '</div>'
+        : i === items.length - 1 ? '<span class="bc-cur" aria-current="page">' + it.n + '</span>' : '<button type="button" class="bc-link" data-up="' + it.k + '">' + it.n + '</button>') + '</li>').join('') + '</ol></nav>';
+      const rows = cur.kids.map((f, i) => '<button type="button" class="bc-row" data-down="' + i + '">' + icon('folder') + '<span class="grow">' + f.name + '</span></button>').join('') +
+        cur.files.map(n => '<div class="bc-file">' + icon(/\.jpg$/.test(n) ? 'image' : 'book') + '<span>' + n + '</span></div>').join('');
+      body.innerHTML = crumbs + title(cur.name) + '<div>' + (rows || '<p class="cs-meta">This folder is empty.</p>') + '</div>';
+      body.querySelectorAll('[data-up]').forEach(b => b.addEventListener('click', () => { path = path.slice(0, +b.dataset.up + 1); draw('.bc-title'); }));
+      body.querySelectorAll('[data-down]').forEach(b => b.addEventListener('click', () => { path = path.concat(cur.kids[+b.dataset.down]); draw('.bc-title'); }));
+      const more = body.querySelector('.bc-more');
+      if (more) {
+        const menu = body.querySelector('.bc-menu'), its = Array.from(menu.querySelectorAll('button'));
+        const open = on => { more.setAttribute('aria-expanded', String(on)); menu.hidden = !on; };
+        more.addEventListener('click', () => { const on = menu.hidden; open(on); if (on) its[0].focus(); });
+        menu.addEventListener('keydown', e => {
+          const i = its.indexOf(document.activeElement);
+          if (e.key === 'Escape') { e.preventDefault(); open(false); more.focus(); }
+          else if (e.key === 'ArrowDown' || e.key === 'ArrowUp') { e.preventDefault(); its[(i + (e.key === 'ArrowDown' ? 1 : its.length - 1)) % its.length].focus(); }
+        });
+      }
+      if (focusSel) { const f = body.querySelector(focusSel); if (f) f.focus({ preventScroll: true }); }
+    };
+    body.addEventListener('click', e => {
+      const menu = body.querySelector('.bc-menu'), more = body.querySelector('.bc-more');
+      if (menu && !menu.hidden && !e.target.closest('.bc-menu, .bc-more')) { menu.hidden = true; more.setAttribute('aria-expanded', 'false'); }
+    });
+    draw();
+  };
+  D('breadcrumbs-3b', deepHtml, deepWire(false));
+  D('breadcrumbs-3f', deepHtml, deepWire(true));
+
+  csInit(cs);
+})();
+
+  </script>

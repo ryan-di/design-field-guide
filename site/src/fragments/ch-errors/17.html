@@ -1,0 +1,81 @@
+<div class="fm" data-fm>
+  <div class="seg fm-seg" role="radiogroup" aria-label="Way to do it">
+    <input type="radio" name="fm-pat-autosave" id="fm-pat-autosave-1" value="type" checked><label for="fm-pat-autosave-1">As you type</label>
+    <input type="radio" name="fm-pat-autosave" id="fm-pat-autosave-2" value="each"><label for="fm-pat-autosave-2">Each change</label>
+    <input type="radio" name="fm-pat-autosave" id="fm-pat-autosave-3" value="unsent"><label for="fm-pat-autosave-3">Unsent text</label>
+    <input type="radio" name="fm-pat-autosave" id="fm-pat-autosave-4" value="crash"><label for="fm-pat-autosave-4">After a crash</label>
+  </div>
+  <div class="fm-stage" data-fm-stage></div>
+  <p class="fig-cap" data-fm-when aria-live="polite"></p>
+  
+  <script>
+  (() => {
+    const fm = document.currentScript.closest('[data-fm]'), stage = fm.querySelector('[data-fm-stage]'), when = fm.querySelector('[data-fm-when]');
+    const icon = n => '<svg class="icon"><use href="#i-' + n + '"/></svg>';
+    const frame = (title, right, body) => '<div class="app-frame fm-frame"><div class="app-bar"><span>' + title + '</span>' + (right || '') + '</div><div class="app-body">' + body + '</div></div>';
+    const setSt = (el, s) => { el.innerHTML = s === 'saving' ? '<span class="spinner" aria-hidden="true"></span>Saving…' : s === 'saved' ? icon('check') + 'Saved' : ''; };
+    let gen = 0;
+    const later = (fn, ms) => { const g = gen; setTimeout(() => { if (g === gen) fn(); }, ms); };
+    const F = {
+      type: {
+        html: frame('Recipes · Lemon cake', '<span class="fma-st" role="status" data-st></span>', '<textarea class="input" rows="4" aria-label="Recipe" spellcheck="false">Mix 200 g flour, 150 g sugar and 3 eggs. Add the zest of two lemons. Bake for 35 minutes.</textarea>'),
+        use: 'Use it for documents people write over time.',
+        more: 'Each pause saves, and the status says so.',
+        wire: s => {
+          const st = s.querySelector('[data-st]'); let tok = 0;
+          setSt(st, 'saved');
+          s.querySelector('textarea').addEventListener('input', () => { const my = ++tok; setSt(st, 'saving'); later(() => { if (my === tok) setSt(st, 'saved'); }, 800); });
+        }
+      },
+      each: {
+        html: frame('Settings · Notifications', '', ['New messages', 'Weekly summary', 'Sounds'].map((n, i) => '<div class="fma-set"><span class="grow">' + n + '</span><span class="fma-st" role="status" data-st></span><label class="switch"><input type="checkbox" role="switch" aria-label="' + n + '"' + (i !== 1 ? ' checked' : '') + '></label></div>').join('')),
+        use: 'Use it for settings, where each change is small and easy to reverse.',
+        more: 'There’s no Save button; each row confirms its own change.',
+        wire: s => s.querySelectorAll('.fma-set').forEach(r => {
+          const st = r.querySelector('[data-st]'); let tok = 0;
+          r.querySelector('input').addEventListener('change', () => { const my = ++tok; setSt(st, 'saving'); later(() => { if (my === tok) setSt(st, 'saved'); }, 500); later(() => { if (my === tok) setSt(st, ''); }, 2500); });
+        })
+      },
+      unsent: {
+        html: frame('Chat', '<span class="fma-chans" role="group" aria-label="Channels"><button class="cs-tab on" type="button" data-ch="0">#family</button><button class="cs-tab" type="button" data-ch="1">#book-club</button></span>',
+          '<div class="fma-msgs" data-msgs></div><input class="input" aria-label="Message" data-box>'),
+        use: 'Use it for message boxes, where people often switch away mid-sentence.',
+        more: 'Unsent text stays with its conversation, and a pencil marks where it is.',
+        wire: s => {
+          const MSG = [['Dinner at 7 on Sunday?', 'Mum is bringing dessert.'], ['Next book: The Overstory.', 'Meet on the 12th?']];
+          const drafts = ['', 'I’m only halfway through, so'];
+          let cur = 0;
+          const box = s.querySelector('[data-box]'), msgs = s.querySelector('[data-msgs]'), tabs = [...s.querySelectorAll('[data-ch]')];
+          const draw = () => {
+            msgs.innerHTML = MSG[cur].map(m => '<p>' + m + '</p>').join('');
+            box.value = drafts[cur];
+            tabs.forEach((b, i) => { b.classList.toggle('on', i === cur); b.setAttribute('aria-pressed', String(i === cur)); const name = i ? '#book-club' : '#family'; b.innerHTML = name + (drafts[i] && i !== cur ? ' <span aria-label="has a draft">✎</span>' : ''); });
+          };
+          box.addEventListener('input', () => { drafts[cur] = box.value; });
+          tabs.forEach((b, i) => b.addEventListener('click', () => { cur = i; draw(); }));
+          draw();
+        }
+      },
+      crash: {
+        html: frame('Sheets', '', '<div class="fma-pane" data-pane><b>Recovered after an unexpected close</b><div class="cs-row"><span class="grow">Budget 2026<br><span class="cs-meta">Kept on this device · 10:41</span></span><button class="btn btn-secondary" type="button" data-open>Open</button></div><div class="cs-row"><span class="grow">Holiday costs<br><span class="cs-meta">Kept on this device · 10:38</span></span><button class="btn btn-secondary" type="button" data-open>Open</button></div></div><p class="cs-meta" data-out></p>'),
+        use: 'Use it for apps that keep work on the device between saves.',
+        more: 'After a crash, the app lists what it kept, and people choose what to open.',
+        wire: s => s.querySelectorAll('[data-open]').forEach(b => b.addEventListener('click', () => {
+          const name = b.closest('.cs-row').querySelector('.grow').firstChild.textContent;
+          b.closest('.cs-row').remove();
+          s.querySelector('[data-out]').textContent = name + ' opened, with the changes from before the crash.';
+          const next = s.querySelector('[data-open]'); if (next) next.focus();
+          else s.querySelector('[data-pane]').innerHTML = '<b>Nothing left to recover.</b>';
+        }))
+      }
+    };
+    const show = k => {
+      gen++;
+      stage.innerHTML = F[k].html; F[k].wire(stage);
+      when.innerHTML = '<b>' + fm.querySelector('.fm-seg input:checked + label').textContent + '.</b> ' + F[k].use + ' ' + F[k].more;
+    };
+    fm.querySelectorAll('.fm-seg input').forEach(i => i.addEventListener('change', () => show(i.value)));
+    show('type');
+  })();
+  </script>
+</div>

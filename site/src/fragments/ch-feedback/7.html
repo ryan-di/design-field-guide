@@ -1,0 +1,41 @@
+<div class="note comfy cw-wrap">
+      <div class="seg cw-seg" role="radiogroup" aria-label="Example">
+        <input type="radio" name="cw-inline-message-w" id="cw-inline-message-w-1" value="vscode" checked><label for="cw-inline-message-w-1">VS Code</label>
+        <input type="radio" name="cw-inline-message-w" id="cw-inline-message-w-2" value="google"><label for="cw-inline-message-w-2">Google</label>
+        <input type="radio" name="cw-inline-message-w" id="cw-inline-message-w-3" value="stripe"><label for="cw-inline-message-w-3">Stripe Checkout</label>
+      </div>
+      <div class="cw" data-cw-view role="img" aria-label=""></div>
+      <p class="cw-cap" data-cw-cap aria-live="polite"></p>
+      
+      <script>
+      (() => {
+        const wrap = document.currentScript.closest('.cw-wrap');
+        const view = wrap.querySelector('[data-cw-view]'), cap = wrap.querySelector('[data-cw-cap]');
+        const ic = id => '<svg class="icon sm"><use href="#i-' + id + '"/></svg>';
+        const line = w => '<i class="cw-line" style="width:' + w + '%"></i>';
+        const msg = t => '<span class="cw-inlw-msg">' + ic('warn') + '<span>' + t + '</span></span>';
+        const S = {
+          vscode: { html: '<div class="cw-inlw-win"><div class="cw-inlw-top">resize.js</div><div class="cw-inlw-code">' +
+              '<em>1</em>' + line(55) + '<em>2</em><span>out = <u>resize(img)</u></span>' +
+              '<span class="cw-inlw-hover">' + ic('x') + 'Missing argument: height</span>' +
+              '<em>3</em>' + line(70) + '<em>4</em>' + line(40) + '</div>' +
+              '<div class="cw-inlw-status"><span class="bad">' + ic('x') + '1</span><span>' + ic('warn') + '0</span></div></div>',
+            alt: 'A code editor. One call on line 2 has a wavy red underline, and a hover card under it says Missing argument: height. The status bar at the bottom counts 1 error and 0 warnings.',
+            cap: 'VS Code: a squiggle marks the exact spot, and hovering it shows the message. A count in the status bar opens the full Problems list, so the markers stay small and one list holds them all.' },
+          google: { html: '<div class="cw-inlw-card"><b>Choose a username</b><span class="cw-inlw-lab">Username</span>' +
+              '<span class="cw-inlw-in bad">mia.chen</span>' + msg('That name is taken. Try another.') +
+              '<span class="btn btn-primary cw-inlw-btn">Next</span></div>',
+            alt: 'A sign-up step with a Username field holding mia.chen, outlined in red. Under it: That name is taken. Try another. A Next button below.',
+            cap: 'Google: when a new account’s username is taken, the message appears right under the field and says what to do next. What you typed stays, so the fix is one edit.' },
+          stripe: { html: '<div class="cw-inlw-card"><span class="cw-inlw-lab">Card information</span>' +
+              '<span class="cw-inlw-in bad">1234 5678 90</span><span class="cw-inlw-two"><span class="cw-inlw-in ph">MM / YY</span><span class="cw-inlw-in ph">CVC</span></span>' +
+              msg('Card number is incomplete.') + '<span class="btn btn-primary cw-inlw-btn wide">Pay</span></div>',
+            alt: 'A payment form. The card number field holds a short number and is outlined in red. Under the fields: Card number is incomplete. A Pay button below.',
+            cap: 'Stripe Checkout: the card number is checked when you leave the field, and the message under it says what’s wrong, like “incomplete”. You fix it before you press Pay, not after.' }
+        };
+        const render = k => { view.innerHTML = S[k].html; view.setAttribute('aria-label', 'Sketch: ' + S[k].alt); cap.textContent = S[k].cap; };
+        wrap.querySelectorAll('input[name="cw-inline-message-w"]').forEach(r => r.addEventListener('change', () => render(r.value)));
+        render('vscode');
+      })();
+      </script>
+    </div>

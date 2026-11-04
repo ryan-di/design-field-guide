@@ -1,0 +1,27 @@
+<div class="stage tall" data-demo="pat-progressive-disclosure">
+      <div class="seg" role="radiogroup" aria-label="Version">
+        <input type="radio" name="p10-pd-mode" id="p10-pd-before" value="before"><label for="p10-pd-before">Before</label>
+        <input type="radio" name="p10-pd-mode" id="p10-pd-after" value="after" checked><label for="p10-pd-after">After</label>
+      </div>
+      <div class="form-card surface" role="group" aria-labelledby="p10-pd-title">
+        <h5 id="p10-pd-title">Print</h5>
+        <div class="p10-grid">
+          <div class="field"><label class="field-label" for="p10-pd-steps">Copies</label><input class="input" id="p10-pd-steps" type="number" min="1" max="99" value="1"></div>
+          <div class="field"><label class="field-label" for="p10-pd-cfg">Scale (%)</label><input class="input" id="p10-pd-cfg" type="number" min="25" max="400" step="5" value="100"></div>
+          <div class="field p10-wide"><label class="field-label" for="p10-pd-seed">Pages</label><input class="input" id="p10-pd-seed" value="All" autocomplete="off"></div>
+        </div>
+        <button class="btn btn-ghost p10-toggle" type="button" id="p10-pd-toggle" aria-expanded="false" aria-controls="p10-pd-adv">Show advanced (5)</button>
+        <p class="p10-sum" id="p10-pd-sum" hidden></p>
+        <div class="p10-grid" id="p10-pd-adv" hidden>
+          <div class="field"><label class="field-label" for="p10-pd-sampler">Paper size</label>
+            <select class="select" id="p10-pd-sampler" data-default="a4"><option value="a4">A4</option><option value="letter">Letter</option><option value="a5">A5</option></select></div>
+          <div class="field"><label class="field-label" for="p10-pd-sched">Two-sided</label>
+            <select class="select" id="p10-pd-sched" data-default="off"><option value="off">Off</option><option value="long">Long edge</option><option value="short">Short edge</option></select></div>
+          <div class="field"><label class="field-label" for="p10-pd-denoise">Margins (mm)</label><input class="input" id="p10-pd-denoise" type="number" min="0" max="40" step="1" value="10" data-default="10"></div>
+          <div class="field"><label class="field-label" for="p10-pd-batch">Pages per sheet</label><input class="input" id="p10-pd-batch" type="number" min="1" max="16" value="1" data-default="1"></div>
+          <div class="field p10-wide"><label class="field-label" for="p10-pd-tiled">Background colors</label>
+            <select class="select" id="p10-pd-tiled" data-default="off"><option value="off">Off</option><option value="on">On, uses more ink</option></select></div>
+        </div>
+      </div>
+      <p class="try"><b>Try it:</b> open the advanced settings, set Margins to 5, then hide them again: the summary keeps that change in view. Reload the page, and the section stays open or closed the way you left it. Switch to Before to see all eight at once.</p>
+    </div>

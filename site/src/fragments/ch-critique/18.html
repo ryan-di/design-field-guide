@@ -1,0 +1,112 @@
+<script>
+(() => {
+  const cs = document.currentScript.closest('.cs');
+  const go = () => {
+  const D = (k, html, wire) => csDemo(cs.querySelector('[data-d="' + k + '"]'), html, wire);
+  const css = document.createElement('style');
+  css.textContent = [
+    '#good-heuristic-review .hr-col{width:min(380px,100%);display:flex;flex-direction:column;gap:10px;text-align:left}',
+    '#good-heuristic-review .hr-card{background:var(--ui-surface);border:1px solid var(--ui-border);border-radius:12px;padding:12px;display:flex;flex-direction:column;gap:6px;font-size:13.5px;line-height:1.4}',
+    '#good-heuristic-review .hr-h{font:600 11.5px var(--font-mono);text-transform:uppercase;letter-spacing:.06em;color:var(--ui-muted)}',
+    '#good-heuristic-review .hr-li{display:flex;gap:8px;align-items:flex-start;padding:4px 0;border-bottom:1px solid var(--ui-border)}',
+    '#good-heuristic-review .hr-li:last-child{border-bottom:0}',
+    '#good-heuristic-review .hr-li .grow{flex:1;min-width:0}',
+    '#good-heuristic-review .hr-tag{flex:none;font:600 11px var(--font-mono);color:var(--ui-muted);white-space:nowrap}',
+    '#good-heuristic-review .hr-new{background:var(--ui-sel-soft);border-radius:6px}',
+    '#good-heuristic-review .hr-miss{color:var(--ui-danger)}',
+    '#good-heuristic-review .hr-fixed .grow{text-decoration:line-through;color:var(--ui-muted)}',
+    '#good-heuristic-review .hr-sev{flex:none;width:22px;height:22px;border-radius:6px;font:700 12px/22px var(--font-mono);text-align:center;background:var(--ui-hover)}',
+    '#good-heuristic-review .hr-sev.s4,#good-heuristic-review .hr-sev.s3{background:var(--ui-danger-soft);color:var(--ui-danger)}',
+    '#good-heuristic-review .hr-acts{display:flex;flex-wrap:wrap;gap:6px}',
+    '#good-heuristic-review .hr-out{font-size:13.5px;line-height:1.45;color:var(--ui-text)}',
+    '#good-heuristic-review .hr-out:empty{display:none}',
+    '#good-heuristic-review .hr-obs{border-left:3px solid var(--ui-sel);padding-left:8px}'
+  ].join('\n');
+  cs.appendChild(css);
+  const li = (text, tag, cls) => '<div class="hr-li' + (cls ? ' ' + cls : '') + '"><span class="grow">' + text + '</span>' + (tag ? '<span class="hr-tag">' + tag + '</span>' : '') + '</div>';
+
+  /* 1. Review as the only test */
+  const FIND = ['Password rules show only after an error', 'Two buttons both say Continue', 'No sign of how many steps are left'];
+  const OBS = ['3 of 5 stopped at Phone number. They thought it was for ads.', '4 of 5 typed a password twice before they saw the rules.', 'Nobody noticed the two Continue buttons.'];
+  const signHtml = fixed => '<div class="hr-col"><div class="hr-card"><span class="hr-h">Meal-kit sign-up · review findings</span>' + FIND.map(f => li(f)).join('') + '</div>' +
+    '<div class="hr-card" data-obs hidden><span class="hr-h">Watching 5 people</span>' + OBS.map(o => '<span class="hr-obs">' + o + '</span>').join('') + '</div>' +
+    '<div class="hr-acts">' + (fixed ? '<button class="btn btn-secondary cs-sm" type="button" data-watch>Watch 5 people</button>' : '') + '<button class="btn btn-primary cs-sm" type="button" data-ship>Fix and ship</button></div>' +
+    '<p class="hr-out" data-out></p></div>';
+  const signWire = fixed => d => {
+    const o = d.querySelector('[data-out]');
+    let watched = false;
+    if (fixed) d.querySelector('[data-watch]').addEventListener('click', e => { watched = true; d.querySelector('[data-obs]').hidden = false; o.textContent = 'The phone step wasn’t on the review list at all.'; });
+    d.querySelector('[data-ship]').addEventListener('click', () => {
+      o.textContent = watched ? 'Shipped fixes for the phone step and the password rules first. After launch, far fewer people leave at the phone step.'
+        : 'Shipped fixes for all three findings. After launch, 4 in 10 people still leave at the phone number step. The review never flagged it.';
+    });
+  };
+  D('good-heuristic-review-1b', signHtml(false), signWire(false));
+  D('good-heuristic-review-1f', signHtml(true), signWire(true));
+
+  /* 2. One reviewer */
+  const P = { a: 'Seat map has no legend', b: 'Fees appear only at the last step', c: 'Timer ends with no warning', d: 'Promo code clears on an error', e: 'Back empties the basket', f: 'Seat colors differ only by hue',
+    g: 'Error just says “Invalid input”', h: 'Ticket names like “GA+” are unclear', i: 'Email field rejects a plus sign', j: 'Confirmation doesn’t say where tickets went', k: 'Date picker opens on the wrong month' };
+  const R = [['a', 'b', 'c', 'd'], ['b', 'e', 'f', 'g', 'a'], ['c', 'h', 'i', 'e'], ['b', 'j', 'd']];
+  const TOTAL = Object.keys(P).length;
+  const revHtml = fixed => '<div class="hr-col"><div class="hr-card"><span class="hr-h">Concert tickets checkout</span><b data-count></b><div data-list></div></div>' +
+    '<div class="hr-acts">' + (fixed ? '<button class="btn btn-secondary cs-sm" type="button" data-add>Add a reviewer</button>' : '<button class="btn btn-secondary cs-sm" type="button" data-miss>Show what was missed</button>') + '</div>' +
+    '<p class="hr-out" data-out></p></div>';
+  const revWire = fixed => d => {
+    const list = d.querySelector('[data-list]'), count = d.querySelector('[data-count]'), o = d.querySelector('[data-out]');
+    const found = []; let n = 0, fresh = [];
+    const add = () => { fresh = R[n].filter(k => !found.includes(k)); fresh.forEach(k => found.push(k)); n++; };
+    const draw = missed => {
+      list.innerHTML = found.map(k => li(P[k], 'Reviewer ' + (R.findIndex(r => r.includes(k)) + 1), n > 1 && fresh.includes(k) ? 'hr-new' : '')).join('') +
+        (missed ? Object.keys(P).filter(k => !found.includes(k)).map(k => li(P[k], 'missed', 'hr-miss')).join('') : '');
+      count.textContent = (n === 1 ? 'One reviewer' : n + ' reviewers') + ' found ' + found.length + ' of ' + TOTAL + ' known problems.';
+    };
+    add(); draw();
+    if (fixed) d.querySelector('[data-add]').addEventListener('click', e => {
+      if (n >= R.length) { o.textContent = 'All four reviewers are in. A fifth would likely add little.'; return; }
+      add(); draw();
+      o.textContent = 'Reviewer ' + n + ' added ' + fresh.length + ' new.' + (n === R.length ? ' A fifth reviewer would likely add little.' : '');
+    });
+    else d.querySelector('[data-miss]').addEventListener('click', e => { draw(true); o.textContent = (TOTAL - found.length) + ' problems were never found.'; });
+  };
+  D('good-heuristic-review-2b', revHtml(false), revWire(false));
+  D('good-heuristic-review-2f', revHtml(true), revWire(true));
+
+  /* 3. Flat list vs severity */
+  const ISSUES = [['Icon sizes differ in the menu', 1], ['Typo: “Delivey fee”', 1], ['Logo is a little blurry', 1], ['Card payment fails if the address has an accent', 4],
+    ['Basket empties when you switch restaurant', 3], ['Prices are low contrast', 2], ['Delivery fee shows only at the end', 3], ['Search ignores spelling mistakes', 2], ['Footer links are cramped', 1]];
+  const SHORT = { 'Icon sizes differ in the menu': 'icon sizes', 'Typo: “Delivey fee”': 'the typo', 'Logo is a little blurry': 'the blurry logo', 'Card payment fails if the address has an accent': 'failed card payments',
+    'Basket empties when you switch restaurant': 'the emptied basket', 'Delivery fee shows only at the end': 'the hidden fee' };
+  const sevHtml = fixed => '<div class="hr-col"><div class="hr-card"><span class="hr-h">Food delivery app · ' + ISSUES.length + ' problems' + (fixed ? ', worst first' : '') + '</span><div data-list></div></div>' +
+    '<div class="hr-acts"><button class="btn btn-primary cs-sm" type="button" data-fix>Fix the first three</button></div><p class="hr-out" data-out></p></div>';
+  const sevWire = fixed => d => {
+    const rows = fixed ? ISSUES.slice().sort((a, b) => b[1] - a[1]) : ISSUES;
+    const list = d.querySelector('[data-list]'), o = d.querySelector('[data-out]');
+    const draw = done => { list.innerHTML = rows.map((r, i) => '<div class="hr-li' + (i < done ? ' hr-fixed' : '') + '">' + (fixed ? '<span class="hr-sev s' + r[1] + '">' + r[1] + '</span>' : '') + '<span class="grow">' + r[0] + '</span></div>').join(''); };
+    draw(0);
+    d.querySelector('[data-fix]').addEventListener('click', e => {
+      draw(3);
+      const worst = rows.slice(3).find(r => r[1] === 4);
+      o.textContent = 'Fixed: ' + rows.slice(0, 3).map(r => SHORT[r[0]]).join(', ') + '. ' + (worst ? 'Still broken: ' + worst[0].toLowerCase() + '.' : 'The cosmetic ones can wait.');
+    });
+  };
+  D('good-heuristic-review-3b', sevHtml(false), sevWire(false));
+  D('good-heuristic-review-3f', sevHtml(true), sevWire(true));
+
+  /* 4. What a mock can't show */
+  const mockFinds = [['Cancel is grayed out while it prepares', 3], ['“OK” doesn’t say what it does', 2], ['The only help is a tiny “?”', 2]];
+  const mockHtml = fixed => '<div class="hr-col"><div class="hr-card"><span class="hr-h">Review · export dialog · static mock</span>' +
+    mockFinds.map(f => '<div class="hr-li"><span class="hr-sev s' + f[1] + '">' + f[1] + '</span><span class="grow">' + f[0] + '</span></div>').join('') +
+    (fixed ? '<span class="hr-h">Not checked: a mock can’t show these</span>' + ['Focus order, and Escape to close', 'How the progress moves over time', 'What an error looks like', 'What a screen reader says'].map(t => '<div class="hr-li"><span class="hr-tag">?</span><span class="grow">' + t + '</span></div>').join('')
+      : '<div class="hr-li"><span class="hr-tag">✓</span><span class="grow">Everything else passes</span></div>') +
+    '</div><div class="hr-acts"><button class="btn btn-primary cs-sm" type="button" data-go>' + (fixed ? 'Check them in the build' : 'Ship it') + '</button></div><p class="hr-out" data-out></p></div>';
+  const mockWire = msg => d => { const o = d.querySelector('[data-out]'), g = d.querySelector('[data-go]'); g.addEventListener('click', () => { o.textContent = msg; g.disabled = true; }); };
+  D('good-heuristic-review-4b', mockHtml(false), mockWire('After release: focus stays behind the dialog, and the progress never moves. Neither could show in a mock, but the review said everything else passed.'));
+  D('good-heuristic-review-4f', mockHtml(true), mockWire('Two of the four fail in the build: focus stays behind the dialog, and the progress never moves. Both are fixed before release.'));
+
+  csInit(cs);
+  };
+  if (window.csDemo) go(); else document.addEventListener('DOMContentLoaded', go);
+})();
+
+</script>

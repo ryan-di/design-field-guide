@@ -1,0 +1,32 @@
+<div class="stage tall" data-demo="eff-cut-combine">
+      <div class="p28-cc">
+        <p class="p28-cc-key"><span><i class="p28-src">A</i>Ask on close</span><span><i class="p28-src">B</i>Keep drafts</span><span><i class="p28-src">C</i>Undo the close</span></p>
+        <fieldset class="p28-cc-part">
+          <legend>Trigger: what starts it</legend>
+          <label class="p28-opt"><input type="radio" name="p28-cc-trigger" value="a" checked><i class="p28-src">A</i><span>Ask before a tab with changes closes</span></label>
+          <label class="p28-opt"><input type="radio" name="p28-cc-trigger" value="b"><i class="p28-src">B</i><span>Keep a draft on every change</span></label>
+          <label class="p28-opt"><input type="radio" name="p28-cc-trigger" value="c"><i class="p28-src">C</i><span>Keep the closed tab for a while</span></label>
+        </fieldset>
+        <fieldset class="p28-cc-part">
+          <legend>Surface: what people see</legend>
+          <label class="p28-opt"><input type="radio" name="p28-cc-surface" value="a" checked><i class="p28-src">A</i><span>Confirm dialog on close</span></label>
+          <label class="p28-opt"><input type="radio" name="p28-cc-surface" value="b"><i class="p28-src">B</i><span>“Draft” marker on the tab</span></label>
+          <label class="p28-opt"><input type="radio" name="p28-cc-surface" value="c"><i class="p28-src">C</i><span>Toast with Undo after closing</span></label>
+        </fieldset>
+        <fieldset class="p28-cc-part">
+          <legend>Recovery: how they get it back</legend>
+          <label class="p28-opt"><input type="radio" name="p28-cc-recovery" value="a" checked><i class="p28-src">A</i><span>Save, Don’t save or Cancel</span></label>
+          <label class="p28-opt"><input type="radio" name="p28-cc-recovery" value="b"><i class="p28-src">B</i><span>Restore the draft from the tab’s menu</span></label>
+          <label class="p28-opt"><input type="radio" name="p28-cc-recovery" value="c"><i class="p28-src">C</i><span>Undo, or Reopen closed tab, brings back its changes</span></label>
+        </fieldset>
+        <div class="surface p28-cc-sum" role="group" aria-labelledby="p28-cc-sum-h">
+          <div class="p28-cc-sumtop"><p class="p28-h" id="p28-cc-sum-h">Combined design</p><span class="p28-cc-status" id="p28-cc-status"></span></div>
+          <ul class="p28-cc-keep" id="p28-cc-keep"></ul>
+          <div id="p28-cc-clash-wrap"><p class="p28-sub">Clashes to resolve</p><ul class="p28-cc-ul p28-cc-clash" id="p28-cc-clash"></ul></div>
+          <div id="p28-cc-trade-wrap"><p class="p28-sub">Trade-offs you accept</p><ul class="p28-cc-ul" id="p28-cc-trade"></ul></div>
+          <p class="p28-sub">Cut</p><p class="p28-cc-cut" id="p28-cc-cut"></p>
+        </div>
+        <p class="p28-sr" id="p28-cc-live" role="status"></p>
+      </div>
+      <p class="try"><b>Try it:</b> you start with all of direction A. Swap one part at a time and watch for clashes. Then try B’s trigger with C’s surface and recovery: nothing blocks closing, and the draft keeps Undo working after a restart.</p>
+    </div>

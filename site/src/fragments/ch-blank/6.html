@@ -1,0 +1,164 @@
+<script>
+(() => {
+  const cs = document.currentScript.closest('.cs');
+  const run = () => {
+  const D = (k, html, wire) => csDemo(cs.querySelector('[data-d="' + k + '"]'), html, wire);
+  const css = document.createElement('style');
+  css.textContent = [
+    '.tp-app{width:min(380px,100%);position:relative}',
+    '.tp-tiles{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}',
+    '.tp-tile{all:unset;cursor:pointer;display:flex;flex-direction:column;gap:5px;padding:8px;border:1.5px solid var(--ui-border);border-radius:10px;background:var(--ui-surface);font-size:13px;min-width:0}',
+    '.tp-tile:hover{background:var(--ui-hover)}',
+    '.tp-tile:focus-visible{outline:2px solid var(--ui-sel);outline-offset:2px}',
+    '.tp-tile[aria-pressed="true"]{border-color:var(--ui-sel);background:var(--ui-sel-soft)}',
+    '.tp-tile b{font-size:13.5px}',
+    '.tp-tile small{color:var(--ui-muted);font-size:12px;line-height:1.35}',
+    '.tp-mini{height:54px;border-radius:6px;border:1px solid var(--ui-border);background:var(--ui-bg);padding:6px;display:flex;flex-direction:column;gap:4px;overflow:hidden}',
+    '.tp-mini i{display:block;height:5px;border-radius:3px;background:var(--ui-skel)}',
+    '.tp-mini i.t{height:7px;width:60%;background:var(--c,var(--ui-muted))}',
+    '.tp-mini i.d{width:70%;margin-left:8px;position:relative}',
+    '.tp-mini i.d::before{content:"";position:absolute;left:-7px;top:0;width:4px;height:4px;border-radius:50%;background:var(--c,var(--ui-muted))}',
+    '.tp-mini .ph{flex:1;border-radius:4px;background:linear-gradient(135deg,var(--thumb-a),var(--thumb-b))}',
+    '.tp-mini .q{font:700 20px/1 var(--font-body);color:var(--ui-sel);text-align:center}',
+    '.tp-mini .bars{flex:1;display:flex;align-items:flex-end;gap:4px}',
+    '.tp-mini .bars span{flex:1;background:var(--ui-sel);border-radius:2px 2px 0 0}',
+    '.tp-sheet{display:flex;flex-direction:column;gap:6px}',
+    '.tp-sheet h6{margin:0;font:700 15px var(--font-body);color:var(--ui-text)}',
+    '.tp-chart{height:70px;border:1px solid var(--ui-border);border-radius:8px;display:flex;align-items:flex-end;gap:8px;padding:8px 10px;background:var(--ui-surface)}',
+    '.tp-chart span{flex:1;background:var(--ui-sel);border-radius:3px 3px 0 0}',
+    '.tp-chart.bad{align-items:center;justify-content:center;gap:6px;color:var(--ui-danger);font-size:13px;background:var(--ui-danger-soft)}',
+    '.tp-card{display:flex;flex-direction:column;gap:6px;padding:10px;border:1px solid var(--ui-border);border-radius:10px;background:var(--ui-surface)}',
+    '.tp-card .btn{align-self:flex-start}',
+    '.tp-cv{display:flex;flex-direction:column;gap:4px;font-size:13.5px}',
+    '.tp-cv h6{margin:6px 0 0;font:700 11.5px var(--font-body);letter-spacing:.06em;text-transform:uppercase;color:var(--ui-muted)}',
+    '.tp-part{all:unset;cursor:pointer;align-self:flex-start;padding:2px 4px;border-radius:5px;border:1.5px solid transparent;max-width:100%}',
+    '.tp-part:hover{background:var(--ui-hover)}',
+    '.tp-part:focus-visible{outline:2px solid var(--ui-sel)}',
+    '.tp-part.big{font:700 18px var(--font-body)}',
+    '.tp-part.mark{border:1.5px dashed var(--ui-sel);background:var(--ui-sel-soft)}',
+    '.tp-part.mark::after{content:"edit";margin-left:6px;font:600 11px var(--font-body);color:var(--ui-sel)}',
+    '.tp-part.mine{border-color:transparent;background:none}',
+    '.tp-part.mine::after{content:none}',
+    '.tp-hint{display:flex;gap:6px;align-items:flex-start;font-size:13px;padding:6px 8px;border-radius:8px;background:var(--ui-sel-soft)}',
+    '.tp-hint .icon{color:var(--ui-sel);margin-top:1px}',
+    '.tp-res{font-size:13.5px;min-height:20px}',
+    '.tp-res.bad{color:var(--ui-danger)}',
+    '.tp-res.ok{color:var(--ui-ok);font-weight:600}',
+    '.tp-acts{display:flex;gap:6px;flex-wrap:wrap}',
+    '.tp-dlg{width:min(300px,100%)}',
+    '.tp-dlg .tp-tiles{gap:6px}',
+    '.tp-dlg .tp-tile{padding:7px}'
+  ].map(r => '#pat-templates ' + r).join('\n');
+  cs.appendChild(css);
+  const icon = n => '<svg class="icon sm" aria-hidden="true"><use href="#i-' + n + '"/></svg>';
+  const frame = (title, body, right) => '<div class="app-frame tp-app"><div class="app-bar"><span>' + title + '</span>' + (right || '') + '</div><div class="app-body">' + body + '</div></div>';
+  const bullets = c => '<span class="tp-mini" style="--c:' + c + '"><i class="t"></i><i class="d"></i><i class="d"></i><i class="d"></i></span>';
+
+  /* 1. One way of working */
+  const SAME = [['Blue', 'var(--ui-sel)'], ['Green', 'var(--ui-ok)'], ['Coral', 'var(--ui-danger)'], ['Mono', 'var(--ui-muted)']];
+  const KINDS = [
+    ['Pitch', 'Problem, idea, ask. One point per slide.', bullets('var(--ui-sel)'), 'Built for an argument. Your photos would sit in small boxes.'],
+    ['Photo story', 'Full-page photos, one line of text each.', '<span class="tp-mini"><span class="ph"></span><i style="width:50%"></i></span>', ''],
+    ['Lesson', 'A question on each slide, the answer on the next.', '<span class="tp-mini"><span class="q">?</span><i style="width:70%;align-self:center"></i></span>', 'Built for teaching. Every slide starts with a question.'],
+    ['Status update', 'One chart and one sentence per slide.', '<span class="tp-mini"><span class="bars"><span style="height:40%"></span><span style="height:70%"></span><span style="height:55%"></span><span style="height:90%"></span></span></span>', 'Built for numbers. Each slide expects a chart.']
+  ];
+  const deckHtml = fixed => frame('New presentation', '<b style="font-size:13.5px">Choose a start</b><div class="tp-tiles">' +
+    (fixed ? KINDS.map((k, i) => '<button type="button" class="tp-tile" aria-pressed="false" data-i="' + i + '">' + k[2] + '<b>' + k[0] + '</b><small>' + k[1] + '</small></button>').join('')
+      : SAME.map((k, i) => '<button type="button" class="tp-tile" aria-pressed="false" data-i="' + i + '">' + bullets(k[1]) + '<b>' + k[0] + '</b></button>').join('')) +
+    '</div><p class="tp-res" role="status" data-out></p>');
+  const deckWire = fixed => d => {
+    const out = d.querySelector('[data-out]'), tiles = d.querySelectorAll('[data-i]');
+    tiles.forEach(b => b.addEventListener('click', () => {
+      tiles.forEach(x => x.setAttribute('aria-pressed', String(x === b)));
+      const i = +b.dataset.i;
+      out.className = 'tp-res' + (fixed && i === 1 ? ' ok' : '');
+      if (!fixed) out.textContent = 'Opened “' + SAME[i][0] + '”. Every slide is a title and bullets, so your photos would sit in small boxes.';
+      else out.textContent = i === 1 ? 'Opened “Photo story”. Full-page photos with one line each.' : 'Opened “' + KINDS[i][0] + '”. ' + KINDS[i][3];
+    }));
+  };
+  D('pat-templates-1b', deckHtml(false), deckWire(false));
+  D('pat-templates-1f', deckHtml(true), deckWire(true));
+
+  /* 2. Stale template */
+  const budgetHtml = fixed => frame('Sheets · Templates', '<div data-view><div class="tp-card"><span class="tp-mini"><i class="t"></i><i></i><i></i><i style="width:70%"></i></span><b>Monthly budget</b>' +
+    (fixed ? '<span class="cs-meta">Owner: Budget team · Checked with the October 2026 release</span>' : '<span class="cs-meta">Track what comes in and goes out.</span>') +
+    '<button class="btn btn-primary cs-sm" type="button" data-use>Use template</button></div></div>');
+  const budgetWire = fixed => d => {
+    const view = d.querySelector('[data-view]'), first = view.innerHTML;
+    const rows = fixed ? [['Rent', '1,200'], ['Food', '450'], ['Phone', '25'], ['Streaming', '18']] : [['Rent', '1,200'], ['Food', '450'], ['Phone (landline)', '30'], ['Fax line', '15']];
+    const wire = () => view.querySelector('[data-use]').addEventListener('click', () => {
+      view.innerHTML = '<div class="tp-sheet"><h6 tabindex="-1">Budget ' + (fixed ? '2026' : '2023') + '</h6>' + rows.map(r => '<div class="cs-row"><span class="grow">' + r[0] + '</span><span>€' + r[1] + '</span></div>').join('') +
+        (fixed ? '<div class="tp-chart" role="img" aria-label="Bar chart of spending"><span style="height:90%"></span><span style="height:40%"></span><span style="height:12%"></span><span style="height:9%"></span></div>'
+          : '<div class="tp-chart bad">' + icon('warn') + 'This chart type is no longer supported.</div>') +
+        '<button class="btn btn-ghost cs-sm" type="button" data-back style="align-self:flex-start">Back to templates</button></div>';
+      view.querySelector('h6').focus({ preventScroll: true });
+      view.querySelector('[data-back]').addEventListener('click', () => { view.innerHTML = first; wire(); view.querySelector('[data-use]').focus({ preventScroll: true }); });
+    });
+    wire();
+  };
+  D('pat-templates-2b', budgetHtml(false), budgetWire(false));
+  D('pat-templates-2f', budgetHtml(true), budgetWire(true));
+
+  /* 3. Unmarked example */
+  const PARTS = { name: ['Jane Doe', 'Sam Rivera'], title: ['Senior designer', 'Product designer'], job: ['Northwind · 2019–2024', 'Lumen Labs · 2021–2026'], skills: ['Figma, research, prototyping', 'Research, writing, prototyping'], email: ['jane@example.com', 'sam@rivera.me'] };
+  const part = (k, fixed, big) => '<button type="button" class="tp-part' + (big ? ' big' : '') + (fixed ? ' mark' : '') + '" data-p="' + k + '">' + PARTS[k][0] + '</button>';
+  const head = (t, fixed) => fixed ? '<h6>' + t + '</h6>' : '<button type="button" class="tp-part" data-h><h6 style="margin:0">' + t + '</h6></button>';
+  const cvHtml = fixed => frame('Résumé', (fixed ? '<p class="tp-hint">' + icon('info') + '<span>Start with your name and the job you want. Parts marked “edit” are yours to change.</span></p>' : '') +
+    '<div class="tp-cv">' + part('name', fixed, 1) + part('title', fixed) + head('Experience', fixed) + part('job', fixed) + head('Skills', fixed) + part('skills', fixed) + head('Contact', fixed) + part('email', fixed) + '</div>' +
+    '<div class="tp-acts"><button class="btn btn-secondary cs-sm" type="button" data-check>Check</button></div><p class="tp-res" role="status" data-out></p>');
+  const cvWire = fixed => d => {
+    const out = d.querySelector('[data-out]');
+    const mine = new Set();
+    d.querySelectorAll('[data-p]').forEach(b => b.addEventListener('click', () => {
+      const k = b.dataset.p; mine.add(k); b.textContent = PARTS[k][1]; b.classList.add('mine'); out.textContent = ''; out.className = 'tp-res';
+    }));
+    d.querySelectorAll('[data-h]').forEach(b => b.addEventListener('click', () => { out.className = 'tp-res'; out.textContent = 'That’s a heading. It stays as it is.'; }));
+    d.querySelector('[data-check]').addEventListener('click', () => {
+      const left = Object.keys(PARTS).filter(k => !mine.has(k));
+      out.className = 'tp-res ' + (left.length ? 'bad' : 'ok');
+      out.textContent = left.length ? left.length + (left.length === 1 ? ' part still has' : ' parts still have') + ' example text: ' + left.map(k => '“' + PARTS[k][0] + '”').join(', ') + '.' : 'All parts are yours.';
+    });
+  };
+  D('pat-templates-3b', cvHtml(false), cvWire(false));
+  D('pat-templates-3f', cvHtml(true), cvWire(true));
+
+  /* 4. Blank hidden behind the gallery */
+  const TPL = ['Event sign-up', 'Feedback', 'Order form', 'Quiz'];
+  const formsHtml = fixed => frame('Forms', '<div class="tp-acts">' + (fixed ? '<button class="btn btn-primary cs-sm" type="button" data-blank>Blank form</button><button class="btn btn-secondary cs-sm" type="button" data-new>From a template</button>' : '<button class="btn btn-primary cs-sm" type="button" data-new>New form</button>') +
+    '</div><b style="font-size:13.5px">Your forms</b><div data-list><div class="cs-row"><span class="grow">Book club RSVP</span><span class="cs-meta">Sep</span></div></div><p class="cs-meta" data-count>Clicks: 0 · Blank forms: 0</p>');
+  const formsWire = fixed => d => {
+    const list = d.querySelector('[data-list]'), count = d.querySelector('[data-count]');
+    let clicks = 0, blanks = 0;
+    const tick = () => { clicks++; count.textContent = 'Clicks: ' + clicks + ' · Blank forms: ' + blanks; };
+    const addBlank = () => { blanks++; list.insertAdjacentHTML('afterbegin', '<div class="cs-row"><span class="grow">Untitled form ' + blanks + '</span><span class="cs-meta">Now</span></div>'); };
+    const closeDlg = () => { const m = d.querySelector('.cs-modal'); if (m) m.remove(); d.querySelector('[data-new]').focus({ preventScroll: true }); };
+    const gallery = () => {
+      d.insertAdjacentHTML('beforeend', '<div class="cs-modal"><div class="cs-dlg tp-dlg" role="dialog" aria-label="Choose a template"><b>Choose a template</b><div class="tp-tiles">' +
+        TPL.map(n => '<button type="button" class="tp-tile" data-t>' + '<span class="tp-mini"><i class="t"></i><i></i><i style="width:60%"></i></span><b>' + n + '</b></button>').join('') + '</div>' +
+        '<div class="acts">' + (fixed ? '<button class="btn btn-ghost cs-sm" type="button" data-x>Close</button>' : '<button class="btn btn-ghost cs-sm" type="button" data-more>More options</button>') + '</div></div></div>');
+      const m = d.querySelector('.cs-modal');
+      m.addEventListener('keydown', e => { if (e.key === 'Escape') closeDlg(); });
+      m.querySelectorAll('[data-t]').forEach(b => b.addEventListener('click', () => { tick(); closeDlg(); list.insertAdjacentHTML('afterbegin', '<div class="cs-row"><span class="grow">' + b.textContent + '</span><span class="cs-meta">Now</span></div>'); }));
+      const x = m.querySelector('[data-x]'); if (x) x.addEventListener('click', () => { tick(); closeDlg(); });
+      const more = m.querySelector('[data-more]');
+      if (more) more.addEventListener('click', () => {
+        tick();
+        more.outerHTML = '<button class="btn btn-secondary cs-sm" type="button" data-b>Blank form</button><button class="btn btn-ghost cs-sm" type="button" data-imp>Import</button>';
+        m.querySelector('[data-b]').addEventListener('click', () => { addBlank(); tick(); closeDlg(); });
+        m.querySelector('[data-imp]').addEventListener('click', () => { tick(); });
+        m.querySelector('[data-b]').focus({ preventScroll: true });
+      });
+      m.querySelector('[data-t]').focus({ preventScroll: true });
+    };
+    d.querySelector('[data-new]').addEventListener('click', () => { tick(); gallery(); });
+    if (fixed) d.querySelector('[data-blank]').addEventListener('click', () => { addBlank(); tick(); });
+  };
+  D('pat-templates-4b', formsHtml(false), formsWire(false));
+  D('pat-templates-4f', formsHtml(true), formsWire(true));
+
+  csInit(cs);
+  };
+  if (window.csDemo) run(); else document.addEventListener('DOMContentLoaded', run);
+})();
+
+</script>

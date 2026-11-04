@@ -1,0 +1,429 @@
+---
+title: "Feedback & status"
+description: "Feedback tells people whether an action worked."
+eyebrow: "Chapter 16"
+sidebar:
+  label: "Feedback & status"
+---
+
+import Raw from '../../../components/Raw.astro';
+import Learned from '../../../components/Learned.astro';
+import Runtime from '../../../components/Runtime.astro';
+import F0 from '../../../fragments/ch-feedback/0.html?raw';
+import F1 from '../../../fragments/ch-feedback/1.html?raw';
+import F2 from '../../../fragments/ch-feedback/2.html?raw';
+import F3 from '../../../fragments/ch-feedback/3.html?raw';
+import F4 from '../../../fragments/ch-feedback/4.html?raw';
+import F5 from '../../../fragments/ch-feedback/5.html?raw';
+import F6 from '../../../fragments/ch-feedback/6.html?raw';
+import F7 from '../../../fragments/ch-feedback/7.html?raw';
+import F8 from '../../../fragments/ch-feedback/8.html?raw';
+import F9 from '../../../fragments/ch-feedback/9.html?raw';
+import F10 from '../../../fragments/ch-feedback/10.html?raw';
+import F11 from '../../../fragments/ch-feedback/11.html?raw';
+import F12 from '../../../fragments/ch-feedback/12.html?raw';
+import F13 from '../../../fragments/ch-feedback/13.html?raw';
+import F14 from '../../../fragments/ch-feedback/14.html?raw';
+import F15 from '../../../fragments/ch-feedback/15.html?raw';
+import F16 from '../../../fragments/ch-feedback/16.html?raw';
+import F17 from '../../../fragments/ch-feedback/17.html?raw';
+import F18 from '../../../fragments/ch-feedback/18.html?raw';
+import F19 from '../../../fragments/ch-feedback/19.html?raw';
+import F20 from '../../../fragments/ch-feedback/20.html?raw';
+import F21 from '../../../fragments/ch-feedback/21.html?raw';
+import F22 from '../../../fragments/ch-feedback/22.html?raw';
+import F23 from '../../../fragments/ch-feedback/23.html?raw';
+import F24 from '../../../fragments/ch-feedback/24.html?raw';
+import F25 from '../../../fragments/ch-feedback/25.html?raw';
+import F26 from '../../../fragments/ch-feedback/26.html?raw';
+import F27 from '../../../fragments/ch-feedback/27.html?raw';
+import F28 from '../../../fragments/ch-feedback/28.html?raw';
+import F29 from '../../../fragments/ch-feedback/29.html?raw';
+import F30 from '../../../fragments/ch-feedback/30.html?raw';
+import F31 from '../../../fragments/ch-feedback/31.html?raw';
+import F32 from '../../../fragments/ch-feedback/32.html?raw';
+
+<Runtime at="start" />
+
+<section class="dfg-chapter" id="ch-feedback">
+
+Feedback tells people whether an action worked. Match how noticeable it is to how much it matters: small confirmations stay quiet, problems stay until they’re fixed, and lasting states stay visible while they’re true.
+
+<article class="entry essay" id="inline-message" data-entry data-name="Inline message">
+
+<div class="entry-head">
+
+## Inline message \{#inline-message-h\}
+
+<Learned id="inline-message" />
+
+</div>
+
+An inline message is a short line of text right next to the thing it’s about. Most often it sits under a form field and says what’s wrong and how to fix it. It can also give a hint before people type, or point out a value that looks like a mistake.
+
+Where a banner is about the whole page or app, an inline message is about one field or one item, and it sits right beside it.
+
+<Raw html={F0} />
+
+### Forms \{#inline-message-forms\}
+
+Inline messages come in four kinds: a hint, an error, a warning and a success note. A hint is there before people type. The other three respond to what they typed, and only an error stops them from going on.
+
+<Raw html={F1} />
+
+### Rules \{#inline-message-rules\}
+
+Four rules keep inline messages useful.
+
+<div class="cs essay-cs">
+
+<section class="rule" id="inline-message-rule-1">
+
+#### 1. Bring the problem to where people look \{#inline-message-rule-1-h\}
+
+After a failed submit, the message often sits next to a field that has scrolled out of view, so people see nothing change near the button and press again or give up. Add a short summary at the top of the form that lists each problem, links to its field and gets focus when the form is sent.
+
+<Raw html={F2} />
+
+</section>
+
+<section class="rule" id="inline-message-rule-2">
+
+#### 2. Give each field one next step \{#inline-message-rule-2-h\}
+
+When every check adds its own red line, the form turns into a wall of errors: people can’t tell what to fix first, and several lines say the same thing. Show only the most useful message for each field. If something is still wrong after they fix it, the next message appears then.
+
+<Raw html={F3} />
+
+</section>
+
+<section class="rule" id="inline-message-rule-3">
+
+#### 3. Wait until people leave the field \{#inline-message-rule-3-h\}
+
+An error that appears on the first key press tells people they’re wrong before they’ve finished, when they’re only not done yet. Check the value when they leave the field or send the form, and if a message is already showing, clear it as soon as the value is right.
+
+<Raw html={F4} />
+
+</section>
+
+<section class="rule" id="inline-message-rule-4">
+
+#### 4. Say what to do instead \{#inline-message-rule-4-h\}
+
+“Invalid date” says that something is wrong, but not which date or why, so people guess and often change the wrong field. A good message names the field and the rule in plain words, and offers the fix as a button when it’s obvious.
+
+<Raw html={F5} />
+
+</section>
+
+<Raw html={F6} />
+
+</div>
+
+### In real products \{#inline-message-products\}
+
+<Raw html={F7} />
+
+</article>
+
+<article class="entry essay" id="toast" data-entry data-name="Toast">
+
+<div class="entry-head">
+
+## Toast \{#toast-h\}
+
+<Learned id="toast" />
+
+</div>
+
+A toast is a short message that appears near the edge of the screen after people do something. It confirms that the action worked, such as “Email archived”, and often offers Undo. It leaves on its own after a few seconds, and people can keep working while it’s there.
+
+Where a banner describes a state that lasts, like being offline, and stays until the state ends, a toast reports one moment and fades. So it can’t carry anything people must see.
+
+<Raw html={F8} />
+
+### Forms \{#toast-forms\}
+
+Toasts come in three common forms: a plain toast only confirms, a toast with Undo lets people reverse what they just did, and a progress toast reports a short task while it runs. All three leave on their own.
+
+<Raw html={F9} />
+
+### Rules \{#toast-rules\}
+
+Five rules keep toasts useful.
+
+<div class="cs essay-cs">
+
+<section class="rule" id="toast-rule-1">
+
+#### 1. Don’t put errors in a toast \{#toast-rule-1-h\}
+
+A toast leaves after a few seconds, whether anyone read it or not, so people who looked away never learn that the photo didn’t upload. Put the error next to the file it’s about, or in a banner that lasts until the problem is solved, where it has room to explain the limit and offer a way forward.
+
+<Raw html={F10} />
+
+</section>
+
+<section class="rule" id="toast-rule-2">
+
+#### 2. Don’t make it the only way to act \{#toast-rule-2-h\}
+
+When a toast holds the only Restart button, the button leaves with it, and people who miss it have no way left to finish the update. Put requests like this in a banner or a notification that stays until people choose, so “Later” is a real choice and not a missed chance.
+
+<Raw html={F11} />
+
+</section>
+
+<section class="rule" id="toast-rule-3">
+
+#### 3. Combine messages into one \{#toast-rule-3-h\}
+
+When several things finish at once, each can fire its own toast, and they pile up, cover the page and repeat the same news. Use one toast that updates as things finish, such as “3 photos uploaded”, so people get one clear result and the page stays usable.
+
+<Raw html={F12} />
+
+</section>
+
+<section class="rule" id="toast-rule-4">
+
+#### 4. Leave a trace that lasts \{#toast-rule-4-h\}
+
+A toast only helps if people are looking when it appears. If the export finishes while they’re in another part of the app, they come back to no sign that it’s done. Also mark the result somewhere that waits, such as a badge on Files or an entry in a notifications list, where people find it whenever they look.
+
+<Raw html={F13} />
+
+</section>
+
+<section class="rule" id="toast-rule-5">
+
+#### 5. Offer Undo instead of asking first \{#toast-rule-5-h\}
+
+A confirm dialog on every delete gets clicked through without reading, as [the Undo pattern](/part-2/safety/#pat-undo) explains. For actions that can be reversed, act right away and show a toast with Undo: it takes fewer clicks, and a mistake is one press to fix.
+
+<Raw html={F14} />
+
+</section>
+
+<Raw html={F15} />
+
+</div>
+
+### In real products \{#toast-products\}
+
+<Raw html={F16} />
+
+</article>
+
+<article class="entry essay" id="banner" data-entry data-name="Banner">
+
+<div class="entry-head">
+
+## Banner \{#banner-h\}
+
+<Learned id="banner" />
+
+</div>
+
+A banner is a strip across the top of an app or page. It describes a state that lasts and changes what people can do: they’re offline, the file is read-only, the trial is ending. It stays while the state lasts and leaves when it ends, where a [toast](#toast) reports one moment and fades.
+
+<Raw html={F17} />
+
+### Forms \{#banner-forms\}
+
+Banners come in three tones, set by how serious the state is: info, warning and error. The tone also decides whether people can close it. A fourth, smaller form covers only one part of a page.
+
+<Raw html={F18} />
+
+### Rules \{#banner-rules\}
+
+Four rules keep banners useful.
+
+<div class="cs essay-cs">
+
+<section class="rule" id="banner-rule-1">
+
+#### 1. Use it only for what’s happening now \{#banner-rule-1-h\}
+
+People learn fast what the top of the screen means. If a banner there always means “something is going on right now”, they read it. If it also carries news and offers, they learn to skip it, and then they skip the offline notice too. Put news somewhere people can open when they want, such as a “What’s new” entry.
+
+<Raw html={F19} />
+
+</section>
+
+<section class="rule" id="banner-rule-2">
+
+#### 2. Let information be closed \{#banner-rule-2-h\}
+
+Some banners are only information, such as a tip or a note that this is a shared copy, and once read they’ve done their job. If they can’t be closed, they keep taking space and turn into a stripe people look past. Let people close them, and remember that they did.
+
+<Raw html={F20} />
+
+</section>
+
+<section class="rule" id="banner-rule-3">
+
+#### 3. Show one at a time \{#banner-rule-3-h\}
+
+Several states can be true at once: offline, read-only, a tip. Each banner is short, but stacked they push the page down, and people rarely read past the first. Show the most serious one and put the rest in a notifications list.
+
+<Raw html={F21} />
+
+</section>
+
+<section class="rule" id="banner-rule-4">
+
+#### 4. Don’t move the page \{#banner-rule-4-h\}
+
+Like [content that loads late](/part-1/craft/#good-edge-cases), a banner that appears or leaves pushes everything below it, and a click aimed at a button lands on the wrong thing. Lay the banner over the top edge, or keep its space reserved, so nothing under the pointer moves.
+
+<Raw html={F22} />
+
+</section>
+
+<Raw html={F23} />
+
+</div>
+
+### In real products \{#banner-products\}
+
+<Raw html={F24} />
+
+</article>
+
+<article class="entry essay" id="badge" data-entry data-name="Badge">
+
+<div class="entry-head">
+
+## Badge \{#badge-h\}
+
+<Learned id="badge" />
+
+</div>
+
+A badge is a small mark on another item: a dot or a number on an icon, a tab or a button. It tells people at a glance that something there is new or needs them, like 3 unread messages or 1 update. It goes away once they’ve looked.
+
+Where a toast interrupts to say something just happened, then fades, a badge doesn’t interrupt. It waits on the item until people are ready to look.
+
+<Raw html={F25} />
+
+### Forms \{#badge-forms\}
+
+Badges come in four forms, set by what people need to know. A dot says only that something is new. A count says how many. A label names the kind of thing, like “New” or “Beta”. A status mark shows a live state, like who is online.
+
+<Raw html={F26} />
+
+### Rules \{#badge-rules\}
+
+Four rules keep badges useful.
+
+<div class="cs essay-cs">
+
+<section class="rule" id="badge-rule-1">
+
+#### 1. Clear it once people look \{#badge-rule-1-h\}
+
+A badge that still says 3 after someone has seen all 3 is out of date, so people stop trusting it and miss the next one that matters. Remove it as soon as they view what it points to, so a badge always means there’s something they haven’t seen yet.
+
+<Raw html={F27} />
+
+</section>
+
+<section class="rule" id="badge-rule-2">
+
+#### 2. Badge only what needs attention \{#badge-rule-2-h\}
+
+When every row has a bright number, none of them stands out, and people open folders one by one to find what changed. Keep badges for what’s new or needs action, and show totals as plain text next to the item, where they don’t compete.
+
+<Raw html={F28} />
+
+</section>
+
+<section class="rule" id="badge-rule-3">
+
+#### 3. Cap the number \{#badge-rule-3-h\}
+
+A big number makes the badge wider than the icon it sits on and crowds the icons next to it. Past a point, nobody reads the exact number anyway: it just means “a lot”. Show “99+” instead, and put the exact count at the top of the list it opens.
+
+<Raw html={F29} />
+
+</section>
+
+<section class="rule" id="badge-rule-4">
+
+#### 4. Say what the number means \{#badge-rule-4-h\}
+
+A red 3 on a gear could mean errors, warnings or updates, and red also reads as danger, so people either worry or ignore it. Put what it counts in the button’s label and a tooltip, like “3 updates available”, so people can decide whether to look now without opening anything.
+
+<Raw html={F30} />
+
+</section>
+
+<Raw html={F31} />
+
+</div>
+
+### In real products \{#badge-products\}
+
+<Raw html={F32} />
+
+</article>
+
+<aside class="in-short" id="ch-feedback-in-short" aria-labelledby="ch-feedback-in-short-h" data-pagefind-ignore>
+
+## In short \{#ch-feedback-in-short-h\}
+
+<div class="is-grid">
+
+<div>
+
+<a class="is-e" href="#inline-message">Inline message</a>
+
+1. [Bring the problem to where people look](#inline-message-rule-1)
+2. [Give each field one next step](#inline-message-rule-2)
+3. [Wait until people leave the field](#inline-message-rule-3)
+4. [Say what to do instead](#inline-message-rule-4)
+
+</div>
+
+<div>
+
+<a class="is-e" href="#toast">Toast</a>
+
+1. [Don’t put errors in a toast](#toast-rule-1)
+2. [Don’t make it the only way to act](#toast-rule-2)
+3. [Combine messages into one](#toast-rule-3)
+4. [Leave a trace that lasts](#toast-rule-4)
+5. [Offer Undo instead of asking first](#toast-rule-5)
+
+</div>
+
+<div>
+
+<a class="is-e" href="#banner">Banner</a>
+
+1. [Use it only for what’s happening now](#banner-rule-1)
+2. [Let information be closed](#banner-rule-2)
+3. [Show one at a time](#banner-rule-3)
+4. [Don’t move the page](#banner-rule-4)
+
+</div>
+
+<div>
+
+<a class="is-e" href="#badge">Badge</a>
+
+1. [Clear it once people look](#badge-rule-1)
+2. [Badge only what needs attention](#badge-rule-2)
+3. [Cap the number](#badge-rule-3)
+4. [Say what the number means](#badge-rule-4)
+
+</div>
+
+</div>
+
+</aside>
+
+</section>
+
+<Runtime chapter="ch-feedback" />

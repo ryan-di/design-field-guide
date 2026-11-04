@@ -1,0 +1,38 @@
+<div class="note comfy cw-wrap">
+      <div class="seg cw-seg" role="radiogroup" aria-label="Example">
+        <input type="radio" name="cw-pat-instant-feedback-w" id="cw-pat-instant-feedback-w-1" value="github" checked><label for="cw-pat-instant-feedback-w-1">GitHub</label>
+        <input type="radio" name="cw-pat-instant-feedback-w" id="cw-pat-instant-feedback-w-2" value="gdocs"><label for="cw-pat-instant-feedback-w-2">Google Docs</label>
+        <input type="radio" name="cw-pat-instant-feedback-w" id="cw-pat-instant-feedback-w-3" value="duolingo"><label for="cw-pat-instant-feedback-w-3">Duolingo</label>
+      </div>
+      <div class="cw" data-cw-view role="img" aria-label=""></div>
+      <p class="cw-cap" data-cw-cap aria-live="polite"></p>
+      
+      <script>
+      (() => {
+        const wrap = document.currentScript.closest('.cw-wrap');
+        const view = wrap.querySelector('[data-cw-view]'), cap = wrap.querySelector('[data-cw-cap]');
+        const ic = id => '<svg class="icon sm"><use href="#i-' + id + '"/></svg>';
+        const line = w => '<i class="cw-line" style="width:' + w + '%"></i>';
+        const doc = '<svg class="icon sm" viewBox="0 0 24 24"><path d="M7 3h7l4 4v14H7z"/><path d="M14 3v4h4"/></svg>';
+        const S = {
+          github: { html: '<div class="cw-ifb-win"><div class="cw-ifb-md">' + line(60) + '<div class="cw-ifb-code"><span><em>$</em> npm install</span><span><em>$</em> npm run dev</span><span class="cw-ifb-copy">' + ic('check') + '</span></div>' + line(84) + line(50) + '</div></div>',
+            alt: 'A code block with two commands. Its copy button in the corner now shows a check mark.',
+            cap: 'GitHub: the copy button on a code block turns into a check mark for a moment. The answer appears on the button that was just pressed.' },
+          gdocs: { html: '<div class="cw-ifb-win"><div class="cw-ifb-pair">' +
+              '<div class="cw-ifb-step"><small>While typing</small><div class="cw-ifb-bar">' + doc + '<b>Team notes</b><span class="cw-ifb-st"><span class="spinner"></span>Saving…</span></div></div>' +
+              '<div class="cw-ifb-step"><small>A moment later</small><div class="cw-ifb-bar">' + doc + '<b>Team notes</b><span class="cw-ifb-st ok">' + ic('check') + 'Saved</span></div></div>' +
+              '<div class="cw-ifb-doc">' + line(92) + '<span>' + '<i class="cw-line" style="display:inline-block;width:60%"></i><i class="cw-ifb-caret"></i></span></div></div></div>',
+            alt: 'Two moments of a document’s title bar. While typing, it says Saving next to the title. A moment later, it says Saved with a check mark.',
+            cap: 'Google Docs: next to the title, the status says it’s saving while you type, then settles on a saved state that stays until the next change.' },
+          duolingo: { html: '<div class="cw-ifb-phone"><span class="cw-ifb-q">Translate this sentence</span><span class="cw-ifb-ans"><span>The</span><span>cat</span><span>sleeps</span></span>' +
+              '<span class="cw-ifb-chips"><span>dog</span><span>eats</span><span>a</span></span>' +
+              '<div class="cw-ifb-panel"><b>' + ic('check') + 'Correct!</b><span class="btn">Continue</span></div></div>',
+            alt: 'A phone lesson with an answer built from word tiles. The bottom panel has turned green and says Correct, and the button there now reads Continue.',
+            cap: 'Duolingo: pressing Check turns the bottom panel green or red right away, with a sound, and the same button becomes Continue.' }
+        };
+        const render = k => { view.innerHTML = S[k].html; view.setAttribute('aria-label', 'Sketch: ' + S[k].alt); cap.textContent = S[k].cap; };
+        wrap.querySelectorAll('input[name="cw-pat-instant-feedback-w"]').forEach(r => r.addEventListener('change', () => render(r.value)));
+        render('github');
+      })();
+      </script>
+    </div>

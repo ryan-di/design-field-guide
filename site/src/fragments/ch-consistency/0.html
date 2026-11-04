@@ -1,0 +1,34 @@
+<div class="stage tall" data-demo="good-consistency">
+      <div class="app-frame p20-cs-frame">
+        <div class="app-bar"><span>Settings</span><button class="btn btn-ghost p20-spot p20-cs-barsave" type="button" data-issue="save">Save</button></div>
+        <div class="app-body">
+          <div class="p20-cs-card">
+            <h5><button class="p20-spot p20-cs-h" type="button" data-issue="case">Photo Display</button></h5>
+            <button class="p20-spot p20-cs-row" type="button" data-issue=""><span>Show dates on photos</span><span class="p20-sw" aria-hidden="true"></span></button>
+            <button class="p20-spot p20-cs-row" type="button" data-issue="term"><span>Open the last album on start</span><span class="p20-sw p20-on" aria-hidden="true"></span></button>
+            <div class="p20-cs-foot">
+              <button class="btn btn-ghost p20-spot" type="button" data-issue="order">Cancel</button>
+              <button class="btn btn-primary p20-spot" type="button" data-issue="save">Save</button>
+            </div>
+          </div>
+          <div class="p20-cs-card">
+            <h5><button class="p20-spot p20-cs-h" type="button" data-issue="case">Saved filters</button></h5>
+            <div class="p20-cs-item"><span>Warm</span><button class="icon-btn p20-spot" type="button" data-issue="icon" aria-label="Delete Warm"><svg class="icon sm"><use href="#i-trash"/></svg></button></div>
+            <div class="p20-cs-item"><span>Black and white</span><button class="icon-btn p20-spot" type="button" data-issue="icon" aria-label="Delete Black and white"><svg class="icon sm"><use href="#i-x"/></svg></button></div>
+            <button class="p20-spot p20-cs-row" type="button" data-issue="term"><span>Add new photos to a collection</span><span class="p20-sw p20-on" aria-hidden="true"></span></button>
+            <div class="p20-cs-foot">
+              <button class="btn btn-secondary p20-spot" type="button" data-issue="save">Save</button>
+              <button class="btn btn-ghost p20-spot" type="button" data-issue="order">Cancel</button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="p20-cs-bar">
+        <p class="p20-cs-score" id="p20-cs-score">0 of 5 found</p>
+        <button class="btn btn-secondary" type="button" id="p20-cs-reveal">Reveal all</button>
+        <button class="btn btn-ghost" type="button" id="p20-cs-reset" hidden>Start over</button>
+      </div>
+      <p class="p20-cs-say" id="p20-cs-say" role="status">Click anything that doesn’t match the rest.</p>
+      <ol class="p20-cs-list" id="p20-cs-list" aria-label="Inconsistencies found"></ol>
+      <p class="try"><b>Try it:</b> this settings screen has five inconsistencies. Click or tab to anything that looks off. Each find is numbered on the screen and explained in the list below it. Stuck? Press Reveal all.</p>
+    </div>

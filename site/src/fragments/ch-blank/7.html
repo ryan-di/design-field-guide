@@ -1,0 +1,48 @@
+<div class="note comfy cw-wrap"><p>Notice that a blank start stays one click away, and each template already works before you change anything.</p>
+  <div class="seg cw-seg" role="radiogroup" aria-label="Example">
+    <input type="radio" name="cw-pat-templates-w" id="cw-pat-templates-w-1" value="docs" checked><label for="cw-pat-templates-w-1">Google Docs</label>
+    <input type="radio" name="cw-pat-templates-w" id="cw-pat-templates-w-2" value="blender"><label for="cw-pat-templates-w-2">Blender</label>
+    <input type="radio" name="cw-pat-templates-w" id="cw-pat-templates-w-3" value="ig"><label for="cw-pat-templates-w-3">Instagram</label>
+  </div>
+  <div class="cw" data-cw-view role="img" aria-label=""></div>
+  <p class="cw-cap" data-cw-cap aria-live="polite"></p>
+  
+  <script>
+  (() => {
+    const wrap = document.currentScript.closest('.cw-wrap');
+    const view = wrap.querySelector('[data-cw-view]'), cap = wrap.querySelector('[data-cw-cap]');
+    const line = w => '<i class="cw-line"' + (w ? ' style="width:' + w + '"' : '') + '></i>';
+    const doc = (name, ws) => '<div class="cw-tmpl-doc"><span class="cw-tmpl-page"><i class="cw-line cw-tmpl-h"></i>' + ws.map(w => line(w + '%')).join('') + '</span><span>' + name + '</span></div>';
+    const svg = '<svg viewBox="0 0 220 120" aria-hidden="true">' +
+      '<g style="stroke:var(--ui-border)" stroke-width="1"><path d="M0 96 L220 72 M0 120 L220 92 M20 60 L120 120 M90 50 L210 118"/></g>' +
+      '<g stroke-width="1.5" stroke-linejoin="round" style="stroke:var(--ui-sel)">' +
+      '<path d="M110 38 L140 52 L110 66 L80 52 Z" style="fill:var(--ui-surface)"/>' +
+      '<path d="M80 52 L110 66 L110 98 L80 84 Z" style="fill:var(--ui-skel)"/>' +
+      '<path d="M140 52 L110 66 L110 98 L140 84 Z" style="fill:var(--ui-border)"/></g>' +
+      '<g fill="none" stroke-width="1.5" stroke-linejoin="round" style="stroke:var(--ui-muted)">' +
+      '<path d="M178 70 L200 58 L200 82 Z M200 58 L208 62 L208 86 L200 82"/><path d="M182 54 L190 49" stroke-dasharray="3 3"/>' +
+      '<circle cx="42" cy="30" r="6"/><circle cx="42" cy="30" r="12" stroke-dasharray="3 4"/><path d="M42 42 L42 70" stroke-dasharray="2 4"/></g></svg>';
+    const S = {
+      docs: { html: '<div class="cw-tmpl-win"><div class="cw-tmpl-head"><b>Start a new document</b><span>Template gallery ↕</span></div><div class="cw-tmpl-row">' +
+          '<div class="cw-tmpl-doc cw-tmpl-blank"><span class="cw-tmpl-page"><span class="cw-tmpl-plus">+</span></span><span>Blank</span></div>' +
+          doc('Resume', [80, 64, 90, 58]) + doc('Letter', [50, 90, 86, 70]) + doc('Proposal', [72, 88, 60, 80]) + '</div></div>',
+        alt: 'A row headed Start a new document. The first tile is Blank, with a big plus. Next to it are template tiles: Resume, Letter, Proposal.',
+        cap: 'Google Docs: “Blank” is the first tile, in the same row as the templates for a resume or a letter.' },
+      blender: { html: '<div class="cw-tmpl-win"><div class="cw-tmpl-bl"><div class="cw-tmpl-list"><small>New file</small><span class="on">General</span><span>2D Animation</span><span>Sculpting</span><span>VFX</span><span>Video Editing</span></div>' +
+          '<div class="cw-tmpl-vp">' + svg + '<small>Cube, camera and light</small></div></div></div>',
+        alt: 'A New file list: General (selected), 2D Animation, Sculpting, VFX, Video Editing. Beside it, the General scene: a cube, a camera and a light on a floor grid.',
+        cap: 'Blender: a new file starts from a task, like Sculpting or Video Editing, and General opens with a cube, a camera and a light, so the first render works before you’ve built anything.' },
+      ig: { html: '<div class="cw-tmpl-phone"><div class="thumb cw-tmpl-pv"><span class="cw-tmpl-play"><span><svg class="icon sm"><use href="#i-play"/></svg></span></span></div>' +
+          '<div class="cw-tmpl-music">♪' + line() + '</div>' +
+          '<div class="cw-tmpl-slots"><span class="thumb b"></span><span class="thumb c"></span><span class="cw-tmpl-slot">+</span><span class="cw-tmpl-slot">+</span></div>' +
+          '<div class="cw-tmpl-times"><span>0.8 s</span><span>1.2 s</span><span>0.6 s</span><span>2.0 s</span></div>' +
+          '<div class="cw-tmpl-foot"><small>2 of 4 clips added</small><span class="btn btn-primary">Next</span></div></div>',
+        alt: 'A phone editing a reel from a template. The song and the cut lengths are kept. Four clip slots: two filled with the person’s clips, two empty with a plus.',
+        cap: 'Instagram: a Reels template keeps another reel’s cuts and song, and leaves a slot for each of your clips, so it’s clear which parts are yours to fill.' }
+    };
+    const render = k => { view.innerHTML = S[k].html; view.setAttribute('aria-label', 'Sketch: ' + S[k].alt); cap.textContent = S[k].cap; };
+    wrap.querySelectorAll('input[name="cw-pat-templates-w"]').forEach(r => r.addEventListener('change', () => render(r.value)));
+    render('docs');
+  })();
+  </script>
+</div>

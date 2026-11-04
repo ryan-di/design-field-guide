@@ -1,0 +1,48 @@
+<div class="note comfy cw-wrap">
+  <div class="seg cw-seg" role="radiogroup" aria-label="Example">
+    <input type="radio" name="cw-pat-forgiving-input-w" id="cw-pat-forgiving-input-w-1" value="google" checked><label for="cw-pat-forgiving-input-w-1">Google Search</label>
+    <input type="radio" name="cw-pat-forgiving-input-w" id="cw-pat-forgiving-input-w-2" value="figma"><label for="cw-pat-forgiving-input-w-2">Figma</label>
+    <input type="radio" name="cw-pat-forgiving-input-w" id="cw-pat-forgiving-input-w-3" value="todoist"><label for="cw-pat-forgiving-input-w-3">Todoist</label>
+    <input type="radio" name="cw-pat-forgiving-input-w" id="cw-pat-forgiving-input-w-4" value="gmail"><label for="cw-pat-forgiving-input-w-4">Gmail</label>
+  </div>
+  <div class="cw" data-cw-view role="img" aria-label=""></div>
+  <p class="cw-cap" data-cw-cap aria-live="polite"></p>
+  
+  <script>
+  (() => {
+    const wrap = document.currentScript.closest('.cw-wrap');
+    const view = wrap.querySelector('[data-cw-view]'), cap = wrap.querySelector('[data-cw-cap]');
+    const ic = id => '<svg class="icon sm"><use href="#i-' + id + '"/></svg>';
+    const line = w => '<i class="cw-line"' + (w ? ' style="width:' + w + '"' : '') + '></i>';
+    const res = '<div class="cw-forgive-res">' + line() + line('92%') + line('70%') + '</div>';
+    const field = (k, v, cls, caret) => '<span class="cw-forgive-f ' + (cls || '') + '"><i>' + k + '</i>' + v + (caret ? '<span class="cw-forgive-caret"></span>' : '') + '</span>';
+    const rcpt = a => '<span class="cw-forgive-rcpt"><b></b>' + a + ic('x') + '</span>';
+    const S = {
+      google: { html: '<div class="cw-forgive-win"><div class="cw-forgive-pad"><div class="cw-forgive-q">' + ic('search') + 'recieve email</div>' +
+          '<p class="cw-forgive-dym"><span>Showing results for <b>receive email</b></span><small>Search instead for <u>recieve email</u></small></p>' + res + res + '</div></div>',
+        alt: 'A search for recieve email, misspelled. Above the results: Showing results for receive email, and a link to search instead for recieve email.',
+        cap: 'Google Search: a misspelled search still gets results, with a line saying what it searched for instead and a link to search exactly what you typed.' },
+      figma: { html: '<div class="cw-forgive-win"><div class="cw-forgive-panel"><small>Frame</small>' +
+          '<div class="cw-forgive-pair">' + field('W', '120*2', 'focus', true) + field('H', '80') + '</div>' +
+          '<span class="cw-forgive-step"><kbd>Enter</kbd>↓</span>' +
+          '<div class="cw-forgive-pair">' + field('W', '240', 'done') + field('H', '80') + '</div></div></div>',
+        alt: 'A width field with 120*2 typed into it. After pressing Enter, the width reads 240.',
+        cap: 'Figma: size and position fields accept math, so typing “120*2” sets the width to 240 without leaving the field to work it out.' },
+      todoist: { html: '<div class="cw-forgive-win"><div class="cw-forgive-task"><div class="cw-forgive-typed">Call Sam <mark>tomorrow at 3pm</mark><span class="cw-forgive-caret"></span></div>' +
+          '<div class="cw-forgive-chips"><span class="cw-forgive-chip on">Tomorrow 3:00 PM ' + ic('x') + '</span><span class="cw-forgive-chip">Priority</span><span class="cw-forgive-chip">Reminders</span></div>' +
+          '<div class="cw-forgive-tfoot"><span class="btn btn-ghost">Cancel</span><span class="btn btn-primary">Add task</span></div></div></div>',
+        alt: 'A new task typed as Call Sam tomorrow at 3pm. The words tomorrow at 3pm are highlighted, and a date chip below reads Tomorrow 3:00 PM.',
+        cap: 'Todoist: as you type a task like “Call Sam tomorrow at 3pm”, the date words are highlighted and turned into a due date, so you see what it understood before you save.' },
+      gmail: { html: '<div class="cw-forgive-win"><div class="cw-forgive-mail"><span class="cw-forgive-mh">New message</span>' +
+          '<div class="cw-forgive-paste"><span>Pasted:</span><code>ana@example.com, li@example.com; sam@example.com</code></div><span class="cw-forgive-down">↓</span>' +
+          '<div class="cw-forgive-to"><span>To</span>' + rcpt('ana@example.com') + rcpt('li@example.com') + rcpt('sam@example.com') + '</div>' +
+          '<div class="cw-forgive-sub">' + line('40%') + line('85%') + line('65%') + '</div></div></div>',
+        alt: 'A list of three addresses separated by a comma and a semicolon is pasted into the To field. It becomes three separate recipient chips.',
+        cap: 'Gmail: paste a list of addresses separated by commas or semicolons into the To field, and each one becomes its own recipient.' }
+    };
+    const render = k => { view.innerHTML = S[k].html; view.setAttribute('aria-label', 'Sketch: ' + S[k].alt); cap.textContent = S[k].cap; };
+    wrap.querySelectorAll('input[name="cw-pat-forgiving-input-w"]').forEach(r => r.addEventListener('change', () => render(r.value)));
+    render('google');
+  })();
+  </script>
+</div>

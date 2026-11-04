@@ -1,0 +1,40 @@
+<div class="note comfy cw-wrap"><p>Notice that tooltips only add a name or a detail, and that on touch screens the name has to be visible instead.</p>
+      <div class="seg cw-seg" role="radiogroup" aria-label="Example">
+        <input type="radio" name="cw-tooltip-w" id="cw-tooltip-w-1" value="figma" checked><label for="cw-tooltip-w-1">Figma</label>
+        <input type="radio" name="cw-tooltip-w" id="cw-tooltip-w-2" value="github"><label for="cw-tooltip-w-2">GitHub</label>
+        <input type="radio" name="cw-tooltip-w" id="cw-tooltip-w-3" value="spotify"><label for="cw-tooltip-w-3">Spotify</label>
+      </div>
+      <div class="cw" data-cw-view role="img" aria-label=""></div>
+      <p class="cw-cap" data-cw-cap aria-live="polite"></p>
+      
+      <script>
+      (() => {
+        const wrap = document.currentScript.closest('.cw-wrap');
+        const view = wrap.querySelector('[data-cw-view]'), cap = wrap.querySelector('[data-cw-cap]');
+        const ic = id => '<svg class="icon sm"><use href="#i-' + id + '"/></svg>';
+        const svg = d => '<svg class="icon sm" viewBox="0 0 24 24">' + d + '</svg>';
+        const line = w => '<i class="cw-line" style="width:' + w + '%"></i>';
+        const tool = (glyph, tip) => '<span class="cw-tipw-tool' + (tip ? ' on' : '') + '">' + glyph + (tip || '') + '</span>';
+        const tip = (text, cls, kbd) => '<span class="cw-tipw-tip' + (cls ? ' ' + cls : '') + '">' + text + (kbd ? '<span class="cw-tipw-kbd">' + kbd + '</span>' : '') + '</span>';
+        const lib = svg('<path d="M5 4v16M10 4v16M15 5l4.5 14.5"/>');
+        const S = {
+          figma: { html: '<div class="cw-tipw-win"><span class="cw-tipw-shape"></span><span class="cw-tipw-bar">' +
+              tool(svg('<path d="M7 4l11 7-5 1.5L10.5 18z"/>')) + tool(svg('<path d="M8.5 4v16M15.5 4v16M4 8.5h16M4 15.5h16"/>')) +
+              tool(svg('<rect x="5" y="5" width="14" height="14" rx="1"/>'), tip('Rectangle', '', 'R')) + tool(svg('<path d="M5 19l2.5-7L15 4.5l4.5 4.5-7.5 7.5z"/><path d="M5 19l5-5"/>')) + tool('T') + '</span></div>',
+            alt: 'A design canvas with a toolbar of icon-only tools at the bottom. The square tool is hovered, and a tooltip above it says Rectangle, R.',
+            cap: 'Figma: hovering a tool shows its name and its key, like Rectangle R. The toolbar stays compact, and the key teaches a faster way for next time.' },
+          github: { html: '<div class="cw-tipw-cmt"><div class="cw-tipw-head"><span class="cw-tipw-av"></span><b>mia</b>commented<span class="cw-tipw-time">3 days ago' + tip('Oct 20, 2026, 2:14 PM', 'r') + '</span></div>' +
+              '<div class="cw-tipw-body">' + line(90) + line(75) + line(40) + '</div></div>',
+            alt: 'A comment header: mia commented 3 days ago. The words 3 days ago are hovered, and a tooltip above shows Oct 20, 2026, 2:14 PM.',
+            cap: 'GitHub: relative times like “3 days ago” show the exact date and time on hover. Most people only need the rough age, and the precise one is there for those who wonder.' },
+          spotify: { html: '<div class="cw-tipw-phone"><div class="cw-tipw-feed"><b>Home</b><div class="thumb"></div><div class="thumb b"></div><div class="thumb c"></div><div class="thumb"></div></div>' +
+              '<div class="cw-tipw-tabs"><span class="on">' + ic('home') + 'Home</span><span>' + ic('search') + 'Search</span><span>' + lib + 'Library</span></div></div>',
+            alt: 'A phone app with a tab bar at the bottom. Each tab has an icon with a word under it: Home, Search, Library.',
+            cap: 'Spotify: the phone app has no hover, so its tab bar puts a word under each icon instead of hiding the names in tooltips.' }
+        };
+        const render = k => { view.innerHTML = S[k].html; view.setAttribute('aria-label', 'Sketch: ' + S[k].alt); cap.textContent = S[k].cap; };
+        wrap.querySelectorAll('input[name="cw-tooltip-w"]').forEach(r => r.addEventListener('change', () => render(r.value)));
+        render('figma');
+      })();
+      </script>
+    </div>

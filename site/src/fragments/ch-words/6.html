@@ -1,0 +1,44 @@
+<div class="note comfy cw-wrap"><p>Read only the buttons in each sketch: they still tell you what will happen.</p>
+  <div class="seg cw-seg" role="radiogroup" aria-label="Example">
+    <input type="radio" name="cw-good-labels-w" id="cw-good-labels-w-1" value="macos" checked><label for="cw-good-labels-w-1">macOS</label>
+    <input type="radio" name="cw-good-labels-w" id="cw-good-labels-w-2" value="github"><label for="cw-good-labels-w-2">GitHub</label>
+    <input type="radio" name="cw-good-labels-w" id="cw-good-labels-w-3" value="whatsapp"><label for="cw-good-labels-w-3">WhatsApp</label>
+    <input type="radio" name="cw-good-labels-w" id="cw-good-labels-w-4" value="spotify"><label for="cw-good-labels-w-4">Spotify</label>
+  </div>
+  <div class="cw" data-cw-view role="img" aria-label=""></div>
+  <p class="cw-cap" data-cw-cap aria-live="polite"></p>
+  
+  <script>
+  (() => {
+    const wrap = document.currentScript.closest('.cw-wrap');
+    const view = wrap.querySelector('[data-cw-view]'), cap = wrap.querySelector('[data-cw-cap]');
+    const ic = id => '<svg class="icon sm"><use href="#i-' + id + '"/></svg>';
+    const svg = d => '<svg class="icon sm" viewBox="0 0 24 24">' + d + '</svg>';
+    const S = {
+      macos: { html: '<div class="cw-glbl-mid"><div class="cw-glbl-dlg"><i class="cw-glbl-app"></i><b>Save changes to “Trip notes”?</b><span>If you don’t save, your changes will be lost.</span>' +
+          '<span class="cw-glbl-acts"><span class="btn btn-secondary">Don’t Save</span><i class="grow"></i><span class="btn btn-secondary">Cancel</span><span class="btn btn-primary">Save</span></span></div></div>',
+        alt: 'A dialog asks to save changes to a document. Its buttons are Don’t Save on the left, then Cancel and Save on the right.',
+        cap: 'macOS: closing an unsaved document asks with Don’t Save, Cancel and Save, not Yes, No and Cancel.' },
+      github: { html: '<div class="cw-glbl-mid"><div class="cw-glbl-box"><span class="cw-glbl-ok">' + ic('check') + 'No conflicts with the base branch</span>' +
+          '<span class="cw-glbl-split"><span class="btn btn-primary">Squash and merge</span><span class="btn btn-primary">▾</span></span>' +
+          '<span class="cw-glbl-menu"><span>' + ic('check') + 'Create a merge commit</span><span class="on">' + ic('check') + 'Squash and merge</span><span>' + ic('check') + 'Rebase and merge</span></span></div></div>',
+        alt: 'A merge box. The main button reads Squash and merge. Its open menu lists Create a merge commit, Squash and merge (checked) and Rebase and merge.',
+        cap: 'GitHub: the merge button names the method you picked, like “Squash and merge”, and the confirm step repeats it.' },
+      whatsapp: { html: '<div class="cw-glbl-mid"><div class="cw-glbl-phone"><i class="cw-glbl-dim"></i><span class="cw-glbl-bub">See you at 6</span>' +
+          '<div class="cw-glbl-sheet"><span>Delete message?</span><span class="del">Delete for everyone</span><span class="del">Delete for me</span></div><span class="cw-glbl-cancel">Cancel</span></div></div>',
+        alt: 'A selected chat message with a sheet below: Delete message? Then Delete for everyone, Delete for me and Cancel.',
+        cap: 'WhatsApp: deleting a message offers “Delete for me” and “Delete for everyone”, so each button says who loses the message.' },
+      spotify: { html: '<div class="cw-glbl-mid"><div class="cw-glbl-phone"><div class="cw-glbl-song"><i></i><span><b>Song title</b><em>Artist</em></span></div><div class="cw-glbl-rows">' +
+          '<span>' + ic('plus') + 'Add to playlist</span><span>' + ic('layers') + 'Add to queue</span>' +
+          '<span>' + svg('<circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="2.5"/>') + 'Go to album</span>' +
+          '<span>' + svg('<circle cx="12" cy="8" r="4"/><path d="M4 21c1-4 4-6 8-6s7 2 8 6"/>') + 'Go to artist</span>' +
+          '<span>' + svg('<path d="M12 3v12M8 7l4-4 4 4"/><path d="M6 11v9h12v-9"/>') + 'Share</span></div></div></div>',
+        alt: 'A song’s menu: Add to playlist, Add to queue, Go to album, Go to artist and Share, each with an icon.',
+        cap: 'Spotify: a song’s menu is a list of verbs with their objects, like Add to playlist, Add to queue and Go to album.' }
+    };
+    const render = k => { view.innerHTML = S[k].html; view.setAttribute('aria-label', 'Sketch: ' + S[k].alt); cap.textContent = S[k].cap; };
+    wrap.querySelectorAll('input[name="cw-good-labels-w"]').forEach(r => r.addEventListener('change', () => render(r.value)));
+    render('macos');
+  })();
+  </script>
+</div>

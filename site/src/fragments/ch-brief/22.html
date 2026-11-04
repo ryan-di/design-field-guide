@@ -1,0 +1,42 @@
+<div class="note comfy cw-wrap">
+      <div class="seg cw-seg" role="radiogroup" aria-label="Example">
+        <input type="radio" name="cw-eff-definition-of-done-w" id="cw-eff-definition-of-done-w-1" value="github" checked><label for="cw-eff-definition-of-done-w-1">GitHub</label>
+        <input type="radio" name="cw-eff-definition-of-done-w" id="cw-eff-definition-of-done-w-2" value="chromatic"><label for="cw-eff-definition-of-done-w-2">Chromatic</label>
+        <input type="radio" name="cw-eff-definition-of-done-w" id="cw-eff-definition-of-done-w-3" value="doordash"><label for="cw-eff-definition-of-done-w-3">DoorDash</label>
+      </div>
+      <div class="cw" data-cw-view role="img" aria-label=""></div>
+      <p class="cw-cap" data-cw-cap aria-live="polite"></p>
+      
+      <script>
+      (() => {
+        const wrap = document.currentScript.closest('.cw-wrap');
+        const view = wrap.querySelector('[data-cw-view]'), cap = wrap.querySelector('[data-cw-cap]');
+        const ok = '<svg class="icon" aria-hidden="true"><use href="#i-check"/></svg>';
+        const tool = '<span class="cw-wdod-who">Tool</span>', you = '<span class="cw-wdod-who you">Person</span>';
+        const chk = t => '<div class="cw-wdod-r">' + ok + '<span>' + t + '</span>' + tool + '</div>';
+        const step = t => '<span>' + ok.replace('class="icon"', 'class="icon sm"') + t + '</span>';
+        const S = {
+          github: { html: '<div class="cw-wdod-win"><div class="cw-wdod-top">Pull request</div><div class="cw-wdod-body">' +
+              chk('build') + chk('unit tests') + chk('lint') + chk('e2e tests') +
+              '<div class="cw-wdod-r wait"><i class="cw-wdod-ring"></i><span>Review required</span>' + you + '</div>' +
+              '<div class="cw-wdod-foot"><span>Merge waits for both</span><span class="btn btn-primary" aria-disabled="true">Merge</span></div></div></div>',
+            alt: 'A pull request with four passing checks marked Tool, and one open item, Review required, marked Person. The Merge button is dimmed until both are done.',
+            cap: 'GitHub: branch protection can require passing status checks and an approving review before a pull request merges. Machines prove the tests pass; a person approves the change itself.' },
+          chromatic: { html: '<div class="cw-wdod-win"><div class="cw-wdod-top">Button · Primary<span class="cw-wdod-who">Tool: 1 change</span></div>' +
+              '<div class="cw-wdod-pair"><div class="cw-wdod-shot"><b>Accepted</b><div class="cw-wdod-pane">' + '<i class="cw-line" style="width:70%"></i>' + '<span class="btn btn-primary">Save</span></div></div>' +
+              '<div class="cw-wdod-shot"><b>New</b><div class="cw-wdod-pane">' + '<i class="cw-line" style="width:70%"></i>' + '<span class="cw-wdod-chg"><span class="btn btn-primary round">Save</span></span></div></div></div>' +
+              '<div class="cw-wdod-body"><div class="cw-wdod-foot">' + you + '<span>Was this change meant?</span><span class="btn btn-secondary">Deny</span><span class="btn btn-primary">Accept</span></div></div></div>',
+            alt: 'Two screenshots of a button story: the last accepted one and the new one, where the button is now round and the change is outlined. Below, marked Person: Deny or Accept.',
+            cap: 'Chromatic: visual tests compare each Storybook story with its last accepted screenshot. The tool finds what changed, and a person accepts or denies it, because only they know if the change was meant.' },
+          doordash: { html: '<div class="cw-wdod-phone"><div class="cw-wdod-status">' + ok + 'Delivered</div>' +
+              '<div class="cw-wdod-photo"><i class="cw-wdod-door"></i><i class="cw-wdod-bag"></i><span>Photo at drop-off</span></div>' +
+              '<div class="cw-wdod-steps">' + step('Picked up') + step('On the way') + step('Left at the door') + '</div></div>',
+            alt: 'A phone order screen: Delivered, with a photo of the bag at the door, and three finished steps: picked up, on the way, left at the door.',
+            cap: 'DoorDash: when an order is left at the door, the courier takes a photo at drop-off and the app shows it to you. “Delivered” comes with proof you can check, not just a status.' }
+        };
+        const render = k => { view.innerHTML = S[k].html; view.setAttribute('aria-label', 'Sketch: ' + S[k].alt); cap.textContent = S[k].cap; };
+        wrap.querySelectorAll('input[name="cw-eff-definition-of-done-w"]').forEach(r => r.addEventListener('change', () => render(r.value)));
+        render('github');
+      })();
+      </script>
+      </div>

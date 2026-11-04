@@ -1,0 +1,298 @@
+---
+title: "Actions"
+description: "The most prominent button should be the main thing to do on that screen, and there should be only one."
+eyebrow: "Chapter 21"
+sidebar:
+  label: "Actions"
+---
+
+import Raw from '../../../components/Raw.astro';
+import Learned from '../../../components/Learned.astro';
+import Runtime from '../../../components/Runtime.astro';
+import F0 from '../../../fragments/ch-actions/0.html?raw';
+import F1 from '../../../fragments/ch-actions/1.html?raw';
+import F2 from '../../../fragments/ch-actions/2.html?raw';
+import F3 from '../../../fragments/ch-actions/3.html?raw';
+import F4 from '../../../fragments/ch-actions/4.html?raw';
+import F5 from '../../../fragments/ch-actions/5.html?raw';
+import F6 from '../../../fragments/ch-actions/6.html?raw';
+import F7 from '../../../fragments/ch-actions/7.html?raw';
+import F8 from '../../../fragments/ch-actions/8.html?raw';
+import F9 from '../../../fragments/ch-actions/9.html?raw';
+import F10 from '../../../fragments/ch-actions/10.html?raw';
+import F11 from '../../../fragments/ch-actions/11.html?raw';
+import F12 from '../../../fragments/ch-actions/12.html?raw';
+import F13 from '../../../fragments/ch-actions/13.html?raw';
+import F14 from '../../../fragments/ch-actions/14.html?raw';
+import F15 from '../../../fragments/ch-actions/15.html?raw';
+import F16 from '../../../fragments/ch-actions/16.html?raw';
+import F17 from '../../../fragments/ch-actions/17.html?raw';
+import F18 from '../../../fragments/ch-actions/18.html?raw';
+import F19 from '../../../fragments/ch-actions/19.html?raw';
+import F20 from '../../../fragments/ch-actions/20.html?raw';
+import F21 from '../../../fragments/ch-actions/21.html?raw';
+
+<Runtime at="start" />
+
+<section class="dfg-chapter" id="ch-actions">
+
+The most prominent button should be the main thing to do on that screen, and there should be only one.
+
+<article class="entry essay" id="buttons" data-entry data-name="Button hierarchy">
+
+<div class="entry-head">
+
+## Button hierarchy \{#buttons-h\}
+
+<Learned id="buttons" />
+
+</div>
+
+A button starts an action: save, send, pay, delete. Its style shows how important that action is, so people can find the main step without reading every label.
+
+That is what separates it from a [link](#link-vs-button), which takes people to another page or place. A button does something where they are.
+
+<Raw html={F0} />
+
+### Forms \{#buttons-forms\}
+
+Buttons come in three styles, set by how important the action is: primary, secondary and tertiary. A fourth, destructive style marks actions that delete or lose something.
+
+<Raw html={F1} />
+
+### Rules \{#buttons-rules\}
+
+Four rules keep buttons useful.
+
+<div class="cs essay-cs">
+
+<section class="rule" id="buttons-rule-1">
+
+#### 1. Keep one primary button \{#buttons-rule-1-h\}
+
+When two buttons are filled, neither one stands out, and people have to read both labels before they know which one takes them forward. Give each screen or dialog one filled button for the main step, and make the others secondary or tertiary, so they’re still there but quieter.
+
+<Raw html={F2} />
+
+</section>
+
+<section class="rule" id="buttons-rule-2">
+
+#### 2. Say what the button does \{#buttons-rule-2-h\}
+
+As with [dialog buttons](/part-3/dialogs/#dialog), OK, Yes and Cancel only make sense next to the question: during an upload, “Cancel” could mean stop the upload or close the question. Use a verb and an object, like “Stop upload”, so each button makes sense on its own.
+
+<Raw html={F3} />
+
+</section>
+
+<section class="rule" id="buttons-rule-3">
+
+#### 3. Set the risky action apart \{#buttons-rule-3-h\}
+
+People press familiar buttons by habit, often by where they sit, so if Delete looks like Save and sits where Save usually goes, one quick click removes a folder and all its files. Make the destructive button red and move it away from the main button’s spot. Where you can, let people undo it instead of asking them to be careful.
+
+<Raw html={F4} />
+
+</section>
+
+<section class="rule" id="buttons-rule-4">
+
+#### 4. Explain why it won’t work \{#buttons-rule-4-h\}
+
+A grayed-out button shows that something is missing, but not what, and when every field looks filled in, people recheck the whole form or give up. Keep the button enabled, and when it’s pressed, say what’s missing and move the cursor there. Or show the reason next to the button before it’s pressed.
+
+<Raw html={F5} />
+
+</section>
+
+<Raw html={F6} />
+
+</div>
+
+### In real products \{#buttons-products\}
+
+<Raw html={F7} />
+
+</article>
+
+<article class="entry essay" id="icon-button" data-entry data-name="Icon button">
+
+<div class="entry-head">
+
+## Icon button \{#icon-button-h\}
+
+<Learned id="icon-button" />
+
+</div>
+
+An icon button is a button that shows a small picture instead of a word: a magnifier for search, an × to close, a heart to like. It fits in tight spaces like toolbars and photo overlays, and suits actions people use again and again.
+
+That is what separates it from a button with a label. A word can be read the first time, but an icon has to be recognized, so it only works for actions people already know or quickly learn.
+
+<Raw html={F8} />
+
+### Forms \{#icon-button-forms\}
+
+Icon buttons come in four common forms. Plain ones sit in a toolbar and do one thing each. Toggles stay on or off, like bold or mute. A floating button holds the main action on a phone screen, and a More button opens a list of the actions that don’t fit.
+
+<Raw html={F9} />
+
+### Rules \{#icon-button-rules\}
+
+Three rules keep icon buttons useful.
+
+<div class="cs essay-cs">
+
+<section class="rule" id="icon-button-rule-1">
+
+#### 1. Label icons people don’t know \{#icon-button-rule-1-h\}
+
+Only a few icons mean the same thing to everyone, like search, close, settings and home. Most others, like crop, could mean several things, so people click around to find out, and some never find the right one. Give those buttons a word, and keep bare icons for the few that everyone knows.
+
+<Raw html={F10} />
+
+</section>
+
+<section class="rule" id="icon-button-rule-2">
+
+#### 2. Keep the row short \{#icon-button-rule-2-h\}
+
+In a row of ten look-alike icons, every action gets the same weight, so people hover them one by one to find the one they want. Group related icons, give the main action a word, and move rare actions into a More menu, so there is less to scan.
+
+<Raw html={F11} />
+
+</section>
+
+<section class="rule" id="icon-button-rule-3">
+
+#### 3. Make them big enough to hit \{#icon-button-rule-3-h\}
+
+A 16 px button is smaller than a fingertip, and with no gap between buttons, one tap covers all three, so people hit Close when they meant Add. Make each button at least 24 px (the WCAG 2.2 minimum), ideally 40 to 44 px, with space between, and keep Close a little apart from the rest.
+
+<Raw html={F12} />
+
+</section>
+
+<Raw html={F13} />
+
+</div>
+
+### In real products \{#icon-button-products\}
+
+<Raw html={F14} />
+
+</article>
+
+<article class="entry essay" id="link-vs-button" data-entry data-name="Link vs button">
+
+<div class="entry-head">
+
+## Link vs button \{#link-vs-button-h\}
+
+<Learned id="link-vs-button" />
+
+</div>
+
+Links and buttons are both things people click, but they do different jobs. A link takes people to another page or place. A button does something where they are: it saves, sends, adds or deletes.
+
+The difference matters because browsers treat them differently: a link has an address, so people can open it in a new tab, bookmark it and come back with Back, and a button has none of that. So choose by what happens on click, not by how it should look.
+
+<Raw html={F15} />
+
+### Forms \{#link-vs-button-forms\}
+
+Each comes in a few forms. A link can sit inside a sentence or stand on its own, and a button can be a full button or a lighter text button. A link can also look like a button when it’s the main next step: the look follows how important it is, but whether it’s a link or a button still follows what it does.
+
+<Raw html={F16} />
+
+### Rules \{#link-vs-button-rules\}
+
+Three rules keep links and buttons clear.
+
+<div class="cs essay-cs">
+
+<section class="rule" id="link-vs-button-rule-1">
+
+#### 1. Use a button when something changes \{#link-vs-button-rule-1-h\}
+
+People open links in a new tab just to look, so if a link deletes or sends something, opening it is enough to do it, with no warning and no way back. A button tells people that pressing it does something, so they press it on purpose. Put Undo next to the result to cover a slip.
+
+<Raw html={F17} />
+
+</section>
+
+<section class="rule" id="link-vs-button-rule-2">
+
+#### 2. Use a link to go somewhere \{#link-vs-button-rule-2-h\}
+
+People open pages in a new tab to keep their place, and use Back to return. A button that only swaps the view breaks both: the address doesn’t change, so there’s nothing to bookmark or share, and Back can’t return to the page they came from. A link keeps all of this working, the same as on every other site.
+
+<Raw html={F18} />
+
+</section>
+
+<section class="rule" id="link-vs-button-rule-3">
+
+#### 3. Underline links in text \{#link-vs-button-rule-3-h\}
+
+A link that differs from the words around it only by color is easy to miss, because people with color blindness or low vision, or anyone on a dim screen, see plain text. An underline marks it without relying on color, so it still shows in grayscale. Links that stand on their own, like “See all orders”, can do without it, because their place already says what they are.
+
+<Raw html={F19} />
+
+</section>
+
+<Raw html={F20} />
+
+</div>
+
+### In real products \{#link-vs-button-products\}
+
+<Raw html={F21} />
+
+</article>
+
+<aside class="in-short" id="ch-actions-in-short" aria-labelledby="ch-actions-in-short-h" data-pagefind-ignore>
+
+## In short \{#ch-actions-in-short-h\}
+
+<div class="is-grid">
+
+<div>
+
+<a class="is-e" href="#buttons">Button hierarchy</a>
+
+1. [Keep one primary button](#buttons-rule-1)
+2. [Say what the button does](#buttons-rule-2)
+3. [Set the risky action apart](#buttons-rule-3)
+4. [Explain why it won’t work](#buttons-rule-4)
+
+</div>
+
+<div>
+
+<a class="is-e" href="#icon-button">Icon button</a>
+
+1. [Label icons people don’t know](#icon-button-rule-1)
+2. [Keep the row short](#icon-button-rule-2)
+3. [Make them big enough to hit](#icon-button-rule-3)
+
+</div>
+
+<div>
+
+<a class="is-e" href="#link-vs-button">Link vs button</a>
+
+1. [Use a button when something changes](#link-vs-button-rule-1)
+2. [Use a link to go somewhere](#link-vs-button-rule-2)
+3. [Underline links in text](#link-vs-button-rule-3)
+
+</div>
+
+</div>
+
+</aside>
+
+</section>
+
+<Runtime chapter="ch-actions" />
