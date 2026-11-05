@@ -15,15 +15,15 @@ Evidence boundary: this is a learning guide. Its demos and product examples are 
 
 ## Front matter
 
-- [How to read this book](references/chapters/ch-preface.md): This book is for anyone who decides how an interface should work, and most of all for design engineers, who make those calls in code.
+- [How to read this book](references/chapters/ch-preface.md): This book is about the part of making software that agents don’t do for you: deciding how an interface should work, and telling whether what got built is any good.
 
 ## Start here
 
-Two short definitions before the rest of the book: what design is, and what a design engineer does.
+Two short essays before the rest of the book: what design is, and what’s left for you when agents write the code.
 
-- [Two definitions](references/chapters/ch-intro.md)
+- [Two ideas](references/chapters/ch-intro.md)
   - [What design is](references/entries/design-what.md): Design is deciding how something should work for the people who use it.
-  - [What design engineering is](references/entries/design-engineering.md): A design engineer designs in the material the product is made of: code.
+  - [Design when agents build](references/entries/design-engineering.md): Agents can turn a clear description into working code in minutes.
 
 ## Part 1 · Good design
 
@@ -188,7 +188,7 @@ How the parts fit together, the terms this book uses, and where its principles c
 - [Where to go from here](references/chapters/ch-afterword.md): The four parts meet in [the loop](https://ryan-di.github.io/design-field-guide/#eff-loop).
 - [Glossary](references/chapters/ch-glossary.md): Terms this book uses in a specific sense, each with the entry that explains it.
 - [Sources](references/chapters/ch-sources.md): The work behind the principles, laws, standards and methods this book names, each with where the book uses it.
-- [About this edition](references/chapters/ch-colophon.md): Design Field Guide is Book 1 of the design engineer primer.
+- [About this edition](references/chapters/ch-colophon.md): Design Field Guide is Book 1 of a design primer for the agent era.
 
 ## Optional
 

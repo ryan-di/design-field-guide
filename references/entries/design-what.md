@@ -1,6 +1,6 @@
 # What design is
 
-Design Field Guide v35 (2026-11) · Start here · Two definitions
+Design Field Guide v35 (2026-11) · Start here · Two ideas
 Live: https://ryan-di.github.io/design-field-guide/#design-what
 Kind: principle
 Cite as: Design Field Guide v35, #design-what

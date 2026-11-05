@@ -6,7 +6,7 @@ Cite as: Design Field Guide v35, #ch-preface
 
 > Evidence boundary: this is a learning guide. Its demos and product examples are illustrations written for the book, not verified product documentation, so check a product’s own docs before citing how it behaves. Tools named in it are 2026 examples, not endorsements.
 
-This book is for anyone who decides how an interface should work, and most of all for design engineers, who make those calls in code. It teaches by showing: every idea comes with a demo you can try on the page.
+This book is about the part of making software that agents don’t do for you: deciding how an interface should work, and telling whether what got built is any good. Agents can write most of the code now, so these calls are what make a product good. The book is for anyone who makes them, whether you design, write code, run the product or direct the agents that do. It teaches by showing: every idea comes with a demo you can try on the page.
 
 ## Three ways to read it
 

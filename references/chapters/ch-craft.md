@@ -6,7 +6,7 @@ Cite as: Design Field Guide v35, #ch-craft
 
 > Evidence boundary: this is a learning guide. Its demos and product examples are illustrations written for the book, not verified product documentation, so check a product’s own docs before citing how it behaves. Tools named in it are 2026 examples, not endorsements.
 
-Craft is what happens in the last 10% of a design: the timing, the messy data and the keyboard path. Mockups rarely show any of it, and people notice all of it. It lives in code, which is why it’s where a design engineer earns their keep. The entries below take those three edges one at a time. The looks a single control takes, from hover to loading, have their own entry: [Interaction states](https://ryan-di.github.io/design-field-guide/#interaction-states).
+Craft is what happens in the last 10% of a design: the timing, the messy data and the keyboard path. Mockups rarely show any of it, and people notice all of it. It lives in code, and agents leave it out unless someone asks for it, so it’s where your judgment shows most. The entries below take those three edges one at a time. The looks a single control takes, from hover to loading, have their own entry: [Interaction states](https://ryan-di.github.io/design-field-guide/#interaction-states).
 
 ## Entries
 

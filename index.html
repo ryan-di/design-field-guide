@@ -586,7 +586,7 @@ window.csToast = (demo, t, text, opts = {}) => {
 
 
 <header class="hero">
-  <p class="eyebrow">Design engineer primer · Book 1</p>
+  <p class="eyebrow">Design primer for the agent era · Book 1</p>
   <h1>Design Field Guide</h1>
   <p class="lede">How to design interfaces, and why the good ones work, with a live demo for every idea.</p>
   <p class="hero-meta"><span id="meta-chapters"></span><span id="meta-entries"></span><span>Your progress stays in this browser</span></p>
@@ -1640,7 +1640,7 @@ mark.p21-flag{background:transparent;color:inherit;text-decoration:underline wav
     <h2>How to read this book</h2>
   </div>
   <div class="prose">
-    <p>This book is for anyone who decides how an interface should work, and most of all for design engineers, who make those calls in code. It teaches by showing: every idea comes with a demo you can try on the page.</p>
+    <p>This book is about the part of making software that agents don’t do for you: deciding how an interface should work, and telling whether what got built is any good. Agents can write most of the code now, so these calls are what make a product good. The book is for anyone who makes them, whether you design, write code, run the product or direct the agents that do. It teaches by showing: every idea comes with a demo you can try on the page.</p>
     <h4>Three ways to read it</h4>
     <p>Read it from the start. Each part builds on the one before, and Part 4 puts the first three to work on one problem. Or start from a question: <a href="#ch-patterns-cheat">When you hear this, try that</a> goes from what people say to a pattern, and <a href="#ch-choose">Before you pick one, ask three questions</a> goes from what people need to a component. Or keep it open while you work: <a href="#ch-good-checklist">Before you ship, ask these</a> and <a href="#ch-eff-checklist">Effective design, step by step</a> turn the book into questions for your next change.</p>
     <h4>How an entry works</h4>
@@ -1655,11 +1655,11 @@ mark.p21-flag{background:transparent;color:inherit;text-decoration:underline wav
 
 <div class="part-divider" id="start" data-part="Start here">
   <p class="eyebrow">Start here</p>
-  <p class="part-title">Design and design engineering</p>
-  <p class="part-sub">Two short definitions before the rest of the book: what design is, and what a design engineer does.</p>
+  <p class="part-title">Design, and what agents change</p>
+  <p class="part-sub">Two short essays before the rest of the book: what design is, and what’s left for you when agents write the code.</p>
 </div>
 
-<section class="chapter" id="ch-intro" data-chapter data-short="Two definitions">
+<section class="chapter" id="ch-intro" data-chapter data-short="Two ideas">
 <article class="entry" id="design-what" data-entry data-name="What design is">
 <div class="entry-head"><h3>What design is</h3><label class="learned"><input type="checkbox" data-learned="design-what"> Learned</label></div>
 <div class="essay">
@@ -1748,29 +1748,29 @@ mark.p21-flag{background:transparent;color:inherit;text-decoration:underline wav
 </div>
 </article>
 
-<article class="entry" id="design-engineering" data-entry data-name="What design engineering is">
-<div class="entry-head"><h3>What design engineering is</h3><label class="learned"><input type="checkbox" data-learned="design-engineering"> Learned</label></div>
+<article class="entry" id="design-engineering" data-entry data-name="Design when agents build">
+<div class="entry-head"><h3>Design when agents build</h3><label class="learned"><input type="checkbox" data-learned="design-engineering"> Learned</label></div>
 <div class="essay">
-<p class="prose">A design engineer designs in the material the product is made of: code. Instead of handing over pictures, they build the thing, try it, and change it until it works.</p>
-<p class="prose">The role exists because many design decisions only show up when something runs. How long should a spinner wait before it appears? What happens to a 40-character name? Where does focus go when a dialog closes? A mockup rarely answers these, but a prototype in code answers them in minutes.</p>
+<p class="prose">Agents can turn a clear description into working code in minutes. Building used to be the slow, costly part of making a product. Now the slow part is knowing what to ask for, and seeing what’s wrong with what comes back.</p>
+<p class="prose">The details matter as much as ever. How long should a spinner wait before it appears? What happens to a 40-character name? Where does focus go when a dialog closes? An agent answers each of these with a guess, most often the common choice, and the guess usually looks fine in a demo. Whether it fits your product is a design call, and you can only make it if you know what good looks like.</p>
 <div class="three">
-  <div><h4>Prototypes</h4><p>Quick working versions that answer a design question, so the team decides on evidence instead of opinions.</p></div>
-  <div><h4>The details</h4><p>States, timing, motion, edge cases and the keyboard path. Mockups skip them, but people notice all of them.</p></div>
-  <div><h4>What ships</h4><p>Keeping what was designed and what ships the same, through components, tokens and review of the built thing.</p></div>
+  <div><h4>What to build</h4><p>A problem and a behavior clear enough that an agent builds the right thing, not only a working one.</p></div>
+  <div><h4>What good looks like</h4><p>States, timing, motion, edge cases and the keyboard path. Agents skip them unless asked, and people notice all of them.</p></div>
+  <div><h4>Whether it’s right</h4><p>Checking the built thing in every state, because a build can pass every test and still feel wrong.</p></div>
 </div>
-<p class="prose">It sits between two roles that already exist. The three differ mostly in where each one starts and what each one is judged on.</p>
+<p class="prose">The work splits by what each side is good at. The agent is fast at what can be written down, and you own what needs judgment.</p>
 <style>#design-engineering .cheat td:nth-child(2){font-weight:400;color:var(--body)}#design-engineering .cheat td:first-child{color:var(--ink);font-weight:600}</style>
 <div class="table-wrap">
   <table class="cheat">
-    <thead><tr><th></th><th>Designer</th><th>Design engineer</th><th>Frontend engineer</th></tr></thead>
+    <thead><tr><th></th><th>You</th><th>The agent</th></tr></thead>
     <tbody>
-      <tr><td>Starts from</td><td>A problem and the people who have it</td><td>A design question, or a design that has to work for real</td><td>A spec and a codebase</td></tr>
-      <tr><td>Produces</td><td>Flows, mockups, the design system</td><td>Working prototypes, interface details, components</td><td>Features that ship, are tested and can be maintained</td></tr>
-      <tr><td>Judged on</td><td>Whether it solves the right problem clearly</td><td>Whether the built thing feels as intended, in every state</td><td>Whether it works, is fast and lasts</td></tr>
+      <tr><td>Starts from</td><td>A problem and the people who have it</td><td>Your brief and the codebase</td></tr>
+      <tr><td>Produces</td><td>The brief, the decisions and the review</td><td>Plans, prototypes and code</td></tr>
+      <tr><td>Judged on</td><td>Whether the right problem is solved, in every state</td><td>Whether the result does what the brief asks</td></tr>
     </tbody>
   </table>
 </div>
-<p class="prose">The rest of the book follows that work, from judging the problem to shipping the solution.</p>
+<p class="prose">Parts 1 to 3 train that judgment: what makes a product and its interactions good, and why. Part 4 puts it to work with agents, from framing the problem to shipping the solution.</p>
 </div>
 </article>
 </section>
@@ -5493,7 +5493,7 @@ mark.p21-flag{background:transparent;color:inherit;text-decoration:underline wav
 <section class="chapter" id="ch-craft" data-chapter data-short="Craft">
   <div class="chapter-head"><p class="eyebrow">Chapter 5</p><h2>Sweat the states and the edges</h2></div>
   <div class="prose">
-    <p>Craft is what happens in the last 10% of a design: the timing, the messy data and the keyboard path. Mockups rarely show any of it, and people notice all of it. It lives in code, which is why it’s where a design engineer earns their keep. The entries below take those three edges one at a time. The looks a single control takes, from hover to loading, have their own entry: <a href="#interaction-states">Interaction states</a>.</p>
+    <p>Craft is what happens in the last 10% of a design: the timing, the messy data and the keyboard path. Mockups rarely show any of it, and people notice all of it. It lives in code, and agents leave it out unless someone asks for it, so it’s where your judgment shows most. The entries below take those three edges one at a time. The looks a single control takes, from hover to loading, have their own entry: <a href="#interaction-states">Interaction states</a>.</p>
   </div>
 
   <article class="entry" id="good-motion" data-entry data-name="Motion">
@@ -7508,7 +7508,7 @@ mark.p21-flag{background:transparent;color:inherit;text-decoration:underline wav
 <section class="chapter" id="ch-practice" data-chapter data-short="Practice &amp; your edge">
   <div class="chapter-head"><p class="eyebrow">Chapter 7</p><h2>Train your eye, design in the real material</h2></div>
   <div class="prose">
-    <p>Taste is a skill you train. You build it by looking closely at real products, rebuilding the details that work, and naming why they work. As a design engineer, you also have an edge: you can design in the real material, where timing, real data and every state are real from the first minute. The entries below turn both into habits: look closely, try the risky part in code, and write down why you chose what you chose.</p>
+    <p>Taste is a skill you train. You build it by looking closely at real products, rebuilding the details that work, and naming why they work. Agents also give you an edge: building is cheap now, so you can design in the real material, where timing, real data and every state are real from the first minute. The entries below turn both into habits: look closely, try the risky part in code, and write down why you chose what you chose.</p>
   </div>
 
   <article class="entry" id="good-train-your-eye" data-entry data-name="Train your eye">
@@ -39312,8 +39312,8 @@ mark.p21-flag{background:transparent;color:inherit;text-decoration:underline wav
     <h2>About this edition</h2>
   </div>
   <div class="prose">
-    <p>Design Field Guide is Book 1 of the design engineer primer. This is version <span id="colophon-version">v35</span>, from November 2026. The <a href="CHANGELOG.md">changelog</a> lists what changed in each version, and the source is on <a href="https://github.com/ryan-di/design-field-guide">GitHub</a>.</p>
-    <p>The book is one HTML file, with every demo built in. Agents can read the same text, generated from this page, starting from <a href="llms.txt">llms.txt</a>.</p>
+    <p>Design Field Guide is Book 1 of a design primer for the agent era. This is version <span id="colophon-version">v35</span>, from November 2026. The <a href="CHANGELOG.md">changelog</a> lists what changed in each version, and the source is on <a href="https://github.com/ryan-di/design-field-guide">GitHub</a>.</p>
+    <p>The book’s source is one HTML file, with every demo built in, and this site is generated from it. Agents can read the same text as plain files, starting from <a href="llms.txt">llms.txt</a>.</p>
     <p>Companion decks in this primer: <a href="https://claude.ai/artifact/DpPreyaUdpLCEz7gdXhByh" target="_blank" rel="noopener">UX Components</a>, <a href="https://claude.ai/artifact/VryzywoXc2cPqBgTPJafzF" target="_blank" rel="noopener">UX Patterns</a> and <a href="https://claude.ai/artifact/WiCu9DfPgWgwByp7tLRU15" target="_blank" rel="noopener">Good Design</a> (slide versions of Parts 1 to 3), and <a href="https://claude.ai/artifact/Mh7sqnKdPPaf1j1wbgfV9v" target="_blank" rel="noopener">The Future of Design</a>.</p>
   </div>
 </section>
