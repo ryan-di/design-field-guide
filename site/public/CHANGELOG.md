@@ -4,6 +4,7 @@ One line per push. Cite the book as “Design Field Guide v35, #<anchor>”; anc
 
 ## v35 (2026-11)
 
+- v35-8: in the Interaction states demo, success shows a pause icon and “Pause” instead of “Playing” next to a play icon.
 - v35-7: written for anyone who makes the design calls agents don’t make for you, not only design engineers. New preface opening, “Design when agents build” in Start here (same `#design-engineering` anchor), and the series is now a design primer for the agent era.
 - v35-6: the contents can be hidden: a button beside the search box on wide screens, the “Contents” heading on phones. The choice is remembered, and / or Cmd+K brings the contents back.
 - v35-5: the contents search box matches the page; badge icons centered in three demos (sync status, playlist cover, failed check); the lede is one line.

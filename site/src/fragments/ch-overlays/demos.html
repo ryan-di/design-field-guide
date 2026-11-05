@@ -400,7 +400,7 @@
       disabled: ['Play', 'Disabled: it can’t be used, and it can’t say why. Prefer explaining.'],
       loading: ['Loading…', 'Loading: the action started. Block double clicks and keep the width steady.'],
       error: ['Couldn’t play', 'Error: say what failed in words, then offer the next step.'],
-      success: ['Playing', 'Success: confirm briefly, then return to default.']
+      success: ['Pause', 'Success: show the result at once. Playback started, so the button now offers Pause.']
     };
     const set = s => {
       btn.className = 'btn btn-primary' + (['hover', 'focus', 'pressed', 'error', 'success'].includes(s) ? ' is-' + s : '');
@@ -409,6 +409,7 @@
       if (s === 'loading') { icon.setAttribute('hidden', ''); const n = document.createElement('span'); n.className = 'spinner'; n.setAttribute('aria-hidden', 'true'); btn.insertBefore(n, label); }
       else icon.removeAttribute('hidden');
       label.textContent = info[s][0]; cap.textContent = info[s][1];
+      $('use', icon).setAttribute('href', s === 'success' ? '#i-pause' : '#i-play');
       $$('[data-state]', st).forEach(b => b.setAttribute('aria-pressed', String(b.dataset.state === s)));
     };
     $$('[data-state]', st).forEach(b => b.addEventListener('click', () => set(b.dataset.state)));
