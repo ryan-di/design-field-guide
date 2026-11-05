@@ -1,7 +1,7 @@
 name: Publish the site
 
 # Builds the Starlight site in site/ (its pages are generated from index.html by tools/starlight/convert.py and
-# committed) and publishes it to GitHub Pages. live.html and book-view.html stay at their old addresses.
+# committed) and publishes it to GitHub Pages. live.html stays at its old address.
 on:
   push:
     branches: [main]
@@ -32,7 +32,7 @@ jobs:
         working-directory: site
         env:
           DFG_BASE: /design-field-guide
-      - run: cp live.html book-view.html site/dist/
+      - run: cp live.html site/dist/
       - uses: actions/upload-pages-artifact@v3
         with:
           path: site/dist
