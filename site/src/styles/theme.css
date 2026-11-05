@@ -112,23 +112,6 @@ h1#_top {
 	margin-top: 3px;
 }
 
-.dfg-home-note {
-	margin-top: 1rem !important;
-	padding-top: 1.5rem;
-	border-top: 1px solid var(--line);
-	max-width: 62ch;
-	font-size: 0.875rem;
-	line-height: 1.6;
-	color: var(--muted);
-}
-.dfg-home-note a {
-	color: inherit;
-	text-underline-offset: 0.2em;
-}
-.dfg-home-note a:hover {
-	color: var(--ink);
-}
-
 /* The book's rail marks the current page with color, not a filled block. */
 .sidebar-content a[aria-current='page'],
 .sidebar-content a[aria-current='page']:hover {
